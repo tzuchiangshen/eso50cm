@@ -3,5 +3,8 @@
 
 = 2011-03-15 =
   * Technical time: (Tzu Shen, Maurizio Baffic)
-     
+  * Current code were reviewed, and several details about the control system were discussed. 
+  * We agreed to reorganized the current code into module based approach. 
+  * The deployment also will be modified to have a standard structure, similar to the INTROOT in VLT and ACS software. Two accounts are suggested, tcs and tcsmgr, the first one will be use to operate the telescope and will have read-only access to the INTROOT and the second one will be dedicated to install/deploy new software (rw access).
+  * Maurizio also showed the encoder system of the telescope.
      
