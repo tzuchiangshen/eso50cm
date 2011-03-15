@@ -11,9 +11,9 @@ During this meeting, general topics related to the project were discussed. We ag
 Maurizio Baffico showed to the rest of us the current control system and answered several technical questions. 
 
 the top priorities for the project in March will be: 
-  # Project startup and code version control
-  # Improve/automatize the startup procedure
-  # Find a way to recover the telescope's position after a power failure. 
+  # [http://code.google.com/p/eso50cm/issues/detail?id=1 Issue 2:] Project startup and code version control
+  # [http://code.google.com/p/eso50cm/issues/detail?id=1 Issue 1:] Improve/automatize the startup procedure
+  # [http://code.google.com/p/eso50cm/issues/detail?id=1 Issue 3:] Find a way to recover the telescope's position after a power failure. 
 
 Other urgent topics are the following, they will be handled in April
   # Improve the tracking performance
