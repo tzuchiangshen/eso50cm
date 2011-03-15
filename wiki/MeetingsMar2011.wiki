@@ -20,6 +20,6 @@ Other urgent topics are the following, they will be handled in April
   # Auto guider implementation (for Pucheros) 
 
 = Progress = 
-Progress in March can be found at [March's work logs WorklogsMarch2011]
+Progress in March can be found at [WorklogsMarch2011 March's work logs]
 
 = Conclusion = 
