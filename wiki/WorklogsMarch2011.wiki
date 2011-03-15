@@ -1,5 +1,5 @@
 = 2011-03-14 = 
-  * reviewed current control system code sent by Maurizio Baffico
+  * Reviewed current control system code sent by Maurizio Baffico
 
 = 2011-03-15 =
   * Technical time: (Tzu Shen, Maurizio Baffic)
