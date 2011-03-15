@@ -1,0 +1,21 @@
+2011-03-11
+
+= Attendees =
+  * Leonaldo Vanzi 
+  * Pedro Escarate
+  * Vincent Suc
+  * Tzu-Chiang Shen 
+
+= Summary =
+During this meeting, general topics related to the project were discussed. We agreed to have monthly meeting in order set short term priorities, and we agreed to reserved every Tuesday as the technical time dedicated to software/hardware tests. 
+Maurizio Baffico showed to the rest of us the current control system and answered several technical questions. 
+
+the top priorities for the project in March will be: 
+  # Project startup and code version control
+  # Improve/automatize the startup procedure
+  # Find a way to recover the telescope's position after a power failure. 
+
+Other urgent topics are the following, they will be handled in April
+  # Improve the tracking performance
+  # Auto guider implementation (for Pucheros) 
+
