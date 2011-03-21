@@ -8,4 +8,9 @@
   * We agreed to reorganized the current code into module based approach. 
   * The deployment also will be modified to have a standard structure, similar to the INTROOT in VLT and ACS software. Two accounts are suggested, tcs and tcsmgr, the first one will be use to operate the telescope and will have read-only access to the INTROOT and the second one will be dedicated to install/deploy new software (rw access).
   * Maurizio also showed the encoder system of the telescope.
-     
+= 2011-03-17 =
+  * Discussion with Johnny about the logging system, we agreed to use ICE communication channel
+  * Also discussed to explore possibility to use GWT for GUI 
+
+= 2011-03-20 =
+  * Current network and control process [http://eso50cm.googlecode.com/files/eso50cm%20control%20system%20network%20diagram.pdf diagrams] created.
