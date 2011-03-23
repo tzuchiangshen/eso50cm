@@ -1,1 +1,2 @@
-=Project Documentation=
+
+[https://code.google.com/p/eso50cm/wiki/DirectoriesStructureAndVars Directories Structure and Environmental Variables]
