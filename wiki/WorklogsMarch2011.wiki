@@ -14,3 +14,11 @@
 
 = 2011-03-20 =
   * Current network and control processes [http://eso50cm.googlecode.com/files/eso50cm%20control%20system%20network%20diagram.pdf diagrams] created.
+
+= 2011-03-22 =
+  * Technical time: (Maurizio Baffico, Johnny Reveco)
+  * Maurizio gave me a very clarifying overview of the system
+  * At LCU:
+    * Maurizio modified /etc/init.d/eso50cm to mount the HDD connected to the LCU on /mnt/hdd during the startup
+    * Created accounts tcs (Telescope Software Operator) and tcsmgr (Telescope Software Manager). Added tcs to the tcsmgr group. The account home directories were located at /mnt/hdd/home2/tcs and tcsmgr.
+    * Created directory structure and environmental variable structure according to the documented in 
