@@ -1,3 +1,36 @@
 ==Environmental Variables==
 
+*SWROOT*: Points to the base directory of the installed software
+*LD_LIBRARY_PATH*, *CLASSPATH*, *PATH*, *PYTHON_PATH*. Same as usual, but they are modified according to `SWROOT` and the patches installed The `tcsmgr` and `tcs` accounts sources `/eso50cm/config/defaultEnv` in their `.bash_profile`. `defaultEnv`  modifies the mentioned environmental variables according to the content of `$SWROOT/patches/patches.list` 
+
+
 ==Directory Structure of the Installed Software==
+
+*/eso50cm/config*: it holds the configuration files related to the S.O., not depending on the version of the software installed
+*/eso50cm/bin*:  it holds the scripts and binaries related to the S.O., not depending on the version of the software installed
+*$SWROOT/patches*: Here we will put the patches. The libs, scripts and binaries contained in the patches will override those libs, script and binaries in common with `$SWROOT`
+
+The `$SWROOT` have the following structure
+`bin` 
+`config` 
+`include` 
+`lib` 
+`resources` 
+`resources/pics` 
+`resources/sounds` 
+`lib/python/site-packages` 
+`man`
+`man/manXX` 
+(the names are self-explanatory)
+
+To create one, use the script `getTemplateForDirectory` (/eso50cm/bin/getTemplateForDirectory) as follows:
+`getTemplateForDirectory SWROOT <NAME OF THE SWROOT>`
+
+==Patches==
+A patch is directory with the same structure of `$SWROOT` (this could change) plus an extra file called 'responsible' where the programmer should add relevant information about the patch
+following structure:
+`[Patch name] [is under VC(version control)?: yes/no] [uset installing the patch] [description: what the patch does] [date]`
+Additionally, you have to add (or create if it doesn't exist) to the `$SWROOT/patches/patches.list` file the name of your patch. The precedence of the patch in inverse (the bottom patch will override any other patch using the portion of the software).
+
+To create a patch, use:
+`generateTemplateForDirectory PATCHROOT <PATCH NAME>`
