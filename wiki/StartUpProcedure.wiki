@@ -6,8 +6,8 @@ This document explains the current start-up procedure
 
 = Procedure =
 == Control Room ==
-* Turn on the Linux-PC. This PC is the current *ntp-server* for the observatory an must be _on_ before you turn on the others PCs.
-* In the Linux-PC, login as *operdor*
+* Turn on the Linux-PC. This PC is the current *ntp-server* for the observatory.
+    # Login as *operdor*
 == Telescope Room ==
  * In the ESO50cm rack:
     # Turn on the Win2-PC (black on top).
