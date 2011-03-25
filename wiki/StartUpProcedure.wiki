@@ -7,8 +7,13 @@ This document explains the current start-up procedure
 = Procedure =
 
 == Telescope Room ==
- # In the ESO50cm rack:
- ## Turn on the Win2-PC (black on top), login into the account *eso50*
+ * In the ESO50cm rack:
+    # Turn on the Win2-PC (black on top).
+    # login into the account *eso50*.
+    # Launch the _hyperterminal_ with the predefined connection to the *ESO50cm* console (phone icon with name ESO50cm on the Desktop). 
+    # Turn on the telescope's TCS (turn on the TCS Power Supply using the black switch in the rear bottom left). At this time you can see the booting messages in the console (ESO50cm Hyperterminal).
+   #Login as *root* (ESO50cm Hyperterminal) and type {{{date}}} to verify if the TCS has the correct time and date.
+
 
 
 = Details =
