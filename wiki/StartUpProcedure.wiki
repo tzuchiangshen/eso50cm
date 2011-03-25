@@ -2,7 +2,13 @@
 
 = Introduction =
 
-This document explain the current start-up procedure
+This document explains the current start-up procedure
+
+= Procedure =
+
+== Telescope Room ==
+ # In the ESO50cm rack:
+ ## Turn on the Win2-PC (black on top), login into the account *eso50*
 
 
 = Details =
