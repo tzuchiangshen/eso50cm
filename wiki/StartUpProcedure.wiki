@@ -19,11 +19,8 @@ This document explains the current start-up procedure
     # Repeat the above step, and run the command *`./lcu -v`* (instead of `./telescope61...`).
     
 
-
-
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+= Troubleshooting =
+ * *The `ntp-server` does not work:* 
+    # Is the server(Linux-PC in the control room `IP:192.168.0.12`) ON?
+    # Is the ntp-daemon runing? (type *`ntpq -p`* or *`ps -ef | grep ntpd`*).
+ 
