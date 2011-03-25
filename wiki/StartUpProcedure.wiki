@@ -1,4 +1,4 @@
-#Telescope Start-up procedure
+#summary Telescope Start-up procedure
 
 = Introduction =
 
