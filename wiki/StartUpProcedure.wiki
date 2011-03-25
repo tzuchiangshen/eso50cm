@@ -16,7 +16,7 @@ This document explains the current start-up procedure
     # Turn on the telescope's TCS (turn on the TCS Power Supply using the black switch in the rear bottom left). At this time you can see the booting messages in the console (ESO50cm Hyperterminal).
     # Login as *root* (ESO50cm Hyperterminal) and execute the command 'date' to verify if the TCS has the correct time and date. If the date is wrong something is not working in the *ntp-server*,  go to *Trubleshotting* section.
     # In the Win2-PC, start a ssh connection with the TCS (double click SSH icon on the Desktop, server: 192.168.0.10, username: operador), change to dir '~/eso50cm', and execute the command './telescope61 -v -d /dev/ttts6'.
-    # Repeat the above step, and run the command './lcu -v'
+    # Repeat the above step, and run the command './lcu -v' (instead of './telescope61...').
     
 
 
