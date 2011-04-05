@@ -1,13 +1,9 @@
-#summary One-sentence summary of this page.
-
-= Introduction =
-
-Add your content here.
-
-
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+= 2011-04-05 = 
+  * Technical Time (Maurizio Baffico, Ruben Soto)
+  * General Overview of the ESO50cm control software/hardware by Maurizio. 
+     * Startup procedure reviewed
+     * Identification of critical processes.
+     * Detection and analysis of common failures.
+  * Analysis for the replacement of SCB by a PC with serial connection. In principle this option is not feasible since it required modifications to the electronic boards (PIC) which read the telescope position.
+  * Creation of tcs and tcsmgr accounts on operator console. 
+  * Start implementation of ESO50cmStartup script which allows to start the system from the operator console without intervention at SBC computer. This script also consider the implementation of a monitoring process which will stop the telescope is a risk position is reached.
