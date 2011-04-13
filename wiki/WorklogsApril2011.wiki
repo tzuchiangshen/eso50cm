@@ -7,3 +7,17 @@
   * Analysis for the replacement of SCB by a PC with serial connection. In principle this option is not feasible since it required modifications to the electronic boards (PIC) which read the telescope position.
   * Creation of tcs and tcsmgr accounts on operator console. 
   * Start implementation of ESO50cmStartup script which allows to start the system from the operator console without intervention at SBC computer. This script also consider the implementation of a monitoring process which will stop the telescope is a risk position is reached.
+
+= 2011-04-12 = 
+  * Technical Time (Maurizio Baffico, Tzu-Chiang Shen, Pedro Escarate)
+  * Upgrade the O.S. of the TS-7800 Single Board Computer
+    * Preparing SD card with newer version of Debian operative system 
+    * The current on is Debian GNU/Linux 3.1, which is from 2006
+    * We need at least version 5 (lenny) from 2010. This requirement is to install ICE framework 
+    * The internet speed was slow and unstable, we decided that Maurizio will create the SD card at San Joaquin tomorrow
+  * I showed Maurizio and Pedro the purpose of ICE, and we discussed about how to proceed with the refactoring
+    * A virtual machine with ubuntu was prepared. Inside of it a ARM emulator is running (to emulate the TS7800)
+    * The ARM emulator has Debian 5.0 and ICE-E 1.2 installed.
+    * A demo with fake process TCS was created, and another client (process in another machine) could invoke a method in the server
+    * A new class Tcs will be created and will be the facade which will cover the current telescope61 and lcu's functionalities
+    * A new Tcs class will be object oriented with c++ 
