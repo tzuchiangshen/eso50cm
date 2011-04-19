@@ -15,7 +15,6 @@ menu()
     printf("O: send greeting as batch oneway\n");
     printf("f: flush all batch requests\n");
 #endif
-    printf("T: set a timeout\n");
     printf("P: get encoders positions\n");
     printf("s: shutdown server\n");
     printf("x: exit\n");
