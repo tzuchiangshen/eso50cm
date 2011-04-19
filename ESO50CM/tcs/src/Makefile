@@ -53,7 +53,7 @@ Client.o: Client.cpp
 	$(CXX) -c -DICEE_PURE_CLIENT $(CPPFLAGS) $(CXXFLAGS) $<
 	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $<
 
-all: $(TARGETS)
+all: $(GEN) $(CLIENT) $(SERVER)
 
 clean: 
 	rm -rf *.o 
