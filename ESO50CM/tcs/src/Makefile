@@ -1,8 +1,9 @@
 
 CLIENT		= client
 SERVER		= LCUControl
+GEN		= gen
 
-TARGETS		= $(CLIENT) $(SERVER)
+TARGETS		= $(GEN) $(CLIENT) $(SERVER) 
 
 OBJS		= LCU.o
 
@@ -36,7 +37,11 @@ CXX = /usr/bin/c++
 CPPFLAGS        := -I../include -I. -I/usr/include
 LDFLAGS         := -L/usr/lib -lIceE
 
-$(CLIENT): $(OBJS) $(COBJS)
+$(GEN):
+	/usr/bin/slice2cppe ../idl/$(SLICE_SRCS)
+	
+
+$(CLIENT): $(GEN) $(OBJS) $(COBJS)
 	rm -f $@
 	$(CXX) $(LDFLAGS) -o $@ $(COBJS) $(OBJS)
 
@@ -48,10 +53,16 @@ Client.o: Client.cpp
 	$(CXX) -c -DICEE_PURE_CLIENT $(CPPFLAGS) $(CXXFLAGS) $<
 	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $<
 
-HelloC.o LCU.o: LCU.cpp
-	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $<
-	$(CXX) -c -o $(CPPFLAGS) $(CXXFLAGS) $<
-	$(CXX) -c -DICEE_PURE_CLIENT -o HelloC.o $(CPPFLAGS) $(CXXFLAGS) $<
+all: $(TARGETS)
+
+clean: 
+	rm -rf *.o 
+	rm -rf LCU.h LCU.cpp
+
+#HelloC.o LCU.o: LCU.cpp
+#	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $<
+#	$(CXX) -c -o $(CPPFLAGS) $(CXXFLAGS) $<
+#	$(CXX) -c -DICEE_PURE_CLIENT -o HelloC.o $(CPPFLAGS) $(CXXFLAGS) $<
 
 
 
