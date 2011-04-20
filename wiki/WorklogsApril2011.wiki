@@ -21,3 +21,22 @@
     * A demo with fake process TCS was created, and another client (process in another machine) could invoke a method in the server
     * A new class Tcs will be created and will be the facade which will cover the current telescope61 and lcu's functionalities
     * A new Tcs class will be object oriented with c++ 
+
+= 2011-04-19 =
+   * Installed SD with the new OS (debian Lenny)
+   * Maurizio tested that the old software is still compiling and running with the new OS
+   * Checked Debiand version:
+      * Debian GNU/Linux 5.0 \n \l
+   * Checked needed packages:
+     * Already Installed:
+        * gcc-4.3         - The GNU C compiler  
+        * zeroc-icee      - Embedded edition of the ZeroC Ice      
+     * Installed subversion:
+        * subversion      - Advanced version control system   
+   * Re-created user and groups tcs and tcsmgr. Pointed their old HOME directory in the HDD
+   * Re-created /eso50cm link
+   * Downloaded code from SVN
+      * To compile: run  make clean;make; make all (make clean all is not working)
+   * client and LCU Control Successfully tested, both running inside the SBC. The encoder position could be successfully retrieved by LCUControl after being invoked by the client. Logs sent to Tzu
+   * Modified client to run from remotely from my laptop. After some minor adjustments needed to make it compile under ubuntu maverick (ice3.3 instead of iceE), it worked like a charm. With this result, we're in position of say that the software implementation using ICE is feasible.
+   * Tried some basic example of IceStorm. After dig around for a while, I realize that the porting of IceStorm to ICEe is not straightforward. It should be manually ported from the ICE distribution or just ICE. 
