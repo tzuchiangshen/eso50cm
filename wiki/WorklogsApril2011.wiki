@@ -23,6 +23,7 @@
     * A new Tcs class will be object oriented with c++ 
 
 = 2011-04-19 =
+   * Technical Time (Maurizio Baffico, Johnny Reveco)
    * Installed SD with the new OS (debian Lenny)
    * Maurizio tested that the old software is still compiling and running with the new OS
    * Checked Debiand version:
