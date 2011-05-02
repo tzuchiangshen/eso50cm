@@ -7,11 +7,12 @@ TARGETS		= $(GEN) $(CLIENT) $(SERVER)
 
 OBJS		= LCU.o
 
-COBJS		= Client.o 
-		  
+COBJS		= Client.o 		  
 
 
 SOBJS		= LCUImpl.o \
+   		  LCUGetImpl.o \
+		  LCUSetImpl.o \
 		  LCUControl.o \
 		  myLCU.o \
 		  myTelescope.o \
