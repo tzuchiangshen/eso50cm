@@ -453,10 +453,23 @@ int myTelescope::getIfNewData( void )
     return new_data;
 }
 
-/**
- * currentPosition
+
+
+/** * currentPosition
  */
-int myTelescope::currentPosition( double * lst, double * ra, double * dec, double * alt, double * az   )
+int myTelescope::targetPosition( double * lst, double * ra, double * dec, double * alt, double * az, double * ha  )
+{
+   * lst = currentTime();
+   * ra  = m_telescope_data->targetRA;
+   * dec = m_telescope_data->targetDec;
+   * ha = m_telescope_data->targetHA;
+   * alt = m_telescope_data->targetAlt;
+   * az = m_telescope_data->targetAz;
+}
+
+/** * currentPosition
+ */
+int myTelescope::currentPosition( double * lst, double * ra, double * dec, double * alt, double * az, double * ha  )
 {
     double degs;
     //char new_data;
@@ -513,7 +526,7 @@ int myTelescope::currentPosition( double * lst, double * ra, double * dec, doubl
 
     * ra  = m_telescope_data->currentRA;
     * dec = m_telescope_data->currentDec;
-
+    * ha = m_telescope_data->currentHA;
 
     equatorialToHorizontal( m_telescope_data->currentHA, m_telescope_data->currentDec, alt, az  );
     //if( m_telescope_data->HighElevation >= * alt  && * alt >= m_telescope_data->LowElevation ) {
@@ -528,6 +541,9 @@ int myTelescope::currentPosition( double * lst, double * ra, double * dec, doubl
 
     return 1;
 }
+
+
+
 
 /**
  * myTelescope::setTarget

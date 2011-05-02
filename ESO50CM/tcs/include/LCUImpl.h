@@ -5,17 +5,35 @@
 #include "LCU.h"
 #include "myLCU.h"
 
+
+
 class LCUImpl : public OUC::LCU
 {
 public:
 
 
     LCUImpl();
-    virtual void sayHello(int delay, const Ice::Current&) const;
+    virtual void sayHello(const int delay, const Ice::Current&);
     virtual void shutdown(const Ice::Current&);
-    virtual void getEncodersPosition(const Ice::Current&);
 
+    virtual bool isConfigured(const Ice::Current&);
+    virtual OUC::EncoderData getEncodersPosition(const Ice::Current&);
+    virtual OUC::TelescopeData getPosition(const Ice::Current&);
+    virtual OUC::TelescopeConfigData getConfiguration(const Ice::Current&);
+    
+    virtual void setConfiguration(const string& fileName, const Ice::Current&);
+    virtual void setTarget(OUC::TelescopePosition& targetPos, const Ice::Current&);
+    virtual void setOffset(OUC::TelescopePosition& offsetPos, const Ice::Current&);
+    virtual void setTracking(OUC::TrackingInfo& trkInfo, const Ice::Current&);
+    virtual void parkTelescope(const Ice::Current&);
+
+    virtual void getConfigState();
+protected:
+    bool m_configured;
 private:
+    OUC::EncoderData *encoder_t;
+    OUC::TelescopeConfigData *telescopeConfigData_t;
+    OUC::TelescopeData *telescopeData_t;
     myLCU *m_lcu; 
     
 };
