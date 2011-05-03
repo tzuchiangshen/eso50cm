@@ -209,9 +209,10 @@ LCUImpl::setConfiguration(const string& fileName, const Ice::Current& c)
     /** Release semaphore for SHM **/
     m_lcu->postSemaphore(); 
 
-    /** Telescope configured **/
-    m_configured = true;
-
+    /** Refresh Configuration and Tracking states **/
+    getConfigState();
+    getTrackingState();
+    
     if( verbose ) 
       printf( "LCUImpl::setTelescopeConfig: Telescope configured!!\n" );
 }
@@ -351,6 +352,9 @@ LCUImpl::setTracking(OUC::TrackingInfo& trkInfo, const Ice::Current& c)
     m_lcu->telescope->setIsTracking(false);
   m_lcu->postSemaphore();
 
+  /** Refresh tracking state **/
+  getTrackingState();
+
   if( verbose )
     printf( "LCUImpl::setTracking Tracking State: %d, ticks velocity: %d",trkInfo.trackState,trkInfo.ticVel);
 }
@@ -402,6 +406,8 @@ LCUImpl::parkTelescope(const Ice::Current& c)
       int ticVel = 0;
       m_lcu->telescope->alpha->Motor->setDeviceMemory(3, &ticVel);
       m_lcu->telescope->setIsTracking(false);
+      /* Refresh tracking state */
+      getTrackingState();
       if(verbose)
 	printf("LCUImpl::parkTelescope: Tracking OFF!!");
 
