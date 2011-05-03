@@ -39,8 +39,8 @@ CPPFLAGS        := -I../include -I. -I/usr/include
 LDFLAGS         := -L/usr/lib -lIceE
 
 $(GEN):
-	/usr/bin/slice2cppe ../idl/$(SLICE_SRCS)
-	
+	/usr/bin/slice2cppe ../idl/$(SLICE_SRCS) 
+	/usr/bin/slice2py ../idl/$(SLICE_SRCS)	
 
 $(CLIENT): $(GEN) $(OBJS) $(COBJS)
 	rm -f $@
