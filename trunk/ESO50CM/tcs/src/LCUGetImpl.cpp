@@ -19,6 +19,22 @@ void LCUImpl::getConfigState()
   m_lcu->postSemaphore();
 }
 
+void LCUImpl::getTrackingState()
+{
+  extern int verbose;
+  
+  if( verbose ) 
+      printf( "LCUImpl::getTrackingState" );
+
+  /** Acquire Semaphore for SHM */
+  m_lcu->waitSemaphore();
+
+  m_tracking = m_lcu->telescope->getIsTracking();
+  
+  /** Release semaphore for SHM **/
+  m_lcu->postSemaphore();
+}
+
 bool LCUImpl::isConfigured(const Ice::Current& c)
 {
 
@@ -29,6 +45,17 @@ bool LCUImpl::isConfigured(const Ice::Current& c)
   return m_configured;
 }
 
+bool LCUImpl::isTracking(const Ice::Current& c)
+{
+
+  extern int verbose;
+  if( verbose ) 
+    printf( "[LCUImpl::isTracking" );
+
+  return m_tracking;
+}
+
+	
 
 OUC::TelescopeConfigData LCUImpl::getConfiguration(const Ice::Current& c)
 {

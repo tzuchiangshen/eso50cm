@@ -12,8 +12,9 @@ LCUImpl::LCUImpl() {
     m_lcu->createTelescope();
     m_lcu->telescope->attachInstrumentMemory();
 
-    //Get telescope configuration
+    //Get telescope configuration & tracking state
     getConfigState();
+    getTrackingState();
 }
 
 void

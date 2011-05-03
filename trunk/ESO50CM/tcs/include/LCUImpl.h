@@ -17,6 +17,7 @@ public:
     virtual void shutdown(const Ice::Current&);
 
     virtual bool isConfigured(const Ice::Current&);
+    virtual bool isTracking(const Ice::Current&);
     virtual OUC::EncoderData getEncodersPosition(const Ice::Current&);
     virtual OUC::TelescopeData getPosition(const Ice::Current&);
     virtual OUC::TelescopeConfigData getConfiguration(const Ice::Current&);
@@ -28,8 +29,10 @@ public:
     virtual void parkTelescope(const Ice::Current&);
 
     virtual void getConfigState();
+    virtual void getTrackingState();
 protected:
     bool m_configured;
+    bool m_tracking; 
 private:
     OUC::EncoderData *encoder_t;
     OUC::TelescopeConfigData *telescopeConfigData_t;

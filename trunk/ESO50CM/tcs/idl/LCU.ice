@@ -94,6 +94,7 @@ interface LCU
     TelescopeData getPosition()
     	 throws TelescopeNotConfiguredEx;	
     bool isConfigured();
+    bool isTracking();
 
     void setConfiguration(string fileName);
     void setTarget(out TelescopePosition targetPos)
