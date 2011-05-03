@@ -65,8 +65,9 @@ def getEncoderPosition():
 def getPosition():
 	telData = OUC.TelescopeData()
 	try:
-           telData = lcuImpl.getPosition();
+           telData = lcuImpl.getPosition()
 	   print "LT = [%ld]\n" % telData.localTime
+	   print time.strftime("LT = %b %d %Y %H:%M:%S \n", time.gmtime(telData.localTime))
 	   print "Time elapsed since last access: %lf\n" % telData.deltaT
 	   print "JD  = %lf\n" % telData.julianDate
 	   print "Latitude = %+11.4lf \n" % telData.latitude
@@ -85,15 +86,64 @@ def getPosition():
 	   print "Target HA = %lf \n" % telData.targetPos.Dec
 	   print "Target Alt = %lf \n" % telData.targetPos.Alt
 	   print "Target Az = %lf \n" % telData.targetPos.Az
+	   print "Generated at = [%ld]\n" % telData.lcuTime
 	except OUC.TelescopeNotConfiguredEx():
            print "Telescope Not Configured !!!"
 	   traceback.print_exc()
 	   status = 1
+
+def getConfiguration():
+	telConfigData = OUC.TelescopeConfigData()
+	try:
+           telConfigData = lcuImpl.getConfiguration()	
+	   print "LT = [%ld]\n" % telConfigData.localTime
+	   print "Latitude = %+11.4lf \n" % telConfigData.latitude
+	   print "Longitude = %+11.4lf \n" % telConfigData.longitude
+	   print "Altitude = %+11.4lf \n" % telConfigData.altitude
+	   print "AMT = %+11.4lf \n" % telConfigData.AMT
+	   print "AMH = %+11.4lf \n" % telConfigData.AMH
+	   print "AMR = %+11.4lf \n" % telConfigData.AMR
+	   print "AWT = %+11.4lf \n" % telConfigData.AWT
+	   print "AWH = %+11.4lf \n" % telConfigData.AWH
+	   print "AWR = %+11.4lf \n" % telConfigData.AWR
+	   print "AAT = %+11.4lf \n" % telConfigData.AAT
+	   print "AAH = %+11.4lf \n" % telConfigData.AAH
+	   print "AAR = %+11.4lf \n" % telConfigData.AAR
+	   print "DMT = %+11.4lf \n" % telConfigData.DMT
+	   print "DMH = %+11.4lf \n" % telConfigData.DMH
+	   print "DMR = %+11.4lf \n" % telConfigData.DMR
+	   print "DWT = %+11.4lf \n" % telConfigData.DWT
+	   print "DWH = %+11.4lf \n" % telConfigData.DWH
+	   print "DWR = %+11.4lf \n" % telConfigData.DWR
+	   print "DAT = %+11.4lf \n" % telConfigData.DAT
+	   print "DAH = %+11.4lf \n" % telConfigData.DAH
+	   print "DAR = %+11.4lf \n" % telConfigData.DAR
+	   print "Generated at = [%ld]\n" % telData.lcuTime
+	except OUC.TelescopeNotConfiguredEx():
+           print "Telescope Not Configured !!!"
+	   traceback.print_exc()
+	   status = 1  
+
+bool isConfigured():
+	print"Telescope Configuration state %d" % lcuImpl.isConfigured() 
+	return lcuImpl.isConfigured()
+
+def setConfiguration():
+	try:
+           lcuImpl.setConfiguration("ESO50cm.conf")
+	except:
+           print "Problems trying to configure telescope!!"
+	   traceback.print_exc()
+	   status = 1
+
 
 if __name__ == "__main__":
       	connect()
         #sayHello()
 	#getEncoderPosition()
 	#getPosition()
+	setConfiguration()
+	if isConfigured():
+		getConfiguration()
 	disconnect()
 	

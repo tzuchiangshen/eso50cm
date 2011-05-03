@@ -174,6 +174,7 @@ OUC::TelescopeData LCUImpl::getPosition(const Ice::Current& c)
 	printf("LCUImpl::getPosition HA = %lf \n", telescopeData_t->targetPos.HA);
 	printf("LCUImpl::getPosition Alt = %lf \n", telescopeData_t->targetPos.Alt);
 	printf("LCUImpl::getPosition Az = %lf \n", telescopeData_t->targetPos.Az);
+	printf("LCUImpl::getPosition Page generated at: [%ld]\n", (long int)telescopeData_t->lcuTime);
       }
 
     return *telescopeData_t;
