@@ -110,6 +110,8 @@ OUC::TelescopeConfigData LCUImpl::getConfiguration(const Ice::Current& c)
 	printf("LCUImpl::getTelescopeConfig DAR = %+11.4lf \n", telescopeConfigData_t->DAR);
 	printf("LCUImpl::getTelescopeConfig Page generated at: [%ld]\n", (long int)telescopeConfigData_t->lcuTime);
       }
+
+    return *telescopeConfigData_t;
 }
 
 
@@ -172,7 +174,9 @@ OUC::TelescopeData LCUImpl::getPosition(const Ice::Current& c)
 	printf("LCUImpl::getPosition HA = %lf \n", telescopeData_t->targetPos.HA);
 	printf("LCUImpl::getPosition Alt = %lf \n", telescopeData_t->targetPos.Alt);
 	printf("LCUImpl::getPosition Az = %lf \n", telescopeData_t->targetPos.Az);
-      }	
+      }
+
+    return *telescopeData_t;
 }
     
 

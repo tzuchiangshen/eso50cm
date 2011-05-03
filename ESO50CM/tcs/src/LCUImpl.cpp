@@ -7,6 +7,8 @@ using namespace std;
 LCUImpl::LCUImpl() {
     m_lcu = new myLCU();
     encoder_t = new OUC::EncoderData();
+    telescopeConfigData_t = new OUC::TelescopeConfigData();
+    telescopeData_t = new OUC::TelescopeData();
     m_lcu->createTelescope();
     m_lcu->telescope->attachInstrumentMemory();
 
