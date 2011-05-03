@@ -211,6 +211,9 @@ LCUImpl::setConfiguration(const string& fileName, const Ice::Current& c)
 
     /** Telescope configured **/
     m_configured = true;
+
+    if( verbose ) 
+      printf( "LCUImpl::setTelescopeConfig: Telescope configured!!\n" );
 }
 
 void 
