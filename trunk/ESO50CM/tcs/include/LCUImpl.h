@@ -18,6 +18,7 @@ public:
 
     virtual bool isConfigured(const Ice::Current&);
     virtual bool isTracking(const Ice::Current&);
+    virtual OUC::RawEncoderData getRawEncodersPosition(const Ice::Current&);
     virtual OUC::EncoderData getEncodersPosition(const Ice::Current&);
     virtual OUC::TelescopeData getPosition(const Ice::Current&);
     virtual OUC::TelescopeConfigData getConfiguration(const Ice::Current&);
@@ -34,6 +35,7 @@ protected:
     bool m_configured;
     bool m_tracking; 
 private:
+    OUC::RawEncoderData *rawEncoder_t;
     OUC::EncoderData *encoder_t;
     OUC::TelescopeConfigData *telescopeConfigData_t;
     OUC::TelescopeData *telescopeData_t;
