@@ -6,6 +6,7 @@ using namespace std;
 
 LCUImpl::LCUImpl() {
     m_lcu = new myLCU();
+    rawEncoder_t = new OUC::RawEncoderData(); 
     encoder_t = new OUC::EncoderData();
     telescopeConfigData_t = new OUC::TelescopeConfigData();
     telescopeData_t = new OUC::TelescopeData();

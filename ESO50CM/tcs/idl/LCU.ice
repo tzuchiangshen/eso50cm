@@ -4,6 +4,24 @@
 module OUC 
 {
 
+struct RawEncoderData
+{
+	int lectAlphaWormE;
+	int lectAlphaAxisE;
+	int lectAlphaMotor;
+	int posAlphaWormE;
+	int posAlphaAxisE;
+	int posAlphaMotor;
+	int lectDeltaWormE;
+	int lectDeltaAxisE;
+	int lectDeltaMotor;
+	int posDeltaWormE;
+	int posDeltaAxisE;
+	int posDeltaMotor;
+	double deltaT;
+	long lcuTime;
+};
+
 struct EncoderData 
 {
 	double alphaWormE;
@@ -74,6 +92,7 @@ struct TelescopeData
 	string targetName;	
 	TelescopePosition currentPos;
 	TelescopePosition targetPos;
+	TelescopePosition differencePos;
 };
 
 exception ErrorEx {
@@ -88,7 +107,10 @@ interface LCU
     idempotent void sayHello(int delay);
     idempotent void shutdown();
   
-    EncoderData getEncodersPosition();
+    EncoderData getEncodersPosition()
+         throws TelescopeNotConfiguredEx;
+    RawEncoderData getRawEncodersPosition() 
+         throws TelescopeNotConfiguredEx;	    
     TelescopeConfigData getConfiguration()
     	 throws TelescopeNotConfiguredEx;	
     TelescopeData getPosition()
