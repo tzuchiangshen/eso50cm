@@ -162,7 +162,7 @@ def getConfiguration():
 	   traceback.print_exc()
 	   status = 1  
 
-bool isConfigured():
+def isConfigured():
 	print"Telescope Configuration state %d" % lcuImpl.isConfigured() 
 	return lcuImpl.isConfigured()
 
