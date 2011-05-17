@@ -9,6 +9,28 @@ global status
 global ic 
 global lcuImpl 
 
+def hexStrEndianSwap(theString):
+    """Rearranges character-couples in a little endian hex string to
+    convert it into a big endian hex string and vice-versa. i.e. 'A3F2'
+    is converted to 'F2A3'
+
+    @param theString: The string to swap character-couples in
+    @return: A hex string with swapped character-couples. -1 on error."""
+
+    # We can't swap character couples in a string that has an odd number
+    # of characters.
+    if len(theString)%2 != 0:
+        return -1
+
+    # Swap the couples
+    swapList = []
+    for i in range(0, len(theString), 2):
+        swapList.insert(0, theString[i:i+2])
+
+    # Combine everything into one string. Don't use a delimeter.
+    return ''.join(swapList)
+
+
 def connect():
 	global status
         global ic
@@ -18,8 +40,9 @@ def connect():
 	status = 0
         try:
            ic = Ice.initialize(sys.argv)
-           obj = ic.stringToProxy("LCU:tcp -p 10000");
+           obj = ic.stringToProxy("LCU:tcp -h 192.168.0.10 -p 10000");
            lcuImpl = OUC.LCUPrx.checkedCast(obj)
+	   print "Connected to LCUControl"
            if not lcuImpl: 
                    raise RuntimeError("Invalid proxy")
 	except:
@@ -132,8 +155,10 @@ def getPosition():
 
 def getConfiguration():
 	telConfigData = OUC.TelescopeConfigData()
+        print "antes \n %s " % telConfigData
 	try:
            telConfigData = lcuImpl.getConfiguration()	
+	   print telConfigData
 	   print "LT = [%ld]\n" % telConfigData.localTime
 	   print "Latitude = %+11.4lf \n" % telConfigData.latitude
 	   print "Longitude = %+11.4lf \n" % telConfigData.longitude
@@ -156,7 +181,7 @@ def getConfiguration():
 	   print "DAT = %+11.4lf \n" % telConfigData.DAT
 	   print "DAH = %+11.4lf \n" % telConfigData.DAH
 	   print "DAR = %+11.4lf \n" % telConfigData.DAR
-	   print "Generated at = [%ld]\n" % telData.lcuTime
+	   print "Generated at = [%ld]\n" % telConfigData.lcuTime
 	except OUC.TelescopeNotConfiguredEx():
            print "Telescope Not Configured !!!"
 	   traceback.print_exc()
@@ -168,7 +193,8 @@ def isConfigured():
 
 def setConfiguration():
 	try:
-           lcuImpl.setConfiguration("ESO50cm.conf")
+           lcuImpl.setConfiguration("./ESO50cm.conf")
+	   print "Configuration send to LCUControl"
 	except:
            print "Problems trying to configure telescope!!"
 	   traceback.print_exc()
@@ -177,12 +203,12 @@ def setConfiguration():
 
 if __name__ == "__main__":
       	connect()
-        #sayHello()
-	#getEncoderPosition()
-	#getRawEncoderPosition()
-	#getPosition()
 	setConfiguration()
 	if isConfigured():
 		getConfiguration()
+        sayHello()
+	getEncoderPosition()
+	getRawEncoderPosition()
+	getPosition()
 	disconnect()
 	
