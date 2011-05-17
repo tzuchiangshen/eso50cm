@@ -2,19 +2,19 @@
 # The client reads this property to create the reference to the
 # "hello" object in the server.
 #
-LCUAdapter.Proxy=LCU:tcp -p 10000
+#LCUAdapter.Proxy=LCU:tcp -p 10000
 # put the ip address of the operator console
-#LCUAdapter.Proxy=LCU:tcp -h 192.168.0.12 -p 10000
+LCUAdapter.Proxy=LCU:tcp -h 192.168.0.10 -p 10000
 
 #
 # The server creates one single object adapter with the name
 # "Hello". The following line sets the endpoints for this
 # adapter.
 
-LCUAdapter.Endpoints=tcp -p 10000
+#LCUAdapter.Endpoints=tcp -p 10000
 #
 # put the ip address of the operator console
-#LCUAdapter.Endpoints=tcp -h 192.168.0.12 -p 10000
+LCUAdapter.Endpoints=tcp -h 192.168.0.10 -p 10000
 
 #
 # Warn about connection exceptions
