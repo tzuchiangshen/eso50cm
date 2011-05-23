@@ -2,7 +2,7 @@
   * Technical Time (Maurizio Baffico, Ruben Soto)
 
 = 2011-05-10 = 
-  ** Technical Time (Maurizio Baffico, Tzu-Chiang Shen, Pedro Escarate)*
+  * *Technical Time (Maurizio Baffico, Tzu-Chiang Shen, Pedro Escarate)*
   * Client (ICE based) application testing
     * client application compiled at a VM with ubuntu, and configuration file was updated according to the deployment. 
     * The LCUControl application was started and communicated properly with telescope61 through shared memory
