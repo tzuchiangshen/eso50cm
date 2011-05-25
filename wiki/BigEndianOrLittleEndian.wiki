@@ -193,6 +193,7 @@ s[7] = 0xFFFFFFBF
 }}}
 
 = References =
+  * http://babbage.cs.qc.edu/IEEE-754/Decimal.html IEEE-754 calculator
   * http://www.heyrick.co.uk/assembler/fpops.html
   * http://wiki.debian.org/ArmEabiPort#GCC_view
   * http://www.makelinux.net/ldd3/
