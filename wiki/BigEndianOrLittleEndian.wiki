@@ -10,7 +10,18 @@ Debian GNU/Linux 5.0 \n \l
 
 root@ts7000:/usr/include/c++/4.3# uname -a
 Linux ts7000 2.6.21-ts #4 PREEMPT Wed Jan 27 17:12:25 MST 2010 armv4tl unknown
+
+root@ts7000:/usr/include/c++/4.3# gcc -v
+Using built-in specs.
+Target: arm-linux-gnueabi
+Configured with: ../src/configure -v --with-pkgversion='Debian 4.3.2-1.1' --with-bugurl=file:///usr/share/doc/gcc-4.3/README.Bugs --enable-languages=c,c++,fortran,objc,obj-c++ --prefix=/usr --enable-shared --with-system-zlib --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --enable-nls --with-gxx-include-dir=/usr/include/c++/4.3 --program-suffix=-4.3 --enable-clocale=gnu --enable-libstdcxx-debug --enable-objc-gc --enable-mpfr --disable-libssp --disable-sjlj-exceptions --enable-checking=release --build=arm-linux-gnueabi --host=arm-linux-gnueabi --target=arm-linux-gnueabi
+Thread model: posix
+gcc version 4.3.2 (Debian 4.3.2-1.1) 
+
+
 }}}
+
+
 
 /mnt/root/root/CURRENTLY_MOD/trunk/ESO50CM/tcs/test # file testEndian
 {{{
@@ -104,6 +115,16 @@ Ubuntu 11.04 \n \l
 
 ubuntu@ubuntu:~/CURRENTLY_MOD$ uname -a
 Linux ubuntu 2.6.38-8-generic #42-Ubuntu SMP Mon Apr 11 03:31:50 UTC 2011 i686 i686 i386 GNU/Linux
+
+ubuntu@ubuntu:~/CURRENTLY_MOD/trunk/ESO50CM/tcs/test$ gcc -v
+Using built-in specs.
+COLLECT_GCC=gcc
+COLLECT_LTO_WRAPPER=/usr/lib/i386-linux-gnu/gcc/i686-linux-gnu/4.5.2/lto-wrapper
+Target: i686-linux-gnu
+Configured with: ../src/configure -v --with-pkgversion='Ubuntu/Linaro 4.5.2-8ubuntu4' --with-bugurl=file:///usr/share/doc/gcc-4.5/README.Bugs --enable-languages=c,c++,fortran,objc,obj-c++ --prefix=/usr --program-suffix=-4.5 --enable-shared --enable-multiarch --with-multiarch-defaults=i386-linux-gnu --enable-linker-build-id --with-system-zlib --libexecdir=/usr/lib/i386-linux-gnu --without-included-gettext --enable-threads=posix --with-gxx-include-dir=/usr/include/c++/4.5 --libdir=/usr/lib/i386-linux-gnu --enable-nls --with-sysroot=/ --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --enable-plugin --enable-gold --enable-ld=default --with-plugin-ld=ld.gold --enable-objc-gc --enable-targets=all --disable-werror --with-arch-32=i686 --with-tune=generic --enable-checking=release --build=i686-linux-gnu --host=i686-linux-gnu --target=i686-linux-gnu
+Thread model: posix
+gcc version 4.5.2 (Ubuntu/Linaro 4.5.2-8ubuntu4) 
+
 
 }}}
 
