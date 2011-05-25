@@ -191,3 +191,8 @@ s[5] = 0x0
 s[6] = 0xFFFFFFF0
 s[7] = 0xFFFFFFBF
 }}}
+
+= References =
+  * http://www.heyrick.co.uk/assembler/fpops.html
+  * http://wiki.debian.org/ArmEabiPort#GCC_view
+  * http://www.makelinux.net/ldd3/
