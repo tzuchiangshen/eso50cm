@@ -1,0 +1,12 @@
+#summary One-sentence summary of this page.
+
+= Introduction =
+
+= APT packages =
+
+The following packages must be installed 
+  * zeroc-icee
+  * gcc 
+  * libc6-dev
+  * subversion 
+  * vim 
