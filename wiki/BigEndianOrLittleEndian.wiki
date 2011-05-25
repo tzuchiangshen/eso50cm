@@ -6,7 +6,7 @@
 = ARM =
 {{{
 root@ts7000:/usr/include/c++/4.3# cat /etc/issue
-Debian GNU/Linux 5.0 \n \l
+Debian GNU/Linux 5.0 \n \l    (lenny)
 
 root@ts7000:/usr/include/c++/4.3# uname -a
 Linux ts7000 2.6.21-ts #4 PREEMPT Wed Jan 27 17:12:25 MST 2010 armv4tl unknown
