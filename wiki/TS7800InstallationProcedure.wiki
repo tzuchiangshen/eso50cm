@@ -2,6 +2,12 @@
 
 = Introduction =
 
+= O. S. =
+
+Debian GNU/Linux 5.0 \n \l
+
+Linux ts7000 2.6.21-ts #4 PREEMPT Wed Jan 27 17:12:25 MST 2010 armv4tl unknown
+
 = APT packages =
 
 The following packages must be installed 
