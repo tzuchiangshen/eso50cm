@@ -208,6 +208,41 @@ OUC::TelescopeData LCUImpl::getPosition(const Ice::Current& c)
 	printf("LCUImpl::getPosition Page generated at: [%ld]\n", (long int)telescopeData_t->lcuTime);
       }
 
+
+
+    double x;
+    double test;
+    unsigned char *p;
+    unsigned char *q;
+
+    //RA
+    test = 0;
+    p = (unsigned char*)&telescopeData_t->currentPos.RA;
+    q = (unsigned char*)&test;
+
+    q += 4;
+    memcpy(q, p, 4);
+    q -= 4;
+    p += 4;
+    memcpy(q, p, 4);
+
+    telescopeData_t->currentPos.RA = test;
+    printf(">>>>>> LCUImpl::getPosition Current RA = %lf \n", test);
+
+    //Dec
+    test = 0;
+    p = (unsigned char*)&telescopeData_t->currentPos.Dec;
+    q = (unsigned char*)&test;
+
+    q += 4;
+    memcpy(q, p, 4);
+    q -= 4;
+    p += 4;
+    memcpy(q, p, 4);
+
+    telescopeData_t->currentPos.Dec = test;
+    printf(">>>>>> LCUImpl::getPosition Current Dec = %lf \n", test);
+
     return *telescopeData_t;
 }
     
