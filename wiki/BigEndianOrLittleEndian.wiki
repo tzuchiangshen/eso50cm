@@ -6,8 +6,9 @@
 = ARM =
 
 /mnt/root/root/CURRENTLY_MOD/trunk/ESO50CM/tcs/test # file testEndian
+{{{
 testEndian: ELF 32-bit LSB executable, ARM, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.14, not stripped
-
+}}}
 /mnt/root/root/CURRENTLY_MOD/trunk/ESO50CM/tcs/test # readelf  -h testEndian
 {{{
 ELF Header:
