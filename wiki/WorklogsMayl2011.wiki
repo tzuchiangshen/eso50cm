@@ -1,6 +1,11 @@
 = 2011-05-03 = 
-  * Technical Time (Maurizio Baffico, Ruben Soto)
-
+  * Technical Time (Maurizio Baffico, Ruben Soto, Pedro Escarate)
+  * Testing of basic telescope commands under ICE framework:
+     * To be done remotely with the support of Pedro Escarate (Maurizio with sick leave).
+     * Problems detected to boot LCU with new SD Card which contained ICE-E
+     * Remote connection not allowed due to firewall configuration problem.
+     * Tests suspended due to the condition explained above and system returned to stable version.
+     * Testing of ICE commands postponed until next week
 = 2011-05-10 = 
   * *Technical Time (Maurizio Baffico, Tzu-Chiang Shen, Pedro Escarate)*
   * Client (ICE based) application testing
