@@ -1,13 +1,31 @@
-#summary One-sentence summary of this page.
+#summary Procedure to identify if a system is BE or LE
 
 = Introduction =
 
-Add your content here.
 
+= ARM =
 
-= Details =
+/mnt/root/root/CURRENTLY_MOD/trunk/ESO50CM/tcs/test # file testEndian
+testEndian: ELF 32-bit LSB executable, ARM, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.14, not stripped
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+/mnt/root/root/CURRENTLY_MOD/trunk/ESO50CM/tcs/test # readelf  -h testEndian
+ELF Header:
+  Magic:   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00 
+  Class:                             ELF32
+  Data:                              2's complement, little endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              EXEC (Executable file)
+  Machine:                           ARM
+  Version:                           0x1
+  Entry point address:               0x83a8
+  Start of program headers:          52 (bytes into file)
+  Start of section headers:          4124 (bytes into file)
+  Flags:                             0x4000002, has entry point, Version4 EABI
+  Size of this header:               52 (bytes)
+  Size of program headers:           32 (bytes)
+  Number of program headers:         8
+  Size of section headers:           40 (bytes)
+  Number of section headers:         37
+  Section header string table index: 34
