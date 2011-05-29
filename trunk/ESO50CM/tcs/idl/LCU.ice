@@ -19,7 +19,7 @@ struct RawEncoderData
 	int posDeltaAxisE;
 	int posDeltaMotor;
 	double deltaT;
-	long lcuTime;
+	double lcuTime;
 };
 
 struct EncoderData 
@@ -28,8 +28,8 @@ struct EncoderData
  	double alphaAxisE;
 	double deltaWormE;
 	double deltaAxisE;
-	long localTime;
-	long lcuTime;
+	double localTime;
+	double lcuTime;
 };
 
 struct TrackingInfo
@@ -41,8 +41,8 @@ struct TrackingInfo
 
 struct TelescopeConfigData
 {
-	long localTime;
-	long lcuTime;
+	double localTime;
+	double lcuTime;
 	double latitude;
  	double longitude;
 	double altitude;
@@ -79,8 +79,8 @@ struct TelescopePosition
 
 struct TelescopeData
 {
-	long localTime;
-	long lcuTime;
+	double localTime;
+	double lcuTime;
 	double deltaT;
 	double localSideralTime;
 	double julianDate;

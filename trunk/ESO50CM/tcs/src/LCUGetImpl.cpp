@@ -96,7 +96,7 @@ OUC::TelescopeConfigData LCUImpl::getConfiguration(const Ice::Current& c)
     m_lcu->waitSemaphore();
 
     /** Local Time **/
-    telescopeConfigData_t->localTime = mktime(m_lcu->telescope->getLocalTime());
+    telescopeConfigData_t->localTime = m_lcu->telescope->getMLocalTime();
  
     /** basic parameters **/
     telescopeConfigData_t->latitude = m_lcu->telescope->getLatitude();
@@ -126,7 +126,7 @@ OUC::TelescopeConfigData LCUImpl::getConfiguration(const Ice::Current& c)
     telescopeConfigData_t->DAR = m_lcu->telescope->delta->AxisE->getEncoderToAxis_Reduction();
       
     /** LCU Local Time **/  
-    telescopeConfigData_t->lcuTime = mktime(m_lcu->getLCU_Time());
+    telescopeConfigData_t->lcuTime = m_lcu->getLCUMTime();
    
     /** Release semaphore for SHM **/
     m_lcu->postSemaphore();
@@ -181,7 +181,7 @@ OUC::TelescopeData LCUImpl::getPosition(const Ice::Current& c)
     m_lcu->waitSemaphore();
     
     /** Acquire Times **/
-    telescopeData_t->localTime = mktime(m_lcu->telescope->getLocalTime());
+    telescopeData_t->localTime = m_lcu->telescope->getMLocalTime();
     telescopeData_t->deltaT = m_lcu->telescope->getDeltaT();
     telescopeData_t->julianDate = m_lcu->telescope->getJulianDate();
     
@@ -197,7 +197,7 @@ OUC::TelescopeData LCUImpl::getPosition(const Ice::Current& c)
     telescopeData_t->highElevation = m_lcu->telescope->getHighElevation();
         
     /** LCU Local Time **/  
-    telescopeData_t->lcuTime = mktime(m_lcu->getLCU_Time());
+    telescopeData_t->lcuTime = m_lcu->getLCUMTime();
     
     /** Release semaphore for SHM **/
     m_lcu->postSemaphore();  
@@ -317,7 +317,7 @@ OUC::RawEncoderData LCUImpl::getRawEncodersPosition(const Ice::Current& c)
     m_lcu->telescope->delta->Motor->readDeviceMemory( 4, &rawEncoder_t->posDeltaMotor, 0 );
 
     /** LCU Local Time **/  
-    rawEncoder_t->lcuTime = mktime(m_lcu->getLCU_Time());
+    rawEncoder_t->lcuTime = m_lcu->getLCUMTime();
   
     /** Release semaphore for SHM **/
     m_lcu->postSemaphore(); 
@@ -363,7 +363,7 @@ OUC::EncoderData LCUImpl::getEncodersPosition(const Ice::Current& c)
     m_lcu->waitSemaphore();
 
     /** Local Time */
-    encoder_t->localTime = mktime(m_lcu->telescope->getLocalTime());
+    encoder_t->localTime = m_lcu->telescope->getMLocalTime();
  
     /** Encoder Position **/
     //Alpha
@@ -375,7 +375,7 @@ OUC::EncoderData LCUImpl::getEncodersPosition(const Ice::Current& c)
   
 
     /** LCU Local Time **/  
-    encoder_t->lcuTime = mktime(m_lcu->getLCU_Time());
+    encoder_t->lcuTime = m_lcu->getLCUMTime();
    
     /** Release semaphore for SHM **/
     m_lcu->postSemaphore();

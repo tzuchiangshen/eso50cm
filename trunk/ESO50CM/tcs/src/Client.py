@@ -1,6 +1,7 @@
 #!/usr/bin/python 
 import sys, traceback, Ice 
 import OUC
+from datetime import datetime
 import time
 from AstroUtil import *
 
@@ -88,7 +89,7 @@ def getRawEncoderPosition():
 	   print "Lecture Delta Motor: %6d\n" % rawEncData.lectDeltaMotor
 	   print "Position Delta Motor: %11d\n" % rawEncData.posDeltaMotor 
 	   print "Generated at = [%ld]\n" % rawEncData.lcuTime
-	   print time.strftime("Generated at = %b %d %Y %H:%M:%S \n", time.gmtime(rawEncData.lcuTime))
+	   print datetime.utcfromtimestamp(rawEncData.lcuTime)
 	except OUC.TelescopeNotConfiguredEx():
            print "Telescope Not Configured !!!"
            traceback.print_exc()
@@ -98,14 +99,14 @@ def getEncoderPosition():
 	encData = OUC.EncoderData()
 	try:
            encData =  lcuImpl.getEncodersPosition();
-	   print "LT = [%ld]\n" % encData.localTime
-           print time.strftime("LT = %b %d %Y %H:%M:%S \n", time.gmtime(encData.localTime))
+	   print "LT = [%lf]\n" % encData.localTime
+           print datetime.utcfromtimestamp(encData.localTime)
 	   print "AW Position  = [%+10.0lf]\n" % encData.alphaWormE
 	   print "AA Position  = [%+10.0lf]\n" % encData.alphaAxisE 
 	   print "DW Position  = [%+10.0lf]\n" % encData.deltaWormE
 	   print "AA Position  = [%+10.0lf]\n" % encData.deltaAxisE
-	   print "Generated at = [%ld]\n" % encData.lcuTime
-	   print time.strftime("Generated = %b %d %Y %H:%M:%S \n", time.gmtime(encData.lcuTime))
+	   print "Generated at = [%lf]\n" % encData.lcuTime
+	   print datetime.utcfromtimestamp(encData.lcuTime)
 	except OUC.TelescopeNotConfiguredEx():
            print "Telescope Not Configured !!!"
            traceback.print_exc()
@@ -116,7 +117,7 @@ def getPosition():
 	try:
            telData = lcuImpl.getPosition()
 	   print "LT = [%ld]\n" % telData.localTime
-	   print time.strftime("LT = %b %d %Y %H:%M:%S \n", time.gmtime(telData.localTime))
+	   print datetime.utcfromtimestamp(telData.localTime)
 	   print "Time elapsed since last access: %lf\n" % telData.deltaT  
 	   print "JD  = %lf\n" % telData.julianDate
 	   print "Latitude = %+11.4lf \n" % telData.latitude
@@ -147,7 +148,7 @@ def getPosition():
 	   format =  degs2HHMMSS(telData.differencePos.Dec)
 	   print "Difference Dec = %+03d:%02d:%02.0lf\n" % (format[0],format[1],format[2])
 	   print "Generated at = [%ld]\n" % telData.lcuTime
-	   print time.strftime("Generated at = %b %d %Y %H:%M:%S \n", time.gmtime(telData.lcuTime))
+	   print datetime.utcfromtimestamp(telData.lcuTime)
 	except OUC.TelescopeNotConfiguredEx():
            print "Telescope Not Configured !!!"
 	   traceback.print_exc()
@@ -160,6 +161,7 @@ def getConfiguration():
            telConfigData = lcuImpl.getConfiguration()	
 	   print telConfigData
 	   print "LT = [%ld]\n" % telConfigData.localTime
+           print datetime.utcfromtimestamp(telConfigData.localTime)
 	   print "Latitude = %+11.4lf \n" % telConfigData.latitude
 	   print "Longitude = %+11.4lf \n" % telConfigData.longitude
 	   print "Altitude = %+11.4lf \n" % telConfigData.altitude
@@ -182,6 +184,7 @@ def getConfiguration():
 	   print "DAH = %+11.4lf \n" % telConfigData.DAH
 	   print "DAR = %+11.4lf \n" % telConfigData.DAR
 	   print "Generated at = [%ld]\n" % telConfigData.lcuTime
+           print datetime.utcfromtimestamp(telConfigData.lcuTime)
 	except OUC.TelescopeNotConfiguredEx():
            print "Telescope Not Configured !!!"
 	   traceback.print_exc()

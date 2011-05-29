@@ -33,7 +33,7 @@ using namespace std;
 class myLCU
 {
     public:
-        myLCU( void );
+         myLCU(void );
         ~myLCU( void );
 
         int waitSemaphore( void );
@@ -44,6 +44,7 @@ class myLCU
         int run( void );
 
         double getDeltaT( void );
+        double getLCUMTime (void);
         struct tm * getLCU_Time( void );
         struct tm * getLCU_UniversalTime( void );
         void * get_lcu_data_address( void );
