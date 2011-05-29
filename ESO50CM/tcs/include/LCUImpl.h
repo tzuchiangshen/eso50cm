@@ -35,6 +35,8 @@ protected:
     bool m_configured;
     bool m_tracking; 
 private:
+
+    double MiddleEndianToLittleEndian(double MEData);
     OUC::RawEncoderData *rawEncoder_t;
     OUC::EncoderData *encoder_t;
     OUC::TelescopeConfigData *telescopeConfigData_t;
