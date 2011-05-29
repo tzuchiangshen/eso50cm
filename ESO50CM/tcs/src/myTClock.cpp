@@ -72,6 +72,8 @@ double myTClock::currentTime( struct timeval * gtime )
     //char infoline[32];
     /** UTC */
     gmtime_r( & (gtime->tv_sec), & m_clock_data->UTime  );
+    /** Local Time in milliseconds **/
+    m_clock_data->MlTime = (gtime->tv_sec)+((gtime->tv_usec/1000000.0));
     /** LTime */
     localtime_r( & (gtime->tv_sec), & m_clock_data->LTime  );
     /** Julian Date */
@@ -138,6 +140,15 @@ double myTClock::julianDate( void )
 struct tm * myTClock::getLocalTime( void )
 {
     return & m_clock_data->LTime;
+}
+
+
+/**
+ * getMLocalTime
+ */
+double myTClock::getMLocalTime( void )
+{
+    return m_clock_data->MlTime;
 }
 
 /**

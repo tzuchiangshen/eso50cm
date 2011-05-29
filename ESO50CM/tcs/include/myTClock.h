@@ -26,6 +26,7 @@ struct my_tClock_data_t
 {
     double longitude;
 
+    double MlTime;
     double LSTime;
     double JDate;
     double old_t;
@@ -33,7 +34,7 @@ struct my_tClock_data_t
     struct tm UTime;
     struct tm LTime;
 
-    struct timeval  gtime;
+    struct timeval gtime;
     struct timezone tzone;
 };
 
@@ -55,6 +56,7 @@ class myTClock
         double getLST();
         double getJulianDate( void );
         double getDeltaT( void );
+	double getMLocalTime( void );
         struct tm * getLocalTime( void );
         struct tm * getUniversalTime( void );
 

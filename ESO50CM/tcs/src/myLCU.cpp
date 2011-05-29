@@ -129,6 +129,18 @@ struct tm * myLCU::getLCU_Time( void )
 }
 
 /**
+ * getLCUMTime (time in milliseconds)
+ */
+double myLCU::getLCUMTime( void )
+{
+    struct timeval gtime;
+    struct timezone tzone;
+
+    gettimeofday( & gtime, & tzone);
+    return (gtime.tv_sec+(gtime.tv_usec/1000000.0));
+}
+
+/**
  * getDeltaT
  */
 double myLCU::getDeltaT( void )
