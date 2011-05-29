@@ -3,6 +3,26 @@
 
 using namespace std;
 
+double LCUImpl::MiddleEndianToLittleEndian(double MEData) 
+{
+    double test;
+    unsigned char *p;
+    unsigned char *q;
+
+    //RA
+    test = 0;
+    p = (unsigned char*)&MEData;
+    q = (unsigned char*)&test;
+
+    q += 4;
+    memcpy(q, p, 4);
+    q -= 4;
+    p += 4;
+    memcpy(q, p, 4);
+
+    return test;
+}
+
 void LCUImpl::getConfigState()
 {
   extern int verbose;
@@ -242,6 +262,12 @@ OUC::TelescopeData LCUImpl::getPosition(const Ice::Current& c)
 
     telescopeData_t->currentPos.Dec = test;
     printf(">>>>>> LCUImpl::getPosition Current Dec = %lf \n", test);
+
+    //TargetPos
+    //m_lcu->telescope->targetPosition(&telescopeData_t->targetPos.localSideralTime, &telescopeData_t->targetPos.RA, &telescopeData_t->targetPos.Dec, &telescopeData_t->targetPos.Alt, &telescopeData_t->targetPos.Az, &telescopeData_t->targetPos.HA);
+
+    telescopeData_t->targetPos.RA = MiddleEndianToLittleEndian(telescopeData_t->targetPos.RA);
+    
 
     return *telescopeData_t;
 }
