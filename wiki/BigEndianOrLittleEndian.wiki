@@ -214,9 +214,36 @@ s[7] = 0xFFFFFFBF
 }}}
 
 = ARM Middle Endian = 
-ARM use middle endian format for datatype bigger than 32 bits, such as double. This means when the data structure is transmit outside of the ARM needs to be swapped before. 
+ARM architecture uses middle endian format for datatype bigger than 32 bits, such as double. This means when the data structure is transmitted outside of the ARM, the bytes order needs to be swapped before. 
 
-For example: a double can be expressed as ABCD EFGH (8 bytes) in ARM. When this data structure is sent to an i386 platform, the data structure needs to be swapped before to be cast to a double. i.e: EFGH ABCD 
+For example: a double can be expressed as ABCD EFGH (8 bytes) in ARM. When this data structure is sent to an i386 platform, the data structure needs to be swapped before to be casted to a double. i.e: EFGH ABCD 
+
+A simple c/c++ code for to achieve this purpose can be 
+
+{{{ 
+
+double LCUImpl::MiddleEndianToLittleEndian(double MEData)
+{
+    double test;
+    unsigned char *p;
+    unsigned char *q;
+
+    //RA
+    test = 0;
+    p = (unsigned char*)&MEData;
+    q = (unsigned char*)&test;
+
+    q += 4;
+    memcpy(q, p, 4);
+    q -= 4;
+    p += 4;
+    memcpy(q, p, 4);
+
+    return test;
+}
+
+
+}}}
 
 = References =
   * http://babbage.cs.qc.edu/IEEE-754/Decimal.html IEEE-754 calculator
