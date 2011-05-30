@@ -27,5 +27,5 @@
     * Essentially ARM use Middle Endian and i386 uses Little Endian 
     * Bytes order needs to be swapped before to be interpreted. 
     * a double in i386: ABCD EFGH, should be interpreted as EFGH ABCD in ARM
-  * Discussed with Maurizio and Pedro the observing mode required for OUC. Specifically for Pucheros 
-    * 
+  * Discussed with Maurizio and Pedro the observing mode required for OUC. Specifically for Pucheros. To be discussed formally with Leo
+  * Discussed how to incorporate pointing correction. This should be embedded in the TCSControl, and get rid of theSkySix 
