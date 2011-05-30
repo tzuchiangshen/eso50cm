@@ -213,6 +213,11 @@ s[6] = 0xFFFFFFF0
 s[7] = 0xFFFFFFBF
 }}}
 
+= ARM Middle Endian = 
+ARM use middle endian format for datatype bigger than 32 bits, such as double. This means when the data structure is transmit outside of the ARM needs to be swapped before. 
+
+For example: a double can be expressed as ABCD EFGH (8 bytes) in ARM. When this data structure is sent to an i386 platform, the data structure needs to be swapped before to be cast to a double. i.e: EFGH ABCD 
+
 = References =
   * http://babbage.cs.qc.edu/IEEE-754/Decimal.html IEEE-754 calculator
   * http://www.heyrick.co.uk/assembler/fpops.html
