@@ -35,7 +35,8 @@ protected:
     bool m_configured;
     bool m_tracking; 
 private:
-
+    void getCurrentPosition(OUC::TelescopeData *telescopeData_t);
+    void getTargetPosition(OUC::TelescopeData *telescopeData_t);
     double MiddleEndianToLittleEndian(double MEData);
     OUC::RawEncoderData *rawEncoder_t;
     OUC::EncoderData *encoder_t;
