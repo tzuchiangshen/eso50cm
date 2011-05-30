@@ -12,14 +12,20 @@
     * client application compiled at a VM with ubuntu, and configuration file was updated according to the deployment. 
     * The LCUControl application was started and communicated properly with telescope61 through shared memory
     * Found problem with values sent from LCUControl to the client application 
-    * Found problem is related the different architecture between i386 and ARM (TS-7800), which is meddle endian based.
+    * Found problem is related the different architecture between i386 and ARM (TS-7800), which is middle endian based.
   * Client Application 
     * Reviewed code in the QT client. 
     * Discussed the way TheSky6 application send commands to QT client (through rs232). 
   * Returned the system back to the stable state.    
 
-= 2011-04-17 =
+= 2011-05-17 =
    * Technical Time (Maurizio Baffico, Johnny Reveco)
 
-= 2011-04-24 =
+= 2011-05-24 =
   * Technical Time (Maurizio Baffico, Tzu-Chiang Shen)
+  * Solved problem of data structure encoding between ARM and i386 architectures. see [http://code.google.com/p/eso50cm/wiki/BigEndianOrLittleEndian]
+    * Essentially ARM use Middle Endian and i386 uses Little Endian 
+    * Bytes order needs to be swapped before to be interpreted. 
+    * a double in i386: ABCD EFGH, should be interpreted as EFGH ABCD in ARM
+  * Discussed with Maurizio and Pedro the observing mode required for OUC. Specifically for Pucheros 
+    * 
