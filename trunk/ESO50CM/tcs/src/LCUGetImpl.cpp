@@ -96,44 +96,44 @@ OUC::TelescopeConfigData LCUImpl::getConfiguration(const Ice::Current& c)
     m_lcu->waitSemaphore();
 
     /** Local Time **/
-    telescopeConfigData_t->localTime = m_lcu->telescope->getMLocalTime();
+    telescopeConfigData_t->localTime =  MiddleEndianToLittleEndian(m_lcu->telescope->getMLocalTime());
  
     /** basic parameters **/
-    telescopeConfigData_t->latitude = m_lcu->telescope->getLatitude();
-    telescopeConfigData_t->longitude = m_lcu->telescope->getLongitude();
-    telescopeConfigData_t->altitude = m_lcu->telescope->getAltitude();
+    telescopeConfigData_t->latitude = MiddleEndianToLittleEndian(m_lcu->telescope->getLatitude());
+    telescopeConfigData_t->longitude = MiddleEndianToLittleEndian(m_lcu->telescope->getLongitude());
+    telescopeConfigData_t->altitude = MiddleEndianToLittleEndian(m_lcu->telescope->getAltitude());
     
     /** Alpha parametres **/
-    telescopeConfigData_t->AMT = m_lcu->telescope->alpha->Motor->getTicsPerRev();
-    telescopeConfigData_t->AMH = m_lcu->telescope->alpha->Motor->getHomePosition();
-    telescopeConfigData_t->AMR = m_lcu->telescope->alpha->Motor->getEncoderToAxis_Reduction();
-    telescopeConfigData_t->AWT = m_lcu->telescope->alpha->WormE->getTicsPerRev();
-    telescopeConfigData_t->AWH = m_lcu->telescope->alpha->WormE->getHomePosition();
-    telescopeConfigData_t->AWR = m_lcu->telescope->alpha->WormE->getEncoderToAxis_Reduction();
-    telescopeConfigData_t->AAT = m_lcu->telescope->alpha->AxisE->getTicsPerRev();
-    telescopeConfigData_t->AAH = m_lcu->telescope->alpha->AxisE->getHomePosition();
-    telescopeConfigData_t->AAR = m_lcu->telescope->alpha->AxisE->getEncoderToAxis_Reduction();
+    telescopeConfigData_t->AMT = MiddleEndianToLittleEndian(m_lcu->telescope->alpha->Motor->getTicsPerRev());
+    telescopeConfigData_t->AMH = MiddleEndianToLittleEndian(m_lcu->telescope->alpha->Motor->getHomePosition());
+    telescopeConfigData_t->AMR = MiddleEndianToLittleEndian(m_lcu->telescope->alpha->Motor->getEncoderToAxis_Reduction());
+    telescopeConfigData_t->AWT = MiddleEndianToLittleEndian(m_lcu->telescope->alpha->WormE->getTicsPerRev());
+    telescopeConfigData_t->AWH = MiddleEndianToLittleEndian(m_lcu->telescope->alpha->WormE->getHomePosition());
+    telescopeConfigData_t->AWR = MiddleEndianToLittleEndian(m_lcu->telescope->alpha->WormE->getEncoderToAxis_Reduction());
+    telescopeConfigData_t->AAT = MiddleEndianToLittleEndian(m_lcu->telescope->alpha->AxisE->getTicsPerRev());
+    telescopeConfigData_t->AAH = MiddleEndianToLittleEndian(m_lcu->telescope->alpha->AxisE->getHomePosition());
+    telescopeConfigData_t->AAR = MiddleEndianToLittleEndian(m_lcu->telescope->alpha->AxisE->getEncoderToAxis_Reduction());
 
     /** Delta parameters **/
-    telescopeConfigData_t->DMT = m_lcu->telescope->delta->Motor->getTicsPerRev();
-    telescopeConfigData_t->DMH = m_lcu->telescope->delta->Motor->getHomePosition();
-    telescopeConfigData_t->DMR = m_lcu->telescope->delta->Motor->getEncoderToAxis_Reduction();
-    telescopeConfigData_t->DWT = m_lcu->telescope->delta->WormE->getTicsPerRev();
-    telescopeConfigData_t->DWH = m_lcu->telescope->delta->WormE->getHomePosition();
-    telescopeConfigData_t->DWR = m_lcu->telescope->delta->WormE->getEncoderToAxis_Reduction();
-    telescopeConfigData_t->DAT = m_lcu->telescope->delta->AxisE->getTicsPerRev();
-    telescopeConfigData_t->DAH = m_lcu->telescope->delta->AxisE->getHomePosition();
-    telescopeConfigData_t->DAR = m_lcu->telescope->delta->AxisE->getEncoderToAxis_Reduction();
+    telescopeConfigData_t->DMT = MiddleEndianToLittleEndian(m_lcu->telescope->delta->Motor->getTicsPerRev());
+    telescopeConfigData_t->DMH = MiddleEndianToLittleEndian(m_lcu->telescope->delta->Motor->getHomePosition());
+    telescopeConfigData_t->DMR = MiddleEndianToLittleEndian(m_lcu->telescope->delta->Motor->getEncoderToAxis_Reduction());
+    telescopeConfigData_t->DWT = MiddleEndianToLittleEndian(m_lcu->telescope->delta->WormE->getTicsPerRev());
+    telescopeConfigData_t->DWH = MiddleEndianToLittleEndian(m_lcu->telescope->delta->WormE->getHomePosition());
+    telescopeConfigData_t->DWR = MiddleEndianToLittleEndian(m_lcu->telescope->delta->WormE->getEncoderToAxis_Reduction());
+    telescopeConfigData_t->DAT = MiddleEndianToLittleEndian(m_lcu->telescope->delta->AxisE->getTicsPerRev());
+    telescopeConfigData_t->DAH = MiddleEndianToLittleEndian(m_lcu->telescope->delta->AxisE->getHomePosition());
+    telescopeConfigData_t->DAR = MiddleEndianToLittleEndian(m_lcu->telescope->delta->AxisE->getEncoderToAxis_Reduction());
       
     /** LCU Local Time **/  
-    telescopeConfigData_t->lcuTime = m_lcu->getLCUMTime();
+    telescopeConfigData_t->lcuTime = MiddleEndianToLittleEndian(m_lcu->getLCUMTime());
    
     /** Release semaphore for SHM **/
     m_lcu->postSemaphore();
 
     if(verbose)
       {
-	printf("LCUImpl::getTelescopeConfig LT  = [%ld]\n", (long int)telescopeConfigData_t->localTime);	
+	printf("LCUImpl::getTelescopeConfig LT  = [%lf]\n", telescopeConfigData_t->localTime);	
 	printf("LCUImpl::getTelescopeConfig Latitude = %+11.4lf \n", telescopeConfigData_t->latitude);
 	printf("LCUImpl::getTelescopeConfig Longitude = %+11.4lf \n", telescopeConfigData_t->longitude);
 	printf("LCUImpl::getTelescopeConfig Altitude = %+11.4lf \n", telescopeConfigData_t->altitude);
@@ -155,7 +155,7 @@ OUC::TelescopeConfigData LCUImpl::getConfiguration(const Ice::Current& c)
 	printf("LCUImpl::getTelescopeConfig DAT = %+11.4lf \n", telescopeConfigData_t->DAT);
 	printf("LCUImpl::getTelescopeConfig DAH = %+11.4lf \n", telescopeConfigData_t->DAH);
 	printf("LCUImpl::getTelescopeConfig DAR = %+11.4lf \n", telescopeConfigData_t->DAR);
-	printf("LCUImpl::getTelescopeConfig Page generated at: [%ld]\n", (long int)telescopeConfigData_t->lcuTime);
+	printf("LCUImpl::getTelescopeConfig Page generated at: [%lf]\n", telescopeConfigData_t->lcuTime);
       }
 
     return *telescopeConfigData_t;
@@ -177,34 +177,36 @@ OUC::TelescopeData LCUImpl::getPosition(const Ice::Current& c)
         throw ex;
       }
 
+    /** Get current and target telescope positions **/
+    getCurrentPosition(telescopeData_t);
+    getTargetPosition(telescopeData_t);
+
     /** Acquire Semaphore for SHM **/
     m_lcu->waitSemaphore();
     
     /** Acquire Times **/
-    telescopeData_t->localTime = m_lcu->telescope->getMLocalTime();
-    telescopeData_t->deltaT = m_lcu->telescope->getDeltaT();
-    telescopeData_t->julianDate = m_lcu->telescope->getJulianDate();
+    telescopeData_t->localTime = MiddleEndianToLittleEndian(m_lcu->telescope->getMLocalTime());
+    telescopeData_t->deltaT = MiddleEndianToLittleEndian(m_lcu->telescope->getDeltaT());
+    telescopeData_t->julianDate = MiddleEndianToLittleEndian(m_lcu->telescope->getJulianDate());
     
-    /** Telescope Position **/
-    m_lcu->telescope->currentPosition(&telescopeData_t->currentPos.localSideralTime, &telescopeData_t->currentPos.RA, &telescopeData_t->currentPos.Dec, &telescopeData_t->currentPos.Alt, &telescopeData_t->currentPos.Az, &telescopeData_t->currentPos.HA);
-    m_lcu->telescope->targetPosition(&telescopeData_t->targetPos.localSideralTime, &telescopeData_t->targetPos.RA, &telescopeData_t->targetPos.Dec, &telescopeData_t->targetPos.Alt, &telescopeData_t->targetPos.Az, &telescopeData_t->targetPos.HA);
-    telescopeData_t->differencePos.RA = m_lcu->telescope->getDifferenceRA();
-    telescopeData_t->differencePos.Dec = m_lcu->telescope->getDifferenceDec();
-    telescopeData_t->latitude = m_lcu->telescope->getLatitude();
-    telescopeData_t->longitude = m_lcu->telescope->getLongitude(); 
-    telescopeData_t->longitude = m_lcu->telescope->getAltitude();
-    telescopeData_t->lowElevation = m_lcu->telescope->getLowElevation(); 
-    telescopeData_t->highElevation = m_lcu->telescope->getHighElevation();
+    /** Telescope Data **/
+    telescopeData_t->differencePos.RA = MiddleEndianToLittleEndian(m_lcu->telescope->getDifferenceRA());
+    telescopeData_t->differencePos.Dec = MiddleEndianToLittleEndian(m_lcu->telescope->getDifferenceDec());
+    telescopeData_t->latitude = MiddleEndianToLittleEndian(m_lcu->telescope->getLatitude());
+    telescopeData_t->longitude = MiddleEndianToLittleEndian(m_lcu->telescope->getLongitude()); 
+    telescopeData_t->longitude = MiddleEndianToLittleEndian(m_lcu->telescope->getAltitude());
+    telescopeData_t->lowElevation = MiddleEndianToLittleEndian(m_lcu->telescope->getLowElevation()); 
+    telescopeData_t->highElevation = MiddleEndianToLittleEndian(m_lcu->telescope->getHighElevation());
         
     /** LCU Local Time **/  
-    telescopeData_t->lcuTime = m_lcu->getLCUMTime();
+    telescopeData_t->lcuTime = MiddleEndianToLittleEndian(m_lcu->getLCUMTime());
     
     /** Release semaphore for SHM **/
     m_lcu->postSemaphore();  
 
     if (verbose)
       {
-	printf("LCUImpl::getPosition LT  = [%ld]\n", (long int)telescopeData_t->localTime);
+	printf("LCUImpl::getPosition LT  = [%lf]\n", telescopeData_t->localTime);
 	printf("LCUImpl::getPosition Time elapsed since last access: %lf\n",telescopeData_t->deltaT);
 	printf("LCUImpl::getPosition JD  = %lf\n", telescopeData_t->julianDate);
 	printf("LCUImpl::getTelescopeConfig Latitude = %+11.4lf \n", telescopeData_t->latitude);
@@ -225,49 +227,8 @@ OUC::TelescopeData LCUImpl::getPosition(const Ice::Current& c)
 	printf("LCUImpl::getPosition Target Az = %lf \n", telescopeData_t->targetPos.Az);
 	printf("LCUImpl::getPosition Difference RA = %lf \n", telescopeData_t->differencePos.RA);
 	printf("LCUImpl::getPosition Difference Dec = %lf \n", telescopeData_t->differencePos.Dec);	
-	printf("LCUImpl::getPosition Page generated at: [%ld]\n", (long int)telescopeData_t->lcuTime);
+	printf("LCUImpl::getPosition Page generated at: [%lf]\n", telescopeData_t->lcuTime);
       }
-
-
-
-    double x;
-    double test;
-    unsigned char *p;
-    unsigned char *q;
-
-    //RA
-    test = 0;
-    p = (unsigned char*)&telescopeData_t->currentPos.RA;
-    q = (unsigned char*)&test;
-
-    q += 4;
-    memcpy(q, p, 4);
-    q -= 4;
-    p += 4;
-    memcpy(q, p, 4);
-
-    telescopeData_t->currentPos.RA = test;
-    printf(">>>>>> LCUImpl::getPosition Current RA = %lf \n", test);
-
-    //Dec
-    test = 0;
-    p = (unsigned char*)&telescopeData_t->currentPos.Dec;
-    q = (unsigned char*)&test;
-
-    q += 4;
-    memcpy(q, p, 4);
-    q -= 4;
-    p += 4;
-    memcpy(q, p, 4);
-
-    telescopeData_t->currentPos.Dec = test;
-    printf(">>>>>> LCUImpl::getPosition Current Dec = %lf \n", test);
-
-    //TargetPos
-    //m_lcu->telescope->targetPosition(&telescopeData_t->targetPos.localSideralTime, &telescopeData_t->targetPos.RA, &telescopeData_t->targetPos.Dec, &telescopeData_t->targetPos.Alt, &telescopeData_t->targetPos.Az, &telescopeData_t->targetPos.HA);
-
-    telescopeData_t->targetPos.RA = MiddleEndianToLittleEndian(telescopeData_t->targetPos.RA);
-    
 
     return *telescopeData_t;
 }
@@ -292,7 +253,7 @@ OUC::RawEncoderData LCUImpl::getRawEncodersPosition(const Ice::Current& c)
     m_lcu->waitSemaphore();
 
     /** Time elapsed since last access **/
-    rawEncoder_t->deltaT = m_lcu->telescope->getDeltaT();
+    rawEncoder_t->deltaT = MiddleEndianToLittleEndian(m_lcu->telescope->getDeltaT());
     
     /** Alpha Raw Encoder **/
     //Axis
@@ -317,7 +278,7 @@ OUC::RawEncoderData LCUImpl::getRawEncodersPosition(const Ice::Current& c)
     m_lcu->telescope->delta->Motor->readDeviceMemory( 4, &rawEncoder_t->posDeltaMotor, 0 );
 
     /** LCU Local Time **/  
-    rawEncoder_t->lcuTime = m_lcu->getLCUMTime();
+    rawEncoder_t->lcuTime = MiddleEndianToLittleEndian(m_lcu->getLCUMTime());
   
     /** Release semaphore for SHM **/
     m_lcu->postSemaphore(); 
@@ -337,7 +298,7 @@ OUC::RawEncoderData LCUImpl::getRawEncodersPosition(const Ice::Current& c)
 	printf("LCUImpl::getRawEncoderPosition Position Delta WormE: %11d\n", rawEncoder_t->posDeltaWormE);
 	printf("LCUImpl::getRawEncoderPosition Lecture Delta Motor: %6d\n", rawEncoder_t->lectDeltaMotor);
 	printf("LCUImpl::getRawEncoderPosition Position Delta Motor: %11d\n", rawEncoder_t->posDeltaMotor);
-	printf("LCUImpl::getRawEncoderPosition Page generated at: [%ld]\n", (long int)rawEncoder_t->lcuTime);
+	printf("LCUImpl::getRawEncoderPosition Page generated at: [%lf]\n", rawEncoder_t->lcuTime);
       }
 
     return *rawEncoder_t;
@@ -363,34 +324,100 @@ OUC::EncoderData LCUImpl::getEncodersPosition(const Ice::Current& c)
     m_lcu->waitSemaphore();
 
     /** Local Time */
-    encoder_t->localTime = m_lcu->telescope->getMLocalTime();
+    encoder_t->localTime = MiddleEndianToLittleEndian(m_lcu->telescope->getMLocalTime());
  
     /** Encoder Position **/
     //Alpha
-    encoder_t->alphaWormE =  m_lcu->telescope->alpha->WormE->getPosition();
-    encoder_t->alphaAxisE =  m_lcu->telescope->alpha->AxisE->getPosition();
+    encoder_t->alphaWormE =  MiddleEndianToLittleEndian(m_lcu->telescope->alpha->WormE->getPosition());
+    encoder_t->alphaAxisE =  MiddleEndianToLittleEndian(m_lcu->telescope->alpha->AxisE->getPosition());
     //Delta
-    encoder_t->deltaWormE = m_lcu->telescope->delta->WormE->getPosition();
-    encoder_t->deltaAxisE = m_lcu->telescope->delta->AxisE->getPosition();
+    encoder_t->deltaWormE = MiddleEndianToLittleEndian(m_lcu->telescope->delta->WormE->getPosition());
+    encoder_t->deltaAxisE = MiddleEndianToLittleEndian(m_lcu->telescope->delta->AxisE->getPosition());
   
 
     /** LCU Local Time **/  
-    encoder_t->lcuTime = m_lcu->getLCUMTime();
+    encoder_t->lcuTime = MiddleEndianToLittleEndian(m_lcu->getLCUMTime());
    
     /** Release semaphore for SHM **/
     m_lcu->postSemaphore();
 
     if( verbose)
       {
-	printf("LCUImpl::getEncoderPosition LT  = [%ld]\n", (long int)encoder_t->localTime);
+	printf("LCUImpl::getEncoderPosition LT  = [%lf]\n", encoder_t->localTime);
         printf("LCUImpl::getEncoderPosition AW Position  = [%+10.0lf]\n", encoder_t->alphaWormE);    
 	printf("LCUImpl::getEncoderPosition AA Position  = [%+10.0lf]\n", encoder_t->alphaAxisE);
 	printf("LCUImpl::getEncoderPosition DW Position  = [%+10.0lf]\n", encoder_t->deltaWormE);
 	printf("LCUImpl::getEncoderPosition DA Position  = [%+10.0lf]\n",  encoder_t->deltaAxisE);
 	printf("LCUImpl::getEncoderPosition --------------------------------\n" );
-	printf("LCUImpl::getEncoderPosition Page generated at: [%ld]\n", (long int)encoder_t->lcuTime);
+	printf("LCUImpl::getEncoderPosition Page generated at: [%lf]\n", encoder_t->lcuTime);
 	printf("LCUImpl::getEncoderPosition Good bye!\n" );
       }
 
     return *encoder_t;
+}
+
+void LCUImpl::getCurrentPosition(OUC::TelescopeData *telescopeData_t)
+{
+    extern int verbose;
+  
+    if( verbose ) 
+      printf( "[LCUImpl::getCurrentPosition" );
+    
+    /** Is telescope configured **/
+    if(!m_configured)
+      {
+	OUC::TelescopeNotConfiguredEx ex;
+        ex.reason = "Telecope Not Configured";
+        throw ex;
+      }
+    
+    /** Acquire Semaphore for SHM **/
+    m_lcu->waitSemaphore();
+    
+    /** Get current position from HW **/
+    m_lcu->telescope->currentPosition(&telescopeData_t->currentPos.localSideralTime, &telescopeData_t->currentPos.RA, &telescopeData_t->currentPos.Dec, &telescopeData_t->currentPos.Alt, &telescopeData_t->currentPos.Az, &telescopeData_t->currentPos.HA);
+    
+    /** Internal byte order conversion **/
+    telescopeData_t->currentPos.localSideralTime =  MiddleEndianToLittleEndian(telescopeData_t->currentPos.localSideralTime);
+    telescopeData_t->currentPos.RA = MiddleEndianToLittleEndian(telescopeData_t->currentPos.RA);
+    telescopeData_t->currentPos.Dec = MiddleEndianToLittleEndian(telescopeData_t->currentPos.Dec);
+    telescopeData_t->currentPos.Alt = MiddleEndianToLittleEndian(telescopeData_t->currentPos.Alt);
+    telescopeData_t->currentPos.Az = MiddleEndianToLittleEndian(telescopeData_t->currentPos.Az);
+    telescopeData_t->currentPos.HA = MiddleEndianToLittleEndian(telescopeData_t->currentPos.HA);
+
+    /** Release semaphore for SHM **/
+    m_lcu->postSemaphore();
+}
+
+void LCUImpl::getTargetPosition(OUC::TelescopeData *telescopeData_t)
+{
+    extern int verbose;
+  
+    if( verbose ) 
+      printf( "[LCUImpl::getTargetPosition" );
+    
+    /** Is telescope configured **/
+    if(!m_configured)
+      {
+	OUC::TelescopeNotConfiguredEx ex;
+        ex.reason = "Telecope Not Configured";
+        throw ex;
+      }
+    
+    /** Acquire Semaphore for SHM **/
+    m_lcu->waitSemaphore();
+    
+    /** Get current position from HW **/
+    m_lcu->telescope->targetPosition(&telescopeData_t->targetPos.localSideralTime, &telescopeData_t->targetPos.RA, &telescopeData_t->targetPos.Dec, &telescopeData_t->targetPos.Alt, &telescopeData_t->targetPos.Az, &telescopeData_t->targetPos.HA);
+    
+    /** Internal byte order conversion **/
+    telescopeData_t->targetPos.localSideralTime =  MiddleEndianToLittleEndian(telescopeData_t->targetPos.localSideralTime);
+    telescopeData_t->targetPos.RA = MiddleEndianToLittleEndian(telescopeData_t->targetPos.RA);
+    telescopeData_t->targetPos.Dec = MiddleEndianToLittleEndian(telescopeData_t->targetPos.Dec);
+    telescopeData_t->targetPos.Alt = MiddleEndianToLittleEndian(telescopeData_t->targetPos.Alt);
+    telescopeData_t->targetPos.Az = MiddleEndianToLittleEndian(telescopeData_t->targetPos.Az);
+    telescopeData_t->targetPos.HA = MiddleEndianToLittleEndian(telescopeData_t->targetPos.HA);
+
+    /** Release semaphore for SHM **/
+    m_lcu->postSemaphore();
 }
