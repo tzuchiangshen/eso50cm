@@ -5,6 +5,8 @@
 using namespace std;
 using namespace OUC;
 
+int verbose=1; 
+
 void
 menu()
 {
