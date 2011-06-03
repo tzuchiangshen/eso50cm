@@ -14,6 +14,8 @@ ELSE (NOT INTROOT)
 ENDIF (NOT INTROOT)
 
 #for generated files from slice
+SET(LCU $ENV{TYPE})
+IF(NOT LCU)
 ADD_CUSTOM_COMMAND(
     OUTPUT ${PROJECT_SOURCE_DIR}/LCU.cpp ${PROJECT_SOURCE_DIR}/LCU.h
     DEPENDS ${PROJECT_SOURCE_DIR}/../idl/LCU.ice 
@@ -26,6 +28,16 @@ ADD_CUSTOM_COMMAND(
     COMMAND ${CMAKE_COMMAND} -E echo " ICE python proxy generated under src/generated/ dir."
     COMMENT "generating slice files..." 
 )
+ELSE(NOT LCU)
+ADD_CUSTOM_COMMAND(
+    OUTPUT ${PROJECT_SOURCE_DIR}/LCU.cpp ${PROJECT_SOURCE_DIR}/LCU.h
+    DEPENDS ${PROJECT_SOURCE_DIR}/../idl/LCU.ice 
+    #generate cpp proxies files
+    COMMAND ${CMAKE_COMMAND} -E echo " LCU.cpp LCU.h generated."
+    COMMAND slice2cppe ${PROJECT_SOURCE_DIR}/../idl/LCU.ice
+    COMMENT "generating slice files..." 
+)
+ENDIF(NOT LCU)
 
 ADD_LIBRARY(myLCU SHARED myLCU myTelescope myTClock myTAxis myTMotor myTEncoder myBSemaphore myUtil)
 set_property(TARGET myLCU PROPERTY LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../lib)
@@ -90,16 +102,18 @@ INSTALL(
 )
 
 #install python libraries
-INSTALL(
-   DIRECTORY "${PROJECT_SOURCE_DIR}/generated/" DESTINATION lib/python/site-packages 
-   FILES_MATCHING PATTERN "*.py"
-)
-INSTALL(
-   DIRECTORY ${PROJECT_SOURCE_DIR}/generated/OUC DESTINATION lib/python/site-packages
-)
-INSTALL(
-   FILES ${PROJECT_SOURCE_DIR}/AstroUtil.py DESTINATION lib/python/site-packages
-)
-INSTALL(
-   FILES ${PROJECT_SOURCE_DIR}/Client.py DESTINATION bin
-)
+IF(NOT LCU)
+   INSTALL(
+      DIRECTORY "${PROJECT_SOURCE_DIR}/generated/" DESTINATION lib/python/site-packages 
+      FILES_MATCHING PATTERN "*.py"
+   )
+   INSTALL(
+      DIRECTORY ${PROJECT_SOURCE_DIR}/generated/OUC DESTINATION lib/python/site-packages
+   )
+   INSTALL(
+      FILES ${PROJECT_SOURCE_DIR}/AstroUtil.py DESTINATION lib/python/site-packages
+   )
+   INSTALL(
+      FILES ${PROJECT_SOURCE_DIR}/Client.py DESTINATION bin
+   )
+ENDIF(NOT LCU)
