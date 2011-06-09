@@ -245,6 +245,7 @@ double LCUImpl::MiddleEndianToLittleEndian(double MEData)
 
 }}}
 
+
 = References =
   * http://babbage.cs.qc.edu/IEEE-754/Decimal.html IEEE-754 calculator
   * http://www.heyrick.co.uk/assembler/fpops.html
