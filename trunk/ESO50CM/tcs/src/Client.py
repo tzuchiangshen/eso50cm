@@ -116,44 +116,44 @@ def getEncoderPosition():
 def getPosition():
 	telData = OUC.TelescopeData()
 	try:
-           telData = lcuImpl.getPosition()
-	   print "LT = [%ld]\n" % telData.localTime
-	   print datetime.utcfromtimestamp(telData.localTime)
-	   print "Time elapsed since last access: %lf\n" % telData.deltaT  
-	   print "JD  = %lf\n" % telData.julianDate
-	   print "Latitude = %+11.4lf \n" % telData.latitude
-	   print "Longitude = %+11.4lf \n" % telData.longitude
-	   print "Altitude = %+11.4lf \n" % telData.altitude
-	   print "High Elevation = %+11.4lf \n" % telData.highElevation
-	   print "Low Elevation = %+11.4lf \n" % telData.lowElevation
-	   format =  degs2HHMMSS(telData.localSideralTime / 15.0)
-	   print "LST: %02d:%02d:%02.0lf\n" % (format[0],format[1],format[2])  
-	   format =  degs2HHMMSS(telData.currentPos.RA / 15.0)
-	   print "Current RA = %02d:%02d:%02.0lf\n" % (format[0],format[1],format[2])
-	   format =  degs2HHMMSS(telData.currentPos.Dec)
-	   print "Current Dec = %+03d:%02d:%02.0lf\n" % (format[0],format[1],format[2])
-	   format =  degs2HHMMSS(telData.currentPos.HA / 15.0)
-	   print "Current HA = %+03d:%02d:%02.0lf\n" % (format[0],format[1],format[2])
-	   print "Current Alt = %lf \n" % telData.currentPos.Alt
-	   print "Current Az = %lf \n" % telData.currentPos.Az
-	   format =  degs2HHMMSS(telData.targetPos.RA / 15.0)
-	   print "Target RA =  %02d:%02d:%02.0lf\n" % (format[0],format[1],format[2])
-	   format =  degs2HHMMSS(telData.targetPos.Dec)
-	   print "Target Dec = %+03d:%02d:%02.0lf\n" % (format[0],format[1],format[2])
-	   format =  degs2HHMMSS(telData.targetPos.HA / 15.0)
-	   print "Target HA = %+03d:%02d:%02.0lf\n" % (format[0],format[1],format[2])
-	   print "Target Alt = %lf \n" % telData.targetPos.Alt
-	   print "Target Az = %lf \n" % telData.targetPos.Az
-	   format =  degs2HHMMSS(telData.differencePos.RA / 15.0)
-	   print "Difference RA = %02d:%02d:%02.0lf\n" % (format[0],format[1],format[2])
-	   format =  degs2HHMMSS(telData.differencePos.Dec)
-	   print "Difference Dec = %+03d:%02d:%02.0lf\n" % (format[0],format[1],format[2])
-	   print "Generated at = [%ld]\n" % telData.lcuTime
-	   print datetime.utcfromtimestamp(telData.lcuTime)
+		telData = lcuImpl.getPosition()
+		print "LT = [%ld]\n" % telData.localTime
+		print datetime.utcfromtimestamp(telData.localTime)
+		print "Time elapsed since last access: %lf\n" % telData.deltaT  
+		print "JD  = %lf\n" % telData.julianDate
+		print "Latitude = %+11.4lf \n" % telData.latitude
+		print "Longitude = %+11.4lf \n" % telData.longitude
+		print "Altitude = %+11.4lf \n" % telData.altitude
+		print "High Elevation = %+11.4lf \n" % telData.highElevation
+		print "Low Elevation = %+11.4lf \n" % telData.lowElevation
+		format =  degs2HHMMSS(telData.localSideralTime / 15.0)
+		print "LST: %02d:%02d:%02.0lf\n" % (format[0],format[1],format[2])  
+		format =  degs2HHMMSS(telData.currentPos.RA / 15.0)
+		print "Current RA = %02d:%02d:%02.0lf\n" % (format[0],format[1],format[2])
+		format =  degs2HHMMSS(telData.currentPos.Dec)
+		print "Current Dec = %+03d:%02d:%02.0lf\n" % (format[0],format[1],format[2])
+		format =  degs2HHMMSS(telData.currentPos.HA / 15.0)
+		print "Current HA = %+03d:%02d:%02.0lf\n" % (format[0],format[1],format[2])
+		print "Current Alt = %lf \n" % telData.currentPos.Alt
+		print "Current Az = %lf \n" % telData.currentPos.Az
+		format =  degs2HHMMSS(telData.targetPos.RA / 15.0)
+		print "Target RA =  %02d:%02d:%02.0lf\n" % (format[0],format[1],format[2])
+		format =  degs2HHMMSS(telData.targetPos.Dec)
+		print "Target Dec = %+03d:%02d:%02.0lf\n" % (format[0],format[1],format[2])
+		format =  degs2HHMMSS(telData.targetPos.HA / 15.0)
+		print "Target HA = %+03d:%02d:%02.0lf\n" % (format[0],format[1],format[2])
+		print "Target Alt = %lf \n" % telData.targetPos.Alt
+		print "Target Az = %lf \n" % telData.targetPos.Az
+		format =  degs2HHMMSS(telData.differencePos.RA / 15.0)
+		print "Difference RA = %02d:%02d:%02.0lf\n" % (format[0],format[1],format[2])
+		format =  degs2HHMMSS(telData.differencePos.Dec)
+		print "Difference Dec = %+03d:%02d:%02.0lf\n" % (format[0],format[1],format[2])
+		print "Generated at = [%ld]\n" % telData.lcuTime
+		print datetime.utcfromtimestamp(telData.lcuTime)
 	except OUC.TelescopeNotConfiguredEx():
-           print "Telescope Not Configured !!!"
-	   traceback.print_exc()
-	   status = 1
+		print "Telescope Not Configured !!!"
+		traceback.print_exc()
+		status = 1
 
 def getConfiguration():
 	telConfigData = OUC.TelescopeConfigData()

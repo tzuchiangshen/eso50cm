@@ -194,7 +194,7 @@ OUC::TelescopeData LCUImpl::getPosition(const Ice::Current& c)
     telescopeData_t->differencePos.Dec = m_lcu->telescope->getDifferenceDec();
     telescopeData_t->latitude = m_lcu->telescope->getLatitude();
     telescopeData_t->longitude = m_lcu->telescope->getLongitude(); 
-    telescopeData_t->longitude = m_lcu->telescope->getAltitude();
+    telescopeData_t->altitude = m_lcu->telescope->getAltitude();
     telescopeData_t->lowElevation = m_lcu->telescope->getLowElevation(); 
     telescopeData_t->highElevation = m_lcu->telescope->getHighElevation();
         
