@@ -4,6 +4,7 @@ import OUC
 from datetime import datetime
 import time
 from AstroUtil import *
+import os
 
 #global variables
 global status 
@@ -196,12 +197,18 @@ def isConfigured():
 
 def setConfiguration():
 	try:
-           lcuImpl.setConfiguration("./ESO50cm.conf")
-	   print "Configuration send to LCUControl"
+		introot_path = ""
+		introot_path = os.getenv("INTROOT")
+		if(introot_path == ""):
+			introot_path = "/introots/ESO50CM" 		
+
+		conf_path = "%s/%s" % (introot_path, "config/ESO50cm.conf")
+		lcuImpl.setConfiguration(conf_path)
+		print "Configuration send to LCUControl"
 	except:
-           print "Problems trying to configure telescope!!"
-	   traceback.print_exc()
-	   status = 1
+		print "Problems trying to configure telescope!!"
+		traceback.print_exc()
+		status = 1
 
 
 if __name__ == "__main__":
