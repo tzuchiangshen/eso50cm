@@ -162,7 +162,7 @@ def getConfiguration():
            telConfigData = lcuImpl.getConfiguration()	
 	   print telConfigData
 	   print "LT = [%ld]\n" % telConfigData.localTime
-           print datetime.utcfromtimestamp(telConfigData.localTime)
+	   print datetime.utcfromtimestamp(telConfigData.localTime)
 	   print "Latitude = %+11.4lf \n" % telConfigData.latitude
 	   print "Longitude = %+11.4lf \n" % telConfigData.longitude
 	   print "Altitude = %+11.4lf \n" % telConfigData.altitude
@@ -212,7 +212,7 @@ def setConfiguration():
 
 
 if __name__ == "__main__":
-      	connect()
+	connect()
 	setConfiguration()
 	if isConfigured():
 		getConfiguration()
