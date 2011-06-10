@@ -68,6 +68,11 @@ set_property(TARGET ClientCXX PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE
 ADD_EXECUTABLE(telescope61 telescope61 common rs232 semaphore main)
 set_property(TARGET telescope61 PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
 
+#for telescope61_sim executable
+ADD_EXECUTABLE(telescope61_sim telescope61_sim common rs232 semaphore main_sim)
+set_property(TARGET telescope61_sim PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
+
+
 SET_TARGET_PROPERTIES(LCUControl PROPERTIES LINKER_LANGUAGE CXX)
 
 #delete generated files in make clean 
@@ -79,7 +84,7 @@ SET_DIRECTORY_PROPERTIES (
 )
 
 #for make install
-INSTALL(TARGETS myLCU LCUImpl LCUControl ClientCXX telescope61
+INSTALL(TARGETS myLCU LCUImpl LCUControl ClientCXX telescope61 telescope61_sim
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
@@ -93,6 +98,12 @@ INSTALL(
 #install generated *.h files into $INTROOT/includes
 INSTALL(
    FILES ${PROJECT_SOURCE_DIR}/LCU.h DESTINATION include 
+)
+
+#install configuration files into $INTROOT/config
+INSTALL(
+   FILES ${PROJECT_SOURCE_DIR}/../config/config 
+         ${PROJECT_SOURCE_DIR}/../config/ESO50cm.conf DESTINATION config 
 )
 
 #install .h 
