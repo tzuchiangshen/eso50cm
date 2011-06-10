@@ -6,4 +6,7 @@
   * Tested getPosition method of LCUControl. 
     * All the fields of the telescope data structure was received correctly except for localtime and lcutime. 
     * at the ARM the calculated values were 
+
+  * CMakeList.txt 
+    * remove libIceUtil in the linking of LCUControl 
   
