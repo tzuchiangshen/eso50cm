@@ -56,6 +56,9 @@ double myTClock::currentTime( void )
     gmtime_r( & m_clock_data->gtime.tv_sec, & m_clock_data->UTime  );
     /** LTime */
     localtime_r( & m_clock_data->gtime.tv_sec, & m_clock_data->LTime  );
+	/** Local Time in milliseconds **/
+	m_clock_data->MlTime = (m_clock_data->gtime.tv_sec)+((m_clock_data->gtime.tv_usec/1000000.0));
+
     /** Julian Date */
     julianDate();
     /** Local Sideral Time */
