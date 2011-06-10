@@ -1,6 +1,7 @@
 #Worklogs for June 2011
 
-= 2011-06-07 =
+= 2011-06-07 = 
+  * code revision 94
   * Technical Time (Maurizio Baffico, Tzu-Chiang Shen, Perdro Escarate)
   * Tested getPosition method of LCUControl. 
     * All the fields of the telescope data structure was received correctly except for localtime and lcutime. 
