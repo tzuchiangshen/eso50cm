@@ -218,7 +218,7 @@ LCUImpl::setConfiguration(const string& fileName, const Ice::Current& c)
 }
 
 void 
-LCUImpl::setTarget(OUC::TelescopePosition& targetPos, const Ice::Current& c)
+LCUImpl::setTarget(const OUC::TelescopePosition& targetPos, const Ice::Current& c)
 {
     extern int verbose;
 
@@ -227,25 +227,25 @@ LCUImpl::setTarget(OUC::TelescopePosition& targetPos, const Ice::Current& c)
 
     /** Is telescope configured **/
     if(!m_configured)
-      {
-	OUC::TelescopeNotConfiguredEx ex;
+    {
+		OUC::TelescopeNotConfiguredEx ex;
         ex.reason = "Telecope Not Configured";
         throw ex;
-      }
+    }
 
     /** Acquire Semaphore for SHM **/
     m_lcu->waitSemaphore();
 
     /** Send new target **/
-    if(m_lcu->telescope->setTarget(targetPos.RA, targetPos.Dec, &targetPos.Alt, &targetPos.Az) == 0) 
-      {
-	char *limits;
-	OUC::TargetOutOfLimitsEx ex;
-	sprintf(limits, "Low Elevation: %lf, High Elevation: %lf", m_lcu->telescope->getHighElevation(), m_lcu->telescope->getHighElevation());
-	ex.reason = "Target Out of Limits. Try a new one\n";
-	ex.reason.append(limits); 
-	throw ex;
-      }
+    if(m_lcu->telescope->setTarget((double)targetPos.RA, (double)targetPos.Dec, (double*)&targetPos.Alt, (double*)&targetPos.Az) == 0) 
+    {
+		char *limits;
+		OUC::TargetOutOfLimitsEx ex;
+		sprintf(limits, "Low Elevation: %lf, High Elevation: %lf", m_lcu->telescope->getHighElevation(), m_lcu->telescope->getHighElevation());
+		ex.reason = "Target Out of Limits. Try a new one\n";
+		ex.reason.append(limits); 
+		throw ex;
+   }
     
     /** Release semaphore for SHM **/
     m_lcu->postSemaphore();
@@ -255,77 +255,84 @@ LCUImpl::setTarget(OUC::TelescopePosition& targetPos, const Ice::Current& c)
 }
 
 void 
-LCUImpl::setOffset(OUC::TelescopePosition& offsetPos, const Ice::Current& c)
+LCUImpl::setOffset(const OUC::TelescopePosition& offsetPos, const Ice::Current& c)
 {
-    extern int verbose;
-    int  alpha_mtr_counts;
-    int  delta_mtr_counts;
-    char mem_address;
-    
-    int no_quit;
-    int goto_alpha_flag = false;
-    int goto_delta_flag = false;
+	extern int verbose;
+	int  alpha_mtr_counts;
+	int  delta_mtr_counts;
+	char mem_address;
+	
+	int no_quit;
+	int goto_alpha_flag = false;
+	int goto_delta_flag = false;
 
-    if( verbose )
-      printf( "LCUImpl::setTarget" );
-
-    /** Is telescope configured **/
-    if(!m_configured)
-      {
-	OUC::TelescopeNotConfiguredEx ex;
-        ex.reason = "Telecope Not Configured";
-        throw ex;
-      }
+	if( verbose )
+		printf( "LCUImpl::setTarget" );
+	
+	/** Is telescope configured **/
+	if(!m_configured)
+	{
+		OUC::TelescopeNotConfiguredEx ex;
+		ex.reason = "Telecope Not Configured";
+		throw ex;
+	}
     
-    /** Set telescope in running state and define offset **/
-    m_lcu->waitSemaphore();
-    m_lcu->telescope->setIsRunningGoto(true);
-    alpha_mtr_counts = m_lcu->telescope->alpha->offsetAxisInDeg(offsetPos.RA);
-    offsetPos.Dec *= -1.;
-    delta_mtr_counts = m_lcu->telescope->delta->offsetAxisInDeg(offsetPos.Dec);
-    if( alpha_mtr_counts < -50 || 50 < alpha_mtr_counts ) {
-      m_lcu->telescope->alpha->Motor->setDeviceMemory( 7, & alpha_mtr_counts, 0  );
-      goto_alpha_flag = true;
-    }
-    if( delta_mtr_counts < -50 || 50 < delta_mtr_counts ) {
-      m_lcu->telescope->delta->Motor->setDeviceMemory( 7, & delta_mtr_counts, 0  );
-      goto_delta_flag = true;
-    }
-    m_lcu->postSemaphore();
-    
-    /** Goto target loop */
-    no_quit = 180;
-    do {
-      sleep( 1 );
-      mem_address = 7;
-      m_lcu->waitSemaphore();
-      if( goto_alpha_flag ) {
-	m_lcu->telescope->alpha->Motor->readDeviceMemory( 7, & alpha_mtr_counts, 0  );
-	if( -50 < alpha_mtr_counts && alpha_mtr_counts < 50 )
-	  goto_alpha_flag = false;
-      }
-      if( goto_delta_flag ) {
-	m_lcu->telescope->delta->Motor->readDeviceMemory( 7, & delta_mtr_counts, 0  );
-	if( -50 < delta_mtr_counts && delta_mtr_counts < 50 )
-	  goto_delta_flag = false;
-      }
-      m_lcu->postSemaphore();
-      
-      if( ! goto_delta_flag && ! goto_alpha_flag ) {
-	no_quit = false;
-      } else {
-	no_quit --;
-      }
-    } while( no_quit );
+/** Set telescope in running state and define offset **/
+	m_lcu->waitSemaphore();
+	m_lcu->telescope->setIsRunningGoto(true);
+	alpha_mtr_counts = m_lcu->telescope->alpha->offsetAxisInDeg(offsetPos.RA);
+	//offsetPos.Dec *= -1.;
+	double offsetDec = offsetPos.Dec * -1.0;
+	delta_mtr_counts = m_lcu->telescope->delta->offsetAxisInDeg(offsetDec);
+	if( alpha_mtr_counts < -50 || 50 < alpha_mtr_counts ) {
+		m_lcu->telescope->alpha->Motor->setDeviceMemory( 7, & alpha_mtr_counts, 0  );
+		goto_alpha_flag = true;
+	}
+	if( delta_mtr_counts < -50 || 50 < delta_mtr_counts ) 
+	{
+		m_lcu->telescope->delta->Motor->setDeviceMemory( 7, & delta_mtr_counts, 0  );
+		goto_delta_flag = true;
+	}
+	m_lcu->postSemaphore();
 
-    /** Stop telescope status */
-    m_lcu->waitSemaphore();
-    m_lcu->telescope->setIsRunningGoto(false);
-    m_lcu->postSemaphore();
+/** Goto target loop */
+	no_quit = 180;
+	do 
+	{
+		sleep( 1 );
+		mem_address = 7;
+		m_lcu->waitSemaphore();
+		if( goto_alpha_flag ) 
+		{
+			m_lcu->telescope->alpha->Motor->readDeviceMemory( 7, & alpha_mtr_counts, 0  );
+			if( -50 < alpha_mtr_counts && alpha_mtr_counts < 50 )
+				goto_alpha_flag = false;
+		}
+		if( goto_delta_flag ) 
+		{
+		m_lcu->telescope->delta->Motor->readDeviceMemory( 7, & delta_mtr_counts, 0  );
+		if( -50 < delta_mtr_counts && delta_mtr_counts < 50 )
+			goto_delta_flag = false;
+		}
+		m_lcu->postSemaphore();
+  	    
+		if( ! goto_delta_flag && ! goto_alpha_flag ) 
+		{
+			no_quit = false;
+		} else 
+		{
+			no_quit --;
+		}
+	} while( no_quit );
+
+	/** Stop telescope status */
+	m_lcu->waitSemaphore();
+	m_lcu->telescope->setIsRunningGoto(false);
+	m_lcu->postSemaphore();
 }
 
 void 
-LCUImpl::setTracking(OUC::TrackingInfo& trkInfo, const Ice::Current& c)
+LCUImpl::setTracking(const OUC::TrackingInfo& trkInfo, const Ice::Current& c)
 {
   extern int verbose;
   if( verbose )
@@ -340,12 +347,14 @@ LCUImpl::setTracking(OUC::TrackingInfo& trkInfo, const Ice::Current& c)
     }
   
   /** Read Tracking Flag **/
+  int ticVel = 0;
   if(trkInfo.trackState & !trkInfo.ticVel)
-    trkInfo.ticVel = 600;
+    //trkInfo.ticVel = 600;
+	ticVel = 600;
 
   /** Set Velocity **/
   m_lcu->waitSemaphore();
-  m_lcu->telescope->alpha->Motor->setDeviceMemory(3, &trkInfo.ticVel, 0);
+  m_lcu->telescope->alpha->Motor->setDeviceMemory(3, &ticVel, 0);
   if(trkInfo.ticVel > 0)
     m_lcu->telescope->setIsTracking(true);
   else
