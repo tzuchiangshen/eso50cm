@@ -119,11 +119,11 @@ interface LCU
     bool isTracking();
 
     void setConfiguration(string fileName);
-    void setTarget(out TelescopePosition targetPos)
+    void setTarget(TelescopePosition targetPos)
     	 throws TelescopeNotConfiguredEx, TargetOutOfLimitsEx;
-    void setOffset(out TelescopePosition offsetPos)
+    void setOffset(TelescopePosition offsetPos)
     	 throws TelescopeNotConfiguredEx, TargetOutOfLimitsEx;
-    void setTracking(out TrackingInfo trkInfo)
+    void setTracking(TrackingInfo trkInfo)
          throws TelescopeNotConfiguredEx;
     void parkTelescope()
          throws TelescopeNotConfiguredEx; 	 
