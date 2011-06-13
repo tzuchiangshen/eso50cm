@@ -1,6 +1,5 @@
 #include <ObservingImpl.h>
 #include <Ice/Ice.h>
-#include <Ice/Connection.h>
 
 using namespace std;
 

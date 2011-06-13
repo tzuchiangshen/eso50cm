@@ -4,7 +4,9 @@
 #
 #LCUAdapter.Proxy=LCU:tcp -p 10000
 # put the ip address of the operator console
-LCUAdapter.Proxy=LCU:tcp -h 10.195.17.145 -p 10000
+LCUAdapter.Proxy=LCU:tcp -h 172.20.10.6 -p 10000
+ObsAdapter.Proxy=Observing:tcp -h 172.20.10.6 -p 10000
+
 
 #
 # The server creates one single object adapter with the name
@@ -14,7 +16,8 @@ LCUAdapter.Proxy=LCU:tcp -h 10.195.17.145 -p 10000
 #LCUAdapter.Endpoints=tcp -p 10000
 #
 # put the ip address of the operator console
-LCUAdapter.Endpoints=tcp -h 10.195.17.145 -p 10000
+LCUAdapter.Endpoints=tcp -h 172.20.10.6 -p 10000
+ObsAdapter.Endpoints=tcp -h 172.20.10.6 -p 10000
 
 #
 # Warn about connection exceptions
