@@ -3,6 +3,8 @@
 
 #include <string.h>
 #include <Observing.h>
+#include <IceUtil/Thread.h>
+#include <IceUtil/ScopedArray.h>
 
 using namespace std;
 

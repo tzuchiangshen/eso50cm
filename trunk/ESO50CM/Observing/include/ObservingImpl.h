@@ -2,6 +2,8 @@
 #define ObservingImpl_I_H
 
 #include "Observing.h"
+#include <IceUtil/Thread.h>
+#include <IceUtil/ScopedArray.h>
 
 class ObservingImpl : public OUC::Observing
 {

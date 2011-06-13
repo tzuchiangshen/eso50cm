@@ -1,7 +1,6 @@
-
 #include <ObservingImpl.h>
 #include <TelescopeImpl.h>
-#include <IceE/IceE.h>
+#include <Ice/Ice.h>
 
 using namespace std;
 

@@ -19,7 +19,7 @@ ADD_CUSTOM_COMMAND(
     DEPENDS ${PROJECT_SOURCE_DIR}/../idl/Observing.ice 
     #generate cpp proxies files
     COMMAND ${CMAKE_COMMAND} -E echo " Observing.cpp Observing.h generated."
-    COMMAND slice2cppe ${PROJECT_SOURCE_DIR}/../idl/Observing.ice -I$ENV{ICE_PATH}
+    COMMAND slice2cpp ${PROJECT_SOURCE_DIR}/../idl/Observing.ice $ENV{INTROOT}/idl/LCU.ice -I$ENV{ICE_PATH}
     #generate python proxies files
     COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_SOURCE_DIR}/generated"
     COMMAND slice2py -I$ENV{INTROOT}/idl  -I${PROJECT_SOURCE_DIR}/../idl --output-dir ${PROJECT_SOURCE_DIR}/generated ${PROJECT_SOURCE_DIR}/../idl/Observing.ice
@@ -28,20 +28,19 @@ ADD_CUSTOM_COMMAND(
 )
 
 ADD_LIBRARY(ObservingImpl SHARED Observing TelescopeImpl ObservingImpl)
-TARGET_LINK_LIBRARIES(ObservingImpl IceE)
+TARGET_LINK_LIBRARIES(ObservingImpl Ice)
 set_property(TARGET ObservingImpl PROPERTY LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../lib)
 
 #for .h file search
-INCLUDE_DIRECTORIES(/usr/lib/include/IceE)
+INCLUDE_DIRECTORIES(/usr/lib/include/Ice)
 INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/")
 INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/../include")
-INCLUDE_DIRECTORIES($ENV{INTROOT}/include)
 
 #for ../bin/ObsControl executable 
 LINK_DIRECTORIES($ENV{INTROOT}/lib)
 LINK_DIRECTORIES(/usr/lib)
 ADD_EXECUTABLE(ObsControl ObsControl)
-TARGET_LINK_LIBRARIES(ObsControl ObservingImpl LCUImpl IceE)
+TARGET_LINK_LIBRARIES(ObsControl ObservingImpl LCUImpl)
 set_property(TARGET ObsControl PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
 
 
@@ -50,6 +49,8 @@ SET_TARGET_PROPERTIES(ObsControl PROPERTIES LINKER_LANGUAGE CXX)
 #delete generated files in make clean 
 SET_DIRECTORY_PROPERTIES (
    PROPERTIES 
+     ADDITIONAL_MAKE_CLEAN_FILES "LCU.h"
+     ADDITIONAL_MAKE_CLEAN_FILES "LCU.cpp"
      ADDITIONAL_MAKE_CLEAN_FILES "Observing.h"
      ADDITIONAL_MAKE_CLEAN_FILES "Observing.cpp"
      ADDITIONAL_MAKE_CLEAN_FILES "${PROJECT_SOURCE_DIR}/generated"
