@@ -15,8 +15,8 @@ ENDIF (NOT INTROOT)
 
 #for generated files from slice
 ADD_CUSTOM_COMMAND(
-    OUTPUT ${PROJECT_SOURCE_DIR}/Observing.cpp ${PROJECT_SOURCE_DIR}/Observing.h
-    DEPENDS ${PROJECT_SOURCE_DIR}/../idl/Observing.ice 
+    OUTPUT ${PROJECT_SOURCE_DIR}/Observing.cpp ${PROJECT_SOURCE_DIR}/Observing.h ${PROJECT_SOURCE_DIR}/LCU.cpp ${PROJECT_SOURCE_DIR}/LCU.h
+    DEPENDS ${PROJECT_SOURCE_DIR}/../idl/Observing.ice $ENV{INTROOT}/idl/LCU.ice
     #generate cpp proxies files
     COMMAND ${CMAKE_COMMAND} -E echo " Observing.cpp Observing.h generated."
     COMMAND slice2cpp ${PROJECT_SOURCE_DIR}/../idl/Observing.ice $ENV{INTROOT}/idl/LCU.ice -I$ENV{ICE_PATH}
