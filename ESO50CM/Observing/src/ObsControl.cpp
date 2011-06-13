@@ -1,6 +1,6 @@
-
-#include <IceE/IceE.h>
 #include <ObservingImpl.h>
+#include <Ice/Ice.h>
+#include <Ice/Connection.h>
 
 using namespace std;
 
@@ -35,7 +35,7 @@ main(int argc, char* argv[])
     }
     catch(const Ice::Exception& ex)
     {
-	fprintf(stderr, "%s\n", ex.toString().c_str());
+	cerr << ex << endl;
 	status = EXIT_FAILURE;
     }
 
@@ -47,7 +47,7 @@ main(int argc, char* argv[])
 	}
 	catch(const Ice::Exception& ex)
 	{
-	    fprintf(stderr, "%s\n", ex.toString().c_str());
+	    cerr << ex << endl;;
 	    status = EXIT_FAILURE;
 	}
     }
