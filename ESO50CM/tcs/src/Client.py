@@ -217,8 +217,8 @@ if __name__ == "__main__":
 	if isConfigured():
 		getConfiguration()
         sayHello()
-	getEncoderPosition()
-	getRawEncoderPosition()
-	getPosition()
+	#getEncoderPosition()
+	#getRawEncoderPosition()
+	#getPosition()
 	disconnect()
 	
