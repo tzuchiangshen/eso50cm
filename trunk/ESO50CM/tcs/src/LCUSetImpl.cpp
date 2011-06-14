@@ -1,5 +1,4 @@
 #include <LCUImpl.h>
-#include <IceE/IceE.h>
 
 using namespace std;
 #define NUM_OF_TRY 4

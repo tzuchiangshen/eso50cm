@@ -1,5 +1,3 @@
-
-#include <IceE/IceE.h>
 #include <LCUImpl.h>
 
 using namespace std;
@@ -35,7 +33,11 @@ main(int argc, char* argv[])
     }
     catch(const Ice::Exception& ex)
     {
+#ifdef LCU
 	fprintf(stderr, "%s\n", ex.toString().c_str());
+#else
+        cerr << ex << endl;
+#endif
 	status = EXIT_FAILURE;
     }
 
@@ -47,7 +49,11 @@ main(int argc, char* argv[])
 	}
 	catch(const Ice::Exception& ex)
 	{
+#ifdef LCU
 	    fprintf(stderr, "%s\n", ex.toString().c_str());
+#else   
+        cerr << ex << endl;
+#endif
 	    status = EXIT_FAILURE;
 	}
     }

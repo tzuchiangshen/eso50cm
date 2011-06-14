@@ -1,5 +1,8 @@
-
-#include <IceE/IceE.h>
+#ifdef LCU
+   #include <IceE/IceE.h>
+#else
+    #include <Ice/Ice.h>
+#endif
 #include "LCU.h"
 
 using namespace std;
@@ -130,7 +133,11 @@ run(int argc, char* argv[], const Ice::CommunicatorPtr& communicator)
 	}
 	catch(const Ice::Exception& ex)
 	{
+#ifdef LCU
 	    fprintf(stderr, "%s\n", ex.toString().c_str());
+#else
+        cerr << ex << endl;
+#endif
 	}
     }
     while(c != EOF && c != 'x');
@@ -154,7 +161,11 @@ main(int argc, char* argv[])
     }
     catch(const Ice::Exception& ex)
     {
+#ifdef LCU
 	fprintf(stderr, "%s\n", ex.toString().c_str());
+#else
+        cerr << ex << endl;
+#endif
 	status = EXIT_FAILURE;
     }
 
@@ -166,7 +177,11 @@ main(int argc, char* argv[])
 	}
 	catch(const Ice::Exception& ex)
 	{
+#ifdef LCU
 	    fprintf(stderr, "%s\n", ex.toString().c_str());
+#else
+        cerr << ex << endl;
+#endif
 	    status = EXIT_FAILURE;
 	}
     }

@@ -1,9 +1,14 @@
-
 #ifndef LCUImpl_I_H
 #define LCUImpl_I_H
 
 #include "LCU.h"
 #include "myLCU.h"
+
+#ifdef LCU
+    #include <IceE/IceE.h>
+#else
+    #include <Ice/Ice.h>
+#endif
 
 
 
