@@ -61,7 +61,7 @@ IF(LCU)
     ADD_DEFINITIONS(-DLCU -DICEE_PURE_CLIENT)
 ENDIF(LCU)
 
-ADD_LIBRARY(LoggerCore SHARED LoggerHelper LoggerI Logger LogMessage)
+ADD_LIBRARY(LoggerCore SHARED LoggerHelper Logger LogMessage)
 set_property(TARGET LoggerCore PROPERTY LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../lib)
 
 #for .h file search
@@ -72,12 +72,10 @@ INCLUDE_DIRECTORIES("${INTROOT}/include")
 INCLUDE_DIRECTORIES("$ENV{SWROOT}/include")
 LINK_DIRECTORIES(${INTROOT}/lib)
 LINK_DIRECTORIES($ENV{SWROOT}/lib)
-ADD_EXECUTABLE(loggingService LoggingService LoggerI)
-IF(LCU)
-    TARGET_LINK_LIBRARIES(loggingService LoggerCore IceE IceUtil)
-ELSE(LCU)
-    TARGET_LINK_LIBRARIES(loggingService LoggerCore Ice IceUtil)
-ENDIF(LCU)
+IF(NOT LCU)
+    ADD_EXECUTABLE(loggingService LoggingService LoggerI dbstuff)
+    TARGET_LINK_LIBRARIES(loggingService LoggerCore Ice IceUtil mysqlcppconn)
+ENDIF(NOT LCU)
 set_property(TARGET loggingService PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
 
 #delete generated files in make clean 
@@ -105,6 +103,11 @@ INSTALL(
    DIRECTORY ${PROJECT_SOURCE_DIR}/../include/ DESTINATION ${INTROOT}/include 
    FILES_MATCHING PATTERN "*.h"
 )
+INSTALL(
+   DIRECTORY ${PROJECT_SOURCE_DIR}/../config/ DESTINATION ${INTROOT}/config
+   FILES_MATCHING PATTERN "*.config"
+)
+
 INSTALL(FILES  ${PROJECT_SOURCE_DIR}/runLoggingService
         DESTINATION ${INTROOT}/bin
         PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)

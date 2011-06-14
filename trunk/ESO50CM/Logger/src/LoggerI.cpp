@@ -1,53 +1,56 @@
 #include "LoggerI.h"
 #include <stdio.h>
 #include <string.h>
+#include "dbstuff.h"
 
 using namespace Log;
 LoggerI::LoggerI()
 {
-    // do nothing
+    globalDiscardLevel=DEFAULT_GLOBAL_DISCARD_LEVEL;
+    // Define the descriptions of the log levels
+    levelDesc[FINEST]="FINEST";
+    levelDesc[FINER]="FINER";
+    levelDesc[FINE]="FINE";
+    levelDesc[CONFIG]="CONFIG";
+    levelDesc[INFO]="INFO";
+    levelDesc[WARNING]="WARNING";
+    levelDesc[SEVERE]="SEVERE";
+    levelDesc[9]="Unknown log level";
+    if (!db.connect("tcp://127.0.0.1:3306","logmgr","logpass"))
+    {
+        cout << "Warning! I couldn't connect to the DB!" << endl;
+        isDBConnected=false;
+    }
+    else
+        isDBConnected=true;
 }
 void LoggerI::logMessage(const LogMessageData &message, const Ice::Current& c)
 {
-    char levelStr[10];
-    switch(message.level) {
-        case FINEST:
-            strcpy(levelStr,"FINEST");
-            break;
-        case FINER:
-            strcpy(levelStr,"FINER");
-            break;
-        case FINE:
-            strcpy(levelStr,"FINE");
-            break;
-        case CONFIG:
-            strcpy(levelStr,"CONFIG");
-            break;
-        case INFO:
-            strcpy(levelStr,"INFO");
-            break;
-        case WARNING:
-            strcpy(levelStr,"WARNING");
-            break;
-        case SEVERE:
-            strcpy(levelStr,"SEVERE");
-            break;
-        default:
-            strcpy(levelStr,"Unknown level");
-            break;
-    }
-    //  |level | timestamp | source | method | linenumber | message |
-    printf("| %s | %lf | %s | %s | %i | %s |\n",levelStr, message.timestamp, message.source.c_str(),
+    if (!isDBConnected)
+    {
+        //  |level | timestamp | source | method | linenumber | message |
+        printf("| %s | %lf | %s | %s | %i | %s |\n",levelDesc[message.level].c_str(), message.timestamp, message.source.c_str(),
                                                 message.method.c_str(), message.lineNumber, message.message.c_str());
+    } else {
+        // we're accessing the DB!
+        int discardLevel=db.getDiscardLevel(message.source);
+        if ((message.level > discardLevel) && (message.level > globalDiscardLevel)) {
+            db.logMessage(message.level, message.source,message.timestamp, message.method,message.lineNumber,message.message);
+        }
+    }
+        
 }
 
 void LoggerI::setDiscardLevel(const string& source, LogLevel level,const Ice::Current&)
 {
-    printf("discard level set to %i for %s\n",level,source.c_str());
+    if (!isDBConnected)
+    {
+        db.setDiscardLevel(source,level);
+    }
 }
 void LoggerI::setGlobalDiscardLevel(LogLevel level,const Ice::Current& c)
 {
-    printf("setGlobalDiscardLevel\n");
+    globalDiscardLevel=level;
 }
 LogMessageDataSet LoggerI::getLogsFromIndex(int index,int maxlogs,const Ice::Current& c)
 {   
