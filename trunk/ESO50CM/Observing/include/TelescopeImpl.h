@@ -28,6 +28,8 @@ public:
   virtual void setTracking(const ::OUC::TrackingInfo& trkInfo, const Ice::Current&);
   virtual void parkTelescope(const Ice::Current&);
 private:
+  OUC::LCUPrx lcuPrx;
+
   OUC::RawEncoderData *rawEncoder_t;
   OUC::EncoderData *encoder_t;
   OUC::TelescopeConfigData *telescopeConfigData_t;
