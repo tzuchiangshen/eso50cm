@@ -75,8 +75,8 @@ LINK_DIRECTORIES($ENV{SWROOT}/lib)
 IF(NOT LCU)
     ADD_EXECUTABLE(loggingService LoggingService LoggerI dbstuff)
     TARGET_LINK_LIBRARIES(loggingService LoggerCore Ice IceUtil mysqlcppconn)
+    set_property(TARGET loggingService PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
 ENDIF(NOT LCU)
-set_property(TARGET loggingService PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
 
 #delete generated files in make clean 
 SET_DIRECTORY_PROPERTIES (
@@ -87,8 +87,16 @@ SET_DIRECTORY_PROPERTIES (
      ADDITIONAL_MAKE_CLEAN_FILES "Logger.cpp"
 )
 
+IF(NOT LCU)
 #for make install
-INSTALL(TARGETS LoggerCore loggingService
+    INSTALL(TARGETS loggingService
+    RUNTIME DESTINATION ${INTROOT}/bin
+    LIBRARY DESTINATION ${INTROOT}/lib
+    ARCHIVE DESTINATION ${INTROOT}/lib
+)
+ENDIF(NOT LCU)
+#for make install
+    INSTALL(TARGETS LoggerCore 
     RUNTIME DESTINATION ${INTROOT}/bin
     LIBRARY DESTINATION ${INTROOT}/lib
     ARCHIVE DESTINATION ${INTROOT}/lib
