@@ -22,7 +22,7 @@ def degs2HHMMSS(degs):
         gg = gg + 1
     
     if( degs  < 0 ):
-        gg = gg - 1 
+        gg = gg * -1 
     
     format = [gg,mm,ss]
     return format

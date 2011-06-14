@@ -89,7 +89,7 @@ def getRawEncoderPosition():
 	   print "Position Delta WormE: %11d\n" % rawEncData.posDeltaWormE
 	   print "Lecture Delta Motor: %6d\n" % rawEncData.lectDeltaMotor
 	   print "Position Delta Motor: %11d\n" % rawEncData.posDeltaMotor 
-	   print "Generated at = [%ld]\n" % rawEncData.lcuTime
+	   print "Generated at = [%lf]\n" % rawEncData.lcuTime
 	   print datetime.utcfromtimestamp(rawEncData.lcuTime)
 	except OUC.TelescopeNotConfiguredEx():
            print "Telescope Not Configured !!!"
@@ -117,7 +117,7 @@ def getPosition():
 	telData = OUC.TelescopeData()
 	try:
 		telData = lcuImpl.getPosition()
-		print "LT = [%ld]" % telData.localTime
+		print "LT = [%lf]" % telData.localTime
 		print datetime.utcfromtimestamp(telData.localTime)
 		print "Time elapsed since last access: %lf" % telData.deltaT  
 		print "JD  = %lf" % telData.julianDate
@@ -148,7 +148,7 @@ def getPosition():
 		print "Difference RA = %02d:%02d:%02.0lf" % (format[0],format[1],format[2])
 		format =  degs2HHMMSS(telData.differencePos.Dec)
 		print "Difference Dec = %+03d:%02d:%02.0lf" % (format[0],format[1],format[2])
-		print "Generated at = [%ld]" % telData.lcuTime
+		print "Generated at = [%lf]" % telData.lcuTime
 		print datetime.utcfromtimestamp(telData.lcuTime)
 	except OUC.TelescopeNotConfiguredEx():
 		print "Telescope Not Configured !!!"
@@ -161,7 +161,7 @@ def getConfiguration():
 	try:
            telConfigData = lcuImpl.getConfiguration()	
 	   print telConfigData
-	   print "LT = [%ld]\n" % telConfigData.localTime
+	   print "LT = [%lf]\n" % telConfigData.localTime
 	   print datetime.utcfromtimestamp(telConfigData.localTime)
 	   print "Latitude = %+11.4lf \n" % telConfigData.latitude
 	   print "Longitude = %+11.4lf \n" % telConfigData.longitude
@@ -184,7 +184,7 @@ def getConfiguration():
 	   print "DAT = %+11.4lf \n" % telConfigData.DAT
 	   print "DAH = %+11.4lf \n" % telConfigData.DAH
 	   print "DAR = %+11.4lf \n" % telConfigData.DAR
-	   print "Generated at = [%ld]\n" % telConfigData.lcuTime
+	   print "Generated at = [%lf]\n" % telConfigData.lcuTime
            print datetime.utcfromtimestamp(telConfigData.lcuTime)
 	except OUC.TelescopeNotConfiguredEx():
            print "Telescope Not Configured !!!"
@@ -198,9 +198,9 @@ def isConfigured():
 def setConfiguration():
 	try:
 		introot_path = ""
-		introot_path = os.getenv("INTROOT")
+		introot_path = os.getenv("SWROOT")
 		if(introot_path == ""):
-			introot_path = "/introots/ESO50CM" 		
+			introot_path = "/eso50cm/LCUSW" 		
 
 		conf_path = "%s/%s" % (introot_path, "config/ESO50cm.conf")
 		lcuImpl.setConfiguration(conf_path)
@@ -210,14 +210,35 @@ def setConfiguration():
 		traceback.print_exc()
 		status = 1
 
+def setTracking(trkState=True, velocity=600):
+        trkInfo = OUC.TrackingInfo()
+        try:
+	   trkInfo.trackState = trkState
+           trkInfo.velocity = velocity
+           
+           lcuImpl.setTracking(trkInfo)
+        except OUC.TelescopeNotConfiguredEx():
+           print "Telescope Not Configured !!!"
+           traceback.print_exc()
+           status = 1
+
+def parkTelescope():
+	try:
+           lcuImpl.parkTelescope()
+	except OUC.TelescopeNotConfiguredEx():
+       	   print "Telescope Not Configured !!!"
+           traceback.print_exc()
+           status = 1
 
 if __name__ == "__main__":
 	connect()
-	setConfiguration()
-	if isConfigured():
-		getConfiguration()
-        sayHello()
+	#setConfiguration()
+	#if isConfigured():
+	#   getConfiguration()
+        #sayHello()
 	#getEncoderPosition()
+        #parkTelescope()
+        setTracking(True, 600)
 	#getRawEncoderPosition()
 	#getPosition()
 	disconnect()
