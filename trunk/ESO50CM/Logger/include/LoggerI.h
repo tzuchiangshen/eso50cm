@@ -15,8 +15,8 @@ namespace Log {
       void logMessage(const LogMessageData&, const Ice::Current&);
       void setDiscardLevel(const string& source, LogLevel level,const Ice::Current&);
       void setGlobalDiscardLevel(LogLevel level,const Ice::Current&);
-      LogMessageDataSet getLogsFromIndex(int index,int maxlogs,const Ice::Current&);
-      LogMessageDataSet getLogsFromDate(int timestamp,const Ice::Current&); 
+      //LogMessageDataSet getLogsFromIndex(int index,int maxlogs,const Ice::Current&);
+      //LogMessageDataSet getLogsFromDate(int timestamp,const Ice::Current&); 
       // log level description
       int globalDiscardLevel;
       string levelDesc[10];  

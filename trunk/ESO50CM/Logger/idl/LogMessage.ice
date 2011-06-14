@@ -43,6 +43,7 @@ module Log
         string    message;
         string    method;
         int       lineNumber;
+        long      logid;
     };
 
     sequence<LogMessageData> LogsVector;

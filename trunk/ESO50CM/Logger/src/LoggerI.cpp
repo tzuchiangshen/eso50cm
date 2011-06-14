@@ -52,6 +52,7 @@ void LoggerI::setGlobalDiscardLevel(LogLevel level,const Ice::Current& c)
 {
     globalDiscardLevel=level;
 }
+/*
 LogMessageDataSet LoggerI::getLogsFromIndex(int index,int maxlogs,const Ice::Current& c)
 {   
     printf("getLogsFromIndex\n");
@@ -60,4 +61,4 @@ LogMessageDataSet LoggerI::getLogsFromDate(int timestamp,const Ice::Current& c)
 {
     printf("getLogsFromDate\n");
 }
-
+*/

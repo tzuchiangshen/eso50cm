@@ -30,6 +30,7 @@ class LoggerHelper {
    private:
        CommunicatorPtr m_ic;
        ObjectPrx m_base;
+       ObjectPrx oneway;
        LoggerPrx m_prx;
        string m_source;
        LogLevel m_discardLevel;

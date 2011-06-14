@@ -54,8 +54,13 @@ LoggerHelper::LoggerHelper(string src)
 #endif 
         m_base = m_ic->stringToProxy(logginServiceProxyStr.c_str());
         if (!m_base)
-            printf("wrong mbase");
-        m_prx = LoggerPrx::checkedCast(m_base);
+            printf("wrong m_base");
+        try {
+             oneway =  m_base->ice_oneway();
+        } catch (const NoEndpointException) {
+             cerr << "No endpoint for oneway invocations" << endl;
+        }
+        m_prx = LoggerPrx::uncheckedCast(oneway);
     //    if (!m_prx) throw "Invalid proxy";   
         if (!m_prx) printf("Invalid proxy");   
         m_source=src;
