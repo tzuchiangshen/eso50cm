@@ -4,12 +4,47 @@
 #include <time.h>
 #include <stdlib.h>
 #include <iostream>
+#include <fstream>
 using namespace std;
+string findFilePath(string relFileName);
 
 LoggerHelper::LoggerHelper(string src) 
 {  
+    string filename;
+    ifstream configFile;
+    size_t found;
+    logginServiceProxyStr="";
     try {
-        printf("proxy: %s",getenv("LOG_SERVICE"));
+        filename=findFilePath("config/loggingService.config");
+        if (filename.empty()) 
+            throw "config/loggingService.config not found";
+        configFile.open(filename.c_str());
+        if (configFile.is_open()) {
+            // we have patches! we look for the file in every directory
+            size_t found;
+            while( !configFile.eof() ) {
+                string line;
+                getline(configFile, line);
+                // got a line, checking if the file exist
+                if (!line.empty())
+                    if (line[0]=='#')   // a comment  
+                        continue;
+                    found=line.find("LoggingService.Endpoints=");
+                    if (found == string::npos)  // string not found
+                        continue;
+                    else
+                        // string found!
+                        logginServiceProxyStr=string("Logger -t:")+line.substr(line.find("=")+1);
+            }
+        } else {
+            throw string(string("Couldn't open")+filename).c_str();
+        }   
+        if (logginServiceProxyStr.empty()) {
+            // if at this point, loggin service is empty, the property is missing
+            throw string(string("Couldn't find the property LoggingService.Endpoints in ")+filename).c_str();
+        }
+        
+        cout << "Proxy for logging service: " << logginServiceProxyStr << endl;
 #ifdef LCU
         int dummy=0;
         m_ic =  Ice::initialize(dummy,0);
@@ -17,7 +52,7 @@ LoggerHelper::LoggerHelper(string src)
         Ice::InitializationData id;
         m_ic =  Ice::initialize(id);
 #endif 
-        m_base = m_ic->stringToProxy(getenv("LOG_SERVICE"));
+        m_base = m_ic->stringToProxy(logginServiceProxyStr.c_str());
         if (!m_base)
             printf("wrong mbase");
         m_prx = LoggerPrx::checkedCast(m_base);
@@ -114,3 +149,48 @@ double LoggerHelper::convertDouble(double MEData)
 }
 #endif
 
+// This method looks for the specified file in several dirs:
+// TODO: move it to a common 'utils' library
+string findFilePath(string relFileName)
+{
+    string fileName;
+    string swroot,introot;
+    if (getenv("SWROOT")!=NULL) {
+        swroot=getenv("SWROOT");
+    }
+    else { 
+        cout << "SWROOT not set, check you environmental variables";
+        return string("");     
+    }
+    ifstream file;
+    if (getenv("INTROOT")!=NULL) {
+        // If we found and introot, we will check there first
+        introot=getenv("INTROOT");
+        fileName=introot+string("/")+relFileName;
+        file.open(fileName.c_str());
+        if (file.is_open())
+            return fileName;
+    }
+    // Now we look in the patches files  
+    ifstream patchesListFile((swroot+string("/patches/patches.list")).c_str());
+    if (patchesListFile.is_open()) 
+        // we have patches! we look for the file in every directory
+    while( !patchesListFile.eof() ) {
+        string line;
+        getline(patchesListFile, line);
+        // got a line, checking if the file exist
+        if (!line.empty())
+            fileName=swroot+string("/patches/")+line+string("/")+relFileName;
+        file.open(fileName.c_str());
+        if (file.is_open())
+            return fileName;           
+    }
+    // at this point, we couldn't find the file in the patches or INTROOT
+    // so we'll test our last chance: the SWROOT
+    fileName=swroot+string("/")+relFileName;
+    file.open(fileName.c_str());
+    if (file.is_open())
+        return fileName;
+    // fuuuuuu. We cannot find the file, so we return an empy string
+        return string("");
+}
