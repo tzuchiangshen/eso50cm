@@ -3,7 +3,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 #project name
 PROJECT(LogPublisherSample)
 
-
+set(CMAKE_CXX_FLAGS "-g -Wall")
 #introot definition
 SET(INTROOT $ENV{INTROOT})
 IF(NOT INTROOT)
