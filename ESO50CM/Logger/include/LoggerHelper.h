@@ -7,7 +7,7 @@
     #include <Ice/Ice.h>
 #endif
 
-#include "LoggerI.h"
+#include "Logger.h"
 
 using namespace Ice;
 using namespace Log;
@@ -33,5 +33,6 @@ class LoggerHelper {
        LoggerPrx m_prx;
        string m_source;
        LogLevel m_discardLevel;
+       string logginServiceProxyStr;
 };
 #endif
