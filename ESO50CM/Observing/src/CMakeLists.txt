@@ -19,7 +19,7 @@ ADD_CUSTOM_COMMAND(
     DEPENDS ${PROJECT_SOURCE_DIR}/../idl/Observing.ice $ENV{INTROOT}/idl/LCU.ice
     #generate cpp proxies files
     COMMAND ${CMAKE_COMMAND} -E echo " Observing.cpp Observing.h generated."
-    COMMAND slice2cpp ${PROJECT_SOURCE_DIR}/../idl/Observing.ice $ENV{INTROOT}/idl/LCU.ice -I$ENV{ICE_PATH}
+    COMMAND slice2cpp -I$ENV{SWROOT}/idl ${PROJECT_SOURCE_DIR}/../idl/Observing.ice $ENV{INTROOT}/idl/LCU.ice 
     #generate python proxies files
     COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_SOURCE_DIR}/generated"
     COMMAND slice2py -I$ENV{INTROOT}/idl  -I${PROJECT_SOURCE_DIR}/../idl --output-dir ${PROJECT_SOURCE_DIR}/generated ${PROJECT_SOURCE_DIR}/../idl/Observing.ice
@@ -93,6 +93,6 @@ INSTALL(
    DIRECTORY ${PROJECT_SOURCE_DIR}/generated/OUC DESTINATION lib/python/site-packages
 )
 INSTALL(
-  FILES ${PROJECT_SOURCE_DIR}/Client.py DESTINATION bin
+  FILES ${PROJECT_SOURCE_DIR}/Client-obs.py DESTINATION bin
 )
 

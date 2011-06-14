@@ -1,8 +1,37 @@
 #include <TelescopeImpl.h>
+#include <Ice/Ice.h>
 
 using namespace std;
 
 TelescopeImpl::TelescopeImpl() {
+  int status;
+  Ice::CommunicatorPtr communicator;
+
+  try
+  {
+    /* Reading configuration info */
+    Ice::InitializationData initData;
+    initData.properties = Ice::createProperties();
+    initData.properties->load("config");
+    communicator = Ice::initialize(initData);
+
+    /* Create proxy */
+    Ice::PropertiesPtr properties = communicator->getProperties();
+    const char* proxyProperty = "LCUAdapter.Proxy";
+    string proxy = properties->getProperty(proxyProperty);
+    Ice::ObjectPrx base = communicator->stringToProxy(proxy);
+    lcuPrx = OUC::LCUPrx::checkedCast(base->ice_twoway()->ice_timeout(-1));
+
+    if(!lcuPrx)
+    {
+       cerr << "Can not create reference to LCU Proxy!!" << endl;
+       status = EXIT_FAILURE;
+    }
+
+  }catch(const Ice::Exception& ex) {
+    cerr << ex << endl;
+    status = EXIT_FAILURE;
+  }
 }
 
 void
