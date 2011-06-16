@@ -331,7 +331,7 @@ LCUImpl::setOffset(const OUC::TelescopePosition& offsetPos, const Ice::Current& 
 }
 
 void 
-LCUImpl::setTracking(const OUC::TrackingInfo& trkInfo, const Ice::Current& c)
+LCUImpl::setTracking(OUC::TrackingInfo& trkInfo, const Ice::Current& c)
 {
   extern int verbose;
   if( verbose )
@@ -346,14 +346,12 @@ LCUImpl::setTracking(const OUC::TrackingInfo& trkInfo, const Ice::Current& c)
     }
   
   /** Read Tracking Flag **/
-  int ticVel = 0;
   if(trkInfo.trackState & !trkInfo.ticVel)
-    //trkInfo.ticVel = 600;
-	ticVel = 600;
+      trkInfo.ticVel = 600;
 
   /** Set Velocity **/
   m_lcu->waitSemaphore();
-  m_lcu->telescope->alpha->Motor->setDeviceMemory(3, &ticVel, 0);
+  m_lcu->telescope->alpha->Motor->setDeviceMemory(3, &trkInfo.ticVel, 0);
   if(trkInfo.ticVel > 0)
     m_lcu->telescope->setIsTracking(true);
   else
@@ -415,7 +413,7 @@ LCUImpl::parkTelescope(const Ice::Current& c)
       m_lcu->telescope->alpha->Motor->setDeviceMemory(3, &ticVel);
       m_lcu->telescope->setIsTracking(false);
       /* Refresh tracking state */
-      getTrackingState();
+      m_tracking = false;
       if(verbose)
 	printf("LCUImpl::parkTelescope: Tracking OFF!!");
 
@@ -499,4 +497,59 @@ LCUImpl::parkTelescope(const Ice::Current& c)
   m_lcu->waitSemaphore();
   m_lcu->telescope->setIsRunningGoto(false);
   m_lcu->postSemaphore();
+}
+
+void 
+LCUImpl::stopTelescope(OUC::TelescopeDirection dir, const Ice::Current& c)
+{
+  extern int verbose;
+  int     ticsPerSeconds= 0;
+
+  if( verbose )
+    printf( "LCUImpl::stopTelescope" );
+  
+  /** Is telescope configured **/
+  if(!m_configured)
+    {
+      OUC::TelescopeNotConfiguredEx ex;
+      ex.reason = "Telecope Not Configured";
+      throw ex;
+    }
+
+  ticsPerSeconds = 0;
+  if(dir == OUC::North) {
+    if (verbose) printf("Stopping North... Tics per second: %d\n", ticsPerSeconds);
+    m_lcu->telescope->delta->Motor->setDeviceMemory(6, & ticsPerSeconds, 0);
+  } else if(dir == OUC::South) {
+    if (verbose) printf("Stopping South... Tics per seconds: %d\n", ticsPerSeconds);
+    m_lcu->telescope->delta->Motor->setDeviceMemory(6, & ticsPerSeconds, 0  );
+  } else if(dir == OUC::East) {
+    if (verbose) printf("Stopping East... Tics per seconds: %d\n", ticsPerSeconds);
+    m_lcu->telescope->alpha->Motor->setDeviceMemory(6, &ticsPerSeconds, 0);
+  } else if(dir == OUC::West) {
+    if (verbose) printf("Stopping West... Tics per seconds: %d\n", ticsPerSeconds);
+    m_lcu->telescope->alpha->Motor->setDeviceMemory(6, &ticsPerSeconds, 0);
+  }
+}
+
+void 
+LCUImpl::moveToTarget(const Ice::Current& c)
+{
+  extern int verbose;
+  
+  if( verbose )
+    printf( "LCUImpl::setTarget" );
+  
+  /** Is telescope configured **/
+  if(!m_configured)
+    {
+      OUC::TelescopeNotConfiguredEx ex;
+      ex.reason = "Telecope Not Configured";
+      throw ex;
+    }
+  
+
+
+
+
 }

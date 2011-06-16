@@ -4,6 +4,8 @@
 module OUC 
 {
 
+enum TelescopeDirection {North, South, East, West};
+
 struct RawEncoderData
 {
 	int lectAlphaWormE;
@@ -123,9 +125,13 @@ interface LCU
     	 throws TelescopeNotConfiguredEx, TargetOutOfLimitsEx;
     void setOffset(TelescopePosition offsetPos)
     	 throws TelescopeNotConfiguredEx, TargetOutOfLimitsEx;
-    void setTracking(TrackingInfo trkInfo)
+    void setTracking(out TrackingInfo trkInfo)
          throws TelescopeNotConfiguredEx;
     void parkTelescope()
+         throws TelescopeNotConfiguredEx;
+    void stopTelescope(TelescopeDirection dir)
+         throws TelescopeNotConfiguredEx;
+    void moveToTarget()
          throws TelescopeNotConfiguredEx; 	 
 };
 };
