@@ -516,6 +516,9 @@ LCUImpl::stopTelescope(OUC::TelescopeDirection dir, const Ice::Current& c)
       throw ex;
     }
 
+  /** Acquire Semaphore for SHM **/
+  m_lcu->waitSemaphore();
+  
   ticsPerSeconds = 0;
   if(dir == OUC::North) {
     if (verbose) printf("Stopping North... Tics per second: %d\n", ticsPerSeconds);
@@ -530,13 +533,26 @@ LCUImpl::stopTelescope(OUC::TelescopeDirection dir, const Ice::Current& c)
     if (verbose) printf("Stopping West... Tics per seconds: %d\n", ticsPerSeconds);
     m_lcu->telescope->alpha->Motor->setDeviceMemory(6, &ticsPerSeconds, 0);
   }
+  
+  /** Release semaphore for SHM **/
+  m_lcu->postSemaphore(); 
+  
 }
 
 void 
 LCUImpl::moveToTarget(const Ice::Current& c)
 {
   extern int verbose;
-  
+  double offset_ra, offset_dec;
+  char mem_address;
+  int  alpha_mtr_counts;
+  int  delta_mtr_counts;
+  int no_quit;
+  int setup_ready;
+  int goto_alpha_flag = false;
+  int goto_delta_flag = false;
+  int value;
+
   if( verbose )
     printf( "LCUImpl::setTarget" );
   
@@ -548,8 +564,120 @@ LCUImpl::moveToTarget(const Ice::Current& c)
       throw ex;
     }
   
+  /** Acquire Semaphore for SHM **/
+  m_lcu->waitSemaphore();
+  
+  /** Differesnce RA Dec  */
+  offset_ra = m_lcu->telescope->getDifferenceRA();
+  offset_dec = m_lcu->telescope->getDifferenceDec();
+  mem_address = 7;
+  offset_ra *= -1.;
+  alpha_mtr_counts = m_lcu->telescope->alpha->offsetAxisInDeg( offset_ra );
+  offset_dec *= -1.;
+  delta_mtr_counts = m_lcu->telescope->delta->offsetAxisInDeg( offset_dec );
+  
+  if( alpha_mtr_counts < -50 || 50 < alpha_mtr_counts ) 
+    {
+      value = 0;
+      m_lcu->telescope->alpha->Motor->setDeviceMemory( 3, & value, 0  );
+      m_lcu->telescope->setIsTracking( false );
+      m_tracking = false;
+      if (verbose) printf("Tracking OFF!\n");
+      m_lcu->telescope->alpha->Motor->setDeviceMemory( 7, & alpha_mtr_counts, 0  );
+      goto_alpha_flag = true;
+    }
 
+  if( delta_mtr_counts < -50 || 50 < delta_mtr_counts ) 
+    {
+      m_lcu->telescope->delta->Motor->setDeviceMemory( 7, & delta_mtr_counts, 0  );
+      goto_delta_flag = true;
+    }  
+  
+  /** Release semaphore for SHM **/
+  m_lcu->postSemaphore(); 
 
+  /** Goto target loop*/
+  setup_ready = NUM_OF_TRY;
+  do {
+    no_quit = 180;
+    do {
+      sleep( 1 );
+      mem_address = 7;
+      
+      m_lcu->waitSemaphore();
+      {
+	if( goto_alpha_flag ) 
+	  {
+	    m_lcu->telescope->alpha->Motor->readDeviceMemory( 7, & alpha_mtr_counts, 0  );
+	    if( -50 < alpha_mtr_counts && alpha_mtr_counts < 50 )
+	      goto_alpha_flag = false;
+	  }
+	if( goto_delta_flag ) 
+	  {
+	    m_lcu->telescope->delta->Motor->readDeviceMemory( 7, & delta_mtr_counts, 0  );
+	    if( -50 < delta_mtr_counts && delta_mtr_counts < 50 )
+	      goto_delta_flag = false;
+	  }
+      }
+      m_lcu->postSemaphore();
+      
+      if( ! goto_delta_flag && ! goto_alpha_flag ) 
+	no_quit = false;
+      else 
+	no_quit --;
+      
+      if( verbose) 
+	printf( "[goto_target] To quit (if something was wrong)... %d sec.\n", no_quit );
+    } while( no_quit );
 
+    goto_alpha_flag = false;
+    goto_delta_flag = false;
+    
+    m_lcu->waitSemaphore();
+    {
+      /** Differesnce RA Dec  */
+      offset_ra  = m_lcu->telescope->getDifferenceRA();
+      offset_dec = m_lcu->telescope->getDifferenceDec();
+      
+      mem_address = 7;
+      offset_ra *= -1.;
+      alpha_mtr_counts = m_lcu->telescope->alpha->offsetAxisInDeg( offset_ra );
+      offset_dec *= -1.;
+      delta_mtr_counts = m_lcu->telescope->delta->offsetAxisInDeg( offset_dec );
+      
+      if( alpha_mtr_counts < -50 || 50 < alpha_mtr_counts ) 
+	{
+	  m_lcu->telescope->alpha->Motor->setDeviceMemory( 7, & alpha_mtr_counts, 0  );
+	  goto_alpha_flag = true;
+	}
+      
+      if( delta_mtr_counts < -50 || 50 < delta_mtr_counts ) 
+	{
+	m_lcu->telescope->delta->Motor->setDeviceMemory( 7, & delta_mtr_counts, 0  );
+	goto_delta_flag = true;
+	}
+    }
+    m_lcu->postSemaphore();
+    
+    if( ! goto_alpha_flag && ! goto_delta_flag ) 
+      setup_ready = false;
+    else 
+      setup_ready --;
+    
+    if(verbose)
+      printf( "[goto_target] Try No %d\n", NUM_OF_TRY - setup_ready );
+  } while( setup_ready );
 
+  /* Put telescope on tracking state */
+  m_lcu->waitSemaphore();
+  {
+    value = 602;
+    m_lcu->telescope->alpha->Motor->setDeviceMemory( 3, & value, 0  );
+    m_lcu->telescope->setIsTracking( true );
+    m_tracking = true;
+    m_lcu->telescope->setIsRunningGoto( false );
+    if (verbose)
+      printf("Tracking ON!\n");
+  }
+  m_lcu->postSemaphore();
 }
