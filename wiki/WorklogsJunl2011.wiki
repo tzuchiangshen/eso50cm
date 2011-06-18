@@ -10,3 +10,13 @@
   * CMakeList.txt 
     * remove libIceUtil in the linking of LCUControl 
   
+= 2011-06-14 =
+   * code revision 124
+   * Technical Time (Johnny Reveco, Maurizio Baffico, Ruben Soto)     
+   * Implementation of SWROOT area at operator console and LCU
+   * Continue verification of GET commands: 
+      * Fixed minor interpretation bugs at python client and AstroUtil library.
+      * All GET commands verified successfully according to the values displayed by old LCU software
+   * Verification of SET commands:
+      * SetTracking commands worked properly, however tracking status does not reflect real value. To be investigated.
+      * ParkingTelescope does not work properly since it stuck the telescope after execution. To be investigated. 
