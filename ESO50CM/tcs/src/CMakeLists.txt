@@ -6,8 +6,12 @@ PROJECT(LCUCONTROL)
 #introot definition
 SET(INTROOT $ENV{INTROOT})
 IF(NOT INTROOT)
-    SET(CMAKE_INSTALL_PREFIX="/opt/LCUCONTROL")
-    MESSAGE("INTROOT not defined, CMAKE_INSTALL_PREFIX set to: /opt/LCUCONTROL")
+   SET(INTROOT $ENV{SWROOT})
+ENDIF(NOT INTROOT)
+
+IF(NOT INTROOT)
+    SET(CMAKE_INSTALL_PREFIX="/eso50cm/WSSW")
+    MESSAGE("INTROOT not defined, CMAKE_INSTALL_PREFIX set to:/eso50cm/WSSW")
 ELSE (NOT INTROOT)
     SET(CMAKE_INSTALL_PREFIX ${INTROOT})
     MESSAGE("CMAKE_INSTALL_PREFIX set to: $ENV{INTROOT}")
@@ -24,7 +28,7 @@ ADD_CUSTOM_COMMAND(
     COMMAND slice2cpp ${PROJECT_SOURCE_DIR}/../idl/LCU.ice
     #generate python proxies files
     COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_SOURCE_DIR}/generated"
-    COMMAND slice2py -I$ENV{INTROOT}/idl  -I${PROJECT_SOURCE_DIR}/../../tcs/idl --output-dir ${PROJECT_SOURCE_DIR}/generated ${PROJECT_SOURCE_DIR}/../idl/LCU.ice
+    COMMAND slice2py -I${INTROOT}/idl  -I${PROJECT_SOURCE_DIR}/../../tcs/idl --output-dir ${PROJECT_SOURCE_DIR}/generated ${PROJECT_SOURCE_DIR}/../idl/LCU.ice
     COMMAND ${CMAKE_COMMAND} -E echo " ICE python proxy generated under src/generated/ dir."
     COMMENT "generating slice files..." 
 )
@@ -63,10 +67,10 @@ ELSE(NOT LCU)
 ENDIF(NOT LCU)
 INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/")
 INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/../include")
-INCLUDE_DIRECTORIES("$ENV{INTROOT}/include")
+INCLUDE_DIRECTORIES("${INTROOT}/include")
 
 #for ../bin/LCUControl executable 
-LINK_DIRECTORIES($ENV{INTROOT}/lib)
+LINK_DIRECTORIES(${INTROOT}/lib)
 LINK_DIRECTORIES(/usr/lib)
 IF(NOT LCU)
    ADD_EXECUTABLE(LCUControl LCUControl)
