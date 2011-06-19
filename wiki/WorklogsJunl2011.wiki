@@ -20,3 +20,14 @@
    * Verification of SET commands:
       * SetTracking commands worked properly, however tracking status does not reflect real value. To be investigated.
       * ParkingTelescope does not work properly since it stuck the telescope after execution. To be investigated. 
+   * General environment changes:
+      * Added INTROOT support
+      * added IDL folder to $SWROOT and getTemplate..
+      * corrected TYPE, now for WS is not set
+   * Logging system test and deploy
+      * created SQL tables
+      * installed mysql connector (installed boost and connector compiled for the console)
+      * twoway logging from LCU to Console successfully test
+      * logs are correctly being archived in the DB
+      * tested discard level: working as expected
+      * changed log ICE method to oneway: the response was improves in more that 6 times and the reliability is good 
