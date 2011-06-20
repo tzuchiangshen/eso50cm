@@ -6,31 +6,43 @@
 module OUC 
 {
 
+exception NotLCUReferenceAvailableEx extends ErrorEx{};
+
 class Telescope 
 {
-    string message;
     void sayHelloTelescope(int delay);
 	 
     EncoderData getEncodersPosition()
-         throws TelescopeNotConfiguredEx;
+         throws TelescopeNotConfiguredEx,
+	        NotLCUReferenceAvailableEx; 
     RawEncoderData getRawEncodersPosition() 
-         throws TelescopeNotConfiguredEx;	    
+         throws TelescopeNotConfiguredEx,
+	        NotLCUReferenceAvailableEx;		    
     TelescopeConfigData getConfiguration()
-    	 throws TelescopeNotConfiguredEx;	
+    	 throws TelescopeNotConfiguredEx,
+                NotLCUReferenceAvailableEx;	
     TelescopeData getPosition()
-    	 throws TelescopeNotConfiguredEx;	
-    bool isConfigured();
-    bool isTracking();
+    	 throws TelescopeNotConfiguredEx,
+                NotLCUReferenceAvailableEx;	
+    bool isConfigured()
+         throws NotLCUReferenceAvailableEx;
+    bool isTracking()
+         throws NotLCUReferenceAvailableEx;
 
-    void setConfiguration(string fileName);
+    void setConfiguration(string fileName)
+         throws NotLCUReferenceAvailableEx;
     void setTarget(TelescopePosition targetPos)
-    	 throws TelescopeNotConfiguredEx, TargetOutOfLimitsEx;
+    	 throws TelescopeNotConfiguredEx, TargetOutOfLimitsEx,
+                NotLCUReferenceAvailableEx;
     void setOffset(TelescopePosition offsetPos)
-    	 throws TelescopeNotConfiguredEx, TargetOutOfLimitsEx;
+    	 throws TelescopeNotConfiguredEx, TargetOutOfLimitsEx,
+                NotLCUReferenceAvailableEx;
     void setTracking(TrackingInfo trkInfo)
-         throws TelescopeNotConfiguredEx;
+         throws TelescopeNotConfiguredEx, 
+                NotLCUReferenceAvailableEx;
     void parkTelescope()
-         throws TelescopeNotConfiguredEx; 
+         throws TelescopeNotConfiguredEx,
+                NotLCUReferenceAvailableEx; 
 };
 
 interface Observing

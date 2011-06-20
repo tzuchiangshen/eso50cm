@@ -4,7 +4,6 @@
 using namespace std;
 
 TelescopeImpl::TelescopeImpl() {
-  int status;
   Ice::CommunicatorPtr communicator;
 
   try
@@ -24,13 +23,13 @@ TelescopeImpl::TelescopeImpl() {
 
     if(!lcuPrx)
     {
-       cerr << "Can not create reference to LCU Proxy!!" << endl;
-       status = EXIT_FAILURE;
+      OUC::NotLCUReferenceAvailableEx ex;
+      ex.reason = "Not reference to LCU Proxy available!";
+      throw ex;
     }
-
   }catch(const Ice::Exception& ex) {
     cerr << ex << endl;
-    status = EXIT_FAILURE;
+    throw ex;
   }
 }
 
@@ -47,26 +46,148 @@ TelescopeImpl::sayHelloTelescope(int delay, const Ice::Current&)
 
 bool TelescopeImpl::isConfigured(const Ice::Current&)
 {
+  extern int verbose;
+  
+  if( verbose ) 
+    printf( "TelescopeImpl::isConfigured" ); 
+  
+  try
+  {
+    if(!lcuPrx)
+      {
+	OUC::NotLCUReferenceAvailableEx ex;
+	ex.reason = "Not reference to LCU Proxy available!";
+	throw ex;	
+      }
+      
+    return lcuPrx->isConfigured();
+  } catch (Ice::Exception& ex) {
+    cerr << "Unexpected run-time error: " << ex << endl;
+    throw ex;
+  }
 }
  
 bool TelescopeImpl::isTracking(const Ice::Current&)
 {
+  extern int verbose;
+  
+  if( verbose ) 
+    printf( "TelescopeImpl::isTracking" ); 
+  
+  try
+  {
+    if(!lcuPrx)
+      {
+	OUC::NotLCUReferenceAvailableEx ex;
+	ex.reason = "Not reference to LCU Proxy available!";
+	throw ex;	
+      }
+      
+    return lcuPrx->isTracking();
+  } catch (Ice::Exception& ex) {
+    cerr << "Unexpected run-time error: " << ex << endl;
+    throw ex;
+  }
 }
 
 OUC::RawEncoderData TelescopeImpl::getRawEncodersPosition(const Ice::Current&)
 {
+  extern int verbose;
+  
+  if( verbose ) 
+    printf( "TelescopeImpl::getRawEncodersPosition" ); 
+  
+  try
+  {
+    if(!lcuPrx)
+      {
+	OUC::NotLCUReferenceAvailableEx ex;
+	ex.reason = "Not reference to LCU Proxy available!";
+	throw ex;	
+      }
+    
+    return  lcuPrx->getRawEncodersPosition();
+  } catch (OUC::TelescopeNotConfiguredEx& ex) {
+    cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+  } catch (Ice::Exception& ex) {
+    cerr << "Unexpected run-time error: " << ex << endl;
+    throw ex;
+  }
 }
  
 OUC::EncoderData TelescopeImpl::getEncodersPosition(const Ice::Current&)
 {
+  extern int verbose;
+  
+  if( verbose ) 
+    printf( "TelescopeImpl::getEncodersPosition" ); 
+  
+  try
+  {
+    if(!lcuPrx)
+      {
+	OUC::NotLCUReferenceAvailableEx ex;
+	ex.reason = "Not reference to LCU Proxy available!";
+	throw ex;	
+      }
+    
+    return  lcuPrx->getEncodersPosition();
+  } catch (OUC::TelescopeNotConfiguredEx& ex) {
+    cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+  } catch (Ice::Exception& ex) {
+    cerr << "Unexpected run-time error: " << ex << endl;
+    throw ex;
+  }  
 }
  
 OUC::TelescopeData TelescopeImpl::getPosition(const Ice::Current&)
 {
+  extern int verbose;
+  
+  if( verbose ) 
+    printf( "TelescopeImpl::getPosition" ); 
+  
+  try
+  {
+    if(!lcuPrx)
+      {
+	OUC::NotLCUReferenceAvailableEx ex;
+	ex.reason = "Not reference to LCU Proxy available!";
+	throw ex;	
+      }
+    
+    return  lcuPrx->getPosition();
+  } catch (OUC::TelescopeNotConfiguredEx& ex) {
+    cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+  } catch (Ice::Exception& ex) {
+    cerr << "Unexpected run-time error: " << ex << endl;
+    throw ex;
+  }
 }
 
 OUC::TelescopeConfigData TelescopeImpl::getConfiguration(const Ice::Current&)
 {
+  extern int verbose;
+  
+  if( verbose ) 
+    printf( "TelescopeImpl::getConfiguration" ); 
+  
+  try
+  {
+    if(!lcuPrx)
+      {
+	OUC::NotLCUReferenceAvailableEx ex;
+	ex.reason = "Not reference to LCU Proxy available!";
+	throw ex;	
+      }
+    
+    return  lcuPrx->getConfiguration();
+  } catch (OUC::TelescopeNotConfiguredEx& ex) {
+    cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+  } catch (Ice::Exception& ex) {
+    cerr << "Unexpected run-time error: " << ex << endl;
+    throw ex;
+  }
 }
 
 void TelescopeImpl::setConfiguration(const string& fileName, const Ice::Current&)
@@ -86,5 +207,13 @@ void TelescopeImpl::setTracking(const ::OUC::TrackingInfo& trkInfo, const Ice::C
 }
 
 void TelescopeImpl::parkTelescope(const Ice::Current&)
+{
+}
+
+void TelescopeImpl::stopTelescope(const ::OUC::TelescopeDirection& dir, const Ice::Current&)
+{
+}
+
+void TelescopeImpl::moveToTarget(const Ice::Current&)
 {
 }

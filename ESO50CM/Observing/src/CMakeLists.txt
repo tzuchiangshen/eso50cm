@@ -6,8 +6,12 @@ PROJECT(OBSCONTROL)
 #introot definition
 SET(INTROOT $ENV{INTROOT})
 IF(NOT INTROOT)
-    SET(CMAKE_INSTALL_PREFIX="/opt/LCUCONTROL")
-    MESSAGE("INTROOT not defined, CMAKE_INSTALL_PREFIX set to: /opt/LCUCONTROL")
+   SET(INTROOT $ENV{SWROOT})
+ENDIF(NOT INTROOT)
+
+IF(NOT INTROOT)
+    SET(CMAKE_INSTALL_PREFIX="/eso50cm/WSSW")
+    MESSAGE("INTROOT not defined, CMAKE_INSTALL_PREFIX set to:/eso50cm/WSSW")
 ELSE (NOT INTROOT)
     SET(CMAKE_INSTALL_PREFIX ${INTROOT})
     MESSAGE("CMAKE_INSTALL_PREFIX set to: $ENV{INTROOT}")
@@ -16,13 +20,13 @@ ENDIF (NOT INTROOT)
 #for generated files from slice
 ADD_CUSTOM_COMMAND(
     OUTPUT ${PROJECT_SOURCE_DIR}/Observing.cpp ${PROJECT_SOURCE_DIR}/Observing.h ${PROJECT_SOURCE_DIR}/LCU.cpp ${PROJECT_SOURCE_DIR}/LCU.h
-    DEPENDS ${PROJECT_SOURCE_DIR}/../idl/Observing.ice $ENV{INTROOT}/idl/LCU.ice
+    DEPENDS ${PROJECT_SOURCE_DIR}/../idl/Observing.ice ${INTROOT}/idl/LCU.ice
     #generate cpp proxies files
     COMMAND ${CMAKE_COMMAND} -E echo " Observing.cpp Observing.h generated."
-    COMMAND slice2cpp -I$ENV{SWROOT}/idl ${PROJECT_SOURCE_DIR}/../idl/Observing.ice $ENV{INTROOT}/idl/LCU.ice 
+    COMMAND slice2cpp -I${INTROOT}/idl ${PROJECT_SOURCE_DIR}/../idl/Observing.ice ${INTROOT}/idl/LCU.ice 
     #generate python proxies files
     COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_SOURCE_DIR}/generated"
-    COMMAND slice2py -I$ENV{INTROOT}/idl  -I${PROJECT_SOURCE_DIR}/../idl --output-dir ${PROJECT_SOURCE_DIR}/generated ${PROJECT_SOURCE_DIR}/../idl/Observing.ice
+    COMMAND slice2py -I${INTROOT}/idl  -I${PROJECT_SOURCE_DIR}/../idl --output-dir ${PROJECT_SOURCE_DIR}/generated ${PROJECT_SOURCE_DIR}/../idl/Observing.ice
     COMMAND ${CMAKE_COMMAND} -E echo " ICE python proxy generated under src/generated/ dir."
     COMMENT "generating slice files..." 
 )
@@ -37,7 +41,7 @@ INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/")
 INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/../include")
 
 #for ../bin/ObsControl executable 
-LINK_DIRECTORIES($ENV{INTROOT}/lib)
+LINK_DIRECTORIES(${INTROOT}/lib)
 LINK_DIRECTORIES(/usr/lib)
 ADD_EXECUTABLE(ObsControl ObsControl)
 TARGET_LINK_LIBRARIES(ObsControl ObservingImpl) 
