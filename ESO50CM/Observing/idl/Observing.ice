@@ -43,6 +43,12 @@ class Telescope
     void parkTelescope()
          throws TelescopeNotConfiguredEx,
                 NotLCUReferenceAvailableEx; 
+    void stopTelescope(TelescopeDirection dir)
+         throws TelescopeNotConfiguredEx,
+                NotLCUReferenceAvailableEx; 
+    void moveToTarget()
+         throws TelescopeNotConfiguredEx,
+                NotLCUReferenceAvailableEx; 
 };
 
 interface Observing
