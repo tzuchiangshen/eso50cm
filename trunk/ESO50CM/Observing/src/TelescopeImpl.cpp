@@ -210,7 +210,7 @@ void TelescopeImpl::parkTelescope(const Ice::Current&)
 {
 }
 
-void TelescopeImpl::stopTelescope(const ::OUC::TelescopeDirection& dir, const Ice::Current&)
+void TelescopeImpl::stopTelescope(const ::OUC::TelescopeDirection dir, const Ice::Current&)
 {
 }
 
