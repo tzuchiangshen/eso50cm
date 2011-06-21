@@ -9,9 +9,11 @@ TelescopeImpl::TelescopeImpl() {
   try
   {
     /* Reading configuration info */
+    string configPath =  getenv("SWROOT");
+    configPath = configPath + "/config/LCU-config";
     Ice::InitializationData initData;
     initData.properties = Ice::createProperties();
-    initData.properties->load("config");
+    initData.properties->load(configPath);
     communicator = Ice::initialize(initData);
 
     /* Create proxy */

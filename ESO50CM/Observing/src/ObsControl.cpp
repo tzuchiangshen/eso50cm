@@ -26,7 +26,7 @@ main(int argc, char* argv[])
     try
     {
 	string configPath =  getenv("SWROOT");
-        configPath = configPath + "/config/config";
+        configPath = configPath + "/config/Obs-config";
         Ice::InitializationData initData;
 	initData.properties = Ice::createProperties();
         initData.properties->load(configPath);

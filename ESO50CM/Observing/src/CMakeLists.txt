@@ -79,7 +79,7 @@ INSTALL(
 
 #install configuration files into $INTROOT/config
 INSTALL(
-   FILES ${PROJECT_SOURCE_DIR}/../config/config DESTINATION config
+   FILES ${PROJECT_SOURCE_DIR}/../config/Obs-config DESTINATION config
 )
 
 #install .h 

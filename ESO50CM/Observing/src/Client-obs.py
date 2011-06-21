@@ -44,7 +44,7 @@ def connect():
         try:
            # Reading configuration info 
            configPath = os.environ.get("SWROOT")
-           configPath = configPath + "/config/config" 
+           configPath = configPath + "/config/Obs-config" 
            initData = Ice.InitializationData()
            initData.properties = Ice.createProperties()
            initData.properties.load(configPath)
