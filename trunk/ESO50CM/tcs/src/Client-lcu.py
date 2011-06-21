@@ -41,11 +41,23 @@ def connect():
 	print "Connecting.."
 	status = 0
         try:
-           ic = Ice.initialize(sys.argv)
-           obj = ic.stringToProxy("LCU:tcp -h 192.168.0.10 -p 10000");
-           lcuImpl = OUC.LCUPrx.checkedCast(obj)
-	   print "Connected to LCUControl"
-           if not lcuImpl: 
+           # Reading configuration info 
+           configPath = os.environ.get("SWROOT")
+           configPath = configPath + "/config/LCU-config"
+           initData = Ice.InitializationData()
+           initData.properties = Ice.createProperties()
+           initData.properties.load(configPath)
+           ic = Ice.initialize(sys.argv, initData)
+
+           # Create proxy
+           properties = ic.getProperties();
+           proxyProperty = "LCUAdapter.Proxy"
+           proxy = properties.getProperty(proxyProperty);
+           print proxy
+           obj = ic.stringToProxy(proxy);
+           lcuImpl = OUC.ObservingPrx.checkedCast(obj)
+           print "Connected to LCUControl"
+           if not lcuImpl:
                    raise RuntimeError("Invalid proxy")
 	except:
            traceback.print_exc()

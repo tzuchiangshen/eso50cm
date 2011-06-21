@@ -129,7 +129,7 @@ INSTALL(
 
 #install configuration files into $INTROOT/config
 INSTALL(
-   FILES ${PROJECT_SOURCE_DIR}/../config/config 
+   FILES ${PROJECT_SOURCE_DIR}/../config/LCU-config 
          ${PROJECT_SOURCE_DIR}/../config/ESO50cm.conf DESTINATION config 
 )
 
@@ -152,6 +152,6 @@ IF(NOT LCU)
       FILES ${PROJECT_SOURCE_DIR}/AstroUtil.py DESTINATION lib/python/site-packages
    )
    INSTALL(
-      FILES ${PROJECT_SOURCE_DIR}/Client.py DESTINATION bin
+      FILES ${PROJECT_SOURCE_DIR}/Client-lcu.py DESTINATION bin
    )
 ENDIF(NOT LCU)
