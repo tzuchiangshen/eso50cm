@@ -24,9 +24,11 @@ main(int argc, char* argv[])
 
     try
     {
+        string configPath =  getenv("SWROOT");
+        configPath = configPath + "/config/LCU-config";
         Ice::InitializationData initData;
 	initData.properties = Ice::createProperties();
-        initData.properties->load("config");
+        initData.properties->load(configPath);
 	initData.properties->setProperty("Ice.Override.Timeout", "100");
 	communicator = Ice::initialize(argc, argv, initData);
 	status = run(argc, argv, communicator);
