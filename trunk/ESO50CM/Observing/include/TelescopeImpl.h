@@ -25,13 +25,12 @@ public:
   virtual void setConfiguration(const string& fileName, const Ice::Current&);
   virtual void setTarget(const ::OUC::TelescopePosition& targetPos, const Ice::Current&);
   virtual void setOffset(const ::OUC::TelescopePosition& offsetPos, const Ice::Current&);
-  virtual void setTracking(const ::OUC::TrackingInfo& trkInfo, const Ice::Current&);
+  virtual void setTracking(OUC::TrackingInfo& trkInfo, const Ice::Current&);
   virtual void parkTelescope(const Ice::Current&);
   virtual void stopTelescope(const ::OUC::TelescopeDirection dir, const Ice::Current&);
   virtual void moveToTarget(const Ice::Current&);
 private:
   OUC::LCUPrx lcuPrx;
-
   OUC::RawEncoderData *rawEncoder_t;
   OUC::EncoderData *encoder_t;
   OUC::TelescopeConfigData *telescopeConfigData_t;
