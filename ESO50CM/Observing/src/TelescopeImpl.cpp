@@ -109,6 +109,7 @@ OUC::RawEncoderData TelescopeImpl::getRawEncodersPosition(const Ice::Current&)
     return  lcuPrx->getRawEncodersPosition();
   } catch (OUC::TelescopeNotConfiguredEx& ex) {
     cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+    throw ex;
   } catch (Ice::Exception& ex) {
     cerr << "Unexpected run-time error: " << ex << endl;
     throw ex;
@@ -134,6 +135,7 @@ OUC::EncoderData TelescopeImpl::getEncodersPosition(const Ice::Current&)
     return  lcuPrx->getEncodersPosition();
   } catch (OUC::TelescopeNotConfiguredEx& ex) {
     cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+    throw ex;
   } catch (Ice::Exception& ex) {
     cerr << "Unexpected run-time error: " << ex << endl;
     throw ex;
@@ -159,6 +161,7 @@ OUC::TelescopeData TelescopeImpl::getPosition(const Ice::Current&)
     return  lcuPrx->getPosition();
   } catch (OUC::TelescopeNotConfiguredEx& ex) {
     cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+    throw ex;
   } catch (Ice::Exception& ex) {
     cerr << "Unexpected run-time error: " << ex << endl;
     throw ex;
@@ -184,6 +187,7 @@ OUC::TelescopeConfigData TelescopeImpl::getConfiguration(const Ice::Current&)
     return  lcuPrx->getConfiguration();
   } catch (OUC::TelescopeNotConfiguredEx& ex) {
     cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+    throw ex;
   } catch (Ice::Exception& ex) {
     cerr << "Unexpected run-time error: " << ex << endl;
     throw ex;
@@ -192,28 +196,185 @@ OUC::TelescopeConfigData TelescopeImpl::getConfiguration(const Ice::Current&)
 
 void TelescopeImpl::setConfiguration(const string& fileName, const Ice::Current&)
 {
+  extern int verbose;
+  
+  if( verbose ) 
+    printf( "TelescopeImpl::setConfiguration" ); 
+  
+  try
+  {
+    if(!lcuPrx)
+      {
+	OUC::NotLCUReferenceAvailableEx ex;
+	ex.reason = "Not reference to LCU Proxy available!";
+	throw ex;	
+      }
+    
+    lcuPrx->setConfiguration(fileName); 
+  } catch (Ice::Exception& ex) {
+    cerr << "Unexpected run-time error: " << ex << endl;
+    throw ex;
+  }
 }
 
 void TelescopeImpl::setTarget(const ::OUC::TelescopePosition& targetPos, const Ice::Current&)
 {
+  extern int verbose;
+  
+  if( verbose ) 
+    printf( "TelescopeImpl::setTarget" ); 
+  
+  try
+  {
+    if(!lcuPrx)
+      {
+	OUC::NotLCUReferenceAvailableEx ex;
+	ex.reason = "Not reference to LCU Proxy available!";
+	throw ex;	
+      }
+    
+    return  lcuPrx->setTarget(targetPos);
+  } catch (OUC::TelescopeNotConfiguredEx& ex) {
+    cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+    throw ex;
+  } catch (OUC::TargetOutOfLimitsEx& ex) {
+    cout << "LCU returned: " << ex.reason << "Try another target!!"<< endl;  
+    throw ex;
+  } catch (Ice::Exception& ex) {
+    cerr << "Unexpected run-time error: " << ex << endl;
+    throw ex;
+  }
 }
 
 void TelescopeImpl::setOffset(const ::OUC::TelescopePosition& offsetPos, const Ice::Current&)
 {
+  extern int verbose;
+  
+  if( verbose ) 
+    printf( "TelescopeImpl::setOffset" ); 
+  
+  try
+  {
+    if(!lcuPrx)
+      {
+	OUC::NotLCUReferenceAvailableEx ex;
+	ex.reason = "Not reference to LCU Proxy available!";
+	throw ex;	
+      }
+    
+    return  lcuPrx->setOffset(offsetPos);
+  } catch (OUC::TelescopeNotConfiguredEx& ex) {
+    cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+    throw ex;
+  } catch (OUC::TargetOutOfLimitsEx& ex) {
+    cout << "LCU returned: " << ex.reason << "Try another target!!"<< endl;  
+    throw ex;
+  } catch (Ice::Exception& ex) {
+    cerr << "Unexpected run-time error: " << ex << endl;
+    throw ex;
+  }
 }
 
-void TelescopeImpl::setTracking(const ::OUC::TrackingInfo& trkInfo, const Ice::Current&)
+void TelescopeImpl::setTracking(OUC::TrackingInfo& trkInfo, const Ice::Current&)
 {
+ extern int verbose;
+  
+  if( verbose ) 
+    printf( "TelescopeImpl::setTracking" ); 
+  
+  try
+  {
+    if(!lcuPrx)
+      {
+	OUC::NotLCUReferenceAvailableEx ex;
+	ex.reason = "Not reference to LCU Proxy available!";
+	throw ex;	
+      }
+    
+    return  lcuPrx->setTracking(trkInfo);
+  } catch (OUC::TelescopeNotConfiguredEx& ex) {
+    cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+    throw ex;
+  } catch (Ice::Exception& ex) {
+    cerr << "Unexpected run-time error: " << ex << endl;
+    throw ex;
+  }
 }
 
 void TelescopeImpl::parkTelescope(const Ice::Current&)
 {
+ extern int verbose;
+  
+  if( verbose ) 
+    printf( "TelescopeImpl::parkTelescope" ); 
+  
+  try
+  {
+    if(!lcuPrx)
+      {
+	OUC::NotLCUReferenceAvailableEx ex;
+	ex.reason = "Not reference to LCU Proxy available!";
+	throw ex;	
+      }
+    
+    return  lcuPrx->parkTelescope();
+  } catch (OUC::TelescopeNotConfiguredEx& ex) {
+    cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+    throw ex;
+  } catch (Ice::Exception& ex) {
+    cerr << "Unexpected run-time error: " << ex << endl;
+    throw ex;
+  }
 }
 
 void TelescopeImpl::stopTelescope(const ::OUC::TelescopeDirection dir, const Ice::Current&)
 {
+ extern int verbose;
+  
+  if( verbose ) 
+    printf( "TelescopeImpl::stopTelescope" ); 
+  
+  try
+  {
+    if(!lcuPrx)
+      {
+	OUC::NotLCUReferenceAvailableEx ex;
+	ex.reason = "Not reference to LCU Proxy available!";
+	throw ex;	
+      }
+    
+    return  lcuPrx->stopTelescope(dir);
+  } catch (OUC::TelescopeNotConfiguredEx& ex) {
+    cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+    throw ex;
+  } catch (Ice::Exception& ex) {
+    cerr << "Unexpected run-time error: " << ex << endl;
+    throw ex;
+  }
 }
 
 void TelescopeImpl::moveToTarget(const Ice::Current&)
 {
+ extern int verbose;
+  
+  if( verbose ) 
+    printf( "TelescopeImpl::moveToTarget" ); 
+  
+  try
+  {
+    if(!lcuPrx)
+      {
+	OUC::NotLCUReferenceAvailableEx ex;
+	ex.reason = "Not reference to LCU Proxy available!";
+	throw ex;	
+      }
+    
+    return  lcuPrx->moveToTarget();
+  } catch (OUC::TelescopeNotConfiguredEx& ex) {
+    cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+    throw ex;
+  } catch (Ice::Exception& ex) {
+    cerr << "Unexpected run-time error: " << ex << endl;
+    throw ex;
+  }
 }

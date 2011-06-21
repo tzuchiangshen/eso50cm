@@ -42,8 +42,20 @@ def connect():
 	print "Connecting.."
 	status = 0
         try:
-           ic = Ice.initialize(sys.argv)
-           obj = ic.stringToProxy("Observing:tcp -h 172.20.10.6 -p 10000");
+           # Reading configuration info 
+           configPath = os.environ.get("SWROOT")
+           configPath = configPath + "/config/config" 
+           initData = Ice.InitializationData()
+           initData.properties = Ice.createProperties()
+           initData.properties.load(configPath)
+           ic = Ice.initialize(sys.argv, initData)
+
+           # Create proxy
+           properties = ic.getProperties();
+           proxyProperty = "ObsAdapter.Proxy"
+           proxy = properties.getProperty(proxyProperty);
+           print proxy
+           obj = ic.stringToProxy(proxy);
            obsImpl = OUC.ObservingPrx.checkedCast(obj)
 	   print "Connected to ObsControl"
            if not obsImpl: 
