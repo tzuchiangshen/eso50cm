@@ -220,6 +220,7 @@ void
 LCUImpl::setTarget(const OUC::TelescopePosition& targetPos, const Ice::Current& c)
 {
     extern int verbose;
+	double RA, Dec =0.0;
 
     if( verbose )
       printf( "LCUImpl::setTarget" );
@@ -231,12 +232,21 @@ LCUImpl::setTarget(const OUC::TelescopePosition& targetPos, const Ice::Current& 
         ex.reason = "Telecope Not Configured";
         throw ex;
     }
+      printf( "LCUImpl::setTarget targetPos.RA=%lf\n", MiddleEndianToLittleEndian(targetPos.RA) );
+      printf( "LCUImpl::setTarget targetPos.Dec=%lf\n",MiddleEndianToLittleEndian(targetPos.Dec) );
+
+	  //convert to middle endian
+	RA = MiddleEndianToLittleEndian(targetPos.RA);
+	Dec = MiddleEndianToLittleEndian(targetPos.Dec);
 
     /** Acquire Semaphore for SHM **/
     m_lcu->waitSemaphore();
 
     /** Send new target **/
-    if(m_lcu->telescope->setTarget((double)targetPos.RA, (double)targetPos.Dec, (double*)&targetPos.Alt, (double*)&targetPos.Az) == 0) 
+    //if(m_lcu->telescope->setTarget((double)targetPos.RA, (double)targetPos.Dec, (double*)&targetPos.Alt, (double*)&targetPos.Az) == 0) 
+
+    if(m_lcu->telescope->setTarget(RA, Dec, (double*)&targetPos.Alt, (double*)&targetPos.Az) == 0) 
+
     {
 		char *limits;
 		OUC::TargetOutOfLimitsEx ex;
