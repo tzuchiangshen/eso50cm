@@ -4,16 +4,13 @@
 #include "LCU.h"
 #include "myLCU.h"
 
-#ifdef LCU
-    #include <IceE/IceE.h>
+#ifdef ARM
+   #include <IceE/IceE.h>
 #else
     #include <Ice/Ice.h>
 #endif
 
-
-
-class LCUImpl : public OUC::LCU
-{
+class LCUImpl : public OUC::LCU {
 public:
 
 
