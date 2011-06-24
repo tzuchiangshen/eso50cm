@@ -1,4 +1,4 @@
-#ifdef LCU
+#ifdef ARM
    #include <IceE/IceE.h>
 #else
     #include <Ice/Ice.h>
@@ -133,7 +133,7 @@ run(int argc, char* argv[], const Ice::CommunicatorPtr& communicator)
 	}
 	catch(const Ice::Exception& ex)
 	{
-#ifdef LCU
+#ifdef ARM
 	    fprintf(stderr, "%s\n", ex.toString().c_str());
 #else
         cerr << ex << endl;
@@ -161,7 +161,7 @@ main(int argc, char* argv[])
     }
     catch(const Ice::Exception& ex)
     {
-#ifdef LCU
+#ifdef ARM
 	fprintf(stderr, "%s\n", ex.toString().c_str());
 #else
         cerr << ex << endl;
@@ -177,7 +177,7 @@ main(int argc, char* argv[])
 	}
 	catch(const Ice::Exception& ex)
 	{
-#ifdef LCU
+#ifdef ARM
 	    fprintf(stderr, "%s\n", ex.toString().c_str());
 #else
         cerr << ex << endl;

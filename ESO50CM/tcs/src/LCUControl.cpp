@@ -35,7 +35,7 @@ main(int argc, char* argv[])
     }
     catch(const Ice::Exception& ex)
     {
-#ifdef LCU
+#ifdef ARM
 	fprintf(stderr, "%s\n", ex.toString().c_str());
 #else
         cerr << ex << endl;
@@ -51,7 +51,7 @@ main(int argc, char* argv[])
 	}
 	catch(const Ice::Exception& ex)
 	{
-#ifdef LCU
+#ifdef ARM
 	    fprintf(stderr, "%s\n", ex.toString().c_str());
 #else   
         cerr << ex << endl;
