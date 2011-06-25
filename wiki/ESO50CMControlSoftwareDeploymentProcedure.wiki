@@ -11,6 +11,7 @@ Deployment Procedure
     
 
 = Software configuration =
+== Third parties software packages == 
   * software packages (Tzu)
     * install as root the following packages 
       * vim, gcc, g++, make, cmake, subversion, zeroc-icee 
