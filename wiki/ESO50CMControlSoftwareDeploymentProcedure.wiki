@@ -21,8 +21,9 @@ Deployment Procedure
 === Control Software Build/Installation === 
 (Ruben)
 == Development Environment === 
-(Tzu)
 === ARM emulator === 
+(Tzu)
+
 = Rerferences =
   * debian installation 
   * ICE 
