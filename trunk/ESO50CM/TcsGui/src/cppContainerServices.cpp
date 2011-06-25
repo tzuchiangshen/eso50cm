@@ -70,6 +70,18 @@ void cppContainerServices::getCurrentPositionDec(char *buffer, int maxlen)
 	//printf("-----------------------%s\n", buffer);
 	//return buffer;
 }
+
+void cppContainerServices::formatRAPosition(double ra, char *buffer, int maxlen) 
+{
+	//convert to sexagesimal 
+	strfdegs( buffer, maxlen, "%02d:%02d:%02.0lf\0", ra / 15.0 );
+}
+
+void cppContainerServices::formatDecPosition(double dec, char *buffer, int maxlen) 
+{
+	strfdegs( buffer, maxlen, "%+03d:%02d:%02.0lf\0", dec);
+}
+
 //=============
 
 int cppContainerServices::getPosition()
@@ -254,7 +266,7 @@ int cppContainerServices::connect()
     {
     	Ice::InitializationData initData;
 		initData.properties = Ice::createProperties();
-        initData.properties->load("config");
+        initData.properties->load("LCU-config");
 		communicator = Ice::initialize(argc, argv, initData);
 		//communicator = Ice::initialize(initData, 0);
 		//status = getPosition(argc, argv, communicator);

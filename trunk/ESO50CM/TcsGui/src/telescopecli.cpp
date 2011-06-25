@@ -124,39 +124,65 @@ void TelescopeCli::showData(const int type,  OUC::TelescopeData *data ) {
 	if (type == 1) {
 		//Time 
 
+		struct tm ts;
+		time_t now; 
+		now = (time_t)data->lcuTime;
+
+		char buf[256];
 		//UT
-		info = QString("%1").arg(data->lcuTime,0, 'f',0);
+		ts = *gmtime(&now);
+		strftime(buf, sizeof(buf), "%H:%M:%S", &ts);
+		info = QString(buf);
 		ui->UT_LineEdit->setText( info );
-		//UT
-		info = QString("%1").arg(data->lcuTime, 0, 'f', 0);
+		//LT
+		ts = *localtime(&now);
+		strftime(buf, sizeof(buf), "%H:%M:%S", &ts);
+		info = QString(buf);
 		ui->LT_LineEdit->setText( info );
 		//JD
 		info = QString("%1").arg(data->julianDate, 0, 'f', 0);
 		ui->JD_LineEdit->setText( info );
 		//LST
-		info = QString("%1").arg(data->localSideralTime);
+		cs->formatRAPosition(data->currentPos.localSideralTime, buf, sizeof(buf));
+		info = QString(tr(buf));
 		ui->LST_LineEdit->setText( info );
 
-		//current position  
-		info = QString("%1").arg(data->currentPos.RA);
+		//current position : RA
+		cs->formatRAPosition(data->currentPos.RA, buf, sizeof(buf));
+		info = QString(tr(buf));
 		ui->telRALineEdit->setText( info );
-		info = QString("%1").arg(data->currentPos.Dec);
+		//current position : Dec
+		cs->formatDecPosition(data->currentPos.Dec, buf, sizeof(buf));
+		info = QString(tr(buf));
 		ui->telDecLineEdit->setText( info );
-		info = QString("%1").arg(data->currentPos.HA);
+		//current position : HA
+		cs->formatRAPosition(data->currentPos.HA, buf, sizeof(buf));
+		info = QString(tr(buf));
 		ui->telHALineEdit->setText( info );
-		//target position  
-		info = QString("%1").arg(data->targetPos.RA);
+
+		//target position : RA
+		cs->formatRAPosition(data->targetPos.RA, buf, sizeof(buf));
+		info = QString(tr(buf));
 		ui->trgRALineEdit->setText( info );
-		info = QString("%1").arg(data->targetPos.Dec);
+		//target position : Dec
+		cs->formatDecPosition(data->targetPos.Dec, buf, sizeof(buf));
+		info = QString(tr(buf));
 		ui->trgDecLineEdit->setText( info );
-		info = QString("%1").arg(data->targetPos.HA);
+		//target position : HA
+		cs->formatRAPosition(data->targetPos.HA, buf, sizeof(buf));
+		info = QString(tr(buf));
 		ui->trgHALineEdit->setText( info );
-		//differences  
-		info = QString("%1").arg(data->differencePos.RA);
+		//differences: RA
+		cs->formatRAPosition(data->differencePos.RA, buf, sizeof(buf));
+		info = QString(tr(buf));
 		ui->difRALineEdit->setText( info );
-		info = QString("%1").arg(data->differencePos.Dec);
+		//difference position : Dec
+		cs->formatDecPosition(data->differencePos.Dec, buf, sizeof(buf));
+		info = QString(tr(buf));
 		ui->difDecLineEdit->setText( info );
-		info = QString("%1").arg(data->differencePos.HA);
+		//difference position : HA
+		cs->formatRAPosition(data->differencePos.HA, buf, sizeof(buf));
+		info = QString(tr(buf));
 		ui->difHALineEdit->setText( info );
 	}
 }
