@@ -324,7 +324,7 @@ void cppContainerServices::run()
 	while(1) 
 	{
 		getPosition();
-		sleep(3);
+		sleep(1.0);
 	}
 }
 
