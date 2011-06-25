@@ -1,0 +1,19 @@
+#ESO50CM Control Software Deployment Procedure
+
+= Introduction =
+Deployment Procedure
+
+= Pre Conditions =
+  * ARM TS7800
+    * configured with debian Debian 5.0 as O.S 
+    * kernel version XXXXXXXX
+  * Network configuration  (Tzu)
+    
+
+= Software configuration =
+  * software packages (Tzu)
+    * install as root the following packages 
+      * vim, gcc, g++, make, cmake, subversion, zeroc-icee 
+  * ESO50cm control software deployment  
+    *    
+  
