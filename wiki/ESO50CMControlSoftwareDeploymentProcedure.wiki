@@ -18,7 +18,7 @@ Deployment Procedure
 == ESO50CM Control Software Deployment ==
 === Deployment Enviroment === 
 (Johnny)
-=== Control Software Build and Install === 
+=== Control Software Build/Installation === 
 (Ruben)
 == Development Environment === 
 (Tzu)
