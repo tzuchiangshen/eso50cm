@@ -184,6 +184,15 @@ void TelescopeCli::showData(const int type,  OUC::TelescopeData *data ) {
 		cs->formatRAPosition(data->differencePos.HA, buf, sizeof(buf));
 		info = QString(tr(buf));
 		ui->difHALineEdit->setText( info );
+
+		//Azimuth
+		cs->formatRAPosition(data->currentPos.Az, buf, sizeof(buf));
+		info = QString(tr(buf));
+		ui->telAltLineEdit->setText( info );
+		//Elevation
+		cs->formatDecPosition(data->currentPos.Alt, buf, sizeof(buf));
+		info = QString(tr(buf));
+		ui->telAzLineEdit->setText( info );
 	}
 }
 
