@@ -3,11 +3,11 @@
 = Introduction =
 Deployment Procedure
 
-= Pre Conditions =
+= Pre Conditions = (Tzu)
   * ARM TS7800
     * configured with debian Debian 5.0 as O.S 
     * kernel version XXXXXXXX
-  * Network configuration  (Tzu)
+  * Network configuration
     
 
 = Software configuration =
@@ -16,10 +16,10 @@ Deployment Procedure
     * install as root the following packages 
       * vim, gcc, g++, make, cmake, subversion, zeroc-icee 
 == ESO50CM Control Software Deployment ==
-=== Deployment Enviroment ===
-=== Control Software Build and Install ===
-=== New Development Environment ===
-
+=== Deployment Enviroment === (Johnny)
+=== Control Software Build and Install === (Ruben)
+== Development Environment === (Tzu)
+=== ARM emulator === 
 = Rerferences =
   * debian installation 
   * ICE 
