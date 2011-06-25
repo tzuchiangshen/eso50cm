@@ -11,10 +11,20 @@ Deployment Procedure
     
 
 = Software configuration =
-== Third parties software packages == 
-  * software packages (Tzu)
+== Third parties software packages == (Tzu)
+  * software packages 
     * install as root the following packages 
       * vim, gcc, g++, make, cmake, subversion, zeroc-icee 
-  * ESO50cm control software deployment  
-    *    
+== ESO50CM Control Software Deployment ==
+=== Deployment Enviroment ===
+=== Control Software Build and Install ===
+=== New Development Environment ===
+
+= Rerferences =
+  * debian installation 
+  * ICE 
+  * ESO50CM Control Software Startup Procedure
+
+
+
   
