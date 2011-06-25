@@ -30,6 +30,8 @@ public:
 	OUC::TelescopeData getTelescopeData();
 	void getCurrentPositionRA(char *buffer, int maxlen);
 	void getCurrentPositionDec(char *buffer, int maxlen);
+	void formatRAPosition(double, char *buffer, int maxlen);
+	void formatDecPosition(double, char *buffer, int maxlen);
 	int setTargetPositionRA(const char* ra);
 	int setTargetPositionDec(const char* arguments);
 
