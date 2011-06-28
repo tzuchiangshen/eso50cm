@@ -9,12 +9,14 @@ using namespace Log;
 
 class LoggingService : public Application {
     int run(int argc, char* args[]) {
+        // Preparing logging service        
         shutdownOnInterrupt();
         CommunicatorPtr ic = communicator();
         ObjectAdapterPtr adapter = ic->createObjectAdapter("LoggingService");
-        ObjectPtr servant = new LoggerI;
+        ObjectPtr servant = new LoggerI(ic);
         ObjectPrx base = adapter->add(servant, ic->stringToIdentity("Logger"));
         adapter->activate();
+        // here we print the result
         cout << ic->proxyToString(base) << endl;    
         ic->waitForShutdown();
         return 0;

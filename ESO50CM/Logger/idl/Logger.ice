@@ -20,12 +20,9 @@ module Log
     {
             void logMessage(LogMessageData log);
             idempotent void setDiscardLevel(string source, LogLevel level);
-            idempotent void setGlobalDiscardLevel(LogLevel level);
-    };
-    interface LoggerClient
-    {
-            LogMessageDataSet getLogsFromIndex(int index,int maxlogs);
-            LogMessageDataSet getLogsFromDate(int timestamp);
+            idempotent void setGlobalDiscardLevel(LogLevel level);     
+            int getDiscardLevel(string source);
+            int getGlobalDiscardLevel();     
     };
 };
 #endif
