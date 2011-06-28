@@ -125,7 +125,7 @@ interface LCU
     	 throws TelescopeNotConfiguredEx, TargetOutOfLimitsEx;
     void setOffset(TelescopePosition offsetPos)
     	 throws TelescopeNotConfiguredEx, TargetOutOfLimitsEx;
-    void setTracking(out TrackingInfo trkInfo)
+    void setTracking(TrackingInfo trkInfo)
          throws TelescopeNotConfiguredEx;
     void parkTelescope()
          throws TelescopeNotConfiguredEx;

@@ -55,7 +55,7 @@ def connect():
            proxy = properties.getProperty(proxyProperty);
            print proxy
            obj = ic.stringToProxy(proxy);
-           lcuImpl = OUC.ObservingPrx.checkedCast(obj)
+           lcuImpl = OUC.LCUPrx.checkedCast(obj)
            print "Connected to LCUControl"
            if not lcuImpl:
                    raise RuntimeError("Invalid proxy")
@@ -214,7 +214,7 @@ def setConfiguration():
 		if(introot_path == ""):
 			introot_path = "/eso50cm/LCUSW" 		
 
-		conf_path = "%s/%s" % (introot_path, "config/ESO50cm.conf")
+		conf_path = "%s/%s" % (introot_path, "/config/ESO50cm.conf")
 		lcuImpl.setConfiguration(conf_path)
 		print "Configuration send to LCUControl"
 	except:
@@ -245,13 +245,16 @@ def parkTelescope():
 if __name__ == "__main__":
 	connect()
 	#setConfiguration()
+        #print "#######################################"
 	#if isConfigured():
 	#   getConfiguration()
         #sayHello()
 	#getEncoderPosition()
         #parkTelescope()
         setTracking(True, 600)
-	#getRawEncoderPosition()
+	print "#######################################"	
+	getRawEncoderPosition()
+        print "#######################################"
 	#getPosition()
 	disconnect()
 	
