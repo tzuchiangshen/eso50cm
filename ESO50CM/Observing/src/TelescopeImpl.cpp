@@ -277,7 +277,7 @@ void TelescopeImpl::setOffset(const ::OUC::TelescopePosition& offsetPos, const I
   }
 }
 
-void TelescopeImpl::setTracking(OUC::TrackingInfo& trkInfo, const Ice::Current&)
+void TelescopeImpl::setTracking(const OUC::TrackingInfo& trkInfo, const Ice::Current&)
 {
  extern int verbose;
   
