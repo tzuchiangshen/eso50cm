@@ -3,7 +3,7 @@
 
 
 #include <Ice/Ice.h>
-#include "LCU.h"
+#include "Observing.h"
 #include <QThread>
 #include <QMutex>
 #include <QDebug>
@@ -25,7 +25,7 @@ public:
 
     int connect();
     int disconnect();
-	LCUPrx getLCUReference();
+	OUC::TelescopePrx getLCUReference();
 	void test();
 	OUC::TelescopeData getTelescopeData();
 	void getCurrentPositionRA(char *buffer, int maxlen);
@@ -43,7 +43,8 @@ private:
 	char * strfdegs( char * string, size_t max_len, const char * format, double degs );
 	double degs2double(char *str);
     Ice::CommunicatorPtr communicator;
-    LCUPrx lcu;
+    ObservingPrx obs;
+	TelescopePrx lcu;
 	OUC::TelescopeData *data;
 	QMutex mutex;
 };

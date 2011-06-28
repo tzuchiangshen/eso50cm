@@ -244,7 +244,7 @@ cppContainerServices::~cppContainerServices()
 
 }
 
-LCUPrx cppContainerServices::getLCUReference() {
+TelescopePrx cppContainerServices::getLCUReference() {
 	if (lcu) 
 		return lcu;
 	else {
@@ -266,7 +266,7 @@ int cppContainerServices::connect()
     {
     	Ice::InitializationData initData;
 		initData.properties = Ice::createProperties();
-        initData.properties->load("LCU-config");
+        initData.properties->load("Obs-config");
 		communicator = Ice::initialize(argc, argv, initData);
 		//communicator = Ice::initialize(initData, 0);
 		//status = getPosition(argc, argv, communicator);
@@ -280,24 +280,30 @@ int cppContainerServices::connect()
     // get reference to LCUImpl
 
     Ice::PropertiesPtr properties = communicator->getProperties();
-    const char* proxyProperty = "LCUAdapter.Proxy";
+    const char* proxyProperty = "ObsAdapter.Proxy";
     string proxy = properties->getProperty(proxyProperty);
     if(proxy.empty())
     {
-	fprintf(stderr, "%s: property `%s' not set\n", argv[0], proxyProperty);
-	return EXIT_FAILURE;
+		fprintf(stderr, "%s: property `%s' not set\n", argv[0], proxyProperty);
+		return EXIT_FAILURE;
     }
 
     Ice::ObjectPrx base = communicator->stringToProxy(proxy);
-    lcu = LCUPrx::checkedCast(base->ice_twoway()->ice_timeout(-1));
+    obs = ObservingPrx::checkedCast(base->ice_twoway()->ice_timeout(-1));
+    if(!obs)
+    {
+		fprintf(stderr, "%s: invalid proxy\n", argv[0]);
+		return EXIT_FAILURE;
+    }
+
+	lcu = obs->getTelescope();
     if(!lcu)
     {
-	fprintf(stderr, "%s: invalid proxy\n", argv[0]);
-	return EXIT_FAILURE;
+		fprintf(stderr, "%s: invalid proxy\n", argv[0]);
+		return EXIT_FAILURE;
     }
 
     return status;
-
 }
 
 int cppContainerServices::disconnect() 
