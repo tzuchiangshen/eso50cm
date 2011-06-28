@@ -37,7 +37,7 @@ class Telescope
     void setOffset(TelescopePosition offsetPos)
     	 throws TelescopeNotConfiguredEx, TargetOutOfLimitsEx,
                 NotLCUReferenceAvailableEx;
-    void setTracking(out TrackingInfo trkInfo)
+    void setTracking(TrackingInfo trkInfo)
          throws TelescopeNotConfiguredEx, 
                 NotLCUReferenceAvailableEx;
     void parkTelescope()
