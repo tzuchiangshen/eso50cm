@@ -220,8 +220,8 @@ void
 LCUImpl::setTarget(const OUC::TelescopePosition& targetPos, const Ice::Current& c)
 {
     extern int verbose;
-	double RA, Dec =0.0;
-
+    double RA, Dec =0.0;
+    
     if( verbose )
       printf( "LCUImpl::setTarget" );
 
@@ -232,29 +232,30 @@ LCUImpl::setTarget(const OUC::TelescopePosition& targetPos, const Ice::Current& 
         ex.reason = "Telecope Not Configured";
         throw ex;
     }
-      printf( "LCUImpl::setTarget targetPos.RA=%lf\n", MiddleEndianToLittleEndian(targetPos.RA) );
-      printf( "LCUImpl::setTarget targetPos.Dec=%lf\n",MiddleEndianToLittleEndian(targetPos.Dec) );
+    
+    if(verbose) 
+      {
+	printf( "LCUImpl::setTarget targetPos.RA=%lf\n", MiddleEndianToLittleEndian(targetPos.RA) );
+	printf( "LCUImpl::setTarget targetPos.Dec=%lf\n",MiddleEndianToLittleEndian(targetPos.Dec) );
+      }
 
-	  //convert to middle endian
-	RA = MiddleEndianToLittleEndian(targetPos.RA);
-	Dec = MiddleEndianToLittleEndian(targetPos.Dec);
-
+    //convert to middle endian
+    RA = MiddleEndianToLittleEndian(targetPos.RA);
+    Dec = MiddleEndianToLittleEndian(targetPos.Dec);
+    
     /** Acquire Semaphore for SHM **/
     m_lcu->waitSemaphore();
-
+    
     /** Send new target **/
-    //if(m_lcu->telescope->setTarget((double)targetPos.RA, (double)targetPos.Dec, (double*)&targetPos.Alt, (double*)&targetPos.Az) == 0) 
-
     if(m_lcu->telescope->setTarget(RA, Dec, (double*)&targetPos.Alt, (double*)&targetPos.Az) == 0) 
-
-    {
-		char *limits;
-		OUC::TargetOutOfLimitsEx ex;
-		sprintf(limits, "Low Elevation: %lf, High Elevation: %lf", m_lcu->telescope->getHighElevation(), m_lcu->telescope->getHighElevation());
-		ex.reason = "Target Out of Limits. Try a new one\n";
-		ex.reason.append(limits); 
-		throw ex;
-   }
+      {
+	char *limits;
+	OUC::TargetOutOfLimitsEx ex;
+	sprintf(limits, "Low Elevation: %lf, High Elevation: %lf", m_lcu->telescope->getHighElevation(), m_lcu->telescope->getHighElevation());
+	ex.reason = "Target Out of Limits. Try a new one\n";
+	ex.reason.append(limits); 
+	throw ex;
+      }
     
     /** Release semaphore for SHM **/
     m_lcu->postSemaphore();
@@ -286,7 +287,7 @@ LCUImpl::setOffset(const OUC::TelescopePosition& offsetPos, const Ice::Current& 
 		throw ex;
 	}
     
-/** Set telescope in running state and define offset **/
+	/** Set telescope in running state and define offset **/
 	m_lcu->waitSemaphore();
 	m_lcu->telescope->setIsRunningGoto(true);
 	alpha_mtr_counts = m_lcu->telescope->alpha->offsetAxisInDeg(offsetPos.RA);
@@ -304,7 +305,7 @@ LCUImpl::setOffset(const OUC::TelescopePosition& offsetPos, const Ice::Current& 
 	}
 	m_lcu->postSemaphore();
 
-/** Goto target loop */
+	/** Goto target loop */
 	no_quit = 180;
 	do 
 	{
@@ -403,12 +404,12 @@ LCUImpl::parkTelescope(const Ice::Current& c)
    /** Current Position */
   m_lcu->telescope->currentPosition(&targetPos.localSideralTime, &targetPos.RA, &targetPos.Dec, &targetPos.Alt, &targetPos.Az, &targetPos.HA);
   /** Set target = zenith */
-  targetPos.RA = targetPos.localSideralTime;
-  targetPos.Dec = m_lcu->telescope->getLatitude();
+  targetPos.RA =  MiddleEndianToLittleEndian(targetPos.localSideralTime);
+  targetPos.Dec = MiddleEndianToLittleEndian(m_lcu->telescope->getLatitude());
   m_lcu->telescope->setTarget(targetPos.RA, targetPos.Dec, &targetPos.Alt, &targetPos.Az);
   /** Set Offsets **/
-  targetPos.RA = m_lcu->telescope->getDifferenceRA();
-  targetPos.Dec = m_lcu->telescope->getDifferenceDec();
+  targetPos.RA = MiddleEndianToLittleEndian(m_lcu->telescope->getDifferenceRA());
+  targetPos.Dec = MiddleEndianToLittleEndian(m_lcu->telescope->getDifferenceDec());
   targetPos.RA *= -1.;
   alpha_mtr_counts = m_lcu->telescope->alpha->offsetAxisInDeg(targetPos.RA);
   targetPos.Dec *= -1.;
@@ -428,6 +429,8 @@ LCUImpl::parkTelescope(const Ice::Current& c)
 	printf("LCUImpl::parkTelescope: Tracking OFF!!");
 
     }
+
+  /** Move telescope to zenith **/
   if( alpha_mtr_counts < -50 || 50 < alpha_mtr_counts ) 
     {
       m_lcu->telescope->alpha->Motor->setDeviceMemory( 7, & alpha_mtr_counts, 0  );
@@ -446,6 +449,7 @@ LCUImpl::parkTelescope(const Ice::Current& c)
     no_quit = 180;
     do 
       {
+        /** Reading current position */
 	sleep( 1 );
 	m_lcu->waitSemaphore();
 	{
@@ -474,13 +478,13 @@ LCUImpl::parkTelescope(const Ice::Current& c)
     { 
       /** Current Position */
       m_lcu->telescope->currentPosition(&targetPos.localSideralTime, &targetPos.RA, &targetPos.Dec, &targetPos.Alt, &targetPos.Az, &targetPos.HA);
-      targetPos.RA = targetPos.localSideralTime;
-      targetPos.Dec = m_lcu->telescope->getLatitude();    
+      targetPos.RA =  MiddleEndianToLittleEndian(targetPos.localSideralTime);
+      targetPos.Dec = MiddleEndianToLittleEndian( m_lcu->telescope->getLatitude());    
       /** Set Position **/
       m_lcu->telescope->setTarget(targetPos.RA, targetPos.Dec, &targetPos.Alt, &targetPos.Az);
       /** Set Offsets **/
-      targetPos.RA = m_lcu->telescope->getDifferenceRA();
-      targetPos.Dec = m_lcu->telescope->getDifferenceDec();
+      targetPos.RA = MiddleEndianToLittleEndian(m_lcu->telescope->getDifferenceRA());
+      targetPos.Dec = MiddleEndianToLittleEndian(m_lcu->telescope->getDifferenceDec());
       targetPos.RA *= -1.;
       alpha_mtr_counts = m_lcu->telescope->alpha->offsetAxisInDeg(targetPos.RA);
       targetPos.Dec *= -1.;
@@ -578,14 +582,15 @@ LCUImpl::moveToTarget(const Ice::Current& c)
   m_lcu->waitSemaphore();
   
   /** Differesnce RA Dec  */
-  offset_ra = m_lcu->telescope->getDifferenceRA();
-  offset_dec = m_lcu->telescope->getDifferenceDec();
+  offset_ra = MiddleEndianToLittleEndian(m_lcu->telescope->getDifferenceRA());
+  offset_dec = MiddleEndianToLittleEndian(m_lcu->telescope->getDifferenceDec());
   mem_address = 7;
   offset_ra *= -1.;
   alpha_mtr_counts = m_lcu->telescope->alpha->offsetAxisInDeg( offset_ra );
   offset_dec *= -1.;
   delta_mtr_counts = m_lcu->telescope->delta->offsetAxisInDeg( offset_dec );
   
+  /** Move Telescope to the requested position **/
   if( alpha_mtr_counts < -50 || 50 < alpha_mtr_counts ) 
     {
       value = 0;
@@ -646,8 +651,8 @@ LCUImpl::moveToTarget(const Ice::Current& c)
     m_lcu->waitSemaphore();
     {
       /** Differesnce RA Dec  */
-      offset_ra  = m_lcu->telescope->getDifferenceRA();
-      offset_dec = m_lcu->telescope->getDifferenceDec();
+      offset_ra  = MiddleEndianToLittleEndian(m_lcu->telescope->getDifferenceRA());
+      offset_dec = MiddleEndianToLittleEndian(m_lcu->telescope->getDifferenceDec());
       
       mem_address = 7;
       offset_ra *= -1.;
