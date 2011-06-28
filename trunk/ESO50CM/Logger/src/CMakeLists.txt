@@ -34,6 +34,13 @@ IF(NOT LCU)
         COMMAND ${CMAKE_COMMAND} -E echo " LogMessage.cpp LogMessage.h generated."
     )
     ADD_CUSTOM_COMMAND(
+        OUTPUT ${PROJECT_SOURCE_DIR}/LogPublisher.cpp ${PROJECT_SOURCE_DIR}/LogPublisher.h    
+        #generate cpp proxies files
+        COMMAND slice2cpp --output-dir ${PROJECT_SOURCE_DIR} -I ../idl -I${INTROOT}/idl ${PROJECT_SOURCE_DIR}/../idl/LogPublisher.ice
+        COMMAND mv ${PROJECT_SOURCE_DIR}/LogPublisher.h ${PROJECT_SOURCE_DIR}/../include
+        COMMAND ${CMAKE_COMMAND} -E echo " LogPublisher.cpp LogPublisher.h generated."
+    )
+    ADD_CUSTOM_COMMAND(
         OUTPUT ${PROJECT_SOURCE_DIR}/Logger.cpp ${PROJECT_SOURCE_DIR}/Logger.h    
         #generate cpp proxies files
         COMMAND slice2cpp --output-dir ${PROJECT_SOURCE_DIR} -I ../idl $ENV{IDL_PATH}  ${PROJECT_SOURCE_DIR}/../idl/Logger.ice
@@ -61,7 +68,7 @@ IF(LCU)
     ADD_DEFINITIONS(-DLCU -DICEE_PURE_CLIENT)
 ENDIF(LCU)
 
-ADD_LIBRARY(LoggerCore SHARED LoggerHelper Logger LogMessage)
+ADD_LIBRARY(LoggerCore SHARED LoggerHelper LogPublisher Logger LogMessage)
 set_property(TARGET LoggerCore PROPERTY LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../lib)
 
 #for .h file search
@@ -74,7 +81,9 @@ LINK_DIRECTORIES(${INTROOT}/lib)
 LINK_DIRECTORIES($ENV{SWROOT}/lib)
 IF(NOT LCU)
     ADD_EXECUTABLE(loggingService LoggingService LoggerI dbstuff)
-    TARGET_LINK_LIBRARIES(loggingService LoggerCore Ice IceUtil mysqlcppconn)
+    TARGET_LINK_LIBRARIES(loggingService LoggerCore Ice IceStorm IceUtil mysqlcppconn)
+    ADD_EXECUTABLE(simpleClient SimpleClientI)
+    TARGET_LINK_LIBRARIES(simpleClient LoggerCore IceUtil Ice IceStorm)
     set_property(TARGET loggingService PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
 ENDIF(NOT LCU)
 
@@ -85,11 +94,13 @@ SET_DIRECTORY_PROPERTIES (
      ADDITIONAL_MAKE_CLEAN_FILES "LogMessage.cpp"
      ADDITIONAL_MAKE_CLEAN_FILES "Logger.h"
      ADDITIONAL_MAKE_CLEAN_FILES "Logger.cpp"
+     ADDITIONAL_MAKE_CLEAN_FILES "LogPublisher.h"
+     ADDITIONAL_MAKE_CLEAN_FILES "LogPublisher.cpp"
 )
 
 IF(NOT LCU)
 #for make install
-    INSTALL(TARGETS loggingService
+    INSTALL(TARGETS LoggerCore loggingService simpleClient
     RUNTIME DESTINATION ${INTROOT}/bin
     LIBRARY DESTINATION ${INTROOT}/lib
     ARCHIVE DESTINATION ${INTROOT}/lib
