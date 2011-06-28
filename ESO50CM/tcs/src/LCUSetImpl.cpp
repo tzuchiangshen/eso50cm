@@ -342,9 +342,11 @@ LCUImpl::setOffset(const OUC::TelescopePosition& offsetPos, const Ice::Current& 
 }
 
 void 
-LCUImpl::setTracking(OUC::TrackingInfo& trkInfo, const Ice::Current& c)
+LCUImpl::setTracking(const OUC::TrackingInfo& trkInfo, const Ice::Current& c)
 {
   extern int verbose;
+  int velocity = trkInfo.ticVel;
+
   if( verbose )
     printf( "LCUImpl::setTracking" );
   
@@ -358,12 +360,12 @@ LCUImpl::setTracking(OUC::TrackingInfo& trkInfo, const Ice::Current& c)
   
   /** Read Tracking Flag **/
   if(trkInfo.trackState & !trkInfo.ticVel)
-      trkInfo.ticVel = 600;
+      velocity = 600;
 
   /** Set Velocity **/
   m_lcu->waitSemaphore();
-  m_lcu->telescope->alpha->Motor->setDeviceMemory(3, &trkInfo.ticVel, 0);
-  if(trkInfo.ticVel > 0)
+  m_lcu->telescope->alpha->Motor->setDeviceMemory(3, &velocity, 0);
+  if(velocity > 0)
     m_lcu->telescope->setIsTracking(true);
   else
     m_lcu->telescope->setIsTracking(false);
