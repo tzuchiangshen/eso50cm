@@ -12,7 +12,7 @@
 #include "myRS232.h"
 #include "commandthread.h"
 #include "cppContainerServices.h"
-#include "LCU.h"
+#include "Observing.h"
 
 
 namespace Ui {
@@ -61,7 +61,7 @@ private:
     bool m_thesky_waitanswer;
 
 	cppContainerServices *cs;
-	LCUPrx lcu;
+	TelescopePrx lcu;
 };
 
 #endif // TELESCOPECLI_H

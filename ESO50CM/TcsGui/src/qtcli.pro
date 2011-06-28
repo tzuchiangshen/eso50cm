@@ -17,14 +17,17 @@ SOURCES  += main.cpp\
             myRS232.cpp \
     		commandthread.cpp \
             cppContainerServices.cpp \ 
-	    	LCU.cpp
+	    	LCU.cpp \
+			Observing.cpp
+
 
 HEADERS  += telescopecli.h \
             lcuthread.h \
             myRS232.h \
     		commandthread.h \
     		cppContainerServices.h \
-    		LCU.h
+    		LCU.h \
+			Observing.h
 
 LIBS += -L/usr/lib -lIce
 
