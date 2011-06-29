@@ -423,7 +423,7 @@ LCUImpl::parkTelescope(const Ice::Current& c)
   if(verbose)
     {
       printf("LCUImpl::parkTelescope: Moving Telescope to RA: %lf, Dec: %lf\n", targetPos.RA, targetPos.Dec);
-      printf("LCUImpl::parkTelescope: Moving Telescope to alpha_counts: %ld, delta_mtr_counts: %ld\n", alpha_mtr_counts, delta_mtr_counts);
+      printf("LCUImpl::parkTelescope: Moving Telescope to alpha_counts: %d, delta_mtr_counts: %d\n", alpha_mtr_counts, delta_mtr_counts);
     }
 
   /** Stop Tracking **/
@@ -442,12 +442,12 @@ LCUImpl::parkTelescope(const Ice::Current& c)
   /** Move telescope to zenith **/
   if( alpha_mtr_counts < -50 || 50 < alpha_mtr_counts ) 
     {
-      //m_lcu->telescope->alpha->Motor->setDeviceMemory( 7, & alpha_mtr_counts, 0  );
+      m_lcu->telescope->alpha->Motor->setDeviceMemory( 7, & alpha_mtr_counts, 0  );
       goto_alpha_flag = true;
     }
   if( delta_mtr_counts < -50 || 50 < delta_mtr_counts ) 
     {
-      //m_lcu->telescope->delta->Motor->setDeviceMemory( 7, & delta_mtr_counts, 0  );
+      m_lcu->telescope->delta->Motor->setDeviceMemory( 7, & delta_mtr_counts, 0  );
       goto_delta_flag = true;
     }
   m_lcu->postSemaphore();
@@ -465,14 +465,14 @@ LCUImpl::parkTelescope(const Ice::Current& c)
 	  if( goto_alpha_flag ) {
 	    m_lcu->telescope->alpha->Motor->readDeviceMemory( 7, & alpha_mtr_counts, 0  );
 	    if(verbose)
-	      printf("LCUImpl::parkTelescope: Reading alpha_counts: %ld\n", alpha_mtr_counts);
+	      printf("LCUImpl::parkTelescope: Reading alpha_counts: %d\n", alpha_mtr_counts);
 	    if( -50 < alpha_mtr_counts && alpha_mtr_counts < 50 )
 	      goto_alpha_flag = false;
 	  }
 	  if( goto_delta_flag ) {
 	    m_lcu->telescope->delta->Motor->readDeviceMemory( 7, & delta_mtr_counts, 0  );
 	    if(verbose)
-	      printf("LCUImpl::parkTelescope: Reading alpha_counts: %ld, delta_mtr_counts: %ld\n",delta_mtr_counts);
+	      printf("LCUImpl::parkTelescope: Reading delta_mtr_counts: %d\n",delta_mtr_counts);
 	    if( -50 < delta_mtr_counts && delta_mtr_counts < 50 )
 	      goto_delta_flag = false;
 	  }
@@ -506,17 +506,17 @@ LCUImpl::parkTelescope(const Ice::Current& c)
       delta_mtr_counts = m_lcu->telescope->delta->offsetAxisInDeg(targetPos.Dec);
       if(verbose)
 	{
-	  printf("LCUImpl::parkTelescope: Moving Telescope to RA: %ld, Dec: %ld\n", targetPos.RA, targetPos.Dec);
-	  printf("LCUImpl::parkTelescope: Moving Telescope to alpha_counts: %ld, delta_mtr_counts: %ld\n", alpha_mtr_counts, delta_mtr_counts);
+	  printf("LCUImpl::parkTelescope: Moving Telescope to RA: %lf, Dec: %lf\n", targetPos.RA, targetPos.Dec);
+	  printf("LCUImpl::parkTelescope: Moving Telescope to alpha_counts: %d, delta_mtr_counts: %d\n", alpha_mtr_counts, delta_mtr_counts);
 	}
       if( alpha_mtr_counts < -50 || 50 < alpha_mtr_counts ) 
 	{
-	  //m_lcu->telescope->alpha->Motor->setDeviceMemory( 7, & alpha_mtr_counts, 0  );
+	  m_lcu->telescope->alpha->Motor->setDeviceMemory( 7, & alpha_mtr_counts, 0  );
 	  goto_alpha_flag = true;
 	}
       if( delta_mtr_counts < -50 || 50 < delta_mtr_counts ) 
 	{
-	  //m_lcu->telescope->delta->Motor->setDeviceMemory( 7, & delta_mtr_counts, 0  );
+	  m_lcu->telescope->delta->Motor->setDeviceMemory( 7, & delta_mtr_counts, 0  );
 	  goto_delta_flag = true;
 	}
     }
