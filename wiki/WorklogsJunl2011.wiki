@@ -33,7 +33,8 @@
 = 2011-06-28 = 
    * code revision 156
    * Technical Time (Maurizio Baffico, Ruben Soto)
-   * Meeting at San Joaquin with Leonardo Vanzi, Pedro Escarate, Maurizio Baffico and Ruben Soto about status of ESO50CM project. We agreed that first version of operational software should be ready for end of September with a backup period of two months (end of November). 
+   * Project Status Meeting at San Joaquin (Leonardo Vanzi, Pedro Escarate, Maurizio Baffico and Ruben Soto)
+      * We agreed that first version of operational software should be ready for end of September with a backup period of two months (end of November). 
    * Continue verification of SET commands:
       * setTracking() verified and working properly.
       * parkTelescope(): algorithm seems to be OK however there are some problem with the conversion between telescope position and encoder units. Some debug information added to code but more testing time required.
