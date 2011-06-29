@@ -1,5 +1,3 @@
-#Worklogs for June 2011
-
 = 2011-06-07 = 
   * code revision 94
   * Technical Time (Maurizio Baffico, Tzu-Chiang Shen, Perdro Escarate)
@@ -31,3 +29,12 @@
       * logs are correctly being archived in the DB
       * tested discard level: working as expected
       * changed log ICE method to oneway: the response was improves in more that 6 times and the reliability is good 
+
+= 2011-06-28 = 
+   * code revision 156
+   * Technical Time (Maurizio Baffico, Ruben Soto)
+   * Meeting at San Joaquin with Leonardo Vanzi, Pedro Escarate, Maurizio Baffico and Ruben Soto about status of ESO50CM project. We agreed that first version of operational software should be ready for end of September with a backup period of two months (end of November). 
+   * Continue verification of SET commands:
+      * setTracking() verified and working properly.
+      * parkTelescope(): algorithm seems to be OK however there are some problem with the conversion between telescope position and encoder units. Some debug information added to code but more testing time required.
+      * Created Cliet-position.py script to monitor telescope position during the tracking tests. 
