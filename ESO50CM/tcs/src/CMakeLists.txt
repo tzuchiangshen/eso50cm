@@ -154,4 +154,7 @@ IF(NOT LCU)
    INSTALL(
       FILES ${PROJECT_SOURCE_DIR}/Client-lcu.py DESTINATION bin
    )
+ INSTALL(
+      FILES ${PROJECT_SOURCE_DIR}/Client-position.py DESTINATION bin
+   )
 ENDIF(NOT LCU)
