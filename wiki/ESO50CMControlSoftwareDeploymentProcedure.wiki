@@ -17,6 +17,7 @@ Deployment Procedure
       * vim, gcc, g++, make, cmake, subversion, zeroc-icee 
 
 == Download
+  *svn checkout http://eso50cm.googlecode.com/svn/trunk
 
 == Compilation
   * /mnt/hdd/home2/tcsmgr/trunk/ESO50CM/tcs/src$ cmake ./
