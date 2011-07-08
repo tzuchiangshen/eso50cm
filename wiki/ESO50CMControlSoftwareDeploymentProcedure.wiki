@@ -15,6 +15,13 @@ Deployment Procedure
   * software packages 
     * install as root the following packages 
       * vim, gcc, g++, make, cmake, subversion, zeroc-icee 
+
+== Download
+
+== Compilation
+  * /mnt/hdd/home2/tcsmgr/trunk/ESO50CM/tcs/src$ cmake ./
+  */mnt/hdd/home2/tcsmgr/trunk/ESO50CM/tcs/src$ make clean all install
+
 == ESO50CM Control Software Deployment ==
 === Deployment Enviroment === 
 (Johnny)
