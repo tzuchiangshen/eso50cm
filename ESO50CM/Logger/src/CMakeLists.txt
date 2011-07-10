@@ -29,7 +29,7 @@ IF(NOT LCU)
     ADD_CUSTOM_COMMAND(
         OUTPUT ${PROJECT_SOURCE_DIR}/LogMessage.cpp ${PROJECT_SOURCE_DIR}/LogMessage.h
         #generate cpp proxies files
-        COMMAND slice2cpp --output-dir ${PROJECT_SOURCE_DIR} -I ../idl $ENV{IDL_PATH}  ${PROJECT_SOURCE_DIR}/../idl/LogMessage.ice
+        COMMAND slice2cpp --output-dir ${PROJECT_SOURCE_DIR} -I ../idl ${PROJECT_SOURCE_DIR}/../idl/LogMessage.ice
         COMMAND mv ${PROJECT_SOURCE_DIR}/LogMessage.h ${PROJECT_SOURCE_DIR}/../include
         COMMAND ${CMAKE_COMMAND} -E echo " LogMessage.cpp LogMessage.h generated."
     )
@@ -43,7 +43,7 @@ IF(NOT LCU)
     ADD_CUSTOM_COMMAND(
         OUTPUT ${PROJECT_SOURCE_DIR}/Logger.cpp ${PROJECT_SOURCE_DIR}/Logger.h    
         #generate cpp proxies files
-        COMMAND slice2cpp --output-dir ${PROJECT_SOURCE_DIR} -I ../idl $ENV{IDL_PATH}  ${PROJECT_SOURCE_DIR}/../idl/Logger.ice
+        COMMAND slice2cpp --output-dir ${PROJECT_SOURCE_DIR} -I ../idl ${PROJECT_SOURCE_DIR}/../idl/Logger.ice
         COMMAND mv ${PROJECT_SOURCE_DIR}/Logger.h ${PROJECT_SOURCE_DIR}/../include
         COMMAND ${CMAKE_COMMAND} -E echo " Logger.cpp Logger.h generated."
     )
@@ -51,14 +51,14 @@ ELSE(NOT LCU)
     ADD_CUSTOM_COMMAND(
         OUTPUT ${PROJECT_SOURCE_DIR}/Logger.cpp ${PROJECT_SOURCE_DIR}/Logger.h    
         #generate cpp proxies files
-        COMMAND slice2cppe --output-dir ${PROJECT_SOURCE_DIR} -I ../idl $ENV{IDL_PATH}  ${PROJECT_SOURCE_DIR}/../idl/Logger.ice
+        COMMAND slice2cppe --output-dir ${PROJECT_SOURCE_DIR} -I ../idl ${PROJECT_SOURCE_DIR}/../idl/Logger.ice
         COMMAND mv ${PROJECT_SOURCE_DIR}/Logger.h ${PROJECT_SOURCE_DIR}/../include
         COMMAND ${CMAKE_COMMAND} -E echo " Logger.cpp Logger.h generated."
     )
     ADD_CUSTOM_COMMAND(
         OUTPUT ${PROJECT_SOURCE_DIR}/LogMessage.cpp ${PROJECT_SOURCE_DIR}/LogMessage.h
         #generate cpp proxies files
-        COMMAND slice2cppe --output-dir ${PROJECT_SOURCE_DIR} -I ../idl $ENV{IDL_PATH}  ${PROJECT_SOURCE_DIR}/../idl/LogMessage.ice
+        COMMAND slice2cppe --output-dir ${PROJECT_SOURCE_DIR} -I ../idl ${PROJECT_SOURCE_DIR}/../idl/LogMessage.ice
         COMMAND mv ${PROJECT_SOURCE_DIR}/LogMessage.h ${PROJECT_SOURCE_DIR}/../include
         COMMAND ${CMAKE_COMMAND} -E echo " LogMessage.cpp LogMessage.h generated."
     )
