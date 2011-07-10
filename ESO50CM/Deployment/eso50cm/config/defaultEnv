@@ -80,3 +80,4 @@ export LD_LIBRARY_CONFIG
 export PYTHONPATH
 export IDL_PATH
 export EDITOR=vim
+ulimit -c unlimited
