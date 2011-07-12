@@ -1,4 +1,5 @@
 = 2011-06-07 = 
   * code revision 171
+  * Technical Time (Maurizio Baffico, Perdro Escarate, Johnny Reveco, Ruben Soto)
   * Investigating problem to run LCUControl and old control software simultaneously. It works properly for getEnconder commands however there are some concurrence problems with getPosition commands. 
   * Power cut affected observatory.  
