@@ -47,7 +47,7 @@ int myTelescope::attachInstrumentMemory( void )
 
     /** Allocate the Instrument Shared Memory segment */
     m_segment_id = shmget( TELSHMKEY, m_shared_segment_size,
-                           S_IRUSR | S_IWUSR );
+                           S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH );
                            //IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR );
     if( m_segment_id < 0 ) {
         perror( "[myTelescope::attachTelescope] shmget" );
@@ -73,7 +73,7 @@ int myTelescope::attachInstrumentMemory( void )
     }
 
     /** Create Semaphore to control the access to the Instrument Shared Memory */
-    bin_telescope_semaphore = new myBSemaphore( TELSEMKEY,  S_IRUSR | S_IWUSR );
+    bin_telescope_semaphore = new myBSemaphore( TELSEMKEY, S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH );
     if( (retval = bin_telescope_semaphore->allocate()) < 0 ) {
         if( verbose ) printf( "[myTelescope::attachTelescope] Error allocating semaphore\n" );
         return retval;
