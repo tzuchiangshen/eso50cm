@@ -22,16 +22,8 @@ then
    done
 fi
 
-
-
-# Set the SWROOT directory. It could be LCUSW or WSSW depending on if we're on the LCU or in the WS
-if [ "`uname -m`" == "armv5tel" ]
-then 
-  export SWROOT=/eso50cm/LCUSW
-  export TYPE="LCU"
-else 
-  export SWROOT=/eso50cm/WSSW
-fi
+# Set the SWROOT directory.
+export SWROOT=/eso50cm/SWROOT
 
 # IDL
 export IDL_PATH=$IDL_PATH' -I '$SWROOT'/idl'
