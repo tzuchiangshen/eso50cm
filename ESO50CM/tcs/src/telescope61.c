@@ -221,7 +221,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
         if( verbose )
             printf( "[telescope_run] allocate semaphore for Instrument Memory (write)...\n" );
         semaphore_id = binary_semaphore_allocate( SEMKEY, 
-                            IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR );
+                            IPC_CREAT | IPC_EXCL | S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH );
         if( semaphore_id == 0 ) {
             if( verbose )
                 printf( "[telescope_run] semaphore_id = 0\n" );
@@ -242,7 +242,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
         if( verbose )
             printf( "[telescope_run] allocate semaphore for Instrument Memory (read)...\n" );
         read_semaphore_id = binary_semaphore_allocate( RDSEMKEY,
-                                IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR );
+                                IPC_CREAT | IPC_EXCL | S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH );
         if( read_semaphore_id == 0 ) {
             if( verbose )
                 printf( "[telescope_run] read_semaphore_id = 0\n" );
@@ -265,7 +265,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
         if( verbose )
             printf( "[telescope_run] shmget for Instrument Memory...\n" );
         segment_id = shmget( SHMKEY, shared_segment_size,
-                             IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR );
+                             IPC_CREAT | IPC_EXCL | S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH );
         if( verbose )
             printf( "[telescope_run] shmctl for Instrument Memory...\n" );
         if( shmctl( segment_id, IPC_RMID, 0 ) < 0 ) {
@@ -278,7 +278,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
         if( verbose )
             printf( "[telescope_run] shmget for Instrument Memory...\n" );
         segment_id = shmget( SHMKEY, shared_segment_size, 
-                            IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR );
+                            IPC_CREAT | IPC_EXCL | S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH );
         if( segment_id == 0 ) {
             if( verbose )
                 printf( "[telescope_run] segment_id = 0\n" );
@@ -321,7 +321,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
         if( verbose )
             printf( "[telescope_run] allocate semaphore for User Memory...\n" );
         user_semaphore_id = binary_semaphore_allocate( USRSEMKEY,
-                                                IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR );
+                                                IPC_CREAT | IPC_EXCL | S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH );
         if( user_semaphore_id == 0 ) {
             if( verbose )
                 printf( "[telescope_run] user_semaphore_id = 0\n" );
@@ -342,7 +342,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
         if( verbose )
             printf( "[telescope_run] shmget for User Memory...\n" );
         user_segment_id = shmget( USRSHMKEY, shared_segment_size,
-                            IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR );
+                            IPC_CREAT | IPC_EXCL | S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH );
         if( user_segment_id < 0 ) {
             if( verbose )
                 printf( "[telescope_run] user_segment_id = 0\n" );
