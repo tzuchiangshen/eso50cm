@@ -36,11 +36,13 @@ int main(int argc, char* argv[]) {
     myLoggerTest log2=myLoggerTest("device2");
     myLoggerTest log3=myLoggerTest("device3");
 
-    
+    printf("\nargc=%i\n",argc);
     if (argc>=2)
+    {
         log1.someMethod(atoi(argv[1])); //
         log2.someMethod(atoi(argv[1])); //
         log3.someMethod(atoi(argv[1])); //
+    }
 	return 0;
 }
 #endif
