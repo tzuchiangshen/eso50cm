@@ -15,3 +15,7 @@
   * code revision 178
   * Technical Time (Perdro Escarate, Tzu-Chiang Shen, Ruben Soto: Remotely)
   * Fix AZ/ALT formatting at qtcli
+  * Rebuild the $SWROOT 
+  * Tracking testing: 
+    * SetTracking works but RA axis dritfs (with velocity=602)
+    * add verbose info to make sure that the tracking velocity reaches to the LCU correctly.
