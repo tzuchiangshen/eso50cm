@@ -24,7 +24,7 @@
     * pointed the telescope to 5 different sources. The telescope move properly to the target position. But we had to invoke moveToTarget() twice in order to reach a <10 seconds of differences. This symptom has already reported by M. Baffico. And the current sofware has the same problem.
   * park telescope test:
     * the telescope parked at   
-{
+{{{
 Lecture Alpha AxisE:    497
 Position Alpha AxisE:         657
 Lecture Alpha WormE:    281
@@ -39,4 +39,4 @@ Lecture Delta Motor:   4452
 Position Delta Motor:       22452
 Generated at = [1311185114.614384]
 2011-07-20 18:05:14.614384
-}
+}}}
