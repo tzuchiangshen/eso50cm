@@ -11,7 +11,7 @@
   * Investigating problem to run LCUControl and old control software simultaneously. It works properly for getEnconder commands however there are some concurrence problems with getPosition commands. 
   * Power cut affected observatory.  
 
-= 2011-07-12 = 
+= 2011-07-20 = 
   * code revision 178
   * Technical Time (Perdro Escarate, Tzu-Chiang Shen, Ruben Soto: Remotely)
   * Fix AZ/ALT formatting at qtcli
