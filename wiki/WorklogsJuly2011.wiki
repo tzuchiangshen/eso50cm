@@ -19,3 +19,4 @@
   * Tracking testing: 
     * SetTracking works but RA axis dritfs (with velocity=602)
     * add verbose info to make sure that the tracking velocity reaches to the LCU correctly.
+    * Fix setTracking method in tcs/src/Client-lcu.py
