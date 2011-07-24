@@ -62,6 +62,7 @@ int stream_status( int m_port ) {
     tv.tv_sec = 0;
     tv.tv_usec = 100;
 
+
     if( ( retval = select( m_port + 1, & fds, NULL, NULL, & tv ) ) < 0  ) {
         printf( "Error on select()\n" );
     }
@@ -120,6 +121,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
     struct timespec req, rem;
 
     struct telescope_data_t * telescope;
+	struct telescope_data_t * telescope_sim;
 
     int i;
     int j;
@@ -170,6 +172,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
     struct sigaction sigchld_action;
 
     int init_ok_flag;
+
 
     do {
         init_ok_flag = 1;
@@ -297,6 +300,8 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
             printf( "[telescope_run] sizeof( struct telescope_data_t )= %d\n", sizeof( struct telescope_data_t ) );
         }
         telescope = (struct telescope_data_t *) shared_memory;
+		telescope_sim = (struct telescope_data_t*)malloc(sizeof(struct telescope_data_t));
+		memset(telescope_sim, 0, sizeof(struct telescope_data_t));
 
         /**
          * USER SHARED MEMORY
@@ -378,20 +383,21 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
 //                printf( "[telescope_run] fd_rs232 = 0\n" );
 //        }
 //
-//        /**
-//         * File descriptor for standard in
-//         */
-//        fd_stdin = fileno( stdin );
-//        if( fd_rs232 == 0 ) {
-//            init_ok_flag = 0;
-//            if( verbose )
-//                printf( "[telescope_run] fd_stdin = 0\n" );
-//        } else if( fd_stdin < 0 ) {
-//            init_ok_flag = 0;
-//            perror( "[telescope_run] fileno" );
-//            if( verbose )
-//                printf( "[telescope_run] fileno ERROR.\n" );
-//        }
+        /**
+         * File descriptor for standard in
+         */
+ 	    fd_stdin = fileno( stdin );
+
+        if( fd_stdin == 0 ) {
+            init_ok_flag = 1;
+            if( verbose )
+                printf( "[telescope_run] fd_stdin = 0\n" );
+        } else if( fd_stdin < 0 ) {
+            init_ok_flag = 0;
+            perror( "[telescope_run] fileno" );
+            if( verbose )
+                printf( "[telescope_run] fileno ERROR.\n" );
+        }
 
     } while( 0 );
 
@@ -411,7 +417,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
         gettimeofday( & (telescope->gtime), & (telescope->tzone) );
         localtime_r( & (telescope->gtime.tv_sec), & LTime  );
         strftime( infoline, 24, "%Y-%m-%d %T", & LTime );
-        if( verbose ) printf( "[telescope_run] Hello World! %s\n", infoline );
+        if( verbose ) printf( "[telescope_run] Hello Simulated World! %s\n", infoline );
 
         telescope->encoder[0].i2c_address = 0xA2;
         telescope->encoder[1].i2c_address = 0xA4;
@@ -657,12 +663,96 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
 //                }
 //            }
 
+            /**
+            * Checks for a message in the instrument shared memory... SIMULATION
+            */
+			int enc_count;
+			enc_count = 0;
+			char *ptr = (char*)&enc_count;
+            if( bin_message_len == 0 ) {
+                for( i = 0; i < 6; i ++ ) {
+                    binary_semaphore_wait( semaphore_id );
+                    if( telescope->encoder[i].message[0] == ':' ) {
+                        gettimeofday( & gtime, & tzone );
+                        startT  = ((double) gtime.tv_usec)/1000000.;
+                        startT += (double) gtime.tv_sec;
+
+                        if( verbose ) {
+							*ptr = telescope->encoder[i].message[3];
+							ptr++;
+							*ptr = telescope->encoder[i].message[4];
+							ptr++;
+							*ptr = telescope->encoder[i].message[5];
+							ptr++;
+							*ptr = telescope->encoder[i].message[6];
+							ptr++;
+                            printf( "\n[telescope_run] Sending new message to PIC for 0x%02X enc_count=%d mem_address=%d\n", telescope->encoder[i].message[1], enc_count, telescope->encoder[i].message[2] );
+                            printf( "[telescope_run] enc_count=0x%X 0x%X 0x%X 0x%X\n", telescope->encoder[i].message[3], telescope->encoder[i].message[4], telescope->encoder[i].message[5], telescope->encoder[i].message[6]);
+						}
+
+                        length = 0;
+                        nums_of_time_outs = 0;
+                        timeout_error_flag = 0;
+
+						//Emulate the response of the PIC which control the encoders and servos
+						int check_sum = 0;
+
+						int rest = telescope->encoder[i].message[1] % 2;
+						int mem_address  = telescope->encoder[i].message[2];
+						printf("[telescope_run] address=%d type=%d\n", telescope->encoder[i].message[1], rest);
+
+						if(rest == 0) {
+							printf("es un write: \n");
+							//even => comes from setDeviceMemory, save the encoder value for later the next readDeviceMemory()
+							telescope_sim->encoder[i].data[telescope->encoder[i].message[2]] = enc_count;
+						}  else {
+							//odd => read 
+							printf("es un read: \n");
+							ptr = (char*)&telescope_sim->encoder[i].data[mem_address];
+							memcpy(&telescope->encoder[i].answer[3], ptr, 1);
+							ptr++;
+							memcpy(&telescope->encoder[i].answer[4], ptr, 1);
+							ptr++;
+							memcpy(&telescope->encoder[i].answer[5], ptr, 1);
+							ptr++;
+							memcpy(&telescope->encoder[i].answer[6], ptr, 1);
+
+
+							int z;
+							for (z=0; z<7; z++) 
+								check_sum += telescope->encoder[i].answer[z];
+
+							telescope->encoder[i].answer[7] = check_sum;
+							telescope->encoder[i].answer[9] = '#';
+						}
+
+						memset( telescope->encoder[i].message, 0, 16 );
+
+						if( timeout_error_flag ) {
+                            printf( "[telescope_run] timeout ERROR\n" );
+                        } else {
+                            if( verbose )
+                                printf( "[telescope_run] Received the answer from PIC for 0x%02X enc_value= 0x%X 0x%X 0x%X 0x%X val=%d\n", telescope->encoder[i].i2c_address, telescope->encoder[i].answer[3], telescope->encoder[i].answer[4], telescope->encoder[i].answer[5], telescope->encoder[i].answer[6],telescope_sim->encoder[i].data[mem_address]);
+                        }
+                        binary_semaphore_post( read_semaphore_id );
+                        gettimeofday( & gtime, & tzone );
+                        endT  = ((double) gtime.tv_usec)/1000000.;
+                        endT += (double) gtime.tv_sec;
+                        if( verbose )
+                            printf( "[telescope_run] dT=%10.6lf[s]\n", endT - startT );
+                    }
+                    binary_semaphore_post( semaphore_id );
+
+                }
+            }
+
 
             /**
             * Get Message to TX from stdin
             */
             //printf( "[telescope_run] checking for a stdio message...\n" );
             if( ! new_message_flag ) {
+
                 if( ( retval = stream_status( fd_stdin ) ) > 0 ) {
                     memset( buffer, 0 , 128 );
                     retval = read( fd_stdin, buffer, 128 );
@@ -672,6 +762,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                     message_length = strlen( buffer );
                 }
             }//END if( ! new_message_flag )
+
 
             /**
             * Process stdin message
