@@ -188,11 +188,11 @@ void TelescopeCli::showData(const int type,  OUC::TelescopeData *data ) {
 		//Azimuth
 		cs->formatRAPosition(data->currentPos.Az, buf, sizeof(buf));
 		info = QString(tr(buf));
-		ui->telAltLineEdit->setText( info );
+		ui->telAzLineEdit->setText( info );
 		//Elevation
 		cs->formatDecPosition(data->currentPos.Alt, buf, sizeof(buf));
 		info = QString(tr(buf));
-		ui->telAzLineEdit->setText( info );
+		ui->telAltLineEdit->setText( info );
 	}
 }
 
