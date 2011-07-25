@@ -8,9 +8,7 @@
 #include <QDialog>
 #include <QLabel>
 
-#include "lcuthread.h"
 #include "myRS232.h"
-#include "commandthread.h"
 #include "cppContainerServices.h"
 #include "Observing.h"
 
@@ -32,7 +30,7 @@ public slots:
     void disconnectFromServer( void );
     void showData( const QString & data );
     void showData( const int type, OUC::TelescopeData *data );
-    void displayError( int socketError, const QString & message );
+    //void displayError( int socketError, const QString & message );
     void processOneThing( void );
     void cliConnected( void );
     void cliDisconnected( void );
@@ -43,7 +41,6 @@ public slots:
 private:
     Ui::TelescopeCli *ui;
 
-    lcuThread thread;
     QString currentData;
     QTimer * timer;
 
@@ -55,7 +52,6 @@ private:
     myRS232 * handset;
     QSocketNotifier * handset_notifier;
 
-    commandThread command_tread;
     
     //commandThread handset_command_tread;
     bool m_thesky_waitanswer;
