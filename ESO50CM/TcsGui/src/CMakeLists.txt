@@ -13,6 +13,16 @@ ELSE (NOT INTROOT)
     MESSAGE("CMAKE_INSTALL_PREFIX set to: $ENV{INTROOT}")
 ENDIF (NOT INTROOT)
 
+#for generated files from slice
+ADD_CUSTOM_COMMAND(
+    OUTPUT ${PROJECT_SOURCE_DIR}/Observing.cpp ${PROJECT_SOURCE_DIR}/Observing.h ${PROJECT_SOURCE_DIR}/LCU.cpp ${PROJECT_SOURCE_DIR}/LCU.h
+    DEPENDS ${INTROOT}/idl/Observing.ice ${INTROOT}/idl/LCU.ice
+    #generate cpp proxies files
+    COMMAND ${CMAKE_COMMAND} -E echo " Observing.cpp Observing.h generated."
+    COMMAND slice2cpp -I${INTROOT}/idl ${INTROOT}/idl/Observing.ice ${INTROOT}/idl/LCU.ice 
+    COMMENT "generating slice files..." 
+)
+
 # qt4 definition 
 FIND_PACKAGE(Qt4 REQUIRED)
 INCLUDE(${QT_USE_FILE})
@@ -21,6 +31,7 @@ INCLUDE_DIRECTORIES(
 	${QT_INCLUDE_DIR}
 	${QT_QTNETWORK_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR} 
+    ${PROJECT_SOURCE_DIR}/../include 
 	${CMAKE_CURRENT_BINARY_DIR}
 )
 
@@ -40,8 +51,8 @@ QT4_WRAP_UI(TCSGUI_SRC ${TCSGUI_UIS})
 
 #generate moc files for QObject classes and append them to the sources list
 SET(TCSGUI_MOC_SRC
-	cppContainerServices.h
-	telescopecli.h
+    ${PROJECT_SOURCE_DIR}/../include/cppContainerServices.h
+    ${PROJECT_SOURCE_DIR}/../include/telescopecli.h
 ) 
 QT4_WRAP_CPP(TCSGUI_SRC ${TCSGUI_MOC_SRC})
 
@@ -56,9 +67,27 @@ TARGET_LINK_LIBRARIES(qtcli
 	${QT_QTNETWORK_LIBRARIES}
 )
 
-#install ../lib/WeatherControl.jar
+#delete generated files in make clean 
+SET_DIRECTORY_PROPERTIES (
+   PROPERTIES 
+   ADDITIONAL_MAKE_CLEAN_FILES "LCU.h"
+   ADDITIONAL_MAKE_CLEAN_FILES "LCU.cpp"
+   ADDITIONAL_MAKE_CLEAN_FILES "Observing.h"
+   ADDITIONAL_MAKE_CLEAN_FILES "Observing.cpp"
+)
+
+#install 
+
+INSTALL(TARGETS qtcli
+	RUNTIME DESTINATION bin
+	LIBRARY DESTINATION lib
+	ARCHIVE DESTINATION lib
+)
+
+#install *.h
 INSTALL(
-   FILES ${PROJECT_SOURCE_DIR}/../bin/qtcli DESTINATION bin 
+   DIRECTORY ${PROJECT_SOURCE_DIR}/../include/ DESTINATION include
+   FILES_MATCHING PATTERN "*.h"
 )
 
 

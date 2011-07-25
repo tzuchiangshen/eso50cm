@@ -264,9 +264,11 @@ int cppContainerServices::connect()
     //Initialize the communicator
     try
     {
+		string configPath = getenv("SWROOT");
+		configPath = configPath + "/config/Obs-config";
     	Ice::InitializationData initData;
 		initData.properties = Ice::createProperties();
-        initData.properties->load("Obs-config");
+        initData.properties->load(configPath);
 		communicator = Ice::initialize(argc, argv, initData);
 		//communicator = Ice::initialize(initData, 0);
 		//status = getPosition(argc, argv, communicator);
