@@ -222,17 +222,16 @@ def setConfiguration():
 		traceback.print_exc()
 		status = 1
 
-def setTracking(trkState=True, velocity=600):
-        trkInfo = OUC.TrackingInfo()
-        try:
-	   trkInfo.trackState = trkState
-           trkInfo.velocity = velocity
-           
-           lcuImpl.setTracking(trkInfo)
-        except OUC.TelescopeNotConfiguredEx():
-           print "Telescope Not Configured !!!"
-           traceback.print_exc()
-           status = 1
+def setTracking(trkState=True, velocity=602):
+	trkInfo = OUC.TrackingInfo()
+	try:
+		trkInfo.trackState = trkState
+		trkInfo.ticVel = velocity
+		lcuImpl.setTracking(trkInfo)
+	except OUC.TelescopeNotConfiguredEx():
+		print "Telescope Not Configured !!!"
+		traceback.print_exc()
+		status = 1
 
 def parkTelescope():
 	try:
@@ -244,17 +243,18 @@ def parkTelescope():
 
 if __name__ == "__main__":
 	connect()
-	#setConfiguration()
-        #print "#######################################"
+	setConfiguration()
+	#print "#######################################"
 	#if isConfigured():
 	#   getConfiguration()
-        #sayHello()
+		#sayHello()
 	#getEncoderPosition()
-        #parkTelescope()
-        setTracking(True, 600)
-	print "#######################################"	
-	getRawEncoderPosition()
-        print "#######################################"
+	#parkTelescope()
+	lcuImpl.moveToTarget()
+	setTracking(True, 602)
+	#print "#######################################"	
+	#getRawEncoderPosition()
+	#print "#######################################"
 	#getPosition()
 	disconnect()
 	
