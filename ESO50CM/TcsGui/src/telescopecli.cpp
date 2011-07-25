@@ -33,12 +33,12 @@ TelescopeCli::TelescopeCli(QWidget *parent) :
 
     connect( cs, SIGNAL( newData(int, OUC::TelescopeData* ) ),
              this, SLOT( showData(int, OUC::TelescopeData* ) ) );
-    connect( & thread, SIGNAL( error( int, QString ) ),
-             this, SLOT( displayError( int, QString ) ) );
-    connect( & thread, SIGNAL( runConnected() ),
-             this, SLOT( cliConnected() ) );
-    connect( & thread, SIGNAL( runDisconnected() ),
-             this, SLOT( cliDisconnected() ) );
+    //connect( & thread, SIGNAL( error( int, QString ) ),
+    ///         this, SLOT( displayError( int, QString ) ) );
+    //connect( & thread, SIGNAL( runConnected() ),
+    //         this, SLOT( cliConnected() ) );
+    //connect( & thread, SIGNAL( runDisconnected() ),
+    //         this, SLOT( cliDisconnected() ) );
 
     timer = new QTimer( this );
     connect( timer, SIGNAL( timeout() ), this, SLOT( processOneThing() ) );
@@ -62,8 +62,8 @@ TelescopeCli::TelescopeCli(QWidget *parent) :
         connect( handset_notifier, SIGNAL( activated(int) ), this, SLOT( handsetMessage() ) );
     }
 
-    connect( & command_tread, SIGNAL( newData( QString ) ),
-             this, SLOT( informationMessage( QString ) ) );
+    //connect( & command_tread, SIGNAL( newData( QString ) ),
+    //         this, SLOT( informationMessage( QString ) ) );
     
     m_thesky_waitanswer = false;
 }
@@ -101,8 +101,8 @@ void TelescopeCli::cliDisconnected( void )
  */
 void TelescopeCli::connectToServer( void )
 {
-    thread.requestNewData( ui->hostLineEdit->text(),
-                                 ui->portLineEdit->text().toInt());
+    //thread.requestNewData( ui->hostLineEdit->text(),
+    //                             ui->portLineEdit->text().toInt());
 }
 
 /**
@@ -110,7 +110,7 @@ void TelescopeCli::connectToServer( void )
  */
 void TelescopeCli::disconnectFromServer( void )
 {
-    thread.quitRun();
+    //thread.quitRun();
 }
 
 
@@ -270,35 +270,35 @@ void TelescopeCli::showData( const QString & data ) {
     //timer->start( 5000 );
 }
 
-void TelescopeCli::displayError( int socketError, const QString & message )
-{
-    switch( socketError ) {
-        case QAbstractSocket::HostNotFoundError:
-            QMessageBox::information( this, tr("LCU Client"),
-                                      tr("The host was not found. Please check the "
-                                         "host and port settings." ) );
-            break;
-    case QAbstractSocket::ConnectionRefusedError:
-            QMessageBox::information( this, tr("LCU Client"),
-                                        tr("The connection was refused by the peer. "
-                                           "Make sure the fortune server is running, "
-                                           "and check that the host name and port "
-                                           "settings are correct.") );
-            break;
-    default:
-            QMessageBox::information( this, tr( "LCU Client"),
-                                      tr("The following error occurred: %1.").arg(message) );
-    }
-
-}
+//void TelescopeCli::displayError( int socketError, const QString & message )
+//{
+//    switch( socketError ) {
+//        case QAbstractSocket::HostNotFoundError:
+//            QMessageBox::information( this, tr("LCU Client"),
+//                                      tr("The host was not found. Please check the "
+//                                         "host and port settings." ) );
+//            break;
+//    case QAbstractSocket::ConnectionRefusedError:
+//            QMessageBox::information( this, tr("LCU Client"),
+//                                        tr("The connection was refused by the peer. "
+//                                           "Make sure the fortune server is running, "
+//                                           "and check that the host name and port "
+//                                           "settings are correct.") );
+//            break;
+//    default:
+//            QMessageBox::information( this, tr( "LCU Client"),
+//                                      tr("The following error occurred: %1.").arg(message) );
+//    }
+//
+//}
 
 /**
  *  processOneThing
  */
 void TelescopeCli::processOneThing( void )
 {
-    thread.requestNewData( ui->hostLineEdit->text(),
-                                 ui->portLineEdit->text().toInt());
+    //thread.requestNewData( ui->hostLineEdit->text(),
+    //                             ui->portLineEdit->text().toInt());
 
     //QMessageBox::information( this, tr("LCU Client"), tr("The Timer is done!" ) );
 
@@ -396,8 +396,8 @@ void TelescopeCli::theSkyMessage( void )
             }
             qDebug() << "[TelescopeCli::theSkyMessage] MS# Slew to target: " << arguments;
             /** Send data to server */
-            command_tread.requestNewConnetion( ui->hostLineEdit->text(),
-                           ui->portLineEdit->text().toInt(), arguments );
+            //command_tread.requestNewConnetion( ui->hostLineEdit->text(),
+            //               ui->portLineEdit->text().toInt(), arguments );
             m_thesky_waitanswer = true;
             /** Clear used arguments */
             arguments.clear();
@@ -468,8 +468,8 @@ void TelescopeCli::handsetMessage( void )
                     page.append( "&dir=w" );
                 }
                 /** Send data to server */
-                command_tread.requestNewConnetion( ui->hostLineEdit->text(),
-                           ui->portLineEdit->text().toInt(), page );
+                //command_tread.requestNewConnetion( ui->hostLineEdit->text(),
+                //           ui->portLineEdit->text().toInt(), page );
             }
             qDebug() << "[TelescopeCli::handsetMessage] " << page;
         } else if( request.contains(":Q") ) {
@@ -489,8 +489,8 @@ void TelescopeCli::handsetMessage( void )
                 page.append( "?dir=w" );
                  qDebug() << "[TelescopeCli::handsetMessage] W";
             } 
-            command_tread.requestNewConnetion( ui->hostLineEdit->text(),
-                           ui->portLineEdit->text().toInt(), page );
+            //command_tread.requestNewConnetion( ui->hostLineEdit->text(),
+            //               ui->portLineEdit->text().toInt(), page );
             qDebug() << "[TelescopeCli::handsetMessage] " << page;
         }
     }
