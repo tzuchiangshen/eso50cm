@@ -18,11 +18,11 @@ ADD_CUSTOM_COMMAND(
     OUTPUT ${PROJECT_SOURCE_DIR}/Observing.cpp ${PROJECT_SOURCE_DIR}/Observing.h ${PROJECT_SOURCE_DIR}/LCU.cpp ${PROJECT_SOURCE_DIR}/LCU.h
     DEPENDS ${INTROOT}/idl/Observing.ice ${INTROOT}/idl/LCU.ice
     #generate cpp proxies files
-    COMMAND ${CMAKE_COMMAND} -E echo " Observing.cpp Observing.h generated."
+    COMMAND ${CMAKE_COMMAND} -E echo " Observing.cpp Observing.h LCU.cpp LCU.h were generated."
     COMMAND slice2cpp -I${INTROOT}/idl ${INTROOT}/idl/Observing.ice ${INTROOT}/idl/LCU.ice 
-    COMMENT "generating slice files..." 
 )
 
+# for more cmake QT information see http://qtnode.net/wiki/Qt4_with_cmake
 # qt4 definition 
 FIND_PACKAGE(Qt4 REQUIRED)
 INCLUDE(${QT_USE_FILE})
