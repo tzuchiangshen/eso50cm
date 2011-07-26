@@ -67,10 +67,10 @@ ENDIF(NOT LCU)
 IF(LCU)
     ADD_DEFINITIONS(-DLCU -DICEE_PURE_CLIENT)
 ENDIF(LCU)
-
+ADD_LIBRARY(DBStuff dbstuff)
+set_property(TARGET DBStuff PROPERTY LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../lib)
 ADD_LIBRARY(LoggerCore SHARED LoggerHelper LogPublisher Logger LogMessage)
 set_property(TARGET LoggerCore PROPERTY LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../lib)
-
 #for .h file search
 INCLUDE_DIRECTORIES(/usr/lib/include)
 INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/")
@@ -100,7 +100,7 @@ SET_DIRECTORY_PROPERTIES (
 
 IF(NOT LCU)
 #for make install
-    INSTALL(TARGETS LoggerCore loggingService simpleClient
+    INSTALL(TARGETS LoggerCore loggingService simpleClient DBStuff
     RUNTIME DESTINATION ${INTROOT}/bin
     LIBRARY DESTINATION ${INTROOT}/lib
     ARCHIVE DESTINATION ${INTROOT}/lib

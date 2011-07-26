@@ -1,1 +1,1 @@
-simpleClient  --Ice.Config=/eso50cm/WSSW/config/loggingService.config
+simpleClient  --Ice.Config=/eso50cm/SWROOT/config/loggingService.config
