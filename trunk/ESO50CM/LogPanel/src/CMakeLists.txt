@@ -43,13 +43,13 @@ LINK_DIRECTORIES(/usr/local/lib)
 #for generated files from slice
 IF(NOT LCU)
     ADD_CUSTOM_COMMAND(
-        OUTPUT ${PROJECT_SOURCE_DIR}/src/moc_mainwindow.cpp 
+        OUTPUT ${PROJECT_SOURCE_DIR}/moc_mainwindow.cpp 
         #generate cpp moc file
         COMMAND /usr/bin/moc-qt4 -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED -I/usr/share/qt4/mkspecs/linux-g++ -I. -I/usr/include/qt4/QtCore -I/usr/include/qt4/QtGui -I/usr/include/qt4 -I. -I. mainwindow.h -o moc_mainwindow.cpp
         COMMAND ${CMAKE_COMMAND} -E echo " moc_mainwindow.cpp generated."
     )
     ADD_CUSTOM_COMMAND(
-        OUTPUT ${PROJECT_SOURCE_DIR}/src/ui_mainwindow.h    
+        OUTPUT ${PROJECT_SOURCE_DIR}/ui_mainwindow.h    
         #generate .h UI file
         COMMAND /usr/bin/uic-qt4 mainwindow.ui -o ui_mainwindow.h
         COMMAND ${CMAKE_COMMAND} -E echo " ui_mainwindow.h generated."
