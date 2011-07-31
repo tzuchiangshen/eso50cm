@@ -212,7 +212,7 @@ def setConfiguration():
 		introot_path = ""
 		introot_path = os.getenv("SWROOT")
 		if(introot_path == ""):
-			introot_path = "/eso50cm/LCUSW" 		
+			introot_path = "/eso50cm/SWROOT" 		
 
 		conf_path = "%s/%s" % (introot_path, "/config/ESO50cm.conf")
 		lcuImpl.setConfiguration(conf_path)
@@ -233,6 +233,37 @@ def setTracking(trkState=True, velocity=602):
 		traceback.print_exc()
 		status = 1
 
+def setTarget(Ra, Dec):
+        targetPos = OUC.TelescopePosition()
+        targetPos.RA = HHMMSS2degs(Ra[0], Ra[1], Ra[2])
+        targetPos.Dec = DDMMSS2degs(Dec[0], Dec[1], Dec[2])
+	try:
+           lcuImpl.setTarget(targetPos)
+        except OUC::TargetOutOfLimitsEx():
+       	   print "Target Out of Limits. Try a new one\n";
+           traceback.print_exc()
+           status =1  
+	except OUC.TelescopeNotConfiguredEx():
+       	   print "Telescope Not Configured !!!"
+           traceback.print_exc()
+           status =1
+
+def moveToTarget():
+        try:
+           lcuImpl.moveToTarget()
+	except OUC.TelescopeNotConfiguredEx():
+       	   print "Telescope Not Configured !!!"
+           traceback.print_exc()
+           status = 1
+
+def stopTelescope():
+        try:
+           lcuImpl.stopTelescope(OUC.North)
+	except OUC.TelescopeNotConfiguredEx():
+       	   print "Telescope Not Configured !!!"
+           traceback.print_exc()
+           status = 1
+
 def parkTelescope():
 	try:
            lcuImpl.parkTelescope()
@@ -242,16 +273,21 @@ def parkTelescope():
            status = 1
 
 if __name__ == "__main__":
+        ra = [12,0,0]
+        dec = [40,0,0]
 	connect()
 	setConfiguration()
 	#print "#######################################"
 	#if isConfigured():
 	#   getConfiguration()
-		#sayHello()
+        #sayHello()
 	#getEncoderPosition()
 	#parkTelescope()
-	lcuImpl.moveToTarget()
-	setTracking(True, 602)
+	#moveToTarget()
+        setTarget(ra, dec)
+	moveToTarget()
+        stopTelescope()
+        setTracking()
 	#print "#######################################"	
 	#getRawEncoderPosition()
 	#print "#######################################"
