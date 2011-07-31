@@ -29,6 +29,9 @@
 
 #include "./telescope.h"
 
+/* Global variable to exit from main loop */
+char quit;
+
 struct encoder_data_t {
     char i2c_address;
     char i2c_status;
@@ -84,6 +87,14 @@ static void clean_up_child_process( int signal_number ) {
 void handle_connection (int connection_fd)
 {
 }
+
+static void exit_handler(int s)
+{
+  if(verbose)
+    printf("telescope61::exit_handler Ctrl+C signal catched!!!");
+  quit = 1; 
+}
+
 /**
  *  telescope run
  */
@@ -128,8 +139,6 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
     int k;
     char * line;
 
-    char quit;
-
     int fd_stdin;
     int fd_rs232;
     char infoline[64];
@@ -170,11 +179,19 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
     unsigned int uint_tmp;
 
     struct sigaction sigchld_action;
+    struct sigaction sigExitHandler;
 
     int init_ok_flag;
 
 
     do {
+        /* Manage CTRL+C and kill signals */
+        sigExitHandler.sa_handler = & exit_handler;
+        sigemptyset(&sigExitHandler.sa_mask);
+        sigExitHandler.sa_flags = 0;
+        sigaction(SIGINT, &sigExitHandler, NULL);
+	sigaction(SIGTERM, &sigExitHandler, NULL);
+
         init_ok_flag = 1;
         //shared_memory = NULL;
         //segment_id   = 0;
