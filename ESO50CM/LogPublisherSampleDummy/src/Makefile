@@ -162,29 +162,29 @@ publisherDummyT/fast:
 	$(MAKE) -f CMakeFiles/publisherDummyT.dir/build.make CMakeFiles/publisherDummyT.dir/build
 .PHONY : publisherDummyT/fast
 
-LoggerHelperDummy.o: LoggerHelperDummy.cpp.o
-.PHONY : LoggerHelperDummy.o
+LoggerHelper.o: LoggerHelper.cpp.o
+.PHONY : LoggerHelper.o
 
 # target to build an object file
-LoggerHelperDummy.cpp.o:
-	$(MAKE) -f CMakeFiles/LoggerCore.dir/build.make CMakeFiles/LoggerCore.dir/LoggerHelperDummy.cpp.o
-.PHONY : LoggerHelperDummy.cpp.o
+LoggerHelper.cpp.o:
+	$(MAKE) -f CMakeFiles/LoggerCore.dir/build.make CMakeFiles/LoggerCore.dir/LoggerHelper.cpp.o
+.PHONY : LoggerHelper.cpp.o
 
-LoggerHelperDummy.i: LoggerHelperDummy.cpp.i
-.PHONY : LoggerHelperDummy.i
+LoggerHelper.i: LoggerHelper.cpp.i
+.PHONY : LoggerHelper.i
 
 # target to preprocess a source file
-LoggerHelperDummy.cpp.i:
-	$(MAKE) -f CMakeFiles/LoggerCore.dir/build.make CMakeFiles/LoggerCore.dir/LoggerHelperDummy.cpp.i
-.PHONY : LoggerHelperDummy.cpp.i
+LoggerHelper.cpp.i:
+	$(MAKE) -f CMakeFiles/LoggerCore.dir/build.make CMakeFiles/LoggerCore.dir/LoggerHelper.cpp.i
+.PHONY : LoggerHelper.cpp.i
 
-LoggerHelperDummy.s: LoggerHelperDummy.cpp.s
-.PHONY : LoggerHelperDummy.s
+LoggerHelper.s: LoggerHelper.cpp.s
+.PHONY : LoggerHelper.s
 
 # target to generate assembly for a file
-LoggerHelperDummy.cpp.s:
-	$(MAKE) -f CMakeFiles/LoggerCore.dir/build.make CMakeFiles/LoggerCore.dir/LoggerHelperDummy.cpp.s
-.PHONY : LoggerHelperDummy.cpp.s
+LoggerHelper.cpp.s:
+	$(MAKE) -f CMakeFiles/LoggerCore.dir/build.make CMakeFiles/LoggerCore.dir/LoggerHelper.cpp.s
+.PHONY : LoggerHelper.cpp.s
 
 publisherDummyTest.o: publisherDummyTest.cpp.o
 .PHONY : publisherDummyTest.o
@@ -224,9 +224,9 @@ help:
 	@echo "... list_install_components"
 	@echo "... publisherDummyT"
 	@echo "... rebuild_cache"
-	@echo "... LoggerHelperDummy.o"
-	@echo "... LoggerHelperDummy.i"
-	@echo "... LoggerHelperDummy.s"
+	@echo "... LoggerHelper.o"
+	@echo "... LoggerHelper.i"
+	@echo "... LoggerHelper.s"
 	@echo "... publisherDummyTest.o"
 	@echo "... publisherDummyTest.i"
 	@echo "... publisherDummyTest.s"

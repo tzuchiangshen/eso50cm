@@ -36,7 +36,7 @@ INCLUDE_DIRECTORIES("$ENV{SWROOT}/include")
 LINK_DIRECTORIES(${INTROOT}/lib $ENV{SWROOT}/lib)
 
 
-ADD_LIBRARY(LoggerCore SHARED LoggerHelperDummy)
+ADD_LIBRARY(LoggerCore SHARED LoggerHelper)
 set_property(TARGET LoggerCore PROPERTY LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../lib)
 
 ADD_EXECUTABLE(publisherDummyT publisherDummyTest)
