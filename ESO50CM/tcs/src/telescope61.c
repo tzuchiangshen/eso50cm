@@ -183,11 +183,12 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
     int init_ok_flag;
 
     do {
-        /* Manage CTRL+C signal */
+        /* Manage CTRL+C and kill signals */
         sigExitHandler.sa_handler = & exit_handler;
         sigemptyset(&sigExitHandler.sa_mask);
         sigExitHandler.sa_flags = 0;
         sigaction(SIGINT, &sigExitHandler, NULL);
+	sigaction(SIGTERM, &sigExitHandler, NULL);
 
         init_ok_flag = 1;
         //shared_memory = NULL;
