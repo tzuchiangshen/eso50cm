@@ -4,6 +4,7 @@
 #include "Observing.h"
 #include <IceUtil/Thread.h>
 #include <IceUtil/ScopedArray.h>
+#include "LoggerHelper.h"
 
 class ObservingImpl : public OUC::Observing
 {
@@ -19,5 +20,7 @@ public:
 private:
     const OUC::TelescopePtr _telescope;
     const OUC::TelescopePrx _telescopePrx;
+    LoggerHelper logger;
+    const char *source;
 };
 #endif

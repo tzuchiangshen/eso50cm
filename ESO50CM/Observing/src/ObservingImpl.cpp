@@ -1,10 +1,11 @@
+
 #include <ObservingImpl.h>
 #include <TelescopeImpl.h>
 #include <Ice/Ice.h>
 
 using namespace std;
 
-ObservingImpl::ObservingImpl(const Ice::ObjectAdapterPtr& adapter) :
+ObservingImpl::ObservingImpl(const Ice::ObjectAdapterPtr& adapter) : logger("ObservingControl"),
     _telescope(new TelescopeImpl),
     _telescopePrx(OUC::TelescopePrx::uncheckedCast(adapter->addWithUUID(_telescope)))
 {
@@ -17,7 +18,7 @@ ObservingImpl::sayHello(int delay, const Ice::Current& c)
     {
         IceUtil::ThreadControl::sleep(IceUtil::Time::milliSeconds(delay));
     }
-    printf("Hello World!\n");
+    logger.logINFO("Hello World!");
 }
 
 void
