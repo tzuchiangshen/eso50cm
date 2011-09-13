@@ -2,13 +2,13 @@
 #define MAINWINDOW_H
 #include <dbstuff.h>
 #include <QtGui/QMainWindow>
+#include <QFileDialog>
 #include <QLabel>
 #include <string>
 #include <Ice/Application.h>
 #include <IceStorm/IceStorm.h>
 #include <IceUtil/UUID.h>
 #include "LogPublisher.h"
-
 
 using namespace std;
 using namespace Ice;
@@ -34,20 +34,26 @@ public:
 private:
     Ui::MainWindow *ui;
     MySQLCon db;
-//    void logEvent(const LogMessageData &message, const Ice::Current& c);
+    void logEvent(const LogMessageData &message, const Ice::Current& c);
     string getTimeString(double timestamp);
     string getSourceDesc(int sourceId);
     string getLevelDesc(int level);
     string levelDesc[10];
+    int levelDescToNumber(QString level);
 
 private slots:
+    void on_searchButton_clicked();
+    void on_actionSave_logs_triggered();
+    void on_detailsTable_cellClicked(int row, int column);
+    void on_logTable_cellClicked(int row, int column);
+    void on_dbConnection_clicked(bool checked);
     void on_logLevelFilter_currentIndexChanged(int index);
 };
 
 class SimpleClientI : public LogPublisher {
   public:
     MainWindow *gui;
-    SimpleClientI(MainWindow *w) { gui=w; };
+    SimpleClientI(MainWindow *w) { gui=w; }
     void logEvent(const LogMessageData &message, const Ice::Current& c) {
         if (gui)
 	    gui->addLog(message.level, message.timestamp, message.source,message.message);
@@ -58,7 +64,7 @@ class Subscriber : public Application  {
 
   public:
     MainWindow *gui;
-    Subscriber(MainWindow *mw) {gui=mw;};
+    Subscriber(MainWindow *mw) {gui=mw;}
 	TopicManagerPrx get_topic_manager() {
 		PropertiesPtr properties = communicator()->getProperties();
 

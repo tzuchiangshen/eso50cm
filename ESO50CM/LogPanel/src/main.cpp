@@ -11,7 +11,7 @@ int ret;
 
 
 QApplication *qapp;
-void *runGUI(void *gui)
+void *runSubscriber(void *gui)
 {
   Subscriber subs((MainWindow *)gui);
   std::cout<<"Starting subscriber"<<std::endl;
@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     std::cout<<"Starting GUI"<<std::endl;  
     MainWindow w;
     w.show();
-    ret = pthread_create(&tid, NULL, runGUI,(void *) &w);  
+    ret = pthread_create(&tid, NULL, runSubscriber,(void *) &w);
     return qapp->exec();    
 }
 
