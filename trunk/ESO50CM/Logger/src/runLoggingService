@@ -1,4 +1,3 @@
-echo "Killing icebox. This step is needed
 killall icebox
 icebox --Ice.Config=/eso50cm/config/icebox.config&
 echo "Waiting 3 sec"
