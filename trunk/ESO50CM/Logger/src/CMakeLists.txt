@@ -56,6 +56,13 @@ ELSE(NOT LCU)
         COMMAND ${CMAKE_COMMAND} -E echo " Logger.cpp Logger.h generated."
     )
     ADD_CUSTOM_COMMAND(
+        OUTPUT ${PROJECT_SOURCE_DIR}/LogPublisher.cpp ${PROJECT_SOURCE_DIR}/LogPublisher.h    
+        #generate cpp proxies files
+        COMMAND slice2cppe --output-dir ${PROJECT_SOURCE_DIR} -I ../idl -I${INTROOT}/idl ${PROJECT_SOURCE_DIR}/../idl/LogPublisher.ice
+        COMMAND mv ${PROJECT_SOURCE_DIR}/LogPublisher.h ${PROJECT_SOURCE_DIR}/../include
+        COMMAND ${CMAKE_COMMAND} -E echo " LogPublisher.cpp LogPublisher.h generated."
+    )
+    ADD_CUSTOM_COMMAND(
         OUTPUT ${PROJECT_SOURCE_DIR}/LogMessage.cpp ${PROJECT_SOURCE_DIR}/LogMessage.h
         #generate cpp proxies files
         COMMAND slice2cppe --output-dir ${PROJECT_SOURCE_DIR} -I ../idl ${PROJECT_SOURCE_DIR}/../idl/LogMessage.ice
@@ -67,8 +74,10 @@ ENDIF(NOT LCU)
 IF(LCU)
     ADD_DEFINITIONS(-DLCU -DICEE_PURE_CLIENT)
 ENDIF(LCU)
-ADD_LIBRARY(DBStuff dbstuff)
-set_property(TARGET DBStuff PROPERTY LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../lib)
+IF(NOT LCU)
+	ADD_LIBRARY(DBStuff dbstuff)
+	set_property(TARGET DBStuff PROPERTY LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../lib)
+ENDIF(NOT LCU)
 ADD_LIBRARY(LoggerCore SHARED LoggerHelper LogPublisher Logger LogMessage)
 set_property(TARGET LoggerCore PROPERTY LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../lib)
 #for .h file search
