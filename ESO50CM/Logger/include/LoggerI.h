@@ -7,7 +7,7 @@
 #include <IceStorm/IceStorm.h>
 #include <Ice/Application.h>
 
-#define DEFAULT_GLOBAL_DISCARD_LEVEL 2
+#define DEFAULT_GLOBAL_DISCARD_LEVEL 1
 using namespace std;
 using namespace Ice;
 using namespace IceStorm;
