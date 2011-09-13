@@ -1,4 +1,4 @@
-#include "LoggerHelper.h"
+#include "LoggerHelperDummy.h"
 #include <stdio.h>
 #include <sys/time.h>
 #include <time.h>
