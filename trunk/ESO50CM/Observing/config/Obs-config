@@ -4,8 +4,10 @@
 #
 #LCUAdapter.Proxy=LCU:tcp -p 10000
 # put the ip address of the operator console
-LCUAdapter.Proxy=LCU:tcp -h 172.20.10.6 -p 10000
-ObsAdapter.Proxy=Observing:tcp -h 172.20.10.6 -p 10000
+LCUAdapter.Proxy=LCU:tcp -h 192.168.0.10 -p 10000
+ObsAdapter.Proxy=Observing:tcp -h 192.168.0.12 -p 10001
+#LCUAdapter.Proxy=LCU:tcp -h 172.20.10.6 -p 10000
+#ObsAdapter.Proxy=Observing:tcp -h 172.20.10.6 -p 10000
 
 
 #
@@ -16,8 +18,10 @@ ObsAdapter.Proxy=Observing:tcp -h 172.20.10.6 -p 10000
 #LCUAdapter.Endpoints=tcp -p 10000
 #
 # put the ip address of the operator console
-LCUAdapter.Endpoints=tcp -h 172.20.10.6 -p 10000
-ObsAdapter.Endpoints=tcp -h 172.20.10.6 -p 10000
+LCUAdapter.Endpoints=tcp -h 192.168.0.10 -p 10000
+ObsAdapter.Endpoints=tcp -h 192.168.0.12 -p 10001
+#LCUAdapter.Endpoints=tcp -h 172.20.10.6 -p 10000
+#ObsAdapter.Endpoints=tcp -h 172.20.10.6 -p 10000
 
 #
 # Warn about connection exceptions

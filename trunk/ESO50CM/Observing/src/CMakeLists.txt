@@ -31,14 +31,17 @@ ADD_CUSTOM_COMMAND(
     COMMENT "generating slice files..." 
 )
 
-ADD_LIBRARY(ObservingImpl SHARED Observing LCU TelescopeImpl ObservingImpl)
-TARGET_LINK_LIBRARIES(ObservingImpl Ice)
-set_property(TARGET ObservingImpl PROPERTY LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../lib)
-
 #for .h file search
 INCLUDE_DIRECTORIES(/usr/include/Ice)
 INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/")
 INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/../include")
+INCLUDE_DIRECTORIES("${INTROOT}/include")
+
+LINK_DIRECTORIES(${INTROOT}/lib)
+ADD_LIBRARY(ObservingImpl SHARED Observing LCU TelescopeImpl ObservingImpl)
+TARGET_LINK_LIBRARIES(ObservingImpl LoggerCore Ice)
+set_property(TARGET ObservingImpl PROPERTY LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../lib)
+
 
 #for ../bin/ObsControl executable 
 LINK_DIRECTORIES(${INTROOT}/lib)
