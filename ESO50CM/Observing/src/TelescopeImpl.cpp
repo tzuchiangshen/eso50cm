@@ -3,7 +3,7 @@
 
 using namespace std;
 
-TelescopeImpl::TelescopeImpl() {
+TelescopeImpl::TelescopeImpl(): logger("TelescopeImpl") {
   Ice::CommunicatorPtr communicator;
 
   try
@@ -22,6 +22,7 @@ TelescopeImpl::TelescopeImpl() {
     string proxy = properties->getProperty(proxyProperty);
     Ice::ObjectPrx base = communicator->stringToProxy(proxy);
     lcuPrx = OUC::LCUPrx::checkedCast(base->ice_twoway()->ice_timeout(-1));
+	logger.logINFO("Got reference to LCUControl at " + proxy);
 
     if(!lcuPrx)
     {
@@ -42,7 +43,7 @@ TelescopeImpl::sayHelloTelescope(int delay, const Ice::Current&)
     {
         IceUtil::ThreadControl::sleep(IceUtil::Time::milliSeconds(delay));
     }
-    printf("Hello World Telescope!\n");
+    logger.logFINE("Hello World Telescope!\n");
 }
 
 
@@ -51,7 +52,7 @@ bool TelescopeImpl::isConfigured(const Ice::Current&)
   extern int verbose;
   
   if( verbose ) 
-    printf( "TelescopeImpl::isConfigured" ); 
+    logger.logFINE( "TelescopeImpl::isConfigured" ); 
   
   try
   {
@@ -74,7 +75,7 @@ bool TelescopeImpl::isTracking(const Ice::Current&)
   extern int verbose;
   
   if( verbose ) 
-    printf( "TelescopeImpl::isTracking" ); 
+    logger.logFINE( "TelescopeImpl::isTracking" ); 
   
   try
   {
@@ -97,7 +98,7 @@ OUC::RawEncoderData TelescopeImpl::getRawEncodersPosition(const Ice::Current&)
   extern int verbose;
   
   if( verbose ) 
-    printf( "TelescopeImpl::getRawEncodersPosition" ); 
+    logger.logFINE( "TelescopeImpl::getRawEncodersPosition" ); 
   
   try
   {
@@ -123,7 +124,7 @@ OUC::EncoderData TelescopeImpl::getEncodersPosition(const Ice::Current&)
   extern int verbose;
   
   if( verbose ) 
-    printf( "TelescopeImpl::getEncodersPosition" ); 
+    logger.logFINE( "TelescopeImpl::getEncodersPosition" ); 
   
   try
   {
@@ -149,7 +150,7 @@ OUC::TelescopeData TelescopeImpl::getPosition(const Ice::Current&)
   extern int verbose;
   
   if( verbose ) 
-    printf( "TelescopeImpl::getPosition" ); 
+    logger.logFINE( "TelescopeImpl::getPosition" ); 
   
   try
   {
@@ -175,7 +176,7 @@ OUC::TelescopeConfigData TelescopeImpl::getConfiguration(const Ice::Current&)
   extern int verbose;
   
   if( verbose ) 
-    printf( "TelescopeImpl::getConfiguration" ); 
+    logger.logFINE( "TelescopeImpl::getConfiguration" ); 
   
   try
   {
@@ -201,7 +202,7 @@ void TelescopeImpl::setConfiguration(const string& fileName, const Ice::Current&
   extern int verbose;
   
   if( verbose ) 
-    printf( "TelescopeImpl::setConfiguration" ); 
+    logger.logFINE( "TelescopeImpl::setConfiguration" ); 
   
   try
   {
@@ -224,7 +225,7 @@ void TelescopeImpl::setTarget(const ::OUC::TelescopePosition& targetPos, const I
   extern int verbose;
   
   if( verbose ) 
-    printf( "TelescopeImpl::setTarget" ); 
+    logger.logFINE( "TelescopeImpl::setTarget" ); 
   
   try
   {
@@ -253,7 +254,7 @@ void TelescopeImpl::setOffset(const ::OUC::TelescopePosition& offsetPos, const I
   extern int verbose;
   
   if( verbose ) 
-    printf( "TelescopeImpl::setOffset" ); 
+    logger.logFINE( "TelescopeImpl::setOffset" ); 
   
   try
   {
@@ -282,7 +283,7 @@ void TelescopeImpl::setTracking(const OUC::TrackingInfo& trkInfo, const Ice::Cur
  extern int verbose;
   
   if( verbose ) 
-    printf( "TelescopeImpl::setTracking" ); 
+    logger.logFINE( "TelescopeImpl::setTracking" ); 
   
   try
   {
@@ -308,7 +309,7 @@ void TelescopeImpl::parkTelescope(const Ice::Current&)
  extern int verbose;
   
   if( verbose ) 
-    printf( "TelescopeImpl::parkTelescope" ); 
+    logger.logFINE( "TelescopeImpl::parkTelescope" ); 
   
   try
   {
@@ -334,7 +335,7 @@ void TelescopeImpl::stopTelescope(const ::OUC::TelescopeDirection dir, const Ice
  extern int verbose;
   
   if( verbose ) 
-    printf( "TelescopeImpl::stopTelescope" ); 
+    logger.logFINE( "TelescopeImpl::stopTelescope" ); 
   
   try
   {
@@ -360,7 +361,7 @@ void TelescopeImpl::moveToTarget(const Ice::Current&)
  extern int verbose;
   
   if( verbose ) 
-    printf( "TelescopeImpl::moveToTarget" ); 
+    logger.logFINE( "TelescopeImpl::moveToTarget" ); 
   
   try
   {

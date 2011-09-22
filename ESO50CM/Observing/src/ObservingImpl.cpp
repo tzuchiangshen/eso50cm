@@ -24,7 +24,7 @@ ObservingImpl::sayHello(int delay, const Ice::Current& c)
 void
 ObservingImpl::shutdown(const Ice::Current& c)
 {
-    printf("Shutting down...\n");
+    logger.logINFO("Shutting down...");
     c.adapter->getCommunicator()->shutdown();
 }
 
@@ -32,6 +32,6 @@ ObservingImpl::shutdown(const Ice::Current& c)
 OUC::TelescopePrx
 ObservingImpl::getTelescope(const Ice::Current& c)
 {
-    printf("Getting Telescope Reference!!");
+    logger.logINFO("Returning Telescope Reference");
     return _telescopePrx;
 }
