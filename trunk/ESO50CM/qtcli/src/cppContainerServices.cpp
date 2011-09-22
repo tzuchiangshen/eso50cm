@@ -116,7 +116,7 @@ int cppContainerServices::setTargetPositionRA(const char *ra)
 
 	try 
 	{
-		if( (ptr = strstr( ra, "ra=" )) != NULL ) {
+		if( (ptr = strstr( (char *)ra, "ra=" )) != NULL ) {
 			cout << "llegue : " << ra << endl;
 
 			if( sscanf(ra, "ra=%d:%d:%d", & trg_ra_hrs, & trg_ra_min, & trg_ra_sec ) == 3 ) {
@@ -170,8 +170,9 @@ int cppContainerServices::setTargetPositionDec(const char *arguments)
 
 	try 
 	{
+	   //if( (ptr = strstr( "dec"=/*arguments*/, "dec=" )) != NULL ) {
 
-	   if( (ptr = strstr( arguments, "dec=" )) != NULL ) {
+	   if( (ptr = strstr( (char *)arguments, "dec=" )) != NULL ) {
 	        if( sscanf( ptr, "dec=%d:%d:%d", & trg_dec_deg, & trg_dec_min, & trg_dec_sec ) == 3 ) {
 	            printf( "[set_target] trg dec=%+03d:%02d:%02d\n", trg_dec_deg, trg_dec_min, trg_dec_sec );
 	            trg_dec  = fabs( (double) trg_dec_deg ) + ((double) trg_dec_min / 60.) + ((double) trg_dec_sec / 3600.);
