@@ -1,0 +1,52 @@
+#!/bin/bash
+#
+# chkconfig: 35 90 12
+# description: Foo server
+#
+
+# Get function from functions library
+. /lib/lsb/init-functions
+
+# Start the service FOO
+start() {
+        log_daemon_msg "Starting Telescope61 server" "telescope61" 
+        # make sure that /dev/ttts6 has the proper permission
+        chmod 755 /dev/ttts6
+        /eso50cm/SWROOT/bin/telescope61 -d /dev/ttts6 -v &> /dev/null &
+        ### Create the lock file ###
+        PID=`pidof telescope61`
+        echo $PID > /var/run/eso50cm/telescope61.pid
+        log_end_msg 0
+}
+
+# Restart the service FOO
+stop() {
+        log_daemon_msg "Stopping Telescope61 server" ""
+        read PID < /var/run/eso50cm/telescope61.pid
+        ### Now, delete the lock file ###
+        echo " PID = $PID" 
+	kill -2 $PID 
+        rm -f /var/run/eso50cm/telescope61.pid
+}
+
+### main logic ###
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  status)
+	status_of_proc -p /var/run/eso50cm/telescope61.pid /eso50cm/SWROOT/bin/telescope61 telescope61 && exit 0 || exit $?
+        ;;
+  restart|reload|condrestart)
+        stop
+        start
+        ;;
+  *)
+        echo $"Usage: $0 {start|stop|restart|reload|status}"
+        exit 1
+esac
+
+exit 0
