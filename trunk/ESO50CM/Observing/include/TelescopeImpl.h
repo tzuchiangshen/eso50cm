@@ -5,6 +5,7 @@
 #include <Observing.h>
 #include <IceUtil/Thread.h>
 #include <IceUtil/ScopedArray.h>
+#include "LoggerHelper.h"
 
 using namespace std;
 
@@ -35,6 +36,7 @@ private:
   OUC::EncoderData *encoder_t;
   OUC::TelescopeConfigData *telescopeConfigData_t;
   OUC::TelescopeData *telescopeData_t;
+  LoggerHelper logger;
 };
 
 #endif

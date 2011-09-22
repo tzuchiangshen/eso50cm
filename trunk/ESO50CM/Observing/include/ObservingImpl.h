@@ -21,6 +21,5 @@ private:
     const OUC::TelescopePtr _telescope;
     const OUC::TelescopePrx _telescopePrx;
     LoggerHelper logger;
-    const char *source;
 };
 #endif
