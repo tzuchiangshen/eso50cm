@@ -8,18 +8,18 @@
 
 class ObservingImpl : public OUC::Observing
 {
-public:
+    public:
 
-    ObservingImpl(const Ice::ObjectAdapterPtr&);
+        ObservingImpl(const Ice::ObjectAdapterPtr&);
 
-    virtual void sayHello(const int delay, const Ice::Current&);
-    virtual void shutdown(const Ice::Current&);
-    
-    virtual OUC::TelescopePrx getTelescope(const Ice::Current&);
+        virtual void sayHello(const int delay, const Ice::Current&);
+        virtual void shutdown(const Ice::Current&);
 
-private:
-    const OUC::TelescopePtr _telescope;
-    const OUC::TelescopePrx _telescopePrx;
-    LoggerHelper logger;
+        virtual OUC::TelescopePrx getTelescope(const Ice::Current&);
+
+    private:
+        const OUC::TelescopePtr _telescope;
+        const OUC::TelescopePrx _telescopePrx;
+        LoggerHelper logger;
 };
 #endif

@@ -12,92 +12,71 @@ global ic
 global obsImpl 
 
 
-def hexStrEndianSwap(theString):
-    """Rearranges character-couples in a little endian hex string to
-    convert it into a big endian hex string and vice-versa. i.e. 'A3F2'
-    is converted to 'F2A3'
-
-    @param theString: The string to swap character-couples in
-    @return: A hex string with swapped character-couples. -1 on error."""
-
-    # We can't swap character couples in a string that has an odd number
-    # of characters.
-    if len(theString)%2 != 0:
-        return -1
-
-    # Swap the couples
-    swapList = []
-    for i in range(0, len(theString), 2):
-        swapList.insert(0, theString[i:i+2])
-
-    # Combine everything into one string. Don't use a delimeter.
-    return ''.join(swapList)
-
 
 def connect():
-	global status
-        global ic
-        global obsImpl
+    global status
+    global ic
+    global obsImpl
 
-	print "Connecting.."
-	status = 0
+    print "Connecting.."
+    status = 0
         try:
-           # Reading configuration info 
-           configPath = os.environ.get("SWROOT")
-           configPath = configPath + "/config/Obs-config" 
-           initData = Ice.InitializationData()
-           initData.properties = Ice.createProperties()
-           initData.properties.load(configPath)
-           ic = Ice.initialize(sys.argv, initData)
+            # Reading configuration info 
+            configPath = os.environ.get("SWROOT")
+            configPath = configPath + "/config/Obs-config" 
+            initData = Ice.InitializationData()
+            initData.properties = Ice.createProperties()
+            initData.properties.load(configPath)
+            ic = Ice.initialize(sys.argv, initData)
 
-           # Create proxy
-           properties = ic.getProperties();
-           proxyProperty = "ObsAdapter.Proxy"
-           proxy = properties.getProperty(proxyProperty);
-           print proxy
-           obj = ic.stringToProxy(proxy);
-           obsImpl = OUC.ObservingPrx.checkedCast(obj)
-	   print "Connected to ObsControl"
-           if not obsImpl: 
-                   raise RuntimeError("Invalid proxy")
-	except:
-           traceback.print_exc()
-           status = 1
-	   sys.exit(status)
+            # Create proxy
+            properties = ic.getProperties();
+            proxyProperty = "ObsAdapter.Proxy"
+            proxy = properties.getProperty(proxyProperty);
+            print proxy
+            obj = ic.stringToProxy(proxy);
+            obsImpl = OUC.ObservingPrx.checkedCast(obj)
+            print "Connected to ObsControl"
+            if not obsImpl: 
+                raise RuntimeError("Invalid proxy")
+         except:
+             traceback.print_exc()
+             status = 1
+             sys.exit(status)
 
 def disconnect():
-	global status
-	print "Desconnecting.."
-	if ic:
-             try: 
-                ic.destroy()
-             except:
-                traceback.print_exc()
-                status = 1
-	sys.exit(status)
+    global status
+    print "Desconnecting.."
+    if ic:
+        try: 
+            ic.destroy()
+        except:
+            traceback.print_exc()
+            status = 1
+            sys.exit(status)
 
 
 def sayHello():
-	try:
-	   obsImpl.sayHello(3) 
-	   print "I said Hello!!"
-        except:
-           traceback.print_exc()
-	   status = 1
+    try:
+        obsImpl.sayHello(3) 
+        print "I said Hello!!"
+    except:
+        traceback.print_exc()
+        status = 1
 
 def sayHelloTelescope():
-	try:
-	   telescope = obsImpl.getTelescope()
-           telescope.sayHelloTelescope(2) 
-	   print "I said Hello Telescope!!"
-        except:
-           traceback.print_exc()
-	   status = 1
+    try:
+        telescope = obsImpl.getTelescope()
+        telescope.sayHelloTelescope(2) 
+        print "I said Hello Telescope!!"
+    except:
+        traceback.print_exc()
+        status = 1
 
 
 if __name__ == "__main__":
-	connect()
-        sayHello()
-        sayHelloTelescope()
-	disconnect()
-	
+    connect()
+    sayHello()
+    sayHelloTelescope()
+    disconnect()
+

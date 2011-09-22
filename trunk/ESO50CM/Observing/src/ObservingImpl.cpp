@@ -1,4 +1,3 @@
-
 #include <ObservingImpl.h>
 #include <TelescopeImpl.h>
 #include <Ice/Ice.h>
