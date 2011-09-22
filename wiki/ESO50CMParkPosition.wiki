@@ -1,0 +1,62 @@
+# eso50cm Telescope Park Position
+
+= Introduction =
+
+Add your content here.
+
+
+= Details =
+{{{
+operador@jumba:~$ ./eso50cm -v read_encoders
+Hello World!
+command: [read_encoders]
+traying to connect to 192.168.0.10:4000...
+connected to server...
+executing command: [read_encoders]...
+
+
+Time elapsed since last access: 0.801042 sec
+--------------------------------------------------
+            Lecture       Position
+Alpha AxisE:    511           +511
+Alpha WormE:    469           +469
+Alpha Motor:      0             +0
+
+Delta AxisE:    740           +740
+Delta WormE:    873           +873
+Delta Motor:      0             +0
+--------------------------------------------------
+Page generated at: [2011-09-22, 16:49:01]
+
+
+END of data!
+Connection closed!
+
+}}}
+
+{{{
+
+operador@jumba:~$ ./eso50cm -v get_position
+Hello World!
+command: [get_position]
+traying to connect to 192.168.0.10:4000...
+connected to server...
+executing command: [get_position]...
+
+
+Time elapsed: 0.300224 sec
+LST = | 16:12:29|  LT  = | 16:49:10|    LD  = |2011-09-22| JD  = |2455827.367477|
+RA  = | 16:12:29|  Dec = |-33:16:09|    HA  = |+00:00:00|  D-L = |+00:00:00|
+tRA = | 00:00:00|  tDec= |+00:00:00|    tHA = |-07:47:30|  tD-L= |+33:16:09|
+dRA = |+07:47:30|  dDec= |+33:16:09|
+
+Alt = |+90.000000 (+90.000000)|
+Az  = |+90.000000 (+90.000000)|
+--------------------------------------------------
+Page generated at: [2011-09-22, 16:49:11]
+
+
+END of data!
+Connection closed!
+
+}}}
