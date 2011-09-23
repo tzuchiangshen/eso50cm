@@ -1,2 +1,7 @@
 = 2011-09-13 = 
-  * Technical Time (Perdro Escarate, Johnny Reveco)
+  * Technical Time (Perdro Escarate, Johnny Reveco, Tzu-Chiang Shen)
+  * svn version 
+ 
+= 2011-09-21 = 
+  * Technical Time (Perdro Escarate, Tzu-Chiang Shen)
+  * svn version 
