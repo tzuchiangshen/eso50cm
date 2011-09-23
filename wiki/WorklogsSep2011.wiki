@@ -25,4 +25,5 @@
     * standardize code format to use 3 space instead of tab 
     * Observing module: done 
     * tcs module: partially done. 
+  * Fixed qtcli compilation problem at the console.
      
