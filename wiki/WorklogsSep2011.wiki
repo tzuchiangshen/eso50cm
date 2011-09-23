@@ -7,4 +7,7 @@
   * svn version r216
   * Startup process clean up 
     * added Deployment/ts7800/linuxrc-sdroot: fixed network configuration problem during first boot time. This will avoid the work around to created /fastboot file and reboot again.
+    * first attempt to convert telescope61 to a service started automatically during bootime. 
+      * Deployment/ts7800/etc/init.d/telescope61 created 
+      * telescope61 is being launched as part of boot process but after that died. This is expected due the way a daemon should behave. Need modify telescope61 to be able to fork itself as describe at [http://www.netzmafia.de/skripten/unix/linux-daemon-howto.html]    
      
