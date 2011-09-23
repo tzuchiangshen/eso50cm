@@ -1,7 +1,10 @@
 = 2011-09-13 = 
   * Technical Time (Perdro Escarate, Johnny Reveco, Tzu-Chiang Shen)
-  * svn version 
+  * svn version r203
  
 = 2011-09-21 = 
   * Technical Time (Perdro Escarate, Tzu-Chiang Shen)
-  * svn version 
+  * svn version r216
+  * Startup process clean up 
+    * added Deployment/ts7800/linuxrc-sdroot: fixed network configuration problem during first boot time. This will avoid the work around to created /fastboot file and reboot again.
+     
