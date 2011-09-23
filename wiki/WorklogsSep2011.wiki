@@ -1,7 +1,13 @@
 = 2011-09-13 = 
   * Technical Time (Perdro Escarate, Johnny Reveco, Tzu-Chiang Shen)
   * svn version r203
-  * 
+  * logging service 
+    * first attempt to use logging service. The ObservingImpl.cpp was adapted to use the logging service instead of printf. The log messages arrived to the logPanel successfully. But the log level is incorrect. 
+  * Pointing test
+    * Managed to point the telescope to serveral sources 
+    * Found Az/Alt labels were swapped in the qtcli GUI
+    * Found TcsGui module doesn't compile at the console complaining about problem with wrong use of const char *. To be fix 
+    * 
  
 = 2011-09-21 = 
   * Technical Time (Perdro Escarate, Tzu-Chiang Shen)
