@@ -2,7 +2,14 @@
   * Technical Time (Perdro Escarate, Johnny Reveco, Tzu-Chiang Shen)
   * svn version r203
   * logging service 
-    * first attempt to use logging service. The ObservingImpl.cpp was adapted to use the logging service instead of printf. The log messages arrived to the logPanel successfully. But the log level is incorrect. 
+    * first attempt to use logging service. The ObservingImpl.cpp was adapted to use the logging service instead of printf. The log messages arrived to the logPanel successfully. But the log level is incorrect. The bug was corrected but not tested yet.
+    * logPanel GUI adjusted to fit the console resolution
+    * Modified Logger configuration files to be shared with other IceBox application (moved to general configurations directory)
+    * Fixed bug in the Logger module that prevent the logger to sent logs from the LCU to the console
+    * Fixed bug in cmake configuration that prevented the compilation of the Logger module in the LCU
+    * Tested the sending of log messages from the LCU to the LoggingService running at the console using a simple test script
+    * Tested the filtering feature of the logPanel 
+
   * Pointing test
     * Managed to point the telescope to serveral sources 
     * Found Az/Alt labels were swapped in the qtcli GUI
