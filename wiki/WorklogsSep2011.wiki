@@ -14,7 +14,7 @@
       * Same script is created for LCUControl
   * Logging services 
     * Adapted Observing module to use logging services intead of printf
-    * Adapted a logPanel and Logger module to be independent of myslq databse setup (code modification is not archived to the svn yet, to be discussed with Johnny)
+    * Adapted a logPanel and Logger module to be independent of myslq database classes (code modification is not archived to the svn yet, to be discussed with Johnny)
   * Code clean and formatting 
     * standardize code format to use 3 space instead of tab 
     * Observing module: done 
