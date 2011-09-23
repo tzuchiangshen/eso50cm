@@ -6,8 +6,16 @@
   * Technical Time (Perdro Escarate, Tzu-Chiang Shen)
   * svn version r216
   * Startup process clean up 
-    * added Deployment/ts7800/linuxrc-sdroot: fixed network configuration problem during first boot time. This will avoid the work around to created /fastboot file and reboot again.
+    * added Deployment/ts7800/linuxrc-sdroot: fixed network configuration problem during first boot time. This will avoid the work around to created /fastboot file and reboot again. Also solved problem of permission of /dev/ttts6
     * first attempt to convert telescope61 to a service started automatically during bootime. 
       * Deployment/ts7800/etc/init.d/telescope61 created 
-      * telescope61 is being launched as part of boot process but after that died. This is expected due the way a daemon should behave. Need modify telescope61 to be able to fork itself as describe at [http://www.netzmafia.de/skripten/unix/linux-daemon-howto.html]    
+      * telescope61 is being launched as part of booting process but after that died. This is expected due the way a daemon should behave. Need modify telescope61 to be able to fork itself as describe at [http://www.netzmafia.de/skripten/unix/linux-daemon-howto.html] 
+      * Same script is created for LCUControl
+  * Logging services 
+    * Adapted Observing module to use logging services intead of print
+    * Adapted a logPanel and Logger module to be independent of myslq databse setup (code modification is not archived to the svn yet, to be discussed with Johnny)
+  * Code clean and formatting 
+    * standardize code format to use 3 space instead of tab 
+    * Observing module: done 
+    * tcs module: partially done. 
      
