@@ -13,7 +13,7 @@
       * telescope61 is being launched as part of booting process but after that died. This is expected due the way a daemon should behave. Need modify telescope61 to be able to fork itself as describe at [http://www.netzmafia.de/skripten/unix/linux-daemon-howto.html] 
       * Same script is created for LCUControl
   * Logging services 
-    * Adapted Observing module to use logging services intead of print
+    * Adapted Observing module to use logging services intead of printf
     * Adapted a logPanel and Logger module to be independent of myslq databse setup (code modification is not archived to the svn yet, to be discussed with Johnny)
   * Code clean and formatting 
     * standardize code format to use 3 space instead of tab 
