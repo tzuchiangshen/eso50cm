@@ -17,6 +17,7 @@
 #include <sys/un.h>
 #include <unistd.h>
 #include <errno.h>      //errno
+#include <syslog.h>
 //-------------------------------------------------------------
 //  Instrument Shared memory and semaphore
 #define SHMKEY   0xFAFAFA00
@@ -89,6 +90,13 @@ void handle_connection (int connection_fd)
 
 
 static void exit_handler(int s)
+{
+  if(verbose)
+    printf("telescope61::exit_handler Ctrl+C signal catched!!!");
+  quit = 1; 
+}
+
+void exit_telescope(void)
 {
   if(verbose)
     printf("telescope61::exit_handler Ctrl+C signal catched!!!");
@@ -181,13 +189,14 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
     struct sigaction sigExitHandler;
 
     int init_ok_flag;
+    syslog(LOG_INFO, " starting run_telescope()!");
 
     do {
         /* Manage CTRL+C and kill signals */
         sigExitHandler.sa_handler = & exit_handler;
         sigemptyset(&sigExitHandler.sa_mask);
         sigExitHandler.sa_flags = 0;
-        sigaction(SIGINT, &sigExitHandler, NULL);
+        /* sigaction(SIGINT, &sigExitHandler, NULL); */
 	sigaction(SIGTERM, &sigExitHandler, NULL);
 
         init_ok_flag = 1;
@@ -396,17 +405,17 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
         /**
          * File descriptor for standard in
          */
-        fd_stdin = fileno( stdin );
-        if( fd_rs232 == 0 ) {
-            init_ok_flag = 0;
-            if( verbose )
-                printf( "[telescope_run] fd_stdin = 0\n" );
-        } else if( fd_stdin < 0 ) {
-            init_ok_flag = 0;
-            perror( "[telescope_run] fileno" );
-            if( verbose )
-                printf( "[telescope_run] fileno ERROR.\n" );
-        }
+//        fd_stdin = fileno( stdin );
+//        if( fd_rs232 == 0 ) {
+//            init_ok_flag = 0;
+//            if( verbose )
+//                printf( "[telescope_run] fd_stdin = 0\n" );
+//        } else if( fd_stdin < 0 ) {
+//            init_ok_flag = 0;
+//            perror( "[telescope_run] fileno" );
+//            if( verbose )
+//                printf( "[telescope_run] fileno ERROR.\n" );
+//        }
 
     } while( 0 );
 
@@ -676,18 +685,18 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
             /**
             * Get Message to TX from stdin
             */
-            //printf( "[telescope_run] checking for a stdio message...\n" );
-            if( ! new_message_flag ) {
-                if( ( retval = stream_status( fd_stdin ) ) > 0 ) {
-                    memset( buffer, 0 , 128 );
-                    retval = read( fd_stdin, buffer, 128 );
-                    buffer[retval-1] = 0;  //enter = 0
-                    fflush( stdin );
-                    new_message_flag = 1;
-                    message_length = strlen( buffer );
-                }
-            }//END if( ! new_message_flag )
-
+//            //printf( "[telescope_run] checking for a stdio message...\n" );
+//            if( ! new_message_flag ) {
+//                if( ( retval = stream_status( fd_stdin ) ) > 0 ) {
+//                    memset( buffer, 0 , 128 );
+//                    retval = read( fd_stdin, buffer, 128 );
+//                    buffer[retval-1] = 0;  //enter = 0
+//                    fflush( stdin );
+//                    new_message_flag = 1;
+//                    message_length = strlen( buffer );
+//                }
+//            }//END if( ! new_message_flag )
+//
             /**
             * Process stdin message
             */
@@ -801,6 +810,8 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                     retval = write_RS232( fd_rs232, msg_buffer, 10  );
                 }
             }
+
+	    /*syslog(LOG_INFO, "i'm still alive!!");*/
 
         } while( ! quit );
         if( verbose ) {

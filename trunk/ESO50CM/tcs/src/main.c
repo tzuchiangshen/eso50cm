@@ -13,8 +13,15 @@
 //#include <sys/ioctl.h>
 
 #include <errno.h>
-
+#include <syslog.h>
+#include <signal.h>
 #include "./telescope.h"
+
+#define DAEMON_NAME "telescope61"
+#define PID_FILE "/var/run/eso50cm/telescope61.pid"
+
+int keep_running = 1;
+
 
 /** Description of long options for getopt_long.  */
 static const struct option long_options[] = {
@@ -74,15 +81,43 @@ void test_device( char * device ) {
     }
 }
 
+void signal_handler(int sig) {
 
+    switch(sig) {
+        case SIGHUP:
+            syslog(LOG_WARNING, "Received SIGHUP signal.");
+            break;
+        case SIGTERM:
+            syslog(LOG_WARNING, "Received SIGTERM signal.");
+            keep_running = 0;
+            exit_telescope();
+            break;
+        case SIGINT:
+            syslog(LOG_WARNING, "Received SIGINT signal.");
+            keep_running = 0;
+            exit_telescope();
+            break;
+        default:
+            syslog(LOG_WARNING, "Unhandled signal (%d) %s", sig, strsignal(sig));
+            break;
+    }
+}
+ 
 int main( int argc, char* const argv[] ) {
     int next_option;
     char * device;
     speed_t baudrate;
     char * module_dir;
     char * socket_path;
+    int daemonize = 1;
 
-    /** Store the program name, which well use in error messages.  */
+    // Setup signal handling before we start
+    signal(SIGHUP, signal_handler);
+    signal(SIGTERM, signal_handler);
+    signal(SIGINT, signal_handler);
+    signal(SIGQUIT, signal_handler);
+
+     /** Store the program name, which well use in error messages.  */
     program_name = argv[0];
 
     /** Set defaults for optionsfor device and baudrate.  */
@@ -228,7 +263,71 @@ int main( int argc, char* const argv[] ) {
         printf( "modules will be loaded from %s\n", module_dir );
         printf( "...\n" );
     }
+
+    syslog(LOG_INFO, "%s daemon starting up", DAEMON_NAME);
+    // Setup syslog logging - see SETLOGMASK(3)
+    setlogmask(LOG_UPTO(LOG_INFO));
+    openlog(DAEMON_NAME, LOG_CONS, LOG_USER);
+
+    /* Our process ID and Session ID */
+    pid_t pid, sid;
+ 
+    if (daemonize) {
+        syslog(LOG_INFO, "starting the daemonizing process");
+ 
+        /* Fork off the parent process */
+        pid = fork();
+        if (pid < 0) {
+            exit(EXIT_FAILURE);
+        }
+        /* If we got a good PID, then
+           we can exit the parent process. */
+        if (pid > 0) {
+            /* parent process */ 
+            /* syslog(LOG_INFO, "fork() finished successfully, exit parent process!"); */
+            exit(EXIT_SUCCESS);
+        }
+ 
+        /* Change the file mode mask */
+        umask(0);
+ 
+        /* Create a new SID for the child process */
+        sid = setsid();
+        if (sid < 0) {
+            /* Log the failure */
+            exit(EXIT_FAILURE);
+        }
+ 
+        /* Change the current working directory */
+        if ((chdir("/")) < 0) {
+            /* Log the failure */
+            exit(EXIT_FAILURE);
+        }
+ 
+        /* Close out the standard file descriptors */
+        close(STDIN_FILENO);
+        close(STDOUT_FILENO);
+        close(STDERR_FILENO);
+    }
+ 
+    //****************************************************
+    // TODO: Insert core of your daemon processing here
+    //****************************************************
     /** Run the server.  */
-    telescope_run( device, baudrate, socket_path );
-    return 0;
+    while(keep_running) {
+        if (pid == 0) {
+           telescope_run( device, baudrate, socket_path );
+        } else 
+	   syslog(LOG_INFO, "parent: I'm still alive, you shouldn't see this message!!!"); 
+        if (keep_running) 
+	   syslog(LOG_INFO, "I'm still alive, you shouldn't see this message!!!"); 
+    }
+
+ 
+    syslog(LOG_INFO, "%s daemon exiting", DAEMON_NAME);
+    //****************************************************
+    // TODO: Free any allocated resources before exiting
+    //****************************************************
+ 
+    exit(0);
 }
