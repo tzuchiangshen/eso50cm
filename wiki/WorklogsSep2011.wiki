@@ -36,7 +36,7 @@
 
 = 2011-09-27 = 
   * Technical Time (Perdro Escarate, Tzu-Chiang Shen, Vincent Suc, Andrea)
-  * svn version r216
+  * svn version r237
   * Startup process clean up 
      * Finished to convert telescope61 into a daemon. And a /etc/init.d/telescope61 initialization script was created
      * Now every time the ARM is rebooted. The telescope61 porcess is loaded automatically and ready to process request. 
