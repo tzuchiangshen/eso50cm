@@ -24,14 +24,14 @@ class SimpleClientI : public LogPublisher {
         levelDesc[WARNING]="WARNING";
         levelDesc[SEVERE]="SEVERE";
  */
-        levelDesc[1]="FINEST";
-        levelDesc[2]="FINER";
-        levelDesc[3]="FINE";
-        levelDesc[4]="CONFIG";
-        levelDesc[5]="INFO";
-        levelDesc[6]="WARNING";
-        levelDesc[7]="SEVERE";
-        levelDesc[9]="Unknown log level";
+        levelDesc[0]="FINEST";
+        levelDesc[1]="FINER";
+        levelDesc[2]="FINE";
+        levelDesc[3]="CONFIG";
+        levelDesc[4]="INFO";
+        levelDesc[5]="WARNING";
+        levelDesc[6]="SEVERE";
+        levelDesc[7]="Unknown log level";
         printf("| %s | %lf | %s | %s | %i | %s |\n",levelDesc[message.level].c_str(), message.timestamp, message.source.c_str(),message.method.c_str(), message.lineNumber, message.message.c_str());
 	}
 };

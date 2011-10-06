@@ -1,6 +1,7 @@
 #include "LoggerI.h"
 #include <stdio.h>
 #include <string.h>
+
 #include "dbstuff.h"
 
 using namespace Log;
@@ -16,6 +17,7 @@ LoggerI::LoggerI(CommunicatorPtr ic):communicator(ic)
     levelDesc[WARNING]="WARNING";
     levelDesc[SEVERE]="SEVERE";
     levelDesc[9]="Unknown log level";
+
     if (!db.connect("tcp://127.0.0.1:3306","logmgr","logpass"))
     {
         cout << "Warning! I couldn't connect to the DB!" << endl;

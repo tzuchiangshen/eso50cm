@@ -45,7 +45,7 @@ LoggerHelper::LoggerHelper(string src)
         }
         
         cout << "Proxy for logging service: " << logginServiceProxyStr << endl;
-#ifdef LCU
+#ifdef ARM
         int dummy=0;
         m_ic =  Ice::initialize(dummy,0);
 #else
@@ -66,7 +66,7 @@ LoggerHelper::LoggerHelper(string src)
         m_source=src;
         setDiscardLevel(CONFIG);
     } catch (const Ice::Exception& ex) {
-#ifdef LCU
+#ifdef ARM
         cout << ex.toString() << endl;
 #else
         cout << ex << endl;
@@ -127,7 +127,7 @@ void LoggerHelper::logWARNING(string log, string method, int lineNumber){
 void LoggerHelper::logSEVERE(string log, string method, int lineNumber){    
     logMsg(SEVERE,log, method, lineNumber);
 };
-#ifdef LCU
+#ifdef ARM
 double LoggerHelper::convertDouble(double MEData)
 {
     double test;
