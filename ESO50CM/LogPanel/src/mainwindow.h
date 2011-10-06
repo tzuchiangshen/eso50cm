@@ -1,6 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-#include <dbstuff.h>
+//#include <dbstuff.h>   // hacked for development
 #include <QtGui/QMainWindow>
 #include <QFileDialog>
 #include <QLabel>
@@ -33,7 +33,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    MySQLCon db;
+//    MySQLCon db;  // Hacked for development
     void logEvent(const LogMessageData &message, const Ice::Current& c);
     string getTimeString(double timestamp);
     string getSourceDesc(int sourceId);
