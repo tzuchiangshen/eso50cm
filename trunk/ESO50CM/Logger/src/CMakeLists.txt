@@ -22,10 +22,10 @@ ELSE(NOT INTROOT)
     MESSAGE("CMAKE_INSTALL_PREFIX set to: $ENV{INTROOT}")
 ENDIF(NOT INTROOT)
 
-SET(LCU $ENV{TYPE})
+SET(ARM $ENV{TYPE})
 
 #for generated files from slice
-IF(NOT LCU)
+IF(NOT ARM)
     ADD_CUSTOM_COMMAND(
         OUTPUT ${PROJECT_SOURCE_DIR}/LogMessage.cpp ${PROJECT_SOURCE_DIR}/LogMessage.h
         #generate cpp proxies files
@@ -47,7 +47,7 @@ IF(NOT LCU)
         COMMAND mv ${PROJECT_SOURCE_DIR}/Logger.h ${PROJECT_SOURCE_DIR}/../include
         COMMAND ${CMAKE_COMMAND} -E echo " Logger.cpp Logger.h generated."
     )
-ELSE(NOT LCU)
+ELSE(NOT ARM)
     ADD_CUSTOM_COMMAND(
         OUTPUT ${PROJECT_SOURCE_DIR}/Logger.cpp ${PROJECT_SOURCE_DIR}/Logger.h    
         #generate cpp proxies files
@@ -69,15 +69,12 @@ ELSE(NOT LCU)
         COMMAND mv ${PROJECT_SOURCE_DIR}/LogMessage.h ${PROJECT_SOURCE_DIR}/../include
         COMMAND ${CMAKE_COMMAND} -E echo " LogMessage.cpp LogMessage.h generated."
     )
-ENDIF(NOT LCU)
+ENDIF(NOT ARM)
 
-IF(LCU)
-    ADD_DEFINITIONS(-DLCU -DICEE_PURE_CLIENT)
-ENDIF(LCU)
-IF(NOT LCU)
-	ADD_LIBRARY(DBStuff dbstuff)
-	set_property(TARGET DBStuff PROPERTY LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../lib)
-ENDIF(NOT LCU)
+IF(ARM)
+    ADD_DEFINITIONS(-DARM -DICEE_PURE_CLIENT)
+ENDIF(ARM)
+
 ADD_LIBRARY(LoggerCore SHARED LoggerHelper LogPublisher Logger LogMessage)
 set_property(TARGET LoggerCore PROPERTY LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../lib)
 #for .h file search
@@ -88,13 +85,25 @@ INCLUDE_DIRECTORIES("${INTROOT}/include")
 INCLUDE_DIRECTORIES("$ENV{SWROOT}/include")
 LINK_DIRECTORIES(${INTROOT}/lib)
 LINK_DIRECTORIES($ENV{SWROOT}/lib)
-IF(NOT LCU)
-    ADD_EXECUTABLE(loggingService LoggingService LoggerI dbstuff)
-    TARGET_LINK_LIBRARIES(loggingService LoggerCore Ice IceStorm IceUtil mysqlcppconn)
+FIND_LIBRARY(MYSQL_LIB NAMES mysqlcppconn )
+IF(EXISTS ${MYSQL_LIB})
+    MESSAGE("mysql found, using mysql libraries ")
+    ADD_LIBRARY(DBStuff dbstuff)
+    set_property(TARGET DBStuff PROPERTY LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../lib)
+ENDIF(EXISTS ${MYSQL_LIB})
+
+IF(NOT ARM)
+    IF(EXISTS ${MYSQL_LIB})
+        ADD_EXECUTABLE(loggingService LoggingService LoggerI dbstuff)
+        TARGET_LINK_LIBRARIES(loggingService LoggerCore Ice IceStorm IceUtil mysqlcppconn)
+    ELSE(EXISTS ${MYSQL_LIB})
+        ADD_EXECUTABLE(loggingService LoggingService LoggerDevelI)
+        TARGET_LINK_LIBRARIES(loggingService LoggerCore Ice IceStorm IceUtil)
+    ENDIF(EXISTS ${MYSQL_LIB})
     ADD_EXECUTABLE(simpleClient SimpleClientI)
     TARGET_LINK_LIBRARIES(simpleClient LoggerCore IceUtil Ice IceStorm)
     set_property(TARGET loggingService PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
-ENDIF(NOT LCU)
+ENDIF(NOT ARM)
 
 #delete generated files in make clean 
 SET_DIRECTORY_PROPERTIES (
@@ -107,20 +116,40 @@ SET_DIRECTORY_PROPERTIES (
      ADDITIONAL_MAKE_CLEAN_FILES "LogPublisher.cpp"
 )
 
-IF(NOT LCU)
+#IF(EXISTS ${MYSQL_LIB})
+#    ADD_CUSTOM_COMMAND(
+#        OUTPUT ${PROJECT_SOURCE_DIR}/../config/loggingService.config   
+#        #generate create loggingService.config as a copy of the lcu or local version of the file
+#        COMMAND cp  ${PROJECT_SOURCE_DIR}/../config/loggingService.config.local   ${PROJECT_SOURCE_DIR}/../config/loggingService.config 
+#        )
+#ELSE(EXISTS ${MYSQL_LIB})
+#    ADD_CUSTOM_COMMAND(
+#        OUTPUT ${PROJECT_SOURCE_DIR}/../config/loggingService.config   
+#        #generate create loggingService.config as a copy of the lcu or local version of the file
+#        COMMAND cp  ${PROJECT_SOURCE_DIR}/../config/loggingService.config.lcu   ${PROJECT_SOURCE_DIR}/../config/loggingService.config 
+#       )
+#ENDIF(EXISTS ${MYSQL_LIB})
+
+
+IF(NOT ARM)
 #for make install
-    INSTALL(TARGETS LoggerCore loggingService simpleClient DBStuff
+    INSTALL(TARGETS LoggerCore loggingService simpleClient
     RUNTIME DESTINATION ${INTROOT}/bin
     LIBRARY DESTINATION ${INTROOT}/lib
     ARCHIVE DESTINATION ${INTROOT}/lib
 )
-ENDIF(NOT LCU)
+ENDIF(NOT ARM)
+
+IF(EXISTS ${MYSQL_LIB})
 #for make install
-    INSTALL(TARGETS LoggerCore 
+    INSTALL(TARGETS DBStuff
     RUNTIME DESTINATION ${INTROOT}/bin
     LIBRARY DESTINATION ${INTROOT}/lib
     ARCHIVE DESTINATION ${INTROOT}/lib
 )
+ENDIF(EXISTS ${MYSQL_LIB})
+
+
 
 INSTALL(
    DIRECTORY ${PROJECT_SOURCE_DIR}/../idl/ DESTINATION ${INTROOT}/idl 

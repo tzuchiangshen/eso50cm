@@ -1,7 +1,7 @@
 #ifndef __LOGGER_HELPER_H_
 #define __LOGGER_HELPER_H_
 
-#ifdef LCU
+#ifdef ARM
     #include <IceE/IceE.h>
 #else
     #include <Ice/Ice.h>
