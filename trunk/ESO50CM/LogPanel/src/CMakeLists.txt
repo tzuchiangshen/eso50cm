@@ -22,7 +22,7 @@ ELSE(NOT INTROOT)
     MESSAGE("CMAKE_INSTALL_PREFIX set to: $ENV{INTROOT}")
 ENDIF(NOT INTROOT)
 
-SET(LCU $ENV{TYPE})
+SET(ARM $ENV{TYPE})
 
 #for generated files from slice
 #for .h file search
@@ -41,7 +41,7 @@ LINK_DIRECTORIES($ENV{SWROOT}/lib)
 LINK_DIRECTORIES(/usr/lib)
 LINK_DIRECTORIES(/usr/local/lib)
 #for generated files from slice
-IF(NOT LCU)
+IF(NOT ARM)
     ADD_CUSTOM_COMMAND(
         OUTPUT ${PROJECT_SOURCE_DIR}/moc_mainwindow.cpp  ${PROJECT_SOURCE_DIR}/ui_mainwindow.h 
         #generate cpp moc and ui files
@@ -49,13 +49,13 @@ IF(NOT LCU)
         COMMAND /usr/bin/uic-qt4 mainwindow.ui -o ui_mainwindow.h
         COMMAND ${CMAKE_COMMAND} -E echo " moc_mainwindow.cpp and  ui_mainwindow.h generated."
     )
-ENDIF(NOT LCU)
+ENDIF(NOT ARM)
 
-IF(NOT LCU)
+IF(NOT ARM)
     ADD_EXECUTABLE(LogPanel main mainwindow moc_mainwindow)
-    TARGET_LINK_LIBRARIES(LogPanel LoggerCore Ice IceStorm IceUtil mysqlcppconn  QtGui QtCore pthread DBStuff)
+    TARGET_LINK_LIBRARIES(LogPanel LoggerCore Ice IceStorm IceUtil QtGui QtCore pthread)
     set_property(TARGET LogPanel PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
-ENDIF(NOT LCU)
+ENDIF(NOT ARM)
 
 INSTALL(FILES  ${PROJECT_SOURCE_DIR}/../bin/LogPanel   ${PROJECT_SOURCE_DIR}/../src/logPanel
         DESTINATION ${INTROOT}/bin

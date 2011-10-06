@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ui->statusBar->showMessage("Application Started",3000);
+/*
     if (!db.connect("tcp://127.0.0.1:3306","logmgr","logpass"))
     {
         ui->dbConnection->setChecked(false);
@@ -19,15 +20,17 @@ MainWindow::MainWindow(QWidget *parent)
         ui->statusBar->showMessage("Succesfully connected to the DB",3000);
         ui->dbConnection->setChecked(true);
     }
-    levelDesc[0]="UNKNOWNLevel0";
-    levelDesc[1]="FINEST";
-    levelDesc[2]="FINER";
-    levelDesc[3]="FINE";
-    levelDesc[4]="CONFIG";
-    levelDesc[5]="INFO";
-    levelDesc[6]="WARNING";
-    levelDesc[7]="SEVERE";
-    levelDesc[9]="UNKNOWN";
+*/
+    ui->dbConnection->setChecked(false);
+
+    levelDesc[0]="FINEST";
+    levelDesc[1]="FINER";
+    levelDesc[2]="FINE";
+    levelDesc[3]="CONFIG";
+    levelDesc[4]="INFO";
+    levelDesc[5]="WARNING";
+    levelDesc[6]="SEVERE";
+    levelDesc[7]="UNKNOWN";
     // sets the initial sizes
     ui->logTable->setColumnWidth(0,200);
     ui->logTable->setColumnWidth(1,90);
@@ -159,7 +162,8 @@ void MainWindow::logEvent(const LogMessageData &message, const Ice::Current& c){
   addLog(message.level, message.timestamp, message.source,message.message);
 }
 string MainWindow::getSourceDesc(int sourceId){
-    return db.getSourceDesc(sourceId);
+    return string("DB Not connected");  // hacked for development
+    //return db.getSourceDesc(sourceId);
 }
 
 string MainWindow::getTimeString(double timestamp){
