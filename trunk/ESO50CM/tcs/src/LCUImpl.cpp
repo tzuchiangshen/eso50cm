@@ -4,7 +4,9 @@
 
 using namespace std;
 
-LCUImpl::LCUImpl() {
+LCUImpl::LCUImpl(): 
+    logger("LCUControl")
+{
     m_lcu = new myLCU();
     rawEncoder_t = new OUC::RawEncoderData(); 
     encoder_t = new OUC::EncoderData();
@@ -21,17 +23,17 @@ LCUImpl::LCUImpl() {
 void
 LCUImpl::sayHello(int delay, const Ice::Current&)
 {
-    if(delay != 0)
+  if(delay != 0)
     {
         IceUtil::ThreadControl::sleep(IceUtil::Time::milliSeconds(delay));
     }
-    printf("Hello World!\n");
+    logger.logINFO("Hello World!\n");
 }
 
 void
 LCUImpl::shutdown(const Ice::Current& c)
 {
-    printf("Shutting down...\n");
+    logger.logINFO("Shutting down...\n");
     c.adapter->getCommunicator()->shutdown();
 }
 
