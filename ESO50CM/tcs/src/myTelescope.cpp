@@ -4,16 +4,18 @@ extern int verbose;
 /**
   * myTelescope::myTelescope
   */
-myTelescope::myTelescope( struct my_lcu_data_t * lcu_data ) : myTClock( & lcu_data->clock_data )
+myTelescope::myTelescope( struct my_lcu_data_t * lcu_data ): 
+    myTClock( & lcu_data->clock_data ),
+    logger("myTelescope")
 {
     //int retval;
-    if( verbose ) printf( "[myTelescope::myTelescope] Hello World!\n" );
+    logger.logFINE("myTelescope::myTelescope Hello World!" );
 
     m_telescope_data = & lcu_data->telescope_data;
-    if( verbose ) printf( "[myTelescope::myTelescope] m_telescope_data at %p\n", (void *) m_telescope_data );
-    if( verbose ) printf( "[myTelescope::myTelescope] m_clock_data at     %p\n", (void *) & lcu_data->clock_data );
-    if( verbose ) printf( "[myTelescope::myTelescope] m_alpha_data at     %p\n", (void *) & lcu_data->alpha_data );
-    if( verbose ) printf( "[myTelescope::myTelescope] m_delta_data at     %p\n", (void *) & lcu_data->delta_data );
+//     logger.logFINE("myTelescope::myTelescope m_telescope_data at %p", (void *) m_telescope_data );
+//     logger.logFINE("myTelescope::myTelescope m_clock_data at     %p", (void *) & lcu_data->clock_data );
+//     logger.logFINE("myTelescope::myTelescope m_alpha_data at     %p", (void *) & lcu_data->alpha_data );
+//     logger.logFINE("myTelescope::myTelescope m_delta_data at     %p", (void *) & lcu_data->delta_data );
 
     //clock = new myTClock( & lcu_data->clock_data );
     alpha = new myTAxis( 'A', & lcu_data->alpha_data );
@@ -32,7 +34,7 @@ myTelescope::~myTelescope( void )
 
     detachInstrumentMemory();
 
-    if( verbose ) printf( "[myTelescope::~myTelescope] Good bye!\n" );
+    logger.logFINE("myTelescope::~myTelescope Good bye!" );
 
 }
 
@@ -49,14 +51,16 @@ int myTelescope::attachInstrumentMemory( void )
     m_segment_id = shmget( TELSHMKEY, m_shared_segment_size,
                            S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH );
                            //IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR );
-    if( m_segment_id < 0 ) {
-        perror( "[myTelescope::attachTelescope] shmget" );
+    if( m_segment_id < 0 ) 
+    {
+        logger.logSEVERE( "myTelescope::attachTelescope Failed shmget operation!" );
         return errno;
     }
     /** Attach the Instrument Shared Memory segment */
     m_shared_memory = (char *) shmat( m_segment_id, 0, 0 );
-    if( m_shared_memory < 0 ) {
-        perror( "[myTelescope::attachTelescope] shmat" );
+    if( m_shared_memory < 0 ) 
+    {
+        logger.logSEVERE("myTelescope::attachTelescope Failed shmat operation!" );
         return errno;
     }
 
@@ -65,25 +69,26 @@ int myTelescope::attachInstrumentMemory( void )
     m_segment_size = m_shmbuffer.shm_segsz;
 
     bin_telescope = (struct telescope_data_t *) m_shared_memory;
-    if( verbose ) printf( "[myTelescope::attachTelescope] bin_telescope at %p\n", (void *) bin_telescope );
-    for( int i = 0; i < 6; i ++ ) {
-        if( verbose ) printf( "[myTelescope::attachTelescope] encoder[%d] at %p\n",
-                i,
-                (void *) & bin_telescope->encoder[i] );
+    //logger.logFINE("myTelescope::attachTelescope bin_telescope at %p", (void *) bin_telescope );
+    for( int i = 0; i < 6; i ++ ) 
+    {
+        //logger.logFINE("myTelescope::attachTelescope encoder[%d] at %p",i,(void *) & bin_telescope->encoder[i] );
     }
 
     /** Create Semaphore to control the access to the Instrument Shared Memory */
     bin_telescope_semaphore = new myBSemaphore( TELSEMKEY, S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH );
-    if( (retval = bin_telescope_semaphore->allocate()) < 0 ) {
-        if( verbose ) printf( "[myTelescope::attachTelescope] Error allocating semaphore\n" );
+    if( (retval = bin_telescope_semaphore->allocate()) < 0 ) 
+    {
+        logger.logFINE("myTelescope::attachTelescope] Error allocating semaphore");
         return retval;
     }
 
     bin_telescope_semaphore->wait();
-    for( int i = 0; i < 6; i ++ ) {
-        if( verbose ) printf( "[myTelescope::initializeTelescope] encoder[0x%02X] at %p\n",
-                bin_telescope->encoder[i].i2c_address,
-                (void *) & bin_telescope->encoder[i] );
+    for( int i = 0; i < 6; i ++ ) 
+    {
+        //logger.logFINE("myTelescope::initializeTelescope] encoder[0x%02X] at %p",
+	//	       bin_telescope->encoder[i].i2c_address,
+	//	       (void *) & bin_telescope->encoder[i] );
     }
     alpha->setInstrumentMemorySpace( & bin_telescope->encoder[0],
                                        & bin_telescope->encoder[2],
@@ -102,15 +107,17 @@ int myTelescope::attachInstrumentMemory( void )
 int myTelescope::detachInstrumentMemory( void )
 {
     /** Detach the shared memory segment */
-    if( m_shared_memory > 0 ) {
-        if( shmdt( m_shared_memory ) < 0 ) {
-            perror( "[myTelescope::detachTelescope] shmdt" );
+    if( m_shared_memory > 0 ) 
+    {
+        if( shmdt( m_shared_memory ) < 0 ) 
+        {
+            logger.logSEVERE("myTelescope::detachTelescope Failed shmdt operation" );
             return errno;
         }
         bin_telescope = NULL;
-        if( verbose ) printf( "[myTelescope::detachTelescope] Done!\n" );
+	logger.logFINE("myTelescope::detachTelescope] Done!");
     } else {
-        if( verbose ) printf( "[myTelescope::detachTelescope] Nothing to do\n" );
+        logger.logFINE("myTelescope::detachTelescope Nothing to do\n");
     }
     return 0;
 }
@@ -123,22 +130,20 @@ int myTelescope::connectTelescope( void )
     int retval;
 
     m_socket_fd = socket( PF_LOCAL, SOCK_STREAM, 0 );
-    if( m_socket_fd < 0 ) {
-        perror( "[myTelescope::myTelescope] socket" );
-        printf( "[myTelescope::myTelescope] socket ERROR\n" );
-    } else {
-        printf( "[myTelescope::myTelescope] socket OK\n" );
-    }
+   
+    if( m_socket_fd < 0 ) 
+        logger.logSEVERE("myTelescope::myTelescope Error opening socket!");
+    else 
+        logger.logFINE("myTelescope::myTelescope] socket OK");
+   
     m_server_name.sun_family= AF_LOCAL;
     strcpy( m_server_name.sun_path, "/tmp/mbux" );
 
     retval = connect( m_socket_fd, (struct sockaddr *) & m_server_name, SUN_LEN( & m_server_name ) );
-    if( retval < 0 ) {
-        perror( "[myTelescope::myTelescope] connect" );
-        printf( "[myTelescope::myTelescope] connect ERROR\n" );
-    } else {
-        printf( "[myTelescope::myTelescope] connect OK\n" );
-    }
+    if( retval < 0 ) 
+        logger.logSEVERE("myTelescope::myTelescope Error connecting to HW");
+    else 
+        logger.logFINE("myTelescope::myTelescope connect OK");
     return retval;
 }
 
@@ -150,12 +155,10 @@ int myTelescope::disconnectTelescope( void )
     int retval;
 
     retval = close( m_socket_fd );
-    if( retval < 0 ) {
-        perror( "[myTelescope::myTelescope] close" );
-        printf( "[myTelescope::myTelescope] close ERROR\n" );
-    } else {
-        printf( "[myTelescope::myTelescope] close OK\n" );
-    }
+    if( retval < 0 ) 
+        logger.logSEVERE("myTelescope::myTelescope Error closing connection");
+    else 
+        logger.logFINE("myTelescope::myTelescope close OK");
     return retval;
 }
 
@@ -587,17 +590,17 @@ int myTelescope::setTarget( double trg_ra, double trg_dec, double * trgAlt, doub
     m_telescope_data->currentRA = degs;
 
 
-    printf( "[myTelescope::setTarget] Target [lst = %lf] [ra = %lf] [dec = %lf]\n", lst, trg_ra, trg_dec );
+    //logger.logFINE("myTelescope::setTarget Target [lst = %lf] [ra = %lf] [dec = %lf]", lst, trg_ra, trg_dec );
     equatorialToHorizontal( lst - trg_ra, trg_dec, trgAlt, trgAz  );
-    if( m_telescope_data->HighElevation >= * trgAlt  && * trgAlt >= m_telescope_data->LowElevation ) {
+    if( m_telescope_data->HighElevation >= * trgAlt  && * trgAlt >= m_telescope_data->LowElevation ) 
+    {
         m_telescope_data->targetRA  = trg_ra;
         m_telescope_data->targetDec = trg_dec;
-        printf( "[myTelescope::setTarget] Target [alt = %lf] [az = %lf]\n", * trgAlt, * trgAz );
+        //logger.logFINE("myTelescope::setTarget Target [alt = %lf] [az = %lf]", * trgAlt, * trgAz );
     } else {
-        if( verbose ) {
-            printf( "[myTelescope::setTarget] Target [lst = %lf] [ra = %lf] [dec = %lf]\n", lst, trg_ra, trg_dec );
-            printf( "[myTelescope::setTarget] Target [alt = %lf] [az = %lf] bellow horizon (%lf).\n", * trgAlt, * trgAz, m_telescope_data->LowElevation );
-        }
+        //logger.logFINE("myTelescope::setTarget Target [lst = %lf] [ra = %lf] [dec = %lf]", lst, trg_ra, trg_dec );
+        //logger.logFINE("myTelescope::setTarget Target [alt = %lf] [az = %lf] bellow horizon (%lf)", 
+	//	       * trgAlt, * trgAz, m_telescope_data->LowElevation );
         return 0;
     }
 

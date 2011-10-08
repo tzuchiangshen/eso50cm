@@ -15,10 +15,10 @@
 #include <myTAxis.h>
 #include <myTClock.h>
 #include <myBSemaphore.h>
+#include "LoggerHelperDummy.h"
 
 #define TELSHMKEY   0xFAFAFA00
 #define TELSEMKEY   0xFAFAFA00
-
 
 struct telescope_data_t {
     struct timeval  gtime;
@@ -151,6 +151,7 @@ class myTelescope : public myTClock
 
         int m_socket_fd;
         struct sockaddr_un m_server_name;
+	LoggerHelper logger;
 };
 
 #endif // * _MYTELSECOPE_H_ *
