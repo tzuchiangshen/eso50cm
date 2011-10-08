@@ -98,7 +98,7 @@ void signal_handler(int sig) {
             exit_telescope();
             break;
         default:
-            syslog(LOG_WARNING, "Unhandled signal (%d) %s", sig, strsignal(sig));
+            syslog(LOG_WARNING, "Unhandled signal (%d) ", sig);
             break;
     }
 }
