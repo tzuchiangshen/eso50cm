@@ -109,7 +109,7 @@ void LoggerHelper::logMsg(LogLevel level,string log, string method, int lineNumb
     m_prx->logMessage(message);
     
 }
-void LoggerHelper::logFINEST2(int lineNumber,string method,const char* Format, ...){    
+void LoggerHelper::logFINEST(int lineNumber,string method,const char* Format, ...){    
       char buffer[1000];
       va_list Arguments;
       va_start(Arguments, Format);      
@@ -125,7 +125,7 @@ void LoggerHelper::logFINEST(const char* Format, ... ){
       string str(buffer);
       logMsg(FINEST,buffer, "", -1);
 };
-void LoggerHelper::logFINER2(int lineNumber,string method,const char* Format, ...){    
+void LoggerHelper::logFINER(int lineNumber,string method,const char* Format, ...){    
       char buffer[1000];
       va_list Arguments;
       va_start(Arguments, Format);      
@@ -141,7 +141,7 @@ void LoggerHelper::logFINER(const char* Format, ... ){
       string str(buffer);
       logMsg(FINER,buffer, "", -1);
 };
-void LoggerHelper::logFINE2(int lineNumber,string method,const char* Format, ...){    
+void LoggerHelper::logFINE(int lineNumber,string method,const char* Format, ...){    
       char buffer[1000];
       va_list Arguments;
       va_start(Arguments, Format);      
@@ -157,7 +157,7 @@ void LoggerHelper::logFINE(const char* Format, ... ){
       string str(buffer);
       logMsg(FINE,buffer, "", -1);
 };
-void LoggerHelper::logCONFIG2(int lineNumber,string method,const char* Format, ...){    
+void LoggerHelper::logCONFIG(int lineNumber,string method,const char* Format, ...){    
       char buffer[1000];
       va_list Arguments;
       va_start(Arguments, Format);      
@@ -173,7 +173,7 @@ void LoggerHelper::logCONFIG(const char* Format, ... ){
       string str(buffer);
       logMsg(CONFIG,buffer, "", -1);
 };
-void LoggerHelper::logINFO2(int lineNumber,string method,const char* Format, ...){    
+void LoggerHelper::logINFO(int lineNumber,string method,const char* Format, ...){    
       char buffer[1000];
       va_list Arguments;
       va_start(Arguments, Format);      
@@ -189,7 +189,7 @@ void LoggerHelper::logINFO(const char* Format, ... ){
       string str(buffer);
       logMsg(INFO,buffer, "", -1);
 };
-void LoggerHelper::logWARNING2(int lineNumber,string method,const char* Format, ...){    
+void LoggerHelper::logWARNING(int lineNumber,string method,const char* Format, ...){    
       char buffer[1000];
       va_list Arguments;
       va_start(Arguments, Format);      
@@ -206,7 +206,7 @@ void LoggerHelper::logWARNING(const char* Format, ... ){
       logMsg(WARNING,buffer, "", -1);
 };
 
-void LoggerHelper::logSEVERE2(int lineNumber,string method,const char* Format, ...){    
+void LoggerHelper::logSEVERE(int lineNumber,string method,const char* Format, ...){    
       char buffer[1000];
       va_list Arguments;
       va_start(Arguments, Format);      
