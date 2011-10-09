@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
+#include <stdio.h>
+#include <stdarg.h>
+#include <wchar.h>
 using namespace std;
 string findFilePath(string relFileName);
 
@@ -106,27 +109,141 @@ void LoggerHelper::logMsg(LogLevel level,string log, string method, int lineNumb
     m_prx->logMessage(message);
     
 }
-void LoggerHelper::logFINEST(string log, string method, int lineNumber){    
-    logMsg(FINEST,log, method, lineNumber);
+void LoggerHelper::logFINEST2(int lineNumber,string method,const char* Format, ...){    
+      char buffer[1000];
+      va_list Arguments;
+      va_start(Arguments, Format);      
+      sprintf(buffer,Format,Arguments);
+      string str(buffer);
+      logMsg(FINEST,buffer, method,lineNumber);
 };
-void LoggerHelper::logFINER(string log, string method, int lineNumber){    
-    logMsg(FINER,log, method, lineNumber);
+void LoggerHelper::logFINEST(const char* Format, ... ){    
+      char buffer[1000];
+      va_list Arguments;
+      va_start(Arguments, Format);      
+      sprintf(buffer,Format,Arguments);
+      string str(buffer);
+      logMsg(FINEST,buffer, "", -1);
 };
-void LoggerHelper::logFINE(string log, string method, int lineNumber){    
-    logMsg(FINE,log, method, lineNumber);
+void LoggerHelper::logFINER2(int lineNumber,string method,const char* Format, ...){    
+      char buffer[1000];
+      va_list Arguments;
+      va_start(Arguments, Format);      
+      sprintf(buffer,Format,Arguments);
+      string str(buffer);
+      logMsg(FINER,buffer, method,lineNumber);
 };
-void LoggerHelper::logCONFIG(string log, string method, int lineNumber){    
-    logMsg(CONFIG,log, method, lineNumber);
+void LoggerHelper::logFINER(const char* Format, ... ){    
+      char buffer[1000];
+      va_list Arguments;
+      va_start(Arguments, Format);      
+      sprintf(buffer,Format,Arguments);
+      string str(buffer);
+      logMsg(FINER,buffer, "", -1);
 };
-void LoggerHelper::logINFO(string log, string method, int lineNumber){    
-    logMsg(INFO,log, method, lineNumber);
+void LoggerHelper::logFINE2(int lineNumber,string method,const char* Format, ...){    
+      char buffer[1000];
+      va_list Arguments;
+      va_start(Arguments, Format);      
+      sprintf(buffer,Format,Arguments);
+      string str(buffer);
+      logMsg(FINE,buffer, method,lineNumber);
 };
-void LoggerHelper::logWARNING(string log, string method, int lineNumber){    
-    logMsg(WARNING,log, method, lineNumber);
+void LoggerHelper::logFINE(const char* Format, ... ){    
+      char buffer[1000];
+      va_list Arguments;
+      va_start(Arguments, Format);      
+      sprintf(buffer,Format,Arguments);
+      string str(buffer);
+      logMsg(FINE,buffer, "", -1);
 };
-void LoggerHelper::logSEVERE(string log, string method, int lineNumber){    
-    logMsg(SEVERE,log, method, lineNumber);
+void LoggerHelper::logCONFIG2(int lineNumber,string method,const char* Format, ...){    
+      char buffer[1000];
+      va_list Arguments;
+      va_start(Arguments, Format);      
+      sprintf(buffer,Format,Arguments);
+      string str(buffer);
+      logMsg(CONFIG,buffer, method,lineNumber);
 };
+void LoggerHelper::logCONFIG(const char* Format, ... ){    
+      char buffer[1000];
+      va_list Arguments;
+      va_start(Arguments, Format);      
+      sprintf(buffer,Format,Arguments);
+      string str(buffer);
+      logMsg(CONFIG,buffer, "", -1);
+};
+void LoggerHelper::logINFO2(int lineNumber,string method,const char* Format, ...){    
+      char buffer[1000];
+      va_list Arguments;
+      va_start(Arguments, Format);      
+      sprintf(buffer,Format,Arguments);
+      string str(buffer);
+      logMsg(INFO,buffer, method,lineNumber);
+};
+void LoggerHelper::logINFO(const char* Format, ... ){    
+      char buffer[1000];
+      va_list Arguments;
+      va_start(Arguments, Format);      
+      sprintf(buffer,Format,Arguments);
+      string str(buffer);
+      logMsg(INFO,buffer, "", -1);
+};
+void LoggerHelper::logWARNING2(int lineNumber,string method,const char* Format, ...){    
+      char buffer[1000];
+      va_list Arguments;
+      va_start(Arguments, Format);      
+      sprintf(buffer,Format,Arguments);
+      string str(buffer);
+      logMsg(WARNING,buffer, method,lineNumber);
+};
+void LoggerHelper::logWARNING(const char* Format, ... ){    
+      char buffer[1000];
+      va_list Arguments;
+      va_start(Arguments, Format);      
+      sprintf(buffer,Format,Arguments);
+      string str(buffer);
+      logMsg(WARNING,buffer, "", -1);
+};
+
+void LoggerHelper::logSEVERE2(int lineNumber,string method,const char* Format, ...){    
+      char buffer[1000];
+      va_list Arguments;
+      va_start(Arguments, Format);      
+      sprintf(buffer,Format,Arguments);
+      string str(buffer);
+      logMsg(SEVERE,buffer, method,lineNumber);
+};
+void LoggerHelper::logSEVERE(const char* Format, ... ){    
+      char buffer[1000];
+      va_list Arguments;
+      va_start(Arguments, Format);      
+      sprintf(buffer,Format,Arguments);
+      string str(buffer);
+      logMsg(SEVERE,buffer, "", -1);
+};
+void  LoggerHelper::logFINEST(string log){
+      logMsg(FINEST,log, "", -1);
+}
+void  LoggerHelper::logFINER(string log){
+      logMsg(FINER,log, "", -1);
+}
+void  LoggerHelper::logFINE(string log){
+      logMsg(FINE,log, "", -1);
+}
+void  LoggerHelper::logCONFIG(string log){
+      logMsg(CONFIG,log, "", -1);
+}
+void  LoggerHelper::logINFO(string log){
+      logMsg(INFO,log, "", -1);
+}
+void  LoggerHelper::logWARNING(string log){
+      logMsg(WARNING,log, "", -1);
+}
+void  LoggerHelper::logSEVERE(string log){
+      logMsg(SEVERE,log, "", -1);
+}
+
 #ifdef ARM
 double LoggerHelper::convertDouble(double MEData)
 {
