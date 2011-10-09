@@ -227,8 +227,8 @@ LCUImpl::setTarget(const OUC::TelescopePosition& targetPos, const Ice::Current& 
         throw ex;
     }
     
-    //logger.logFINE( "LCUImpl::setTarget targetPos.RA=%lf\n", MiddleEndianToLittleEndian(targetPos.RA) );
-    //logger.logFINE( "LCUImpl::setTarget targetPos.Dec=%lf\n",MiddleEndianToLittleEndian(targetPos.Dec) );
+    logger.logFINE( "LCUImpl::setTarget targetPos.RA=%lf\n", MiddleEndianToLittleEndian(targetPos.RA) );
+    logger.logFINE( "LCUImpl::setTarget targetPos.Dec=%lf\n",MiddleEndianToLittleEndian(targetPos.Dec) );
 
     //convert to middle endian
     RA = MiddleEndianToLittleEndian(targetPos.RA);
@@ -389,10 +389,10 @@ LCUImpl::parkTelescope(const Ice::Current& c)
     /** Current Position */
     m_lcu->telescope->currentPosition(&targetPos.localSideralTime, &targetPos.RA, &targetPos.Dec, &targetPos.Alt, &targetPos.Az, &targetPos.HA);
     /** Set target = zenith */
-    //logger.logFINE("LCUImpl::parkTelescope: LST for setTarget: %lf, Latitude for setTarget: %lf \n", targetPos.localSideralTime, m_lcu->telescope->getLatitude());
+    logger.logFINE("LCUImpl::parkTelescope: LST for setTarget: %lf, Latitude for setTarget: %lf \n", targetPos.localSideralTime, m_lcu->telescope->getLatitude());
     targetPos.RA =  targetPos.localSideralTime;
     targetPos.Dec = m_lcu->telescope->getLatitude();
-    //logger.logFINE("LCUImpl::parkTelescope: RA for setTarget: %lf, Dec for setTarget: %lf \n", targetPos.RA, targetPos.Dec);
+    logger.logFINE("LCUImpl::parkTelescope: RA for setTarget: %lf, Dec for setTarget: %lf \n", targetPos.RA, targetPos.Dec);
     m_lcu->telescope->setTarget(targetPos.RA, targetPos.Dec, &targetPos.Alt, &targetPos.Az);
     /** Set Offsets **/
     targetPos.RA = m_lcu->telescope->getDifferenceRA();
@@ -401,8 +401,8 @@ LCUImpl::parkTelescope(const Ice::Current& c)
     alpha_mtr_counts = m_lcu->telescope->alpha->offsetAxisInDeg(targetPos.RA);
     targetPos.Dec *= -1.;
     delta_mtr_counts = m_lcu->telescope->delta->offsetAxisInDeg(targetPos.Dec);
-    //logger.logFINE("LCUImpl::parkTelescope: Moving Telescope to RA: %lf, Dec: %lf\n", targetPos.RA, targetPos.Dec);
-    //logger.logFINE("LCUImpl::parkTelescope: Moving Telescope to alpha_counts: %d, delta_mtr_counts: %d\n", alpha_mtr_counts, delta_mtr_counts);
+    logger.logFINE("LCUImpl::parkTelescope: Moving Telescope to RA: %lf, Dec: %lf\n", targetPos.RA, targetPos.Dec);
+    logger.logFINE("LCUImpl::parkTelescope: Moving Telescope to alpha_counts: %d, delta_mtr_counts: %d\n", alpha_mtr_counts, delta_mtr_counts);
     
     /** Stop Tracking **/
     if(m_lcu->telescope->getIsTracking()) 
@@ -441,14 +441,14 @@ LCUImpl::parkTelescope(const Ice::Current& c)
 	        if( goto_alpha_flag ) 
 	        {
 		    m_lcu->telescope->alpha->Motor->readDeviceMemory( 7, & alpha_mtr_counts, 0  );
-		    //logger.logFINE("LCUImpl::parkTelescope: HW returns alpha_counts: %d\n", alpha_mtr_counts);
+		    logger.logFINE("LCUImpl::parkTelescope: HW returns alpha_counts: %d\n", alpha_mtr_counts);
 		    if( -50 < alpha_mtr_counts && alpha_mtr_counts < 50 )
 		      goto_alpha_flag = false;
 		}
 		if( goto_delta_flag ) 
 		{
 		    m_lcu->telescope->delta->Motor->readDeviceMemory( 7, & delta_mtr_counts, 0  );
-		    //logger.logFINE("LCUImpl::parkTelescope: HW returns delta_mtr_counts: %d\n",delta_mtr_counts);
+		    logger.logFINE("LCUImpl::parkTelescope: HW returns delta_mtr_counts: %d\n",delta_mtr_counts);
 		    if( -50 < delta_mtr_counts && delta_mtr_counts < 50 )
 		      goto_delta_flag = false;
 		}
@@ -468,7 +468,7 @@ LCUImpl::parkTelescope(const Ice::Current& c)
 	    m_lcu->telescope->currentPosition(&targetPos.localSideralTime, &targetPos.RA, &targetPos.Dec, &targetPos.Alt, &targetPos.Az, &targetPos.HA);
 	    targetPos.RA =  targetPos.localSideralTime;
 	    targetPos.Dec = m_lcu->telescope->getLatitude();
-	    //logger.logFINE("LCUImpl::parkTelescope: RA for setTarget: %lf, Dec for setTarget: %lf \n", targetPos.RA, targetPos.Dec);
+	    logger.logFINE("LCUImpl::parkTelescope: RA for setTarget: %lf, Dec for setTarget: %lf \n", targetPos.RA, targetPos.Dec);
 	    /** Set Position **/
 	    m_lcu->telescope->setTarget(targetPos.RA, targetPos.Dec, &targetPos.Alt, &targetPos.Az);
 	    /** Set Offsets **/
@@ -478,8 +478,8 @@ LCUImpl::parkTelescope(const Ice::Current& c)
 	    alpha_mtr_counts = m_lcu->telescope->alpha->offsetAxisInDeg(targetPos.RA);
 	    targetPos.Dec *= -1.;
 	    delta_mtr_counts = m_lcu->telescope->delta->offsetAxisInDeg(targetPos.Dec);
-	    //logger.logFINE("LCUImpl::parkTelescope: Moving Telescope to RA: %lf, Dec: %lf\n", targetPos.RA, targetPos.Dec);
-	    //logger.logFINE("LCUImpl::parkTelescope: Moving Telescope to alpha_counts: %d, delta_mtr_counts: %d\n", alpha_mtr_counts, delta_mtr_counts);
+	    logger.logFINE("LCUImpl::parkTelescope: Moving Telescope to RA: %lf, Dec: %lf\n", targetPos.RA, targetPos.Dec);
+	    logger.logFINE("LCUImpl::parkTelescope: Moving Telescope to alpha_counts: %d, delta_mtr_counts: %d\n", alpha_mtr_counts, delta_mtr_counts);
 	    if( alpha_mtr_counts < -50 || 50 < alpha_mtr_counts ) 
 	    {
 	        m_lcu->telescope->alpha->Motor->setDeviceMemory( 7, & alpha_mtr_counts, 0  );
@@ -525,19 +525,19 @@ LCUImpl::stopTelescope(OUC::TelescopeDirection dir, const Ice::Current& c)
     ticsPerSeconds = 0;
     if(dir == OUC::North) 
     {
-      //logger.logFINE("Stopping North... Tics per second: %d\n", ticsPerSeconds);
+        logger.logFINE("Stopping North... Tics per second: %d\n", ticsPerSeconds);
 	m_lcu->telescope->delta->Motor->setDeviceMemory(6, & ticsPerSeconds, 0);
     } else if(dir == OUC::South) 
     {
-      //logger.logFINE("Stopping South... Tics per seconds: %d\n", ticsPerSeconds);
+        logger.logFINE("Stopping South... Tics per seconds: %d\n", ticsPerSeconds);
 	m_lcu->telescope->delta->Motor->setDeviceMemory(6, & ticsPerSeconds, 0  );
     } else if(dir == OUC::East) 
     {
-      //logger.logFINE("Stopping East... Tics per seconds: %d\n", ticsPerSeconds);
+        logger.logFINE("Stopping East... Tics per seconds: %d\n", ticsPerSeconds);
 	m_lcu->telescope->alpha->Motor->setDeviceMemory(6, &ticsPerSeconds, 0);
     } else if(dir == OUC::West) 
     {
-      //logger.logFINE("Stopping West... Tics per seconds: %d\n", ticsPerSeconds);
+        logger.logFINE("Stopping West... Tics per seconds: %d\n", ticsPerSeconds);
 	m_lcu->telescope->alpha->Motor->setDeviceMemory(6, &ticsPerSeconds, 0);
     }
   
@@ -579,8 +579,8 @@ LCUImpl::moveToTarget(const Ice::Current& c)
     alpha_mtr_counts = m_lcu->telescope->alpha->offsetAxisInDeg( offset_ra );
     offset_dec *= -1.;
     delta_mtr_counts = m_lcu->telescope->delta->offsetAxisInDeg( offset_dec );
-    //logger.logFINE("LCUImpl::moveToTarget: Moving Telescope to RA: %lf, Dec: %lf\n", offset_ra, offset_dec);
-    //logger.logFINE("LCUImpl::moveToTarget: Moving Telescope to alpha_counts: %d, delta_mtr_counts: %d\n", alpha_mtr_counts, delta_mtr_counts);
+    logger.logFINE("LCUImpl::moveToTarget: Moving Telescope to RA: %lf, Dec: %lf\n", offset_ra, offset_dec);
+    logger.logFINE("LCUImpl::moveToTarget: Moving Telescope to alpha_counts: %d, delta_mtr_counts: %d\n", alpha_mtr_counts, delta_mtr_counts);
 
     /** Stop Tracking **/
     if(m_lcu->telescope->getIsTracking()) 
@@ -620,14 +620,14 @@ LCUImpl::moveToTarget(const Ice::Current& c)
 	        if( goto_alpha_flag ) 
 		{
 		    m_lcu->telescope->alpha->Motor->readDeviceMemory( 7, & alpha_mtr_counts, 0  );
-		    //logger.logFINE("LCUImpl::moveToTarget: HW returns alpha_counts: %d\n", alpha_mtr_counts);
+		    logger.logFINE("LCUImpl::moveToTarget: HW returns alpha_counts: %d\n", alpha_mtr_counts);
 		    if( -50 < alpha_mtr_counts && alpha_mtr_counts < 50 )
 		        goto_alpha_flag = false;
 		}
 		if( goto_delta_flag ) 
 		{
 		    m_lcu->telescope->delta->Motor->readDeviceMemory( 7, & delta_mtr_counts, 0  );
-		    //logger.logFINE("LCUImpl::moveToTarget: HW returns delta_mtr_counts: %d\n",delta_mtr_counts);
+		    logger.logFINE("LCUImpl::moveToTarget: HW returns delta_mtr_counts: %d\n",delta_mtr_counts);
 		    if( -50 < delta_mtr_counts && delta_mtr_counts < 50 )
 		        goto_delta_flag = false;
 		}
@@ -638,7 +638,7 @@ LCUImpl::moveToTarget(const Ice::Current& c)
 	        no_quit = false;
 	    else 
 	        no_quit --; 
-	    //logger.logFINE( "LCUImpl::moveToTarget: To quit (if something was wrong)... %d sec.\n", no_quit );
+	    logger.logFINE( "LCUImpl::moveToTarget: To quit (if something was wrong)... %d sec.\n", no_quit );
 	} while( no_quit );
 
 	goto_alpha_flag = false;
@@ -653,8 +653,8 @@ LCUImpl::moveToTarget(const Ice::Current& c)
 	    alpha_mtr_counts = m_lcu->telescope->alpha->offsetAxisInDeg( offset_ra );
 	    offset_dec *= -1.;
 	    delta_mtr_counts = m_lcu->telescope->delta->offsetAxisInDeg( offset_dec );
-	    //logger.logFINE("LCUImpl::moveToTarget: Moving Telescope to RA: %lf, Dec: %lf\n", offset_ra, offset_dec);
-	    //logger.logFINE("LCUImpl::moveToTarget: Moving Telescope to alpha_counts: %d, delta_mtr_counts: %d\n", alpha_mtr_counts, delta_mtr_counts);
+	    logger.logFINE("LCUImpl::moveToTarget: Moving Telescope to RA: %lf, Dec: %lf\n", offset_ra, offset_dec);
+	    logger.logFINE("LCUImpl::moveToTarget: Moving Telescope to alpha_counts: %d, delta_mtr_counts: %d\n", alpha_mtr_counts, delta_mtr_counts);
 	}
       
 	/** Move Telescope to the requested position **/
@@ -675,7 +675,7 @@ LCUImpl::moveToTarget(const Ice::Current& c)
 	else 
 	    setup_ready --;
 
-	//logger.logFINE( "LCUImpl::moveToTarget: Try No %d\n", NUM_OF_TRY - setup_ready );
+	logger.logFINE( "LCUImpl::moveToTarget: Try No %d\n", NUM_OF_TRY - setup_ready );
     } while( setup_ready );
    
     /* Start Tracking */

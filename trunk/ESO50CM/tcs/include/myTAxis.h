@@ -3,7 +3,7 @@
 
 #include <myTEncoder.h>
 #include <myTMotor.h>
-#include "LoggerHelperDummy.h"
+#include "LoggerHelper.h"
 
 struct my_TAxis_data_t
 {

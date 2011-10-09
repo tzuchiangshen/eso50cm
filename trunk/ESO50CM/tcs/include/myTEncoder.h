@@ -16,7 +16,7 @@
 #include <time.h>               //gmtime
 
 #include <myBSemaphore.h>
-#include "LoggerHelperDummy.h"
+#include "LoggerHelper.h"
 
 //-------------------------------------------------------------
 //  Instrument Shared memory and semaphore

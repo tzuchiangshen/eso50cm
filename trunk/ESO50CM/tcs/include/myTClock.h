@@ -6,7 +6,7 @@
 #include <time.h>               //gmtime
 #include <math.h>
 #include <errno.h>              //error number
-#include "LoggerHelperDummy.h"
+#include "LoggerHelper.h"
 
 
 //-------------------------------------------------------------
