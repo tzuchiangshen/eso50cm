@@ -59,3 +59,4 @@ module Log
 };
 
 #endif
+
