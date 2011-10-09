@@ -22,10 +22,15 @@ public:
               {
                   sprintf(message,"This is a test %i . Adding extra data to make it more interesting.  Asdafasdaf 10004032040320320 llllll 111111111111222ssss    ccccddd e",counter++);
                   logger.logWARNING(message);
+
+                  logger.logFINEST("This is a very good %i %s %itest",10,"hola",10);
                   logger.logINFO(message);
-                  logger.logSEVERE(message,"Method1",20);
-                  logger.logFINEST("THis is the finest message EVER", "callback2",2);
-                  logger.logFINE("fine!","method22",4);
+		  string teststr="this is a tesssst";
+		  
+                  logger.logSEVERE(teststr);
+		  logger.logSEVERE2( __LINE__,__PRETTY_FUNCTION__,"test %i",10);
+                  logger.logFINEST("THis is the finest message EVER");
+                  logger.logFINE("fine!");
               }
     }
 };
