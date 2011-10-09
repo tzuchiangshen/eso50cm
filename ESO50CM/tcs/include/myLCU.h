@@ -22,7 +22,7 @@ using namespace std;
 
 #include "myTelescope.h"
 #include "myBSemaphore.h"
-#include "LoggerHelperDummy.h"
+#include "LoggerHelper.h"
 
 //#include "myTCP.h"
 //#include <arpa/inet.h>              //inet_ntoa

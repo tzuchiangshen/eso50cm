@@ -3,7 +3,6 @@
 
 #include "LCU.h"
 #include "myLCU.h"
-#include "LoggerHelperDummy.h"
 
 #ifdef ARM
    #include <IceE/IceE.h>

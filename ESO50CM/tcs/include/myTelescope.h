@@ -15,7 +15,7 @@
 #include <myTAxis.h>
 #include <myTClock.h>
 #include <myBSemaphore.h>
-#include "LoggerHelperDummy.h"
+#include "LoggerHelper.h"
 
 #define TELSHMKEY   0xFAFAFA00
 #define TELSEMKEY   0xFAFAFA00

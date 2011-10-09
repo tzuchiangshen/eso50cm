@@ -8,11 +8,11 @@ myTAxis::myTAxis( char id, struct my_TAxis_data_t * axis ):
     logger("myTAxis")
 {
     m_id = id;
-    //logger.logFINE("myTAxis::myTAxis %c Hello World!", m_id );
-    //logger.logFINE("myTAxis::myTAxis %c axis_data at %p", m_id, (void *) axis );
-    //logger.logFINE("myTAxis::myTAxis %c motorE at    %p", m_id, (void *) & axis->motorE );
-    //logger.logFINE("myTAxis::myTAxis %c wormE at     %p", m_id, (void *) & axis->wormE );
-    //logger.logFINE("myTAxis::myTAxis %c axisE at     %p", m_id, (void *) & axis->axisE );
+    logger.logFINE("myTAxis::myTAxis %c Hello World!", m_id );
+    logger.logFINE("myTAxis::myTAxis %c axis_data at %p", m_id, (void *) axis );
+    logger.logFINE("myTAxis::myTAxis %c motorE at    %p", m_id, (void *) & axis->motorE );
+    logger.logFINE("myTAxis::myTAxis %c wormE at     %p", m_id, (void *) & axis->wormE );
+    logger.logFINE("myTAxis::myTAxis %c axisE at     %p", m_id, (void *) & axis->axisE );
 
     Motor = new myTMotor( m_id, 'M',  & axis->motorE );
     WormE = new myTEncoder( m_id, 'W', & axis->wormE );
@@ -26,7 +26,7 @@ myTAxis::~myTAxis() {
     delete Motor;
     delete WormE;
     delete AxisE;
-    //logger.logFINE("myTAxis::~myTAxis %c Good Bye!", m_id );
+    logger.logFINE("myTAxis::~myTAxis %c Good Bye!", m_id );
 }
 
 
@@ -63,7 +63,7 @@ int myTAxis::offsetAxisInDeg( double degs )
 
     mtr_counts = (int) round( degs );
     if( mtr_counts > 0 ) {
-        //logger.logFINE("myTAxis::offsetAxisInDeg Running motor %d", mtr_counts);
+        logger.logFINE("myTAxis::offsetAxisInDeg Running motor %d", mtr_counts);
         Motor->runEncSteps( mtr_counts );
     } else {
         logger.logFINE("myTAxis::offsetAxisInDeg Nothing to do!");

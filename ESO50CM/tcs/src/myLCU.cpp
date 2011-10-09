@@ -27,17 +27,17 @@ myLCU::myLCU(void):
         //logger.logSEVERE("myLCU::myLCU Can't attach User Shared Memory!, id=%d\n", m_segment_id );
         m_shared_memory = NULL;
     } else {
-        //logger.logFINE("myLCU::myLCU User Shared Memory attached at address %p", (void *) m_shared_memory );
+        logger.logFINE("myLCU::myLCU User Shared Memory attached at address %p", (void *) m_shared_memory );
 	
         /** Determine the User Shared Memory segment size */
         shmctl( m_segment_id, IPC_STAT, & m_shmbuffer );
         m_segment_size = m_shmbuffer.shm_segsz;
-        //logger.logFINE("myLCU::myLCU segment size %d", m_segment_size );
-        //logger.logFINE("[myLCU::myLCU sizeof( struct my_lcu_data_t ): %d\n", (int) sizeof( struct my_lcu_data_t ) );
+        logger.logFINE("myLCU::myLCU segment size %d", m_segment_size );
+        logger.logFINE("[myLCU::myLCU sizeof( struct my_lcu_data_t ): %d\n", (int) sizeof( struct my_lcu_data_t ) );
 
         m_lcu_data = (struct my_lcu_data_t *) m_shared_memory;
-        //logger.logFINE("myLCU::myLCU m_lcu_data at address %p\n", (void *) m_lcu_data );
-        //logger.logFINE("myLCU::myLCU m_lcu_data->m_telescope_data at address %p\n", (void *) & m_lcu_data->telescope_data );
+        logger.logFINE("myLCU::myLCU m_lcu_data at address %p\n", (void *) m_lcu_data );
+        logger.logFINE("myLCU::myLCU m_lcu_data->m_telescope_data at address %p\n", (void *) & m_lcu_data->telescope_data );
     }
 
     /** Create Semaphore to control the access to the User Shared Memory */
@@ -114,7 +114,7 @@ int myLCU::postSemaphore( void )
 void myLCU::createTelescope( void )
 {
     telescope = new myTelescope( m_lcu_data );
-    //logger.logFINE("myLCU::initializeTelescope] telescope %p", (void *) telescope);
+    logger.logFINE("myLCU::initializeTelescope] telescope %p", (void *) telescope);
 }
 
 
