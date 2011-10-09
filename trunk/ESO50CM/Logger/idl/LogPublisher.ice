@@ -22,3 +22,4 @@ module Log
     };
 };
 #endif
+
