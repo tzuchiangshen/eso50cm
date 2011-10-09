@@ -1,7 +1,10 @@
 #include <Ice/Ice.h>
 #include <Ice/Application.h>
-#include "LoggerI.h"
-
+#ifdef MYSQL_LIB
+   #include "LoggerI.h"
+#else
+   #include "LoggerDevelI.h"
+#endif // MYSQL_LIB
 using namespace std;
 using namespace Ice;
 using namespace Log;
