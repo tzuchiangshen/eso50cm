@@ -28,7 +28,7 @@ public:
 		  string teststr="this is a tesssst";
 		  
                   logger.logSEVERE(teststr);
-		  logger.logSEVERE2( __LINE__,__PRETTY_FUNCTION__,"test %i",10);
+		  logger.logSEVERE( __LINE__,__PRETTY_FUNCTION__,"test %i",10);
                   logger.logFINEST("THis is the finest message EVER");
                   logger.logFINE("fine!");
               }
