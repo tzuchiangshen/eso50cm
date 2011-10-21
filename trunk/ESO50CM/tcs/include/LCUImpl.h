@@ -30,7 +30,7 @@ public:
     virtual void parkTelescope(const Ice::Current&);
     virtual void stopTelescope(OUC::TelescopeDirection dir, const Ice::Current&);
     virtual void moveToTarget(const Ice::Current&);
-    virtual void handset_slew(const OUC::SlewInfo, const Ice::Current&);
+    virtual void handsetSlew(const OUC::SlewInfo&, const Ice::Current&);
 
     virtual void getConfigState();
     virtual void getTrackingState();
