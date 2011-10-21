@@ -701,7 +701,7 @@ LCUImpl::handset_slew(const OUC::SlewInfo slewInfo, const Ice::Current& c)
     double degs_per_sec;
     int tics_per_sec;
 
-    slew_rate = slewInfo.rate[0];
+    slew_rate = slewInfo.rateName[0];
     slew_dir = slewInfo.direction[0];
 
     if( slew_rate == 'S' ) {
@@ -713,8 +713,7 @@ LCUImpl::handset_slew(const OUC::SlewInfo slewInfo, const Ice::Current& c)
     } else if( slew_rate == 'O' ) {
         degs_per_sec = 1./240.;         //128x  32['/s]
     }
-    if( verbose )
-        printf( "[handset_command] degs_per_sec = %lf\n", degs_per_sec );
+	printf( "[handset_command] degs_per_sec = %lf\n", degs_per_sec );
 
     m_lcu->waitSemaphore();
     is_telescope_configured = m_lcu->telescope->getIsConfigured();
@@ -759,5 +758,5 @@ LCUImpl::handset_slew(const OUC::SlewInfo slewInfo, const Ice::Current& c)
         m_lcu->telescope->alpha->Motor->setDeviceMemory( 6, & tics_per_sec, 0  );
     }
 
-    lcu->postSemaphore();
+    m_lcu->postSemaphore();
 }
