@@ -41,6 +41,13 @@ struct TrackingInfo
 	int ticVel;
 };
 
+struct SlewInfo
+{
+	string rateName;
+	double rate;
+	string direction;
+};
+
 struct TelescopeConfigData
 {
 	double localTime;
