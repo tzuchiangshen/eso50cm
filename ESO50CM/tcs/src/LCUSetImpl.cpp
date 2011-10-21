@@ -692,7 +692,7 @@ LCUImpl::moveToTarget(const Ice::Current& c)
 }
 
 void 
-LCUImpl::handset_slew(const OUC::SlewInfo slewInfo, const Ice::Current& c)
+LCUImpl::handsetSlew(const OUC::SlewInfo& slewInfo, const Ice::Current& c)
 {
 
     char slew_rate = 255;

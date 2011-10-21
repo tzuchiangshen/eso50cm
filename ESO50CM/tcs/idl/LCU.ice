@@ -140,6 +140,8 @@ interface LCU
          throws TelescopeNotConfiguredEx;
     void moveToTarget()
          throws TelescopeNotConfiguredEx; 	 
+    void handsetSlew(SlewInfo slew)
+         throws TelescopeNotConfiguredEx; 	 
 };
 };
 	
