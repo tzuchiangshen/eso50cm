@@ -34,6 +34,9 @@ class Telescope
     void setTarget(TelescopePosition targetPos)
     	 throws TelescopeNotConfiguredEx, TargetOutOfLimitsEx,
                 NotLCUReferenceAvailableEx;
+    void handsetSlew(SlewInfo slew)
+    	 throws TelescopeNotConfiguredEx, TargetOutOfLimitsEx,
+                NotLCUReferenceAvailableEx;
     void setOffset(TelescopePosition offsetPos)
     	 throws TelescopeNotConfiguredEx, TargetOutOfLimitsEx,
                 NotLCUReferenceAvailableEx;
