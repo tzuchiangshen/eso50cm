@@ -277,10 +277,10 @@ if __name__ == "__main__":
     dec = [40,0,0]
     connect()
     setConfiguration()
-    #print "#######################################"
-    #if isConfigured():
-    #   getConfiguration()
-        #sayHello()
+    print "#######################################"
+    if isConfigured():
+       getConfiguration()
+       sayHello()
     #getEncoderPosition()
     #parkTelescope()
     #moveToTarget()

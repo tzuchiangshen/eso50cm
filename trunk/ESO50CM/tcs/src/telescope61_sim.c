@@ -183,8 +183,11 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
 
     int init_ok_flag;
 
+    LoggerHelper logger=Logger("telescope61_sim");
 
     do {
+        logger.logINFO("telescope61_sim process started!!");
+
         /* Manage CTRL+C and kill signals */
         sigExitHandler.sa_handler = & exit_handler;
         sigemptyset(&sigExitHandler.sa_mask);
