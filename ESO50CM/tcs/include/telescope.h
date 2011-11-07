@@ -6,6 +6,8 @@
 #include <termios.h>
 //#include <unistd.h>
 
+#include "LoggerHelper.h"
+
 /** Symbols defined in common.c.  ************************************/
 
 /** The name of this program.  */
@@ -72,5 +74,8 @@ extern int read_RS232( int m_port, char * str, int max );
 extern int write_RS232( int m_port, const char * s, int length );
 extern int flush_RS232( int m_port );
 extern int status_RS232( int m_port, int m_microsecs );
+
+/** Logger external variable */
+extern LoggerHelper logger;
 
 #endif  /* TELESCOPE_H */

@@ -7,6 +7,7 @@ using namespace std;
 LCUImpl::LCUImpl(): 
     logger("LCUControl")
 {
+    logger.logINFO("LCUControl process started!!");
     m_lcu = new myLCU();
     rawEncoder_t = new OUC::RawEncoderData(); 
     encoder_t = new OUC::EncoderData();
