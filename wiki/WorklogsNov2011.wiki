@@ -1,4 +1,9 @@
 = 2011-11-08 = 
   * Technical Time (Tzu-Chiang Shen, Ruben Soto)
   * svn version r269
-  * 
+  * Deployed the new software release in ARM and the console 
+  * Logging module 
+    * make logging services configuration file to have the operational IPs by default. 
+  * tcs module
+    * made LCUControl to load the telescope configuration automatically when it starts.
+    
