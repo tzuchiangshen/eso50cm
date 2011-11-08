@@ -93,13 +93,25 @@ ENDIF(NOT LCU)
 set_property(TARGET ClientCXX PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
 
 #for telescope61 executable
-ADD_EXECUTABLE(telescope61 telescope61 common rs232 semaphore main)
-TARGET_LINK_LIBRARIES(telescope61 LoggerCore Ice)
+LINK_DIRECTORIES(${INTROOT}/lib)
+IF(NOT LCU)
+   ADD_EXECUTABLE(telescope61 telescope61 common rs232 semaphore main)
+   TARGET_LINK_LIBRARIES(telescope61 LoggerCore Ice)
+ELSE(NOT LCU)
+   ADD_EXECUTABLE(telescope61 telescope61 common rs232 semaphore main)
+   TARGET_LINK_LIBRARIES(telescope61 LoggerCore IceE)
+ENDIF(NOT LCU)
 set_property(TARGET telescope61 PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
 
 #for telescope61_sim executable
-ADD_EXECUTABLE(telescope61_sim telescope61_sim common rs232 semaphore main_sim)
-TARGET_LINK_LIBRARIES(telescope61_sim LoggerCore Ice)
+LINK_DIRECTORIES(${INTROOT}/lib)
+IF(NOT LCU)
+   ADD_EXECUTABLE(telescope61_sim telescope61_sim common rs232 semaphore main_sim)
+   TARGET_LINK_LIBRARIES(telescope61_sim LoggerCore Ice)
+ELSE(NOT LCU)
+   ADD_EXECUTABLE(telescope61_sim telescope61_sim common rs232 semaphore main_sim)
+   TARGET_LINK_LIBRARIES(telescope61_sim LoggerCore IceE)
+ENDIF(NOT LCU)
 set_property(TARGET telescope61_sim PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
 
 
