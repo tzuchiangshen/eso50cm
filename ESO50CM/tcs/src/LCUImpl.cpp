@@ -5,9 +5,10 @@
 using namespace std;
 
 LCUImpl::LCUImpl(): 
-    logger("LCUControl")
+    logger("LCUControl"),
+    telConfigFileName("/eso50cm/SWROOT/config/ESO50cm.conf")
 {
-    logger.logINFO("LCUControl process started!!");
+    logger.logINFO("LCUImpl::LCUImpl LCUControl process started!!");
     m_lcu = new myLCU();
     rawEncoder_t = new OUC::RawEncoderData(); 
     encoder_t = new OUC::EncoderData();
@@ -16,8 +17,17 @@ LCUImpl::LCUImpl():
     m_lcu->createTelescope();
     m_lcu->telescope->attachInstrumentMemory();
 
-    const string fileName("/eso50cm/SWROOT/config/ESO50cm.conf");
-    setConfiguration(fileName);
+    // Configure Telescope
+    string configPath =  getenv("SWROOT");
+    configPath = configPath + "/config/" + telConfigFileName;
+    try {
+        setConfiguration(configPath);
+    } catch (OUC::NotConfigurationFileEx& ex) {
+        logger.logSEVERE("LCUImpl::LCUImpl Telescope could not be configured."); 
+    } catch(const Ice::Exception& ex) {
+        cerr << ex << endl;
+	throw ex;
+    }
 
     //Get telescope configuration & tracking state
     getConfigState();
@@ -31,13 +41,13 @@ LCUImpl::sayHello(int delay, const Ice::Current&)
     {
         IceUtil::ThreadControl::sleep(IceUtil::Time::milliSeconds(delay));
     }
-    logger.logINFO("Hello World!\n");
+    logger.logINFO("LCUImpl::sayHello Hello World!\n");
 }
 
 void
 LCUImpl::shutdown(const Ice::Current& c)
 {
-    logger.logINFO("Shutting down...\n");
+    logger.logINFO("LCUImpl::shutdown Shutting down...\n");
     c.adapter->getCommunicator()->shutdown();
 }
 

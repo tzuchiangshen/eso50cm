@@ -12,11 +12,11 @@ LCUImpl::setConfiguration(const string& fileName, const Ice::Current& c)
  void 
 LCUImpl::setConfiguration(const string& fileName)
 {
-    logger.logFINE( "LCUImpl::setTelescopeConfig" );
+    logger.logFINE( "LCUImpl::setConfiguration" );
     
     /** Is telescope configured **/
     if(m_configured)
-    logger.logFINE("Telescope Already configured... re-loading configuration");
+    logger.logFINE("LCUImpl::setConfiguration Telescope Already configured... re-loading configuration");
     
     
     /** Acquire Semaphore for SHM **/
@@ -205,7 +205,10 @@ LCUImpl::setConfiguration(const string& fileName)
         m_lcu->telescope->setIsTracking( 0 );
         config_file.close();
     } else {
-      logger.logWARNING( "LCUImpl::setTelescopeConfig: Unable to open Configuration File!\n" );
+        OUC::NotConfigurationFileEx ex;
+        ex.reason = " Unable to find or open telescope configuration file";
+	logger.logSEVERE( "LCUImpl::setConfiguration Unable to open Configuration File!\n" );
+        throw ex;
     }
     
     /** Release semaphore for SHM **/
@@ -215,7 +218,7 @@ LCUImpl::setConfiguration(const string& fileName)
     getConfigState();
     getTrackingState();
      
-    logger.logINFO( "LCUImpl::setTelescopeConfig: Telescope configured!!\n" );
+    logger.logINFO( "LCUImpl::setConfiguration Telescope configured!!\n" );
 }
 
 void 
@@ -246,12 +249,12 @@ LCUImpl::setTarget(const OUC::TelescopePosition& targetPos, const Ice::Current& 
     /** Send new target **/
     if(m_lcu->telescope->setTarget(RA, Dec, (double*)&targetPos.Alt, (double*)&targetPos.Az) == 0) 
       {
-    char *limits;
-    OUC::TargetOutOfLimitsEx ex;
-    sprintf(limits, "Low Elevation: %lf, High Elevation: %lf", m_lcu->telescope->getHighElevation(), m_lcu->telescope->getHighElevation());
-    ex.reason = "Target Out of Limits. Try a new one\n";
-    ex.reason.append(limits); 
-    throw ex;
+	  char *limits;
+   	  OUC::TargetOutOfLimitsEx ex;
+	  sprintf(limits, "Low Elevation: %lf, High Elevation: %lf", m_lcu->telescope->getHighElevation(), m_lcu->telescope->getHighElevation());
+	  ex.reason = "Target Out of Limits. Try a new one\n";
+	  ex.reason.append(limits); 
+	  throw ex;
       }
     
     /** Release semaphore for SHM **/
