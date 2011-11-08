@@ -1,3 +1,6 @@
+#ifndef ____client_cpp__
+#define ____client_cpp__
+
 #include <stdio.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
@@ -183,7 +186,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
 
     int init_ok_flag;
 
-    LoggerHelper logger=Logger("telescope61_sim");
+    LoggerHelper logger = LoggerHelper("telescope61_sim");
 
     do {
         logger.logINFO("telescope61_sim process started!!");
@@ -207,60 +210,50 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
 
         /** Install a handler for SIGCHLD that cleans up child processes that
         have terminated.  */
-        if( verbose )
-            printf( "[telescope_run] Installing a handler for SIGCHLD...\n" );
+        logger.logFINE("telescope61_sim::telescope_run Installing a handler for SIGCHLD...\n" );
         memset( & sigchld_action, 0, sizeof( sigchld_action ) );
         sigchld_action.sa_handler = & clean_up_child_process;
-        if( sigaction( SIGCHLD, & sigchld_action, NULL ) < 0 ) {
-            perror( "[telescope_run] sigaction" );
-            if( verbose )
-                printf( "[telescope_run] sigaction ERROR!\n" );
+        if( sigaction( SIGCHLD, & sigchld_action, NULL ) < 0 ) 
+	{
+            logger.logSEVERE("telescope61_sim::telescope_run sigaction ERROR!!\n");
             init_ok_flag = 0;
         }
-        if( verbose )
-            printf( "[telescope_run] sigaction OK!\n" );
+        logger.logFINE("telescope61_sim::telescope_run sigaction OK!\n");
 
         /**
         * INSTRUMENT SHARED MEMORY
         */
         /** Allocate a semaphore (write) */
-        if( verbose )
-            printf( "[telescope_run] allocate semaphore for Instrument Memory (write)...\n" );
+        logger.logINFO("telescope61_sim::telescope_run allocate semaphore for Instrument Memory (write)...\n");
         semaphore_id = binary_semaphore_allocate( SEMKEY, 
                             IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR );
-        if( semaphore_id == 0 ) {
-            if( verbose )
-                printf( "[telescope_run] semaphore_id = 0\n" );
+        if( semaphore_id == 0 ) 
+	{
+            logger.logFINE("telescope61_sim::[telescope_run semaphore_id = 0\n");
             init_ok_flag = 0;
-        } else  if( semaphore_id < 0 ) {
-            perror( "[telescope_run] semget" );
-            if( verbose )
-                printf( "[telescope_run] semget ERROR!\n" );
+        } else  if( semaphore_id < 0 ) 
+        {
+            logger.logSEVERE("telescope61_sim::telescope_run semget ERROR!\n");
             init_ok_flag = 0;
         }
-        if( verbose )
-            printf( "[telescope_run] semaphore_id = %d\n", semaphore_id );
+        logger.logFINE("telescope61_sim::telescope_run semaphore_id = %d\n", semaphore_id);
 
         /** Semaphore initialization (write) */
         retval = binary_semaphore_initialize( semaphore_id );
 
         /** Allocate a semaphore (read) */
-        if( verbose )
-            printf( "[telescope_run] allocate semaphore for Instrument Memory (read)...\n" );
+        logger.logFINE("telescope61_sim::telescope_run allocate semaphore for Instrument Memory (read)...\n");
         read_semaphore_id = binary_semaphore_allocate( RDSEMKEY,
                                 IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR );
-        if( read_semaphore_id == 0 ) {
-            if( verbose )
-                printf( "[telescope_run] read_semaphore_id = 0\n" );
+        if( read_semaphore_id == 0 ) 
+	{
+	    logger.logFINE("telescope61_sim::telescope_run read_semaphore_id = 0\n");
             init_ok_flag = 0;
         } else if( read_semaphore_id < 0 ) {
-            perror( "[telescope_run] semget" );
-            if( verbose )
-                printf( "[telescope_run] semget ERROR!\n" );
+            logger.logSEVERE("telescope61_sim::telescope_run semget ERROR!\n");
             init_ok_flag = 0;
         }
-        if( verbose )
-            printf( "[telescope_run] semaphore_id = %d\n", read_semaphore_id );
+        logger.logFINE("telescope61_sim::telescope_run semaphore_id = %d\n", read_semaphore_id);
 
         /** Semaphore initialization */
         retval = binary_semaphore_initialize( read_semaphore_id );
@@ -1030,3 +1023,4 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
     }
 
 }
+#endif

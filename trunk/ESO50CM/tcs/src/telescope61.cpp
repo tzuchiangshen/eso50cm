@@ -1,3 +1,6 @@
+#ifndef ____client_cpp__
+#define ____client_cpp__
+
 #include <stdio.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
@@ -28,7 +31,7 @@
 #define USRSHMKEY   0xFAFAFA01
 #define USRSEMKEY   0xFAFAFA01
 
-#include "./telescope.h"
+#include "telescope.h"
 
 /* Global variable to exit from main loop */
 char quit;
@@ -189,9 +192,12 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
     struct sigaction sigExitHandler;
 
     int init_ok_flag;
-    syslog(LOG_INFO, " starting run_telescope()!");
 
-    do {
+    LoggerHelper logger = LoggerHelper("telescope61");
+
+    do { 
+        logger.logINFO("telescope61 process started!!");
+
         /* Manage CTRL+C and kill signals */
         sigExitHandler.sa_handler = & exit_handler;
         sigemptyset(&sigExitHandler.sa_mask);
@@ -945,3 +951,4 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
     }
 
 }
+#endif

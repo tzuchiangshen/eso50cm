@@ -8,8 +8,14 @@
 
 #include "LoggerHelper.h"
 
-/** Symbols defined in common.c.  ************************************/
+/** Symbols defined in semaphorec.  ************************************/
+extern int binary_semaphore_allocate( key_t key, int sem_flags );
+extern int binary_semaphore_deallocate( int sem_id );
+extern int binary_semaphore_initialize( int sem_id );
+extern int binary_semaphore_wait( int sem_id );
+extern int binary_semaphore_post( int sem_id );
 
+/** Symbols defined in common.c.  ************************************/
 /** The name of this program.  */
 extern const char * program_name;
 
@@ -39,7 +45,6 @@ extern void error (const char* cause, const char* message);
 extern char* get_self_executable_directory ();
 
 /** Symbols defined in module.c  **************************************/
-
 /** An instance of a loaded server module.  */
 struct server_module {
     /** The shared library handle corresponding to the loaded module.  */
@@ -74,8 +79,5 @@ extern int read_RS232( int m_port, char * str, int max );
 extern int write_RS232( int m_port, const char * s, int length );
 extern int flush_RS232( int m_port );
 extern int status_RS232( int m_port, int m_microsecs );
-
-/** Logger external variable */
-extern LoggerHelper logger;
 
 #endif  /* TELESCOPE_H */
