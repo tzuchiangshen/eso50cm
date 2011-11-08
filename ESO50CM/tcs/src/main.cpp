@@ -286,6 +286,7 @@ int main( int argc, char* const argv[] ) {
         if (pid > 0) {
             /* parent process */ 
             /* syslog(LOG_INFO, "fork() finished successfully, exit parent process!"); */
+            printf(" telescope61 started successfully in the backgroud\n"); 
             exit(EXIT_SUCCESS);
         }
  
