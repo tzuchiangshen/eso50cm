@@ -16,6 +16,9 @@ LCUImpl::LCUImpl():
     m_lcu->createTelescope();
     m_lcu->telescope->attachInstrumentMemory();
 
+    const string fileName("/eso50cm/SWROOT/config/ESO50cm.conf");
+    setConfiguration(fileName);
+
     //Get telescope configuration & tracking state
     getConfigState();
     getTrackingState();

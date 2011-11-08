@@ -6,6 +6,12 @@ using namespace std;
 void 
 LCUImpl::setConfiguration(const string& fileName, const Ice::Current& c)
 {
+   setConfiguration(fileName);
+}
+
+ void 
+LCUImpl::setConfiguration(const string& fileName)
+{
     logger.logFINE( "LCUImpl::setTelescopeConfig" );
     
     /** Is telescope configured **/
