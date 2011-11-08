@@ -1,4 +1,4 @@
 = 2011-11-08 = 
-  * Technical Time (Tzu-Chiang Shen)
+  * Technical Time (Tzu-Chiang Shen, Ruben Soto)
   * svn version r269
   * 
