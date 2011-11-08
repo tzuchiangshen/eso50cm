@@ -126,6 +126,68 @@ def getConfiguration():
         traceback.print_exc()
         status = 1  
 
+def getEncoderPosition():
+    encData = OUC.EncoderData()
+    try:
+        telescope = obsImpl.getTelescope()
+        encData =  telescope.getEncodersPosition();
+        print "LT = [%lf]" % encData.localTime
+        print datetime.utcfromtimestamp(encData.localTime)
+        print "AW Position  = [%+10.0lf]" % encData.alphaWormE
+        print "AA Position  = [%+10.0lf]" % encData.alphaAxisE 
+        print "DW Position  = [%+10.0lf]" % encData.deltaWormE
+        print "AA Position  = [%+10.0lf]" % encData.deltaAxisE
+        print "Generated at = [%lf]" % encData.lcuTime
+        print datetime.utcfromtimestamp(encData.lcuTime)
+    except OUC.TelescopeNotConfiguredEx():
+        print "Telescope Not Configured !!!"
+        traceback.print_exc()
+        status = 1
+
+def getPosition():
+    telData = OUC.TelescopeData()
+    try:
+        telescope = obsImpl.getTelescope()
+        telData = telescope.getPosition()
+        print "LT = [%lf]" % telData.localTime
+        print datetime.utcfromtimestamp(telData.localTime)
+        print "Time elapsed since last access: %lf" % telData.deltaT  
+        print "JD  = %lf" % telData.julianDate
+        print "Latitude = %+11.4lf" % telData.latitude
+        print "Longitude = %+11.4lf" % telData.longitude
+        print "Altitude = %+11.4lf" % telData.altitude
+        print "High Elevation = %+11.4lf" % telData.highElevation
+        print "Low Elevation = %+11.4lf" % telData.lowElevation
+        format =  degs2HHMMSS(telData.currentPos.localSideralTime / 15.0)
+        print "LST = %02d:%02d:%02.0lf" % (format[0],format[1],format[2])  
+        format =  degs2HHMMSS(telData.currentPos.RA / 15.0)
+        print "Current RA = %02d:%02d:%02.0lf" % (format[0],format[1],format[2])
+        format =  degs2HHMMSS(telData.currentPos.Dec)
+        print "Current Dec = %+03d:%02d:%02.0lf" % (format[0],format[1],format[2])
+        format =  degs2HHMMSS(telData.currentPos.HA / 15.0)
+        print "Current HA = %+03d:%02d:%02.0lf" % (format[0],format[1],format[2])
+        print "Current Alt = %lf" % telData.currentPos.Alt
+        print "Current Az = %lf" % telData.currentPos.Az
+        format =  degs2HHMMSS(telData.targetPos.RA / 15.0)
+        print "Target RA =  %02d:%02d:%02.0lf" % (format[0],format[1],format[2])
+        format =  degs2HHMMSS(telData.targetPos.Dec)
+        print "Target Dec = %+03d:%02d:%02.0lf" % (format[0],format[1],format[2])
+        format =  degs2HHMMSS(telData.targetPos.HA / 15.0)
+        print "Target HA = %+03d:%02d:%02.0lf" % (format[0],format[1],format[2])
+        print "Target Alt = %lf" % telData.targetPos.Alt
+        print "Target Az = %lf" % telData.targetPos.Az
+        format =  degs2HHMMSS(telData.differencePos.RA / 15.0)
+        print "Difference RA = %02d:%02d:%02.0lf" % (format[0],format[1],format[2])
+        format =  degs2HHMMSS(telData.differencePos.Dec)
+        print "Difference Dec = %+03d:%02d:%02.0lf" % (format[0],format[1],format[2])
+        print "Generated at = [%lf]" % telData.lcuTime
+        print datetime.utcfromtimestamp(telData.lcuTime)
+    except OUC.TelescopeNotConfiguredEx():
+        print "Telescope Not Configured !!!"
+        traceback.print_exc()
+        status = 1
+
+
 
 if __name__ == "__main__":
     parser = optparse.OptionParser(usage= "%prog -c command")
@@ -143,5 +205,10 @@ if __name__ == "__main__":
         setConfiguration()
     elif (command == "get_config"):
         getConfiguration()
+    elif (command == "get_position"):
+        getPosition()
+    elif (command == "read_encoders"):
+        getEncoderPosition()
+
     disconnect()
 
