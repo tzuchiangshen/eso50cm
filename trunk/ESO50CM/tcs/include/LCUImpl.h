@@ -24,6 +24,7 @@ public:
     virtual OUC::TelescopeConfigData getConfiguration(const Ice::Current&);
     
     virtual void setConfiguration(const string& fileName, const Ice::Current&);
+    void setConfiguration(const string& fileName);
     virtual void setTarget(const ::OUC::TelescopePosition& targetPos, const Ice::Current&);
     virtual void setOffset(const ::OUC::TelescopePosition& offsetPos, const Ice::Current&);
     virtual void setTracking(const OUC::TrackingInfo& trkInfo, const Ice::Current&);
