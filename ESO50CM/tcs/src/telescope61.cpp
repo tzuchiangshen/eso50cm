@@ -63,6 +63,7 @@ int stream_status( int m_port ) {
     fd_set fds;
     struct timeval tv;
     int retval;
+    LoggerHelper logger = LoggerHelper("telescope61");
 
     FD_ZERO( & fds );
     FD_SET( m_port, & fds );
@@ -70,7 +71,7 @@ int stream_status( int m_port ) {
     tv.tv_usec = 100;
 
     if( ( retval = select( m_port + 1, & fds, NULL, NULL, & tv ) ) < 0  ) {
-        printf( "Error on select()\n" );
+        logger.logSEVERE( "Error on select()\n" );
     }
     return retval;
 }
@@ -94,15 +95,17 @@ void handle_connection (int connection_fd)
 
 static void exit_handler(int s)
 {
-  if(verbose)
-    printf("telescope61::exit_handler Ctrl+C signal catched!!!");
+  LoggerHelper logger = LoggerHelper("telescope61");
+
+  logger.logFINE("telescope61::exit_handler Ctrl+C signal catched!!!");
   quit = 1; 
 }
 
 void exit_telescope(void)
 {
-  if(verbose)
-    printf("telescope61::exit_handler Ctrl+C signal catched!!!");
+  LoggerHelper logger = LoggerHelper("telescope61");
+  
+  logger.logFINE("telescope61::exit_handler Ctrl+C signal catched!!!");
   quit = 1; 
 }
 
@@ -196,7 +199,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
     LoggerHelper logger = LoggerHelper("telescope61");
 
     do { 
-        logger.logINFO("telescope61 process started!!");
+        logger.logINFO("telescope61::telescope_run process started!!");
 
         /* Manage CTRL+C and kill signals */
         sigExitHandler.sa_handler = & exit_handler;
@@ -217,195 +220,155 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
 
         /** Install a handler for SIGCHLD that cleans up child processes that
         have terminated.  */
-        if( verbose )
-            printf( "[telescope_run] Installing a handler for SIGCHLD...\n" );
+	logger.logFINE( "telescope61_telescope_run Installing a handler for SIGCHLD...\n" );
         memset( & sigchld_action, 0, sizeof( sigchld_action ) );
         sigchld_action.sa_handler = & clean_up_child_process;
         if( sigaction( SIGCHLD, & sigchld_action, NULL ) < 0 ) {
-            perror( "[telescope_run] sigaction" );
-            if( verbose )
-                printf( "[telescope_run] sigaction ERROR!\n" );
+            perror( "telescope61::telescope_run sigaction" );
+	    logger.logFINE( "telescope61::telescope_run sigaction ERROR!\n" );
             init_ok_flag = 0;
         }
-        if( verbose )
-            printf( "[telescope_run] sigaction OK!\n" );
+	logger.logFINE( "telescope61::telescope_run sigaction OK!\n" );
 
         /**
         * INSTRUMENT SHARED MEMORY
         */
         /** Allocate a semaphore (write) */
-        if( verbose )
-            printf( "[telescope_run] allocate semaphore for Instrument Memory (write)...\n" );
+	logger.logFINE( "telescope61::telescope_run allocate semaphore for Instrument Memory (write)...\n" );
         semaphore_id = binary_semaphore_allocate( SEMKEY, 
                             IPC_CREAT | IPC_EXCL | S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH );
-        if( semaphore_id == 0 ) {
-            if( verbose )
-                printf( "[telescope_run] semaphore_id = 0\n" );
+        if( semaphore_id == 0 ) 
+	{
+	    logger.logFINE( "telescope61::telescope_run semaphore_id = 0\n" );
             init_ok_flag = 0;
-        } else  if( semaphore_id < 0 ) {
-            perror( "[telescope_run] semget" );
-            if( verbose )
-                printf( "[telescope_run] semget ERROR!\n" );
+        } else  if( semaphore_id < 0 ) 
+        {
+	    logger.logSEVERE( "telescope61::telescope_run semget ERROR!\n" );
             init_ok_flag = 0;
         }
-        if( verbose )
-            printf( "[telescope_run] semaphore_id = %d\n", semaphore_id );
+	logger.logFINE( "telescope61::telescope_run semaphore_id = %d\n", semaphore_id );
 
         /** Semaphore initialization (write) */
         retval = binary_semaphore_initialize( semaphore_id );
 
         /** Allocate a semaphore (read) */
-        if( verbose )
-            printf( "[telescope_run] allocate semaphore for Instrument Memory (read)...\n" );
+	logger.logFINE( "telescope61::telescope_run allocate semaphore for Instrument Memory (read)...\n" );
         read_semaphore_id = binary_semaphore_allocate( RDSEMKEY,
                                 IPC_CREAT | IPC_EXCL | S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH );
-        if( read_semaphore_id == 0 ) {
-            if( verbose )
-                printf( "[telescope_run] read_semaphore_id = 0\n" );
+        if( read_semaphore_id == 0 ) 
+        {
+	    logger.logFINE( "telescope61::telescope_run read_semaphore_id = 0\n" );
             init_ok_flag = 0;
-        } else if( read_semaphore_id < 0 ) {
-            perror( "[telescope_run] semget" );
-            if( verbose )
-                printf( "[telescope_run] semget ERROR!\n" );
+        } else if( read_semaphore_id < 0 ) 
+        {
+	    logger.logSEVERE( "telescope61::telescope_run semget ERROR!\n" );
             init_ok_flag = 0;
         }
-        if( verbose )
-            printf( "[telescope_run] semaphore_id = %d\n", read_semaphore_id );
+	logger.logFINE( "telescope61::telescope_run semaphore_id = %d\n", read_semaphore_id );
 
         /** Semaphore initialization */
         retval = binary_semaphore_initialize( read_semaphore_id );
 
         /** Allocate and deallocate a shared memory segment */
-        if( verbose )
-            printf( "[telescope_run] Allocate and deallocate a shared memory segment.\n" );
-        if( verbose )
-            printf( "[telescope_run] shmget for Instrument Memory...\n" );
+	logger.logFINE( "telescope61::telescope_run Allocate and deallocate a shared memory segment.\n" );
+	logger.logFINE( "telescope61::telescope_run shmget for Instrument Memory...\n" );
         segment_id = shmget( SHMKEY, shared_segment_size,
                              IPC_CREAT | IPC_EXCL | S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH );
-        if( verbose )
-            printf( "[telescope_run] shmctl for Instrument Memory...\n" );
-        if( shmctl( segment_id, IPC_RMID, 0 ) < 0 ) {
-            perror( "[telescope_run] shmctl");
-            if( verbose )
-                printf( "[telescope_run] shmctl ERROR.\n");
+	logger.logFINE( "telescope61::telescope_run shmctl for Instrument Memory...\n" );
+       
+	if( shmctl( segment_id, IPC_RMID, 0 ) < 0 ) 
+	{
+	  logger.logSEVERE( "telescope61::telescope_run shmctl ERROR.\n");
         }
 
         /** Allocate a shared memory segment */
-        if( verbose )
-            printf( "[telescope_run] shmget for Instrument Memory...\n" );
+	logger.logFINE( "telescope61::telescope_run shmget for Instrument Memory...\n" );
         segment_id = shmget( SHMKEY, shared_segment_size, 
                             IPC_CREAT | IPC_EXCL | S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH );
-        if( segment_id == 0 ) {
-            if( verbose )
-                printf( "[telescope_run] segment_id = 0\n" );
+        if( segment_id == 0 ) 
+	{
+	    logger.logFINE( "telescope61::telescope_run segment_id = 0\n" );
             init_ok_flag = 0;
         } else if( segment_id < 0 ) {
-            perror( "[telescope_run] shmget" );
-            if( verbose )
-                printf( "[telescope_run] shmget ERROR!\n" );
+	    logger.logFINE( "telescope61::telescope_run shmget ERROR!\n" );
             init_ok_flag = 0;
         }
-        if( verbose )
-            printf( "[telescope_run] segment_id = %d\n", segment_id );
+	logger.logFINE( "telescope61::telescope_run segment_id = %d\n", segment_id );
 
         /** Attach the shared memory segment */
-        if( verbose )
-            printf( "[telescope_run] shmat for Instrument Memory...\n" );
+	logger.logFINE( "telescope61::telescope_run shmat for Instrument Memory...\n" );
         shared_memory = (char *) shmat( segment_id, 0, 0 );
         if( (void *) user_shared_memory == NULL ) {
-            perror( "[telescope_run] shmat" );
-            if( verbose )
-                printf( "[telescope_run] shmat ERROR!\n" );
+	    logger.logSEVERE( "telescope61::telescope_run shmat ERROR!\n" );
             init_ok_flag = 0;
         }
-        if( verbose )
-            printf( "[telescope_run] Instrument Shared Memory attached at adress %p\n", (void *) shared_memory );
+	logger.logFINE( "telescope61::telescope_run Instrument Shared Memory attached at adress %p\n", (void *) shared_memory );
 
         /** Determine the segment size */
         shmctl( segment_id, IPC_STAT, & shmbuffer );
         segment_size = shmbuffer.shm_segsz;
-        if( verbose ) {
-            printf( "[telescope_run] instrument segment size          = %d\n", segment_size );
-            printf( "[telescope_run] sizeof( struct telescope_data_t )= %d\n", sizeof( struct telescope_data_t ) );
-        }
-        telescope = (struct telescope_data_t *) shared_memory;
+	logger.logFINE( "telescope61::telescope_run instrument segment size          = %d\n", segment_size );
+	logger.logFINE( "telescope61::telescope_run sizeof( struct telescope_data_t )= %d\n", sizeof( struct telescope_data_t ) );
+	telescope = (struct telescope_data_t *) shared_memory;
 
         /**
          * USER SHARED MEMORY
          */
         /** Allocate a semaphore */
-        if( verbose )
-            printf( "[telescope_run] allocate semaphore for User Memory...\n" );
+	logger.logFINE( "telescope61::telescope_run allocate semaphore for User Memory...\n" );
         user_semaphore_id = binary_semaphore_allocate( USRSEMKEY,
                                                 IPC_CREAT | IPC_EXCL | S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH );
         if( user_semaphore_id == 0 ) {
-            if( verbose )
-                printf( "[telescope_run] user_semaphore_id = 0\n" );
+	    logger.logFINE( "telescope61::telescope_run user_semaphore_id = 0\n" );
             init_ok_flag = 0;
         } else if( user_semaphore_id < 0 ) {
-            perror( "[telescope_run] semget" );
-            if( verbose )
-                printf( "[telescope_run] semget ERROR!\n" );
+	    logger.logSEVERE( "telescope61::telescope_run semget ERROR!\n" );
             init_ok_flag = 0;
         }
-        if( verbose )
-            printf( "[telescope_run] user_semaphore_id = %d\n", user_semaphore_id );
+	logger.logFINE( "telescope61::telescope_run user_semaphore_id = %d\n", user_semaphore_id );
 
         /** Initialize semaphore */
         retval = binary_semaphore_initialize( user_semaphore_id );
 
         /** Allocate a shared memory segment */
-        if( verbose )
-            printf( "[telescope_run] shmget for User Memory...\n" );
+	logger.logFINE( "telescope61::telescope_run shmget for User Memory...\n" );
         user_segment_id = shmget( USRSHMKEY, shared_segment_size,
                             IPC_CREAT | IPC_EXCL | S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH );
         if( user_segment_id < 0 ) {
-            if( verbose )
-                printf( "[telescope_run] user_segment_id = 0\n" );
+	    logger.logFINE( "telescope61::telescope_run user_segment_id = 0\n" );
             init_ok_flag = 0;
         } else if( user_segment_id < 0 ) {
-            perror( "[telescope_run] shmget" );
-            if( verbose )
-                printf( "[telescope_run] shmget ERROR!\n" );
+	    logger.logSEVERE( "telescope61::telescope_run shmget ERROR!\n" );
             init_ok_flag = 0;
         }
-        if( verbose )
-            printf( "[telescope_run] user_segment_id = %d\n", user_segment_id );
+	logger.logFINE( "telescope61::telescope_run user_segment_id = %d\n", user_segment_id );
 
         /** Attach the shared memory segment */
-        if( verbose )
-            printf( "[telescope_run] shmat for User Memory...\n" );
+	logger.logFINE( "telescope61::telescope_run shmat for User Memory...\n" );
         user_shared_memory = (char *) shmat( user_segment_id, 0, 0 );
         if( (void *) user_shared_memory == NULL ) {
-            perror( "[telescope_run] shmat" );
-            if( verbose )
-                printf( "[telescope_run] shmat ERROR!\n" );
+	    logger.logSEVERE( "telescope61::telescope_run shmat ERROR!\n" );
             init_ok_flag = 0;
         }
-        if( verbose )
-            printf( "[telescope_run] User Shared Memory attached at adress %p\n", (void *) user_shared_memory );
+	logger.logFINE( "telescope61::telescope_run User Shared Memory attached at adress %p\n", (void *) user_shared_memory );
 
         /** Determine the segment size */
         shmctl( user_segment_id, IPC_STAT, & shmbuffer );
         user_segment_size = shmbuffer.shm_segsz;
-        if( verbose ) {
-            printf( "[telescope_run] user segment size: %d\n", segment_size );
-        }
-
-
+	logger.logFINE( "telescope61::telescope_run user segment size: %d\n", segment_size );
+       
         /**
          * Open rs232
          */
-        if( verbose ) {
-            printf( "[telescope_run] Opening rs232 device\n" );
-            printf( "[telescope_run] device = %s\n", device );
-            printf( "[telescope_run] baudrate = %d\n", (int) baudrate );
-        }
+	logger.logFINE( "telescope61::telescope_run Opening rs232 device\n" );
+	logger.logFINE( "telescope61::telescope_run device = %s\n", device );
+	logger.logFINE( "telescope61::telescope_run baudrate = %d\n", (int) baudrate );
+       
         fd_rs232 = open_RS232( device, baudrate );
-        if( fd_rs232 == 0 ) {
+        if( fd_rs232 == 0 ) 
+	{
             init_ok_flag = 0;
-            if( verbose )
-                printf( "[telescope_run] fd_rs232 = 0\n" );
+	    logger.logFINE( "telescope61::telescope_run fd_rs232 = 0\n" );
         }
 
         /**
@@ -426,8 +389,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
     } while( 0 );
 
     if( init_ok_flag ) {
-        if( verbose )
-            printf( "[telescope_run] Everything looks OK!\n[telescope_run] Starting main loop\n" );
+        logger.logFINE( "telescope61::telescope_run Everything looks OK!\n[telescope_run] Starting main loop\n" );
 
         /** User Shared Memory Initialization */
         binary_semaphore_wait( user_semaphore_id );
@@ -441,7 +403,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
         gettimeofday( & (telescope->gtime), & (telescope->tzone) );
         localtime_r( & (telescope->gtime.tv_sec), & LTime  );
         strftime( infoline, 24, "%Y-%m-%d %T", & LTime );
-        if( verbose ) printf( "[telescope_run] Hello World! %s\n", infoline );
+        logger.logFINE( "telescope61::telescope_run Hello World! %s\n", infoline );
 
         telescope->encoder[0].i2c_address = 0xA2;
         telescope->encoder[1].i2c_address = 0xA4;
@@ -520,8 +482,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                             }// END else if( rx_msg_length > 0 )
                         } // END for( k = 0; k < rx; k ++ )
                     } else {
-                        if( verbose )
-                            printf( "[telescope_run] read ERROR\n" );
+		        logger.logFINE( "telescope61::telescope_run read ERROR\n" );
                     } //END if( (rx = read_RS232( fd_rs232, tty_buffer, 256 )) > 0 )
                 } else {
                     /** No bytes available. */
@@ -529,7 +490,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                     if( wait_for_message && (nums_of_time_outs > 10 ) ) {
                         /** Max number of timeouts has been reached while waiting
                             for a message... */
-                        printf( "[telescope_run] timeout ERROR: bytes received = %d\n", rx_msg_length  );
+                        logger.logSEVERE( "telescope61::telescope_run timeout ERROR: bytes received = %d\n", rx_msg_length  );
                         rx_msg_length = 0;
                         wait_for_message = 0;
                         new_ttymssg_flag = 0;
@@ -547,105 +508,98 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
             */
             binary_semaphore_wait( semaphore_id );
             if( new_ttymssg_flag ) {
-                if( (unsigned char) msg_buffer[1] == 0xA0 ) {
-                    if( verbose ) {
-                        printf( "[telescope_run] Short message received\n" );
-                        if( msg_buffer[9] == '#' ) {
-                            printf( "[telescope_run] Last char OK\n" );
-                        } else {
-                            printf( "[telescope_run] Last char Wrong\n" );
-                        }
-                        if( msg_buffer[2] == 'P' ) {
-                            new_timep_flag = 1;
-                            gettimeofday( & (telescope->gtime), & (telescope->tzone) );
-                            localtime_r( & (telescope->gtime.tv_sec), & LTime  );
-                            strftime( infoline, 24, "%Y-%m-%d %T", & LTime );
-                            printf( "[telescope_run] %s\n", infoline );
-                        }
-                    }
-                } else if( (unsigned char) msg_buffer[1] == 0xA1 ) {
-                    if( verbose ) {
-                        printf( "[telescope_run] Long message received\n" );
-                        if( msg_buffer[41] == '#' ) {
-                            printf( "[telescope_run] Last char OK\n" );
-                        } else {
-                            printf( "[telescope_run] Last char Wrong\n" );
-                        }
-                        if( msg_buffer[2] == 'N' ) {
-                            printf( "[telescope_run] Version number: %s\n", & msg_buffer[3] );
-                        } else if( msg_buffer[2] == 'D' ) {
-                            printf( "[telescope_run] Version date  : %s\n", & msg_buffer[3] );
-                        } else if( msg_buffer[2] == 'T' ) {
-                            printf( "[telescope_run] Version time  : %s\n", & msg_buffer[3] );
-                        } else if( msg_buffer[2] == 'P' ) {
-                            telescope->new_data = 1;
-                            //printf( "[telescope_run] " );
-                            //for( i = 0; i < 24; i ++ ) {
-                            //    printf( "[%02X]", (unsigned int) msg_buffer[3+i] );
-                            //}
-                            //printf( " (%d)\n", (unsigned int) msg_buffer[41] );
-                            char i2c;
-                            char mem;
-                            int numero;
-                            unsigned char chksum;
+	        if( (unsigned char) msg_buffer[1] == 0xA0 ) {
+		    logger.logFINE( "telescope61::telescope_run Short message received\n" );
+		    if( msg_buffer[9] == '#' ) {
+		        logger.logFINE( "telescope61::telescope_run Last char OK\n" );
+		    } else {
+		        logger.logFINE( "telescope61::telescope_run Last char Wrong\n" );
+		    }
+		    if( msg_buffer[2] == 'P' ) {
+		        new_timep_flag = 1;
+		        gettimeofday( & (telescope->gtime), & (telescope->tzone) );
+		        localtime_r( & (telescope->gtime.tv_sec), & LTime  );
+		        strftime( infoline, 24, "%Y-%m-%d %T", & LTime );
+		        logger.logFINE( "telescope61::telescope_run %s\n", infoline );
+		    }
+		}
+	    } else if( (unsigned char) msg_buffer[1] == 0xA1 ) {
+	        logger.logFINE( "telescope61::telescope_run Long message received\n" );
+		if( msg_buffer[41] == '#' ) {
+		    logger.logFINE( "telescope61::telescope_run Last char OK\n" );
+		} else {
+		    logger.logFINE( "telescope61::telescope_run Last char Wrong\n" );
+		}
+		if( msg_buffer[2] == 'N' ) {
+		    logger.logFINE( "telescope61::telescope_run Version number: %s\n", & msg_buffer[3] );
+		} else if( msg_buffer[2] == 'D' ) {
+		    logger.logFINE( "telescope61::telescope_run Version date  : %s\n", & msg_buffer[3] );
+		} else if( msg_buffer[2] == 'T' ) {
+		    logger.logFINE( "telescope61::telescope_run Version time  : %s\n", & msg_buffer[3] );
+		} else if( msg_buffer[2] == 'P' ) {
+		    telescope->new_data = 1;
+		    //printf( "[telescope_run] " );
+		    //for( i = 0; i < 24; i ++ ) {
+		    //    printf( "[%02X]", (unsigned int) msg_buffer[3+i] );
+		    //}
+		    //printf( " (%d)\n", (unsigned int) msg_buffer[41] );
+		    char i2c;
+		    char mem;
+		    int numero;
+		    unsigned char chksum;
 
-                            chksum = 0;
-                            i = 3;
-
-                            for( j = 0; j < 4; j ++ ) {
-                                i2c     = msg_buffer[i];;
-                                chksum += (unsigned char) msg_buffer[i];
-                                mem     = msg_buffer[i+1];
-                                chksum += (unsigned char) msg_buffer[i+1];
-                                ((char *) & numero)[0] =  msg_buffer[i+2];
-                                chksum += (unsigned char) msg_buffer[i+2];
-                                ((char *) & numero)[1] =  msg_buffer[i+3];
-                                chksum += (unsigned char) msg_buffer[i+3];
-                                ((char *) & numero)[2] =  msg_buffer[i+4];
-                                chksum += (unsigned char) msg_buffer[i+4];
-                                ((char *) & numero)[3] =  msg_buffer[i+5];
-                                chksum += (unsigned char) msg_buffer[i+5];
-                                //printf( "[telescope_run] 0x%02X %d %d\n", (unsigned int) i2c, (int) mem, numero );
-
-                                for( k = 0; k < 6; k ++ ) {
-                                    if( telescope->encoder[k].i2c_address + 1 == i2c ) {
-                                        telescope->encoder[k].data[mem] = numero;
-                                        printf( "[telescope_run] 0x%02X %d %d\n",
+		    chksum = 0;
+		    i = 3;
+		    
+		    for( j = 0; j < 4; j ++ ) {
+		        i2c     = msg_buffer[i];;
+		        chksum += (unsigned char) msg_buffer[i];
+		        mem     = msg_buffer[i+1];
+			chksum += (unsigned char) msg_buffer[i+1];
+			((char *) & numero)[0] =  msg_buffer[i+2];
+			chksum += (unsigned char) msg_buffer[i+2];
+			((char *) & numero)[1] =  msg_buffer[i+3];
+			chksum += (unsigned char) msg_buffer[i+3];
+			((char *) & numero)[2] =  msg_buffer[i+4];
+			chksum += (unsigned char) msg_buffer[i+4];
+			((char *) & numero)[3] =  msg_buffer[i+5];
+			chksum += (unsigned char) msg_buffer[i+5];
+			//printf( "[telescope_run] 0x%02X %d %d\n", (unsigned int) i2c, (int) mem, numero );
+			
+			for( k = 0; k < 6; k ++ ) {
+			    if( telescope->encoder[k].i2c_address + 1 == i2c ) {
+			        telescope->encoder[k].data[mem] = numero;
+				logger.logFINE( "telescope61::telescope_run 0x%02X %d %d\n",
                                                 (unsigned int) telescope->encoder[k].i2c_address,
                                                 (int) mem,
                                                 telescope->encoder[k].data[mem] );
-                                        break;
-                                    }
-                                }
-                                i += 6;
-                            }
-                            if( (unsigned char) msg_buffer[40] != chksum ) {
-                                printf( "[telescope_run] ChkSum Error(%d,%d)\n",
+				break;
+			    }
+			}
+			i += 6;
+		    }
+		    if( (unsigned char) msg_buffer[40] != chksum ) {
+		        logger.logFINE( "telescope61::telescope_run ChkSum Error(%d,%d)\n",
                                         (unsigned char) msg_buffer[40], chksum );
-                            }
-                        }
-                    }
-                }
-                new_ttymssg_flag = 0;
+		    }
+		}
+		new_ttymssg_flag = 0;
                 rx_msg_length = 0;
-            }//END if( new_ttymssg_flag )
+	    }//END if( new_ttymssg_flag )
 
-            if( checksum_error_flag ) {
-            }//END if( checksum_error_flag )
             binary_semaphore_post( semaphore_id );
-
+	    
             /**
-            * Checks for a message in the instrument shared memory...
-            */
+	     * Checks for a message in the instrument shared memory...
+	     */
             if( bin_message_len == 0 ) {
                 for( i = 0; i < 6; i ++ ) {
-                    binary_semaphore_wait( semaphore_id );
+		    binary_semaphore_wait( semaphore_id );
                     if( telescope->encoder[i].message[0] == ':' ) {
                         gettimeofday( & gtime, & tzone );
                         startT  = ((double) gtime.tv_usec)/1000000.;
                         startT += (double) gtime.tv_sec;
-                        if( verbose )
-                            printf( "[telescope_run] Sending new message for 0x%02X\n", telescope->encoder[i].i2c_address );
+			logger.logFINE( "telescope61::telescope_run Sending new message for 0x%02X\n", telescope->encoder[i].i2c_address );
                         retval = write_RS232( fd_rs232, telescope->encoder[i].message, 10  );
                         memset( telescope->encoder[i].message, 0, 16 );
                         length = 0;
@@ -670,23 +624,20 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                             }
                         } while( length < 10 );
                         if( timeout_error_flag ) {
-                            printf( "[telescope_run] timeout ERROR\n" );
+			    logger.logSEVERE( "telescope61::telescope_run timeout ERROR\n" );
                         } else {
-                            if( verbose )
-                                printf( "[telescope_run] Received the answer from 0x%02X\n", telescope->encoder[i].i2c_address );
+			    logger.logFINE( "telescope61::telescope_run Received the answer from 0x%02X\n", telescope->encoder[i].i2c_address );
                         }
                         binary_semaphore_post( read_semaphore_id );
                         gettimeofday( & gtime, & tzone );
                         endT  = ((double) gtime.tv_usec)/1000000.;
                         endT += (double) gtime.tv_sec;
-                        if( verbose )
-                            printf( "[telescope_run] dT=%10.6lf[s]\n", endT - startT );
+			logger.logFINE( "telescope61::telescope_run dT=%10.6lf[s]\n", endT - startT );
                     }
                     binary_semaphore_post( semaphore_id );
-
-                }
+		}
             }
-
+	    
 
             /**
             * Get Message to TX from stdin
@@ -710,16 +661,15 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
             if( new_message_flag ) {
                 new_message_flag = 0;
                 if( strcmp( buffer, "exit" ) == 0 ) {
-                    message_length = 0;
-                    if( verbose )
-                        printf( "[telescope_run] %s\n", buffer );
-                    quit = 1;
+		    message_length = 0;
+		    logger.logFINE( "telescope61::telescope_run %s\n", buffer );
+		    quit = 1;
                 } else if( strcmp( buffer, "reply" ) == 0 ) {
                     binary_semaphore_wait( semaphore_id );
                     localtime_r( & (telescope->gtime.tv_sec), & LTime  );
                     binary_semaphore_post( semaphore_id );     
                     strftime( infoline, 24, "%Y-%m-%d %T", & LTime );
-                    printf( "[telescope_run] Reply. (%s)\n", infoline );
+                    logger.logFINE( "telescope61::telescope_run Reply. (%s)\n", infoline );
                     message_length = 0;
                     reply_flag = 1;
                 } else if( strcmp( buffer, "noreply" ) == 0 ) {
@@ -727,7 +677,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                     localtime_r( & (telescope->gtime.tv_sec), & LTime  );
                     binary_semaphore_post( semaphore_id );     
                     strftime( infoline, 24, "%Y-%m-%d %T", & LTime );
-                    printf( "[telescope_run] No Reply. (%s)\n", infoline );
+                    logger.logFINE( "telescope61::telescope_run No Reply. (%s)\n", infoline );
                     message_length = 0;
                     reply_flag = 0;
                 } else if( strcmp( buffer, "date" ) == 0 ) {
@@ -736,11 +686,11 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                     //gettimeofday( & (telescope->gtime), & (telescope->tzone) );
                     localtime_r( & (telescope->gtime.tv_sec), & LTime  );
                     strftime( infoline, 24, "%Y-%m-%d %T", & LTime );
-                    printf( "[telescope_run] Date: %s\n", infoline );
+                    logger.logFINE( "telescope61::telescope_run Date: %s\n", infoline );
                     binary_semaphore_post( semaphore_id );
                 } else if( strcmp( buffer, "vn" ) == 0 ) {
                     message_length = 0;
-                    printf( "[telescope_run] Geting version number.\n" );
+                    logger.logFINE( "telescope61::telescope_run Geting version number.\n" );
                     msg_buffer[0] = ':';
                     msg_buffer[1] = 0xA1;
                     msg_buffer[2] = 'N';
@@ -754,7 +704,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                     retval = write_RS232( fd_rs232, msg_buffer, 10  );
                 } else if( strcmp( buffer, "vd" ) == 0 ) {
                     message_length = 0;
-                    printf( "[telescope_run] Geting version date.\n" );
+                    logger.logFINE( "telescope61::telescope_run Geting version date.\n" );
                     msg_buffer[0] = ':';
                     msg_buffer[1] = 0xA1;
                     msg_buffer[2] = 'D';
@@ -768,7 +718,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                     retval = write_RS232( fd_rs232, msg_buffer, 10  );
                 } else if( strcmp( buffer, "vt" ) == 0 ) {
                     message_length = 0;
-                    printf( "[telescope_run] Geting version time.\n" );
+                    logger.logFINE( "telescope61::telescope_run Geting version time.\n" );
                     msg_buffer[0] = ':';
                     msg_buffer[1] = 0xA1;
                     msg_buffer[2] = 'T';
@@ -782,7 +732,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                     retval = write_RS232( fd_rs232, msg_buffer, 10  );
                 } else if( strcmp( buffer, "gp" ) == 0 ) {
                     message_length = 0;
-                    printf( "[telescope_run] Geting position.\n" );
+                    logger.logFINE( "telescope61::telescope_run Geting position.\n" );
                     msg_buffer[0] = ':';
                     msg_buffer[1] = 0xA1;
                     msg_buffer[2] = 'P';
@@ -796,13 +746,12 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                     retval = write_RS232( fd_rs232, msg_buffer, 10  );
                 } else {
                     message_length = 0;
-                    if( verbose )
-                        printf( "[telescope_run] Unknown command %s.\n", buffer );
+		    logger.logFINE( "telescope61::telescope_run Unknown command %s.\n", buffer );
                 }// END
             } else if( reply_flag ) { // END if( new_message_flag )
                 if( new_timep_flag ) {
                     new_timep_flag = 0;
-                    printf( "[telescope_run] Replying...\n" );
+                    logger.logFINE( "telescope61::telescope_run Replying...\n" );
                     msg_buffer[0] = ':';
                     msg_buffer[1] = 0xA1;
                     msg_buffer[2] = 'P';
@@ -820,30 +769,23 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
 	    /*syslog(LOG_INFO, "i'm still alive!!");*/
 
         } while( ! quit );
-        if( verbose ) {
-            binary_semaphore_wait( semaphore_id );
-            gettimeofday( & (telescope->gtime), & (telescope->tzone) );
-            localtime_r( & (telescope->gtime.tv_sec), & LTime  );
-            strftime( infoline, 24, "%Y-%m-%d %T", & LTime );
-            if( verbose )
-                printf( "[telescope_run] Main Loop ended at %s\n", infoline );
-            binary_semaphore_post( semaphore_id );
-        }
+	binary_semaphore_wait( semaphore_id );
+	gettimeofday( & (telescope->gtime), & (telescope->tzone) );
+	localtime_r( & (telescope->gtime.tv_sec), & LTime  );
+	strftime( infoline, 24, "%Y-%m-%d %T", & LTime );
+	logger.logFINE( "telescope61::telescope_run Main Loop ended at %s\n", infoline );
+	binary_semaphore_post( semaphore_id );
     } else {
-        printf( "[telescope_run] Something wrong!\n" );
+        logger.logFINE( "telescope61::telescope_run Something wrong!\n" );
     }//END if( init_ok_flag )
-
+    
     /** Close RS232 device */
     if( fd_rs232 > 0 ) {
-        if( verbose )
-            printf( "[telescope_run] Closing fd_rs232...\n");
+        logger.logFINE( "telescope61::telescope_run Closing fd_rs232...\n");
         if( close( fd_rs232 ) < 0 ) {
-            perror( "[telescope_run] close");
-            if( verbose )
-                printf( "[telescope_run] close ERROR.\n");
+	  logger.logSEVERE( "telescope61::telescope_run close ERROR.\n");
         } else {
-            if( verbose )
-                printf( "[telescope_run] close OK.\n");
+	  logger.logFINE( "telescope61::telescope_run close OK.\n");
         }
     }
 
@@ -852,55 +794,39 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
      */
     /** Detach the shared memory segment */
     if( (void *) shared_memory != NULL ) {
-        if( verbose )
-            printf( "[telescope_run] Detaching Instrumen Shared Memory...\n");
+        logger.logFINE( "telescope61::telescope_run Detaching Instrumen Shared Memory...\n");
         if( shmdt( shared_memory ) < 0 ) {
-            perror( "[telescope_run] shmdt");
-            if( verbose )
-                printf( "[telescope_run] shmdt ERROR.\n");
+	    logger.logSEVERE( "telescope61::telescope_run shmdt ERROR.\n");
         } else {
-            if( verbose )
-                printf( "[telescope_run] shmdt OK.\n");
+	    logger.logFINE( "telescope61::telescope_run shmdt OK.\n");
         }
     }
 
     /** Deallocate the shared memory segment */
     if( segment_id >= 0 ) {
-        if( verbose )
-            printf( "[telescope_run] Deallocating Instrumen Shared Memory...\n");
+        logger.logFINE( "telescope61::telescope_run Deallocating Instrumen Shared Memory...\n");
         if( shmctl( segment_id, IPC_RMID, 0 ) < 0 ) {
-            perror( "[telescope_run] shmctl");
-            if( verbose )
-                printf( "[telescope_run] shmctl ERROR.\n");
+	    logger.logSEVERE( "telescope61::telescope_run shmctl ERROR.\n");
         } else {
-            if( verbose )
-                printf( "[telescope_run] shmctl OK.\n");
+	    logger.logFINE( "telescope61::telescope_run shmctl OK.\n");
         }
     }
 
     /** Deallocate the semaphore */
     if( semaphore_id >= 0 ) {
-        if( verbose )
-            printf( "[telescope_run] Deallocating semaphore fo Instrumen Shared Memory (write)...\n");
+        logger.logFINE( "telescope61::telescope_run Deallocating semaphore fo Instrumen Shared Memory (write)...\n");
         if( binary_semaphore_deallocate( semaphore_id ) < 0 ) {
-            perror( "[telescope_run] semctl");
-            if( verbose )
-                printf( "[telescope_run] semctl ERROR.\n");
+	    logger.logSEVERE( "telescope61::telescope_run semctl ERROR.\n");
         } else {
-            if( verbose )
-                printf( "[telescope_run] semctl OK.\n");
+	    logger.logFINE( "telescope61::telescope_run semctl OK.\n");
         }
     }
     if( read_semaphore_id >= 0 ) {
-        if( verbose )
-            printf( "[telescope_run] Deallocating semaphore fo Instrumen Shared Memory (read)...\n");
+        logger.logFINE( "telescope61::telescope_run Deallocating semaphore fo Instrumen Shared Memory (read)...\n");
         if( binary_semaphore_deallocate( read_semaphore_id ) < 0 ) {
-            perror( "[telescope_run] semctl");
-            if( verbose )
-                printf( "[telescope_run] semctl ERROR.\n");
+	    logger.logSEVERE( "telescope61::telescope_run semctl ERROR.\n");
         } else {
-            if( verbose )
-                printf( "[telescope_run] semctl OK.\n");
+	    logger.logFINE( "telescope61::telescope_run semctl OK.\n");
         }
     }
 
@@ -909,46 +835,31 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
      */
     /** Detach the shared memory segment */
     if( (void *) user_shared_memory != NULL ) {
-        if( verbose )
-            printf( "[telescope_run] Detaching User Shared Memory...\n");
+        logger.logFINE( "telescope61::telescope_run Detaching User Shared Memory...\n");
         if( shmdt( user_shared_memory ) < 0 ) {
-            perror( "[telescope_run] shmdt");
-            if( verbose )
-                printf( "[telescope_run] shmdt ERROR.\n");
+	    logger.logSEVERE( "telescope61::telescope_run shmdt ERROR.\n");
         } else {
-            if( verbose )
-                printf( "[telescope_run] shmdt OK.\n");
+	    logger.logFINE( "telescope61::telescope_run shmdt OK.\n");
         }
     }
     /** Deallocate the shared memory segment */
     if( user_segment_id >= 0 ) {
-        if( verbose )
-            printf( "[telescope_run] Deallocating Instrumen Shared Memory...\n");
+        logger.logFINE( "telescope61::telescope_run Deallocating Instrumen Shared Memory...\n");
         if( shmctl( user_segment_id, IPC_RMID, 0 ) < 0 ) {
-            perror( "[telescope_run] shmctl");
-            if( verbose )
-                printf( "[telescope_run] shmctl ERROR.\n");
+	    logger.logSEVERE( "telescope61::telescope_run shmctl ERROR.\n");
         } else {
-            if( verbose )
-                printf( "[telescope_run] shmctl OK.\n");
+	    logger.logFINE( "telescope61::telescope_run shmctl OK.\n");
         }
     }
     /** Deallocate the semaphore */
     if( user_semaphore_id >= 0 ) {
-        if( verbose )
-            printf( "[telescope_run] Deallocating semaphore fo User Shared Memory...\n");
+        logger.logFINE( "telescope61::telescope_run Deallocating semaphore fo User Shared Memory...\n");
         if( binary_semaphore_deallocate( user_semaphore_id ) < 0 ) {
-            perror( "[telescope_run] semctl");
-            if( verbose )
-                printf( "[telescope_run] semctl ERROR.\n");
+	    logger.logSEVERE( "telescope61::telescope_run semctl ERROR.\n");
         } else {
-            if( verbose )
-                printf( "[telescope_run] semctl OK.\n");
+	    logger.logFINE( "telescope61::telescope_run semctl OK.\n");
         }
     }
-    if( verbose ) {
-        printf( "[telescope_run] Good bye!\n" );
-    }
-
+    logger.logFINE( "telescope61::telescope_run Good bye!\n" );
 }
 #endif
