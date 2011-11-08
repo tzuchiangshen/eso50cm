@@ -47,6 +47,7 @@ private:
     OUC::TelescopeConfigData *telescopeConfigData_t;
     OUC::TelescopeData *telescopeData_t;
     LoggerHelper logger;
+    string telConfigFileName;
     myLCU *m_lcu; 
 };
 
