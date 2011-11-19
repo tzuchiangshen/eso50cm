@@ -16,3 +16,15 @@ The following packages must be installed
   * libc6-dev
   * subversion 
   * vim 
+
+
+= ESO50CM CONTROL SW =
+  * svn checkout https://eso50cm.googlecode.com/svn/trunk/ eso50cm --username tzuchiangshen@gmail.com
+  * cd eso50cm/ESO50CM/Deployment/src/
+  * make install 
+  * cd $SWROOT
+  * cd ..
+  * getTemplateForDirectory SWROOT SWROOT
+  * cd ~/CURRENTLY_MOD/eso50cm/ESO50cm/Logging/src
+  * cmake .
+  * make clean all install
