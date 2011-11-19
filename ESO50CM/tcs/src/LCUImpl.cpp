@@ -26,7 +26,7 @@ LCUImpl::LCUImpl():
         logger.logSEVERE("LCUImpl::LCUImpl Telescope could not be configured."); 
     } catch(const Ice::Exception& ex) {
         logger.logSEVERE("LCUImpl::LCUImpl Uncaught exception ."); 
-	    throw ex;
+        throw ex;
     }
 
     //Get telescope configuration & tracking state
