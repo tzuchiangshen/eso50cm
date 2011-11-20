@@ -48,7 +48,7 @@ def connect():
 
 def disconnect():
     global status
-    #print "Desconnecting.."
+    #print "Disconnecting.."
     if ic:
         try: 
             ic.destroy()
@@ -98,27 +98,27 @@ def getConfiguration():
         telConfigData = telescope.getConfiguration()   
         print "LT = [%lf]" % telConfigData.localTime
         print datetime.utcfromtimestamp(telConfigData.localTime)
-        print "Latitude = %+11.4lf " % telConfigData.latitude
+        print chr(27)+"[0;32m"+"Latitude  = %+11.4lf " % telConfigData.latitude 
         print "Longitude = %+11.4lf " % telConfigData.longitude
-        print "Altitude = %+11.4lf " % telConfigData.altitude
-        print "AMT = %+11.4lf " % telConfigData.AMT
-        print "AMH = %+11.4lf " % telConfigData.AMH
-        print "AMR = %+11.4lf " % telConfigData.AMR
-        print "AWT = %+11.4lf " % telConfigData.AWT
-        print "AWH = %+11.4lf " % telConfigData.AWH
-        print "AWR = %+11.4lf " % telConfigData.AWR
-        print "AAT = %+11.4lf " % telConfigData.AAT
-        print "AAH = %+11.4lf " % telConfigData.AAH
-        print "AAR = %+11.4lf " % telConfigData.AAR
-        print "DMT = %+11.4lf " % telConfigData.DMT
-        print "DMH = %+11.4lf " % telConfigData.DMH
-        print "DMR = %+11.4lf " % telConfigData.DMR
-        print "DWT = %+11.4lf " % telConfigData.DWT
-        print "DWH = %+11.4lf " % telConfigData.DWH
-        print "DWR = %+11.4lf " % telConfigData.DWR
-        print "DAT = %+11.4lf " % telConfigData.DAT
-        print "DAH = %+11.4lf " % telConfigData.DAH
-        print "DAR = %+11.4lf " % telConfigData.DAR
+        print "Altitude  = %+11.4lf " % telConfigData.altitude + chr(27) + "[0m"
+        print chr(27)+"[0;33m"+"AMT       = %+11.4lf " % telConfigData.AMT
+        print "AMH       = %+11.4lf " % telConfigData.AMH
+        print "AMR       = %+11.4lf " % telConfigData.AMR
+        print "AWT       = %+11.4lf " % telConfigData.AWT
+        print "AWH       = %+11.4lf " % telConfigData.AWH
+        print "AWR       = %+11.4lf " % telConfigData.AWR
+        print "AAT       = %+11.4lf " % telConfigData.AAT
+        print "AAH       = %+11.4lf " % telConfigData.AAH
+        print "AAR       = %+11.4lf " % telConfigData.AAR + chr(27) + "[0m"
+        print chr(27)+"[0;34m"+"DMT       = %+11.4lf " % telConfigData.DMT
+        print "DMH       = %+11.4lf " % telConfigData.DMH
+        print "DMR       = %+11.4lf " % telConfigData.DMR
+        print "DWT       = %+11.4lf " % telConfigData.DWT
+        print "DWH       = %+11.4lf " % telConfigData.DWH
+        print "DWR       = %+11.4lf " % telConfigData.DWR
+        print "DAT       = %+11.4lf " % telConfigData.DAT
+        print "DAH       = %+11.4lf " % telConfigData.DAH
+        print "DAR       = %+11.4lf " % telConfigData.DAR + chr(27) + "[0m"
         print "Generated at = [%lf]" % telConfigData.lcuTime
         print datetime.utcfromtimestamp(telConfigData.lcuTime)
     except OUC.TelescopeNotConfiguredEx():
@@ -133,10 +133,56 @@ def getEncoderPosition():
         encData =  telescope.getEncodersPosition();
         print "LT = [%lf]" % encData.localTime
         print datetime.utcfromtimestamp(encData.localTime)
-        print "AW Position  = [%+10.0lf]" % encData.alphaWormE
+        print chr(27)+"[0;32m"+"AW Position  = [%+10.0lf]" % encData.alphaWormE
         print "AA Position  = [%+10.0lf]" % encData.alphaAxisE 
         print "DW Position  = [%+10.0lf]" % encData.deltaWormE
-        print "AA Position  = [%+10.0lf]" % encData.deltaAxisE
+        print "AA Position  = [%+10.0lf]" % encData.deltaAxisE + chr(27) + "[0m"
+        print "Generated at = [%lf]" % encData.lcuTime
+        print datetime.utcfromtimestamp(encData.lcuTime)
+    except OUC.TelescopeNotConfiguredEx():
+        print "Telescope Not Configured !!!"
+        traceback.print_exc()
+        status = 1
+
+def isConfigured():
+    
+    try:
+        telescope = obsImpl.getTelescope()
+        a =  telescope.isConfigured();
+        #print a
+        print "isConfigured  =[%s]" % a
+    except: 
+        print chr(27)+"[0;31m"+"error" + chr(27) + "[0m" 
+
+def isTracking():
+    
+    try:
+        telescope = obsImpl.getTelescope()
+        n =  telescope.isTracking();
+        #print n
+        print "isTracking  =[%s]" % n
+    except: 
+        print chr(27)+"[0;31m"+"error" + chr(27) + "[0m" 
+def getRawEncoderPosition():
+    encData = OUC.RawEncoderData()
+    try:
+        telescope = obsImpl.getTelescope()
+        encData =  telescope.getRawEncodersPosition();
+        #print encData
+        print "LT = [%lf]" % encData.lcuTime
+        print datetime.utcfromtimestamp(encData.lcuTime)
+        print chr(27)+"[0;33m"+"AWE Position  = [%+10.0lf]" % encData.lectAlphaWormE
+        print "AAE Position  = [%+10.0lf]" % encData.lectAlphaAxisE 
+        print "AM  Position  = [%+10.0lf]" % encData.lectAlphaMotor + chr(27) + "[0m"
+        print chr(27)+"[0;32m"+"DWE Position  = [%+10.0lf]" % encData.lectDeltaWormE + chr(27) + "[0m"
+        print chr(27)+"[0;32m"+"AAE Position  = [%+10.0lf]" % encData.lectDeltaAxisE + chr(27) + "[0m"
+        print chr(27)+"[0;32m"+"DM Position   = [%+10.0lf]" % encData.lectDeltaMotor + chr(27) + "[0m"
+        print chr(27)+"[0;33m"+"AWE Position  = [%+10.0lf]" % encData.posAlphaWormE
+        print chr(27)+"[0;33m"+"AAE Position  = [%+10.0lf]" % encData.posAlphaAxisE
+        print "AM position   = [%+10.0lf]" % encData.posAlphaMotor  + chr(27) + "[0m"
+        print chr(27)+"[0;32m"+"DWE Position  = [%+10.0lf]" % encData.posDeltaWormE
+        print "DAE position  = [%+10.0lf]" % encData.posDeltaAxisE
+        print "DM Position   = [%+10.0lf]" % encData.posDeltaMotor  + chr(27) + "[0m"
         print "Generated at = [%lf]" % encData.lcuTime
         print datetime.utcfromtimestamp(encData.lcuTime)
     except OUC.TelescopeNotConfiguredEx():
@@ -149,38 +195,38 @@ def getPosition():
     try:
         telescope = obsImpl.getTelescope()
         telData = telescope.getPosition()
-        print "LT = [%lf]" % telData.localTime
+        print "LT              = [%lf]" % telData.localTime
         print datetime.utcfromtimestamp(telData.localTime)
         print "Time elapsed since last access: %lf" % telData.deltaT  
-        print "JD  = %lf" % telData.julianDate
-        print "Latitude = %+11.4lf" % telData.latitude
-        print "Longitude = %+11.4lf" % telData.longitude
-        print "Altitude = %+11.4lf" % telData.altitude
-        print "High Elevation = %+11.4lf" % telData.highElevation
-        print "Low Elevation = %+11.4lf" % telData.lowElevation
+        print "JD              =  %lf" % telData.julianDate + chr(27) + "[0m"
+        print chr(27)+"[0;32m"+"Latitude        =   %+11.4lf" % telData.latitude + chr(27) + "[0m"
+        print chr(27)+"[0;32m"+"Longitude       =   %+11.4lf" % telData.longitude + chr(27) + "[0m"
+        print chr(27)+"[0;32m"+"Altitude        =   %+11.4lf" % telData.altitude + chr(27) + "[0m"
+        print "High Elevation  =   %+11.4lf" % telData.highElevation
+        print "Low Elevation   =   %+11.4lf" % telData.lowElevation
         format =  degs2HHMMSS(telData.currentPos.localSideralTime / 15.0)
-        print "LST = %02d:%02d:%02.0lf" % (format[0],format[1],format[2])  
+        print "LST             =       %02d:%02d:%02.0lf" % (format[0],format[1],format[2])  
         format =  degs2HHMMSS(telData.currentPos.RA / 15.0)
-        print "Current RA = %02d:%02d:%02.0lf" % (format[0],format[1],format[2])
+        print chr(27)+"[0;34m"+"Current RA      =       %02d:%02d:%02.0lf" % (format[0],format[1],format[2]) + chr(27) + "[0m"
         format =  degs2HHMMSS(telData.currentPos.Dec)
-        print "Current Dec = %+03d:%02d:%02.0lf" % (format[0],format[1],format[2])
+        print chr(27)+"[0;34m"+"Current Dec     =      %+03d:%02d:%02.0lf" % (format[0],format[1],format[2]) + chr(27) + "[0m"
         format =  degs2HHMMSS(telData.currentPos.HA / 15.0)
-        print "Current HA = %+03d:%02d:%02.0lf" % (format[0],format[1],format[2])
-        print "Current Alt = %lf" % telData.currentPos.Alt
-        print "Current Az = %lf" % telData.currentPos.Az
+        print chr(27)+"[0;34m"+"Current HA      =      %+03d:%02d:%02.0lf" % (format[0],format[1],format[2]) + chr(27) + "[0m"
+        print chr(27)+"[0;34m"+"Current Alt     =       %lf" % telData.currentPos.Alt + chr(27) + "[0m"
+        print chr(27)+"[0;34m"+"Current Az      =      %lf" % telData.currentPos.Az + chr(27) + "[0m"
         format =  degs2HHMMSS(telData.targetPos.RA / 15.0)
-        print "Target RA =  %02d:%02d:%02.0lf" % (format[0],format[1],format[2])
+        print chr(27)+"[0;31m"+"Target RA       =       %02d:%02d:%02.0lf" % (format[0],format[1],format[2]) + chr(27) + "[0m"
         format =  degs2HHMMSS(telData.targetPos.Dec)
-        print "Target Dec = %+03d:%02d:%02.0lf" % (format[0],format[1],format[2])
+        print chr(27)+"[0;31m"+"Target Dec      =      %+03d:%02d:%02.0lf" % (format[0],format[1],format[2]) + chr(27) + "[0m"
         format =  degs2HHMMSS(telData.targetPos.HA / 15.0)
-        print "Target HA = %+03d:%02d:%02.0lf" % (format[0],format[1],format[2])
-        print "Target Alt = %lf" % telData.targetPos.Alt
-        print "Target Az = %lf" % telData.targetPos.Az
+        print chr(27)+"[0;31m"+"Target HA       =      %+03d:%02d:%02.0lf" % (format[0],format[1],format[2]) + chr(27) + "[0m"
+        print chr(27)+"[0;31m"+"Target Alt      =        %lf" % telData.targetPos.Alt + chr(27) + "[0m"
+        print chr(27)+"[0;31m"+"Target Az       =        %lf" % telData.targetPos.Az + chr(27) + "[0m"
         format =  degs2HHMMSS(telData.differencePos.RA / 15.0)
-        print "Difference RA = %02d:%02d:%02.0lf" % (format[0],format[1],format[2])
+        print "Difference RA   =      %02d:%02d:%02.0lf" % (format[0],format[1],format[2])
         format =  degs2HHMMSS(telData.differencePos.Dec)
-        print "Difference Dec = %+03d:%02d:%02.0lf" % (format[0],format[1],format[2])
-        print "Generated at = [%lf]" % telData.lcuTime
+        print "Difference Dec  =     %+03d:%02d:%02.0lf" % (format[0],format[1],format[2])
+        print "Generated at    = [%lf]" % telData.lcuTime
         print datetime.utcfromtimestamp(telData.lcuTime)
     except OUC.TelescopeNotConfiguredEx():
         print "Telescope Not Configured !!!"
@@ -192,7 +238,7 @@ def getPosition():
 if __name__ == "__main__":
     parser = optparse.OptionParser(usage= "%prog -c command")
     parser.add_option("-c", "--command", dest="command", default = None, 
-                        type = "string", help="send command to the telescope")
+                        type = "string", help=chr(27)+"[0;31m"+"send command to the telescope ,avaible commands: isConfigured get_position \n get_config \n read_encoders \n read_rawencoders \n istracking"+ chr(27) + "[0m")
 
     (options, args) = parser.parse_args()
 
@@ -209,6 +255,12 @@ if __name__ == "__main__":
         getPosition()
     elif (command == "read_encoders"):
         getEncoderPosition()
+    elif (command == "read_rawencoders"):
+        getRawEncoderPosition()
+    elif (command == "isconfigured"):
+        isConfigured()
+    elif (command == "istracking"):
+        isTracking()
 
     disconnect()
 
