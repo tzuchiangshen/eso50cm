@@ -8,10 +8,12 @@
  */
 hsCli::hsCli(QWidget *parent) :
     QMainWindow(parent),
-    ui( new Ui::hsCli )
+    ui( new Ui::hsCli ),
+    logger("HSGui")
 {
     ui->setupUi( this );
 
+    logger.logINFO("HSGui started");
     setWindowTitle( tr( "myHS" ) );
     //ui->hostLineEdit->setFocus();
 
@@ -118,6 +120,7 @@ void hsCli::deltaReleased( string dir )
  */
 void hsCli::northPressed( void )
 {
+    logger.logINFO("Offseting the telescope in the NORTH direction ...");
     string dir("N");
     deltaPressed( dir );
     ui->southPB->setEnabled( false );
@@ -130,6 +133,7 @@ void hsCli::northPressed( void )
 void hsCli::northReleased( void )
 {
     deltaReleased( string("N") );
+    logger.logINFO("Ofseting the telescope in NORTH direction ended.");
     ui->southPB->setEnabled( true );
 }
 
@@ -139,6 +143,7 @@ void hsCli::northReleased( void )
  */
 void hsCli::southPressed( void )
 {
+    logger.logINFO("Offseting the telescope in the SOUTH direction ...");
     deltaPressed( string("S"));
     ui->northPB->setEnabled( false );
 }
@@ -150,6 +155,7 @@ void hsCli::southPressed( void )
 void hsCli::southReleased( void )
 {
     deltaReleased( string("S") );
+    logger.logINFO("Ofseting the telescope in the SOUTH direction ended.");
     ui->northPB->setEnabled( true );
 }
 
@@ -158,6 +164,7 @@ void hsCli::southReleased( void )
  */
 void hsCli::eastPressed( void )
 {
+    logger.logINFO("Offseting the telescope in the EAST direction ...");
     alphaPressed( string("E") );
     ui->westPB->setEnabled( false );
 }
@@ -169,6 +176,7 @@ void hsCli::eastPressed( void )
 void hsCli::eastReleased( void )
 {
     alphaReleased( string("E") );
+    logger.logINFO("Ofseting the telescope in the EAST direction ended.");
     ui->westPB->setEnabled( true );
 }
 
@@ -177,6 +185,7 @@ void hsCli::eastReleased( void )
  */
 void hsCli::westPressed( void )
 {
+    logger.logINFO("Offseting the telescope in the WEST direction ...");
     alphaPressed( string("W") );
     ui->eastPB->setEnabled( false );
 }
@@ -188,6 +197,7 @@ void hsCli::westPressed( void )
 void hsCli::westReleased( void )
 {
     alphaReleased( string("W") );
+    logger.logINFO("Ofseting the telescope in the WEST direction ended.");
     ui->eastPB->setEnabled( true );
 }
 
