@@ -11,6 +11,7 @@
 #include "myRS232.h"
 #include "TcsGuiController.h"
 #include "Observing.h"
+#include "LoggerHelper.h"
 
 
 namespace Ui {
@@ -58,6 +59,7 @@ private:
 
 	TcsGuiController *controller;
 	TelescopePrx lcu;
+    LoggerHelper logger;
 };
 
 #endif // TELESCOPECLI_H

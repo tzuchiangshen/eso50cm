@@ -5,9 +5,12 @@
 
 TelescopeCli::TelescopeCli(QWidget *parent) :
     QMainWindow(parent),
-    ui( new Ui::TelescopeCli )
+    ui( new Ui::TelescopeCli ),
+    logger("TcsGui")
 {
     ui->setupUi( this );
+
+    logger.logINFO("TcsGUI started.");
 
     setWindowTitle(tr("myLCU client"));
     ui->hostLineEdit->setFocus();

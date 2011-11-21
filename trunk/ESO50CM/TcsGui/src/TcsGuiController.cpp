@@ -4,6 +4,23 @@
 using namespace std;
 using namespace OUC;
 
+TcsGuiController::TcsGuiController() :
+   logger("TcsGUI")
+{
+    ::Log::LogLevel level = ::Log::FINE;
+    logger.setDiscardLevel(level);
+	lcu = NULL;
+	communicator = NULL;
+	data = new OUC::TelescopeData();
+}
+
+TcsGuiController::~TcsGuiController()
+{
+	disconnect();
+	lcu = NULL;
+	communicator = NULL;
+
+}
 
 //move this to OBSComponent 
 //-------------
@@ -88,10 +105,13 @@ int TcsGuiController::getPosition()
 {
 	try 
 	{
+        char buffer[1000];
 		mutex.lock();
 		*data = lcu->getPosition();
-		printf(">>>>>>>>>>>>> currentPos.RA = %.10lf \n", data->currentPos.RA);
-		printf(">>>>>>>>>>>>> crrentPos.Dec = %.10lf \n", data->currentPos.Dec);
+        sprintf(buffer, "currentPos.RA =%.10lf\n", data->currentPos.RA);
+		logger.logFINE(buffer);
+		sprintf(buffer, "crrentPos.Dec = %.10lf \n", data->currentPos.Dec);
+		logger.logINFO(buffer);
 		mutex.unlock();
 		emit newData(1, data);
 	}
@@ -229,22 +249,7 @@ OUC::TelescopeData TcsGuiController::getTelescopeData()
 	return newData;
 }
 
-TcsGuiController::TcsGuiController() :
-   logger("TcsGUI")
-{
-	lcu = NULL;
-	communicator = NULL;
-	data = new OUC::TelescopeData();
-    logger.logINFO("TcsGUI started");
-}
 
-TcsGuiController::~TcsGuiController()
-{
-	disconnect();
-	lcu = NULL;
-	communicator = NULL;
-
-}
 
 TelescopePrx TcsGuiController::getLCUReference() {
 	if (lcu) 
