@@ -1,5 +1,5 @@
 
-#include "cppContainerServices.h"
+#include "TcsGuiController.h"
 
 using namespace std;
 using namespace OUC;
@@ -8,7 +8,7 @@ using namespace OUC;
 //move this to OBSComponent 
 //-------------
 
-char * cppContainerServices::strfdegs( char * string, size_t max_len, const char * format, double degs )
+char * TcsGuiController::strfdegs( char * string, size_t max_len, const char * format, double degs )
 {
     int gg, mm, ss, cc;
     double m_secs;
@@ -47,7 +47,7 @@ char * cppContainerServices::strfdegs( char * string, size_t max_len, const char
     return string;
 }
 
-void cppContainerServices::getCurrentPositionRA(char *buffer, int maxlen) 
+void TcsGuiController::getCurrentPositionRA(char *buffer, int maxlen) 
 {
 
 	mutex.lock();
@@ -59,7 +59,7 @@ void cppContainerServices::getCurrentPositionRA(char *buffer, int maxlen)
 	//return buffer;
 }
 
-void cppContainerServices::getCurrentPositionDec(char *buffer, int maxlen) 
+void TcsGuiController::getCurrentPositionDec(char *buffer, int maxlen) 
 {
 
 	mutex.lock();
@@ -71,20 +71,20 @@ void cppContainerServices::getCurrentPositionDec(char *buffer, int maxlen)
 	//return buffer;
 }
 
-void cppContainerServices::formatRAPosition(double ra, char *buffer, int maxlen) 
+void TcsGuiController::formatRAPosition(double ra, char *buffer, int maxlen) 
 {
 	//convert to sexagesimal 
 	strfdegs( buffer, maxlen, "%02d:%02d:%02.0lf\0", ra / 15.0 );
 }
 
-void cppContainerServices::formatDecPosition(double dec, char *buffer, int maxlen) 
+void TcsGuiController::formatDecPosition(double dec, char *buffer, int maxlen) 
 {
 	strfdegs( buffer, maxlen, "%+03d:%02d:%02.0lf\0", dec);
 }
 
 //=============
 
-int cppContainerServices::getPosition()
+int TcsGuiController::getPosition()
 {
 	try 
 	{
@@ -103,7 +103,7 @@ int cppContainerServices::getPosition()
     return EXIT_SUCCESS;
 }
 
-int cppContainerServices::setTargetPositionRA(const char *ra)
+int TcsGuiController::setTargetPositionRA(const char *ra)
 {
 	printf("<<<<<<<<<<<<<<<<<<<<<<<<< setTargetPosition ra=%s\n", ra);
     int trg_ra_hrs;
@@ -157,7 +157,7 @@ int cppContainerServices::setTargetPositionRA(const char *ra)
     return EXIT_SUCCESS;
 }
 
-int cppContainerServices::setTargetPositionDec(const char *arguments)
+int TcsGuiController::setTargetPositionDec(const char *arguments)
 {
 	printf("<<<<<<<<<<<<<<<<<<<<<<<<< setTargetPosition dec=%s\n", arguments);
     int trg_dec_deg;
@@ -218,7 +218,7 @@ int cppContainerServices::setTargetPositionDec(const char *arguments)
     return EXIT_SUCCESS;
 }
 
-OUC::TelescopeData cppContainerServices::getTelescopeData() 
+OUC::TelescopeData TcsGuiController::getTelescopeData() 
 {
 	OUC::TelescopeData newData;
 	mutex.lock();
@@ -229,14 +229,16 @@ OUC::TelescopeData cppContainerServices::getTelescopeData()
 	return newData;
 }
 
-cppContainerServices::cppContainerServices()
+TcsGuiController::TcsGuiController() :
+   logger("TcsGUI")
 {
 	lcu = NULL;
 	communicator = NULL;
 	data = new OUC::TelescopeData();
+    logger.logINFO("TcsGUI started");
 }
 
-cppContainerServices::~cppContainerServices()
+TcsGuiController::~TcsGuiController()
 {
 	disconnect();
 	lcu = NULL;
@@ -244,7 +246,7 @@ cppContainerServices::~cppContainerServices()
 
 }
 
-TelescopePrx cppContainerServices::getLCUReference() {
+TelescopePrx TcsGuiController::getLCUReference() {
 	if (lcu) 
 		return lcu;
 	else {
@@ -254,7 +256,7 @@ TelescopePrx cppContainerServices::getLCUReference() {
 }
 
 
-int cppContainerServices::connect() 
+int TcsGuiController::connect() 
 {
     int status;
 
@@ -308,7 +310,7 @@ int cppContainerServices::connect()
     return status;
 }
 
-int cppContainerServices::disconnect() 
+int TcsGuiController::disconnect() 
 {
     int status;
     if(communicator)
@@ -327,7 +329,7 @@ int cppContainerServices::disconnect()
     return status;
 }
 
-void cppContainerServices::run() 
+void TcsGuiController::run() 
 {
 	while(1) 
 	{
@@ -336,7 +338,7 @@ void cppContainerServices::run()
 	}
 }
 
-void cppContainerServices::test() 
+void TcsGuiController::test() 
 {
 	OUC::TelescopeData data;
 	data = lcu->getPosition();

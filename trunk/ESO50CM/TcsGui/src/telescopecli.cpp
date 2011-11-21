@@ -12,12 +12,12 @@ TelescopeCli::TelescopeCli(QWidget *parent) :
     setWindowTitle(tr("myLCU client"));
     ui->hostLineEdit->setFocus();
 
-	cs = new cppContainerServices;
-	cs->connect();
-	lcu = cs->getLCUReference();
-	//cs->test();
-	cs->start();
-	///cs->setTargetPositionRA("ra=+05:15:05");
+	controller = new TcsGuiController;
+	controller->connect();
+	lcu = controller->getLCUReference();
+	//controller->test();
+	controller->start();
+	///controller->setTargetPositionRA("ra=+05:15:05");
 
 
     //connect( ui->hostLineEdit, SIGNAL( textChanged(QString) ),
@@ -31,7 +31,7 @@ TelescopeCli::TelescopeCli(QWidget *parent) :
     connect( ui->disconnectButton, SIGNAL( clicked() ),
              this, SLOT( disconnectFromServer() ) );
 
-    connect( cs, SIGNAL( newData(int, OUC::TelescopeData* ) ),
+    connect( controller, SIGNAL( newData(int, OUC::TelescopeData* ) ),
              this, SLOT( showData(int, OUC::TelescopeData* ) ) );
     //connect( & thread, SIGNAL( error( int, QString ) ),
     ///         this, SLOT( displayError( int, QString ) ) );
@@ -143,54 +143,54 @@ void TelescopeCli::showData(const int type,  OUC::TelescopeData *data ) {
 		info = QString("%1").arg(data->julianDate, 0, 'f', 0);
 		ui->JD_LineEdit->setText( info );
 		//LST
-		cs->formatRAPosition(data->currentPos.localSideralTime, buf, sizeof(buf));
+		controller->formatRAPosition(data->currentPos.localSideralTime, buf, sizeof(buf));
 		info = QString(tr(buf));
 		ui->LST_LineEdit->setText( info );
 
 		//current position : RA
-		cs->formatRAPosition(data->currentPos.RA, buf, sizeof(buf));
+		controller->formatRAPosition(data->currentPos.RA, buf, sizeof(buf));
 		info = QString(tr(buf));
 		ui->telRALineEdit->setText( info );
 		//current position : Dec
-		cs->formatDecPosition(data->currentPos.Dec, buf, sizeof(buf));
+		controller->formatDecPosition(data->currentPos.Dec, buf, sizeof(buf));
 		info = QString(tr(buf));
 		ui->telDecLineEdit->setText( info );
 		//current position : HA
-		cs->formatRAPosition(data->currentPos.HA, buf, sizeof(buf));
+		controller->formatRAPosition(data->currentPos.HA, buf, sizeof(buf));
 		info = QString(tr(buf));
 		ui->telHALineEdit->setText( info );
 
 		//target position : RA
-		cs->formatRAPosition(data->targetPos.RA, buf, sizeof(buf));
+		controller->formatRAPosition(data->targetPos.RA, buf, sizeof(buf));
 		info = QString(tr(buf));
 		ui->trgRALineEdit->setText( info );
 		//target position : Dec
-		cs->formatDecPosition(data->targetPos.Dec, buf, sizeof(buf));
+		controller->formatDecPosition(data->targetPos.Dec, buf, sizeof(buf));
 		info = QString(tr(buf));
 		ui->trgDecLineEdit->setText( info );
 		//target position : HA
-		cs->formatRAPosition(data->targetPos.HA, buf, sizeof(buf));
+		controller->formatRAPosition(data->targetPos.HA, buf, sizeof(buf));
 		info = QString(tr(buf));
 		ui->trgHALineEdit->setText( info );
 		//differences: RA
-		cs->formatRAPosition(data->differencePos.RA, buf, sizeof(buf));
+		controller->formatRAPosition(data->differencePos.RA, buf, sizeof(buf));
 		info = QString(tr(buf));
 		ui->difRALineEdit->setText( info );
 		//difference position : Dec
-		cs->formatDecPosition(data->differencePos.Dec, buf, sizeof(buf));
+		controller->formatDecPosition(data->differencePos.Dec, buf, sizeof(buf));
 		info = QString(tr(buf));
 		ui->difDecLineEdit->setText( info );
 		//difference position : HA
-		cs->formatRAPosition(data->differencePos.HA, buf, sizeof(buf));
+		controller->formatRAPosition(data->differencePos.HA, buf, sizeof(buf));
 		info = QString(tr(buf));
 		ui->difHALineEdit->setText( info );
 
 		//Azimuth
-		cs->formatRAPosition(data->currentPos.Az, buf, sizeof(buf));
+		controller->formatRAPosition(data->currentPos.Az, buf, sizeof(buf));
 		info = QString(tr(buf));
 		ui->telAzLineEdit->setText( info );
 		//Elevation
-		cs->formatDecPosition(data->currentPos.Alt, buf, sizeof(buf));
+		controller->formatDecPosition(data->currentPos.Alt, buf, sizeof(buf));
 		info = QString(tr(buf));
 		ui->telAltLineEdit->setText( info );
 	}
@@ -333,7 +333,7 @@ void TelescopeCli::theSkyMessage( void )
             /** Send answer to The Sky */
             /* answer.append( ui->telRALineEdit->text().toAscii() ); */
 	   		//answer.append("06:18:10");
-			cs->getCurrentPositionRA(buffer2, 256);
+			controller->getCurrentPositionRA(buffer2, 256);
 			//qDebug() << "<<<<<<<<<<<<<<<<<" << buffer2;
 			answer.append(tr(buffer2));
             answer.append("#");
@@ -346,7 +346,7 @@ void TelescopeCli::theSkyMessage( void )
             qDebug( "[TelescopeCli::theSkyMessage] GD# Get Telescope Dec (%s)", buffer );
             /** Send answer to The Sky */
             //answer.append( ui->telDecLineEdit->text().toAscii() );
-			cs->getCurrentPositionDec(buffer2, 256);
+			controller->getCurrentPositionDec(buffer2, 256);
 			//qDebug() << "<<<<<<<<<<<<<<<<<" << buffer2;
 	    	//answer.append("-44:09:00");
 			answer.append(tr(buffer2));
@@ -369,7 +369,7 @@ void TelescopeCli::theSkyMessage( void )
                 arguments.append( & buffer[3] );
                 arguments.remove( QRegExp(" ") );
                 arguments.remove( QRegExp("#") );
-				cs->setTargetPositionRA(arguments.toStdString().c_str());
+				controller->setTargetPositionRA(arguments.toStdString().c_str());
                 qDebug() << "[TelescoeCli::theSkyMessage] Sr# Set target ra: " << arguments; //.toLatin1();
             }
             /** Send answer to The Sky */
@@ -384,7 +384,7 @@ void TelescopeCli::theSkyMessage( void )
                 arguments.append( & buffer[3] );
                 arguments.remove( QRegExp(" ") );
                 arguments.remove( QRegExp("#") );
-				cs->setTargetPositionDec(arguments.toStdString().c_str());
+				controller->setTargetPositionDec(arguments.toStdString().c_str());
                 qDebug() << "[TelescopeCli::theSkyMessage] Sd# Set target dec: " << arguments; //.toLatin1();
             }
             /** Send answer to The Sky */

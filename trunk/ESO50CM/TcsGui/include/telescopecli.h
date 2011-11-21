@@ -9,7 +9,7 @@
 #include <QLabel>
 
 #include "myRS232.h"
-#include "cppContainerServices.h"
+#include "TcsGuiController.h"
 #include "Observing.h"
 
 
@@ -56,7 +56,7 @@ private:
     //commandThread handset_command_tread;
     bool m_thesky_waitanswer;
 
-	cppContainerServices *cs;
+	TcsGuiController *controller;
 	TelescopePrx lcu;
 };
 
