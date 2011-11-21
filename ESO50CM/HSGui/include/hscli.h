@@ -9,6 +9,7 @@
 #include <QLabel>
 #include <QSpinBox>
 #include "hsGuiController.h"
+#include "LoggerHelper.h"
 
 
 namespace Ui {
@@ -65,6 +66,7 @@ private:
     //commandThread alpha_thread;
     //commandThread delta_thread;
     hsGuiController *guiController;
+    LoggerHelper logger;
 
 };
 
