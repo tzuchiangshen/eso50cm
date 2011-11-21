@@ -9,17 +9,18 @@
 #include <QDebug>
 #include <math.h>
 #include <string.h>
+#include "LoggerHelper.h"
 
 
 using namespace std;
 using namespace OUC;
 
-class cppContainerServices : public QThread
+class TcsGuiController : public QThread
 {
 	Q_OBJECT
 public:
-    cppContainerServices();
-    ~cppContainerServices();
+    TcsGuiController();
+    ~TcsGuiController();
 
 	void run();
 
@@ -47,6 +48,7 @@ private:
 	TelescopePrx lcu;
 	OUC::TelescopeData *data;
 	QMutex mutex;
+    LoggerHelper logger;
 };
 #endif 
 
