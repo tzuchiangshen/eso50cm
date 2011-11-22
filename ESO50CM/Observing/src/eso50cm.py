@@ -183,6 +183,7 @@ def getRawEncoderPosition():
         #print encData
         print "LT = [%lf]" % encData.lcuTime
         print datetime.utcfromtimestamp(encData.lcuTime)
+        print chr(27)+"[0;33m"+"                   Lecture     Position " + chr(27) + "[0m"
         print chr(27)+"[0;33m"+"AWE Position  = [%+10.0lf]" % encData.lectAlphaWormE
         print "AAE Position  = [%+10.0lf]" % encData.lectAlphaAxisE 
         print "AM  Position  = [%+10.0lf]" % encData.lectAlphaMotor + chr(27) + "[0m"
