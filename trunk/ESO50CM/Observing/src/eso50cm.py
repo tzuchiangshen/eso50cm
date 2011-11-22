@@ -85,10 +85,22 @@ def setConfiguration():
 
         conf_path = "%s/%s" % (introot_path, "/config/ESO50cm.conf")
         telescope.setConfiguration(conf_path)
+        print "Default configuration send to LCUControl"
+    except:
+        print chr(27)+"[0;31m"+"Problems trying to configure telescope.Cannot find the specific path!!"+ chr(27) + "[0m"
+        print chr(27)+"[0;31m"+"Please be sure that you are entering the right information"+ chr(27) + "[0m"
+        traceback.print_exc()
+        status = 1
+
+def setConfiguration2(conf_path):
+    try:
+        telescope = obsImpl.getTelescope()
+        telescope.setConfiguration(conf_path)
         print "Configuration send to LCUControl"
     except:
-        print "Problems trying to configure telescope!!"
-        traceback.print_exc()
+        print chr(27)+"[0;31m"+"Problems trying to configure telescope.Cannot find the specific path!!"+ chr(27) + "[0m"
+        print chr(27)+"[0;31m"+"Please be sure that you are entering the right information (abs file path = %s)" % conf_path + chr(27) + "[0m"
+        #traceback.print_exc()
         status = 1
 
 def getConfiguration():
@@ -242,13 +254,18 @@ if __name__ == "__main__":
 
     (options, args) = parser.parse_args()
 
+    print chr(27)+"[0;32m"+"command received: " + chr(27) + "[0m" 
     print options
+    print "arguments are: "
     print args
 
     connect()
     command = options.command
     if (command == "set_config"):
-        setConfiguration()
+        if len(args) != 0:
+            setConfiguration2(args[0])
+        else:
+            setConfiguration()
     elif (command == "get_config"):
         getConfiguration()
     elif (command == "get_position"):
