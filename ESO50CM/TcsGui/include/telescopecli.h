@@ -33,11 +33,11 @@ public slots:
     void showData( const int type, OUC::TelescopeData *data );
     //void displayError( int socketError, const QString & message );
     void processOneThing( void );
-    void cliConnected( void );
-    void cliDisconnected( void );
+    //void cliConnected( void );
+    //void cliDisconnected( void );
     void theSkyMessage( void );
     void handsetMessage( void );
-    void informationMessage( QString message );
+    //void informationMessage( QString message );
 
 private:
     Ui::TelescopeCli *ui;
