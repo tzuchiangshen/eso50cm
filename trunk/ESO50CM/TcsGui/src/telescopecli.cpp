@@ -13,7 +13,7 @@ TelescopeCli::TelescopeCli(QWidget *parent) :
     logger.logINFO("TcsGUI started.");
 
     setWindowTitle(tr("myLCU client"));
-    ui->hostLineEdit->setFocus();
+    //ui->hostLineEdit->setFocus();
 
 	controller = new TcsGuiController;
 	controller->connect();
@@ -27,12 +27,12 @@ TelescopeCli::TelescopeCli(QWidget *parent) :
     //         this, SLOT( enableConnectButton() ) );
     //connect( ui->portLineEdit, SIGNAL( textChanged(QString) ),
     //         this, SLOT( enableConnectButton() ) );
-    ui->connectButton->setEnabled( true );
-    ui->disconnectButton->setEnabled( false );
-    connect( ui->connectButton, SIGNAL( clicked() ),
-             this, SLOT( connectToServer() ) );
-    connect( ui->disconnectButton, SIGNAL( clicked() ),
-             this, SLOT( disconnectFromServer() ) );
+    //ui->connectButton->setEnabled( true );
+    //ui->disconnectButton->setEnabled( false );
+    //connect( ui->connectButton, SIGNAL( clicked() ),
+    //         this, SLOT( connectToServer() ) );
+    //connect( ui->disconnectButton, SIGNAL( clicked() ),
+    //         this, SLOT( disconnectFromServer() ) );
 
     connect( controller, SIGNAL( newData(int, OUC::TelescopeData* ) ),
              this, SLOT( showData(int, OUC::TelescopeData* ) ) );
@@ -81,22 +81,22 @@ TelescopeCli::~TelescopeCli()
 /**
  * cliConnected
  */
-void TelescopeCli::cliConnected( void )
-{
-    ui->connectButton->setEnabled( false );
-    ui->disconnectButton->setEnabled( true );
-    ui->view->clear();
-}
+//void TelescopeCli::cliConnected( void )
+//{
+//    ui->connectButton->setEnabled( false );
+//    ui->disconnectButton->setEnabled( true );
+//    ui->view->clear();
+//}
 
 /**
  * cliDisconnected
  */
-void TelescopeCli::cliDisconnected( void )
-{
-    ui->connectButton->setEnabled( true );
-    ui->disconnectButton->setEnabled( false );
-    ui->statusLabel->setText( "Not connected" );
-}
+//void TelescopeCli::cliDisconnected( void )
+//{
+//    ui->connectButton->setEnabled( true );
+//    ui->disconnectButton->setEnabled( false );
+//    ui->statusLabel->setText( "Not connected" );
+//}
 
 
 /**
@@ -121,12 +121,14 @@ void TelescopeCli::disconnectFromServer( void )
  * changeLocation
  */
 void TelescopeCli::showData(const int type,  OUC::TelescopeData *data ) {
-	qDebug() << "TelescopeCli::showData type=" << type << " data=" << data->currentPos.RA;
+	//qDebug() << "TelescopeCli::showData type=" << type << " data=" << data->currentPos.RA;
 
 	QString info;
-	if (type == 1) {
-		//Time 
 
+
+	if (type == 1) {
+
+		//Time 
 		struct tm ts;
 		time_t now; 
 		now = (time_t)data->lcuTime;
@@ -196,11 +198,20 @@ void TelescopeCli::showData(const int type,  OUC::TelescopeData *data ) {
 		controller->formatDecPosition(data->currentPos.Alt, buf, sizeof(buf));
 		info = QString(tr(buf));
 		ui->telAltLineEdit->setText( info );
-	}
+
+        info = QString("<font color='green'>Connected<font>");
+        ui->statusLabel->setText( info );
+
+	} else if ( type == 2) {
+        //error happended in the controller.
+        info = QString("<font color='red'>Not Connected</font>");
+        ui->statusLabel->setText( info );
+    }
+
 }
 
 void TelescopeCli::showData( const QString & data ) {
-    ui->view->append( data );
+    //ui->view->append( data );
     //data.indexOf( "LT");
 
 	
@@ -263,7 +274,7 @@ void TelescopeCli::showData( const QString & data ) {
             info = str.section( "|", 2, 2 );
             ui->statusLabel->setText( info );
         } else if( str.contains( "info", Qt::CaseInsensitive ) ) {
-            ui->view->append( str );
+            //ui->view->append( str );
         }
 
         i ++ ;
@@ -502,23 +513,23 @@ void TelescopeCli::handsetMessage( void )
 /**
  * informationMessage
  */
-void TelescopeCli::informationMessage( QString message )
-{
-    qDebug( "[TelescopeCli::informationMessage] New data" );
-
-    if( m_thesky_waitanswer ) {
-        m_thesky_waitanswer = false;
-        message.insert( 0, "<pre>" );
-        message.append( "</pre>" );
-        QMessageBox::StandardButton reply;
-        reply = QMessageBox::information( this, tr("myTelescope"), message );
-        if (reply == QMessageBox::Ok)
-            ui->infoLabel->setText(tr("OK"));
-        else
-            ui->infoLabel->setText(tr("Escape"));
-    } else {
-        qDebug() << message.toLatin1();
-    }
-    //command_tread.wakeUp();
-    qDebug( "[TelescopeCli::informationMessage] Good bye!" );
-}
+//void TelescopeCli::informationMessage( QString message )
+//{
+//    qDebug( "[TelescopeCli::informationMessage] New data" );
+//
+//    if( m_thesky_waitanswer ) {
+//        m_thesky_waitanswer = false;
+//        message.insert( 0, "<pre>" );
+//        message.append( "</pre>" );
+//        QMessageBox::StandardButton reply;
+//        reply = QMessageBox::information( this, tr("myTelescope"), message );
+//        if (reply == QMessageBox::Ok)
+//            ui->infoLabel->setText(tr("OK"));
+//        else
+//            ui->infoLabel->setText(tr("Escape"));
+//    } else {
+//        qDebug() << message.toLatin1();
+//    }
+//    //command_tread.wakeUp();
+//    qDebug( "[TelescopeCli::informationMessage] Good bye!" );
+//}

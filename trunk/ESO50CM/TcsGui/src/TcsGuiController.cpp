@@ -111,13 +111,15 @@ int TcsGuiController::getPosition()
         sprintf(buffer, "currentPos.RA =%.10lf\n", data->currentPos.RA);
 		logger.logFINE(buffer);
 		sprintf(buffer, "crrentPos.Dec = %.10lf \n", data->currentPos.Dec);
-		logger.logINFO(buffer);
+		logger.logFINE(buffer);
 		mutex.unlock();
 		emit newData(1, data);
 	}
 	catch(const Ice::Exception& ex)
 	{
+        logger.logSEVERE("Error in TcsGuiController:getPosition(). %s", ex.ice_name().c_str());
 	    cout << ex << endl;
+        emit newData(2, data);
 	}
 
     return EXIT_SUCCESS;
@@ -279,37 +281,37 @@ int TcsGuiController::connect()
 		communicator = Ice::initialize(argc, argv, initData);
 		//communicator = Ice::initialize(initData, 0);
 		//status = getPosition(argc, argv, communicator);
+       // get reference to LCUImpl
+   
+        Ice::PropertiesPtr properties = communicator->getProperties();
+        const char* proxyProperty = "ObsAdapter.Proxy";
+        string proxy = properties->getProperty(proxyProperty);
+        if(proxy.empty())
+        {
+   	     fprintf(stderr, "%s: property `%s' not set\n", argv[0], proxyProperty);
+   	     return EXIT_FAILURE;
+        }
+   
+        Ice::ObjectPrx base = communicator->stringToProxy(proxy);
+        obs = ObservingPrx::checkedCast(base->ice_twoway()->ice_timeout(-1));
+        if(!obs)
+        {
+   	     fprintf(stderr, "%s: invalid proxy\n", argv[0]);
+   	     return EXIT_FAILURE;
+        }
+   
+   	    lcu = obs->getTelescope();
+        if(!lcu)
+        {
+   		    fprintf(stderr, "%s: invalid proxy\n", argv[0]);
+   		    return EXIT_FAILURE;
+        }
     }
     catch(const Ice::Exception& ex)
     {
 		cout << ex << endl;
 		status = EXIT_FAILURE;
-    }
-
-    // get reference to LCUImpl
-
-    Ice::PropertiesPtr properties = communicator->getProperties();
-    const char* proxyProperty = "ObsAdapter.Proxy";
-    string proxy = properties->getProperty(proxyProperty);
-    if(proxy.empty())
-    {
-		fprintf(stderr, "%s: property `%s' not set\n", argv[0], proxyProperty);
-		return EXIT_FAILURE;
-    }
-
-    Ice::ObjectPrx base = communicator->stringToProxy(proxy);
-    obs = ObservingPrx::checkedCast(base->ice_twoway()->ice_timeout(-1));
-    if(!obs)
-    {
-		fprintf(stderr, "%s: invalid proxy\n", argv[0]);
-		return EXIT_FAILURE;
-    }
-
-	lcu = obs->getTelescope();
-    if(!lcu)
-    {
-		fprintf(stderr, "%s: invalid proxy\n", argv[0]);
-		return EXIT_FAILURE;
+		emit newData(2, data);
     }
 
     return status;
@@ -338,8 +340,13 @@ void TcsGuiController::run()
 {
 	while(1) 
 	{
-		getPosition();
-		sleep(1.0);
+        try { 
+		   getPosition();
+		   sleep(1.0);
+        } catch (...) {
+           cout << "Unexpected exception, continue ... " << endl;
+        }
+
 	}
 }
 
