@@ -1,0 +1,53 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+
+#project name
+PROJECT(Logger)
+
+SET(CMAKE_Java_COMPILER /usr/bin/javac)
+SET(CMAKE_CXX_FLAGS "-lpthread")
+
+#introot definition
+SET(INTROOT $ENV{INTROOT})
+IF(NOT INTROOT)
+    SET(INTROOT $ENV{SWROOT})
+    SET(SWROOT $ENV{SWROOT})
+    IF(NOT SWROOT)
+        SET(CMAKE_INSTALL_PREFIX="/tmp/Logger")
+        MESSAGE("Nor INTROOT neither SWROOT defined, CMAKE_INSTALL_PREFIX set to: /tmp/Logger")
+    ELSE(NOT SWROOT) 
+        SET(CMAKE_INSTALL_PREFIX ${SWROOT})
+        MESSAGE("No INTROOT defined. Using SWROOT, CMAKE_INSTALL_PREFIX set to: $ENV{SWROOT}")
+    ENDIF(NOT SWROOT)
+ELSE(NOT INTROOT)
+    SET(CMAKE_INSTALL_PREFIX ${INTROOT})
+    MESSAGE("CMAKE_INSTALL_PREFIX set to: $ENV{INTROOT}")
+ENDIF(NOT INTROOT)
+
+SET(ARM $ENV{TYPE})
+
+# generate py files from UI files
+ADD_CUSTOM_COMMAND(
+ OUTPUT ${PROJECT_SOURCE_DIR}/LogMessage.cpp ${PROJECT_SOURCE_DIR}/LogMessage.h
+ #generate python Base file from UI
+ COMMAND pyuic4 Ui_StartupPanelBase.ui i> Ui_StartupPanelBase.py
+ COMMAND ${CMAKE_COMMAND} -E echo "Ui_StartupPanelBase.py generated."
+)
+# for make clean
+SET_DIRECTORY_PROPERTIES (
+   PROPERTIES 
+     ADDITIONAL_MAKE_CLEAN_FILES "Ui_StartupPanelBase.py"
+)
+
+#for make install
+INSTALL(
+   DIRECTORY ${PROJECT_SOURCE_DIR}/../config/ DESTINATION ${INTROOT}/config
+   FILES_MATCHING PATTERN "*"
+)
+
+INSTALL(FILES  ${PROJECT_SOURCE_DIR}/startupPanel.py 
+        DESTINATION ${INTROOT}/bin
+        PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+
+INSTALL(FILES  ${PROJECT_SOURCE_DIR}/Ui_StartupPanelBase.py
+        DESTINATION ${INTROOT}/lib/python/site-packages)
+
