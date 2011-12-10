@@ -1,7 +1,10 @@
 = 2011-12-10 = 
-  * Technical Time (Tzu-Chiang Shen, Ruben Soto)
+  * Technical Time (Tzu-Chiang Shen, Ruben Soto version r296)
+  * Install new version (r296) at the new console machine (192.168.0.102)
   * Troubleshooting problem which hangs telescope61 
-  * output of the current sw 
+  * Apparently the hagging symptom has been caused by the logging system 
+  * tested old version: r265 (not working), r260 (not working), r244 (???)
+  * comparing to the output of the current operational SW 
 
 {{{
 observatorio@OUC3:/home/pescaratem/mbaffico/operador$ ./eso50cm read_encoders
