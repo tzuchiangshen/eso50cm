@@ -58,26 +58,24 @@ static void print_usage( int is_error ) {
 
 void test_device( char * device ) {
     struct stat dir_info;
+    LoggerHelper logger = LoggerHelper("main");
 
     /** Check that it exists.  */
     if( access( device, F_OK ) != 0 ) {
         error( device, "device does not exist");
     } else {
-        if( verbose )
-            printf( "device %s exists\n", device );
+        logger.logFINE( "device %s exists\n", device );
     }
     /** Check that it is accessible.  */
     if( access( device, R_OK ) != 0) {
         error (device, "device is not readable");
     } else {
-        if( verbose )
-            printf( "device %s is readable\n", device );
+        logger.logFINE( "main::test_device device %s is readable\n", device );
     }
     if( access( device, W_OK) != 0) {
         error (device, "device is not writable");
     } else {
-        if( verbose )
-            printf( "device %s is writable\n", device );
+        logger.logFINE( "main::test_device device %s is writable\n", device );
     }
 }
 
@@ -112,6 +110,7 @@ int main( int argc, char* const argv[] ) {
     char * module_dir;
     char * socket_path;
     int daemonize = 1;
+    LoggerHelper logger = LoggerHelper("main");
 
     // Setup signal handling before we start
     signal(SIGHUP, signal_handler);
@@ -221,16 +220,12 @@ int main( int argc, char* const argv[] ) {
     if( device == NULL ) {
         device = (char *) malloc( sizeof( "/dev/ttyS0" ) );
         strcpy( device, "/dev/ttyS0" );
-        if( verbose ){
-            printf( "No device was secified, using default %s\n", device );
-        }
+	logger.logFINE( "main::main No device was secified, using default %s\n", device );
     }
 
     if( baudrate == 0 ) {
         baudrate = B57600;
-        if( verbose ){
-            printf( "No baudrate was secified, using default %d\n", (int) baudrate );
-        }
+        logger.logFINE( "main::main No baudrate was secified, using default %d\n", (int) baudrate );
     }
 
 
@@ -240,30 +235,25 @@ int main( int argc, char* const argv[] ) {
         if( access( device, F_OK ) != 0 ) {
             error( device, "device does not exist");
         } else {
-            if( verbose )
-                printf( "device %s exists\n", device );
+	    logger.logFINE( "main::main device %s exists\n", device );
         }
         /** Check that it is accessible.  */
         if( access( device, R_OK ) != 0) {
             error (device, "device is not readable");
         } else {
-            if( verbose )
-                printf( "device %s is readable\n", device );
+	    logger.logFINE( "main::main device %s is readable\n", device );
         }
         if( access( device, W_OK) != 0) {
             error (device, "device is not writable");
         } else {
-            if( verbose )
-                printf( "device %s is writable\n", device );
+	    logger.logFINE( "main::main device %s is writable\n", device );
         }
     }
 
 
     /** Print  module directory if were running verbose.  */
-    if( verbose ) {
-        printf( "modules will be loaded from %s\n", module_dir );
-        printf( "...\n" );
-    }
+    logger.logFINE( "main::main modules will be loaded from %s\n", module_dir );
+    
 
     syslog(LOG_INFO, "%s daemon starting up", DAEMON_NAME);
     // Setup syslog logging - see SETLOGMASK(3)
@@ -286,7 +276,7 @@ int main( int argc, char* const argv[] ) {
         if (pid > 0) {
             /* parent process */ 
             /* syslog(LOG_INFO, "fork() finished successfully, exit parent process!"); */
-            printf(" telescope61 started successfully in the backgroud\n"); 
+	    logger.logFINE("main::main telescope61 started successfully in the backgroud\n"); 
             exit(EXIT_SUCCESS);
         }
  

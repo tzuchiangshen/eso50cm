@@ -224,8 +224,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
         memset( & sigchld_action, 0, sizeof( sigchld_action ) );
         sigchld_action.sa_handler = & clean_up_child_process;
         if( sigaction( SIGCHLD, & sigchld_action, NULL ) < 0 ) {
-            perror( "telescope61::telescope_run sigaction" );
-	    logger.logFINE( "telescope61::telescope_run sigaction ERROR!\n" );
+	    logger.logSEVERE( "telescope61::telescope_run sigaction ERROR!\n" );
             init_ok_flag = 0;
         }
 	logger.logFINE( "telescope61::telescope_run sigaction OK!\n" );
@@ -290,7 +289,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
 	    logger.logFINE( "telescope61::telescope_run segment_id = 0\n" );
             init_ok_flag = 0;
         } else if( segment_id < 0 ) {
-	    logger.logFINE( "telescope61::telescope_run shmget ERROR!\n" );
+	    logger.logSEVERE( "telescope61::telescope_run shmget ERROR!\n" );
             init_ok_flag = 0;
         }
 	logger.logFINE( "telescope61::telescope_run segment_id = %d\n", segment_id );
@@ -522,65 +521,65 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
 		        strftime( infoline, 24, "%Y-%m-%d %T", & LTime );
 		        logger.logFINE( "telescope61::telescope_run %s\n", infoline );
 		    }
-		}
-	    } else if( (unsigned char) msg_buffer[1] == 0xA1 ) {
-	        logger.logFINE( "telescope61::telescope_run Long message received\n" );
-		if( msg_buffer[41] == '#' ) {
-		    logger.logFINE( "telescope61::telescope_run Last char OK\n" );
-		} else {
-		    logger.logFINE( "telescope61::telescope_run Last char Wrong\n" );
-		}
-		if( msg_buffer[2] == 'N' ) {
-		    logger.logFINE( "telescope61::telescope_run Version number: %s\n", & msg_buffer[3] );
-		} else if( msg_buffer[2] == 'D' ) {
-		    logger.logFINE( "telescope61::telescope_run Version date  : %s\n", & msg_buffer[3] );
-		} else if( msg_buffer[2] == 'T' ) {
-		    logger.logFINE( "telescope61::telescope_run Version time  : %s\n", & msg_buffer[3] );
-		} else if( msg_buffer[2] == 'P' ) {
-		    telescope->new_data = 1;
-		    //printf( "[telescope_run] " );
-		    //for( i = 0; i < 24; i ++ ) {
-		    //    printf( "[%02X]", (unsigned int) msg_buffer[3+i] );
-		    //}
-		    //printf( " (%d)\n", (unsigned int) msg_buffer[41] );
-		    char i2c;
-		    char mem;
-		    int numero;
-		    unsigned char chksum;
-
-		    chksum = 0;
-		    i = 3;
-		    
-		    for( j = 0; j < 4; j ++ ) {
-		        i2c     = msg_buffer[i];;
-		        chksum += (unsigned char) msg_buffer[i];
-		        mem     = msg_buffer[i+1];
-			chksum += (unsigned char) msg_buffer[i+1];
-			((char *) & numero)[0] =  msg_buffer[i+2];
-			chksum += (unsigned char) msg_buffer[i+2];
-			((char *) & numero)[1] =  msg_buffer[i+3];
-			chksum += (unsigned char) msg_buffer[i+3];
-			((char *) & numero)[2] =  msg_buffer[i+4];
-			chksum += (unsigned char) msg_buffer[i+4];
-			((char *) & numero)[3] =  msg_buffer[i+5];
-			chksum += (unsigned char) msg_buffer[i+5];
-			//printf( "[telescope_run] 0x%02X %d %d\n", (unsigned int) i2c, (int) mem, numero );
-			
-			for( k = 0; k < 6; k ++ ) {
-			    if( telescope->encoder[k].i2c_address + 1 == i2c ) {
-			        telescope->encoder[k].data[mem] = numero;
-				logger.logFINE( "telescope61::telescope_run 0x%02X %d %d\n",
-                                                (unsigned int) telescope->encoder[k].i2c_address,
-                                                (int) mem,
-                                                telescope->encoder[k].data[mem] );
-				break;
-			    }
-			}
-			i += 6;
+		} else if( (unsigned char) msg_buffer[1] == 0xA1 ) {
+		    logger.logFINE( "telescope61::telescope_run Long message received\n" );
+		    if( msg_buffer[41] == '#' ) {
+		        logger.logFINE( "telescope61::telescope_run Last char OK\n" );
+		    } else {
+		        logger.logFINE( "telescope61::telescope_run Last char Wrong\n" );
 		    }
-		    if( (unsigned char) msg_buffer[40] != chksum ) {
-		        logger.logFINE( "telescope61::telescope_run ChkSum Error(%d,%d)\n",
-                                        (unsigned char) msg_buffer[40], chksum );
+		    if( msg_buffer[2] == 'N' ) {
+		        logger.logFINE( "telescope61::telescope_run Version number: %s\n", & msg_buffer[3] );
+		    } else if( msg_buffer[2] == 'D' ) {
+		        logger.logFINE( "telescope61::telescope_run Version date  : %s\n", & msg_buffer[3] );
+		    } else if( msg_buffer[2] == 'T' ) {
+		        logger.logFINE( "telescope61::telescope_run Version time  : %s\n", & msg_buffer[3] );
+		    } else if( msg_buffer[2] == 'P' ) {
+		        telescope->new_data = 1;
+			//printf( "[telescope_run] " );
+			//for( i = 0; i < 24; i ++ ) {
+			//    printf( "[%02X]", (unsigned int) msg_buffer[3+i] );
+			//}
+			//printf( " (%d)\n", (unsigned int) msg_buffer[41] );
+			char i2c;
+			char mem;
+			int numero;
+			unsigned char chksum;
+			
+			chksum = 0;
+			i = 3;
+		    
+			for( j = 0; j < 4; j ++ ) {
+			    i2c     = msg_buffer[i];;
+			    chksum += (unsigned char) msg_buffer[i];
+			    mem     = msg_buffer[i+1];
+			    chksum += (unsigned char) msg_buffer[i+1];
+			    ((char *) & numero)[0] =  msg_buffer[i+2];
+			    chksum += (unsigned char) msg_buffer[i+2];
+			    ((char *) & numero)[1] =  msg_buffer[i+3];
+			    chksum += (unsigned char) msg_buffer[i+3];
+			    ((char *) & numero)[2] =  msg_buffer[i+4];
+			    chksum += (unsigned char) msg_buffer[i+4];
+			    ((char *) & numero)[3] =  msg_buffer[i+5];
+			    chksum += (unsigned char) msg_buffer[i+5];
+			    //printf( "[telescope_run] 0x%02X %d %d\n", (unsigned int) i2c, (int) mem, numero );
+			
+			    for( k = 0; k < 6; k ++ ) {
+			        if( telescope->encoder[k].i2c_address + 1 == i2c ) {
+				  telescope->encoder[k].data[mem] = numero;
+				  logger.logFINE( "telescope61::telescope_run 0x%02X %d %d\n",
+						  (unsigned int) telescope->encoder[k].i2c_address,
+						  (int) mem,
+						  telescope->encoder[k].data[mem] );
+				  break;
+				}
+			    }
+			    i += 6;
+			}
+			if( (unsigned char) msg_buffer[40] != chksum ) {
+			    logger.logFINE( "telescope61::telescope_run ChkSum Error(%d,%d)\n",
+					    (unsigned char) msg_buffer[40], chksum );
+			}
 		    }
 		}
 		new_ttymssg_flag = 0;
@@ -633,7 +632,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                         endT  = ((double) gtime.tv_usec)/1000000.;
                         endT += (double) gtime.tv_sec;
 			logger.logFINE( "telescope61::telescope_run dT=%10.6lf[s]\n", endT - startT );
-                    }
+		    }
                     binary_semaphore_post( semaphore_id );
 		}
             }
