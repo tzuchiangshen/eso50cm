@@ -1,0 +1,59 @@
+= 2011-12-10 = 
+  * Technical Time (Tzu-Chiang Shen, Ruben Soto)
+  * Troubleshooting problem which hangs telescope61 
+  * output of the current sw 
+
+{{{
+observatorio@OUC3:/home/pescaratem/mbaffico/operador$ ./eso50cm read_encoders
+Time elapsed since last access: 1323545190.455358 sec
+--------------------------------------------------
+            Lecture       Position
+Alpha AxisE:    557           +557
+Alpha WormE:    469           +469
+Alpha Motor:      0             +0
+
+Delta AxisE:    747           +747
+Delta WormE:    873           +873
+Delta Motor:      0             +0
+--------------------------------------------------
+Page generated at: [2011-12-10, 16:26:30]
+
+
+[telescope_run] Unknown command .
+[telescope_run] Sending new message for 0xA8
+[telescope_run] Received the answer from 0xA8
+[telescope_run] dT=  0.009914[s]
+[telescope_run] Sending new message for 0xA8
+[telescope_run] Received the answer from 0xA8
+[telescope_run] dT=  0.010093[s]
+[telescope_run] Sending new message for 0xA6
+[telescope_run] Received the answer from 0xA6
+[telescope_run] dT=  0.010100[s]
+[telescope_run] Sending new message for 0xA6
+[telescope_run] Received the answer from 0xA6
+[telescope_run] dT=  0.010100[s]
+[telescope_run] Sending new message for 0xA2
+[telescope_run] Received the answer from 0xA2
+[telescope_run] dT=  0.010139[s]
+[telescope_run] Sending new message for 0xA2
+[telescope_run] Received the answer from 0xA2
+[telescope_run] dT=  0.010138[s]
+[telescope_run] Sending new message for 0xAC
+[telescope_run] Received the answer from 0xAC
+[telescope_run] dT=  0.010340[s]
+[telescope_run] Sending new message for 0xAC
+[telescope_run] Received the answer from 0xAC
+[telescope_run] dT=  0.010107[s]
+[telescope_run] Sending new message for 0xAA
+[telescope_run] Received the answer from 0xAA
+[telescope_run] dT=  0.010112[s]
+[telescope_run] Sending new message for 0xAA
+[telescope_run] Received the answer from 0xAA
+[telescope_run] dT=  0.010112[s]
+[telescope_run] Sending new message for 0xA4
+[telescope_run] Received the answer from 0xA4
+[telescope_run] dT=  0.010131[s]
+[telescope_run] Sending new message for 0xA4
+[telescope_run] Received the answer from 0xA4
+[telescope_run] dT=  0.010131[s]
+}}}
