@@ -3,7 +3,7 @@
   * Install new version (r296) at the new console machine (192.168.0.102)
   * Troubleshooting problem which hangs telescope61 
   * Apparently the hagging symptom has been caused by the logging system 
-  * tested old version: r265 (not working), r260 (not working), r244 (???)
+  * tested old version: r265 (not working), r260 (not working), r244 (OK!)
   * comparing to the output of the current operational SW 
 
 {{{
