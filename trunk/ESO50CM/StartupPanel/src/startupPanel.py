@@ -2,14 +2,13 @@
 # -*- coding: utf-8 -*-
 
 """
-
+muahahaha
 """
 # basic imports
 import sys
 import os
 # for threading and semaphores
-from threading import Thread, Semaphore
-from time import sleep
+
 # for UI
 from Ui_StartupPanelBase import Ui_StartupPanelBase
 from PyQt4 import  QtGui, QtCore
@@ -18,13 +17,11 @@ import shlex, pexpect,subprocess
 #for read configuration file
 from xml.etree.ElementTree import ElementTree
 
-UPDATE_TIME=5
-
-
-class Service(Thread):
+UPDATE_TIME=5 # in seconds
+    
+class Service(QtCore.QObject):
     def __init__(self,name, host,username, command, grep,dependencies,timeToStart,isProcessRunning):
-        Thread.__init__(self)
-        self.isProcessRunning=isProcessRunning  # this is a method, will go up to ask for a process status information
+        QtCore.QThread.__init__(self,None)
         self.name=name
         self.username=username
         self.host=host
@@ -32,69 +29,79 @@ class Service(Thread):
         self.grep=grep
         self.dependencies=dependencies
         self.instances=0
+        self.isProcessRunning=isProcessRunning
         self.timeToStart=timeToStart
         self.button= QtGui.QPushButton("Start")
         QtCore.QObject.connect(self.button, QtCore.SIGNAL("clicked()"), self.buttonPressed)
         self.status=QtGui.QTableWidgetItem()
         self.running=False # we will change this calling stopService method
-        self.semChecking=Semaphore()
-        self.starting=False
-        self.stopping=False
-        self.keepChecking=False
-        self.markAsStopped()
-            
+        self.startResquested=False
+        # timer for updating
+        self.ctimer = QtCore.QTimer()
+        # timer for set the process as started (single shot)
+        self.stimer = QtCore.QTimer()
+        self.waitingForTimer=False
+        QtCore.QObject.connect(self.ctimer, QtCore.SIGNAL("timeout()"), self.updateTimer)
+        self.ctimer.start(UPDATE_TIME*1000)
+        self.checkStatus()
+        
+
     def markAsStopped(self,message="Stopped"):
-        if (self.running):
-            self.running=False
-            self.status.setTextColor(QtGui.QColor('red'))
-            self.status.setText(message)
-            self.status.toolTip(message)
-            self.button.setText("Start")
+        self.running=False
+        self.status.setTextColor(QtGui.QColor('red'))
+        self.status.setText(message)
+        #self.status.toolTip(message)
+        self.button.setText("Start")
+        
 
     def markAsStarted(self,message="Running"):
-        if (not self.running):
-            self.running=True
-            self.status.setTextColor(QtGui.QColor('green'))
-            self.status.setText(message)
-            self.status.toolTip(message)
-            self.button.setText("Stop")
+        self.running=True
+        self.waitingForTimer=False
+        self.status.setTextColor(QtGui.QColor('green'))
+        self.status.setText(message)
+        #self.status.toolTip(message)
+        self.button.setText("Stop")
+    
                            
     def checkStatus(self):
         try:
-            self.semChecking.acquire()      
+            self.checkHostCommunication()
+            message=self.checkHostCommunication()     
+            if message != "OK":
+                self.markAsStopped(message)
+                return
             self.status.setTextColor(QtGui.QColor('blue'))
             self.status.setText("Checking....")
             #you process should be detected by > ps -fea | egrep "<your regular expression>" |grep -v grep| awk  '{print $2}'
-            commandLine='ssh -X '+self.username+'@'+self.host+' ps -fea | egrep "'+self.grep+'" '+'| grep -v grep'
-            print self.name+"-commandLine: "+commandLine
-            ssh=subprocess.Popen(shlex.split(commandLine),stdout=subprocess.PIPE)
-            awk=subprocess.Popen(['awk','{print $2}'],stdin=ssh.stdout ,stdout=subprocess.PIPE)
-            output=awk.communicate()[0].strip()
-            pids=output.split('\n')
-            ssh.stdout.close()
-            try: 
-                pids.remove('')
-            except:
-                pass
+            commandLine='ssh -X '+self.username+'@'+self.host+' ps -fea | egrep "'+self.grep+'" '+'| grep -v grep '
+            p = subprocess.Popen(shlex.split(commandLine), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            pids=[]
+            for line in p.stdout.readlines():
+                line=line.strip()
+                if line!='':
+                    pids.append(line)
+            p.stdout.close() 
             self.instances=pids.__len__()
+            #print pids
             if (self.instances==0):
                 self.markAsStopped()
             else:
-                sleep(self.timeToStart)
-                self.markAsStarted()
+                #ok! the process is started, but we will not mark it inmediatly as started
+                self.waitingForTimer=True
+                self.stimer.singleShot(self.timeToStart*1000, self.markAsStarted)
         except Exception,ex:
+            self.status.setTextColor(QtGui.QColor('red'))
             self.status.setText("Error updating process status: "+str(ex))
-            self.status.setToolTip("Error updating process status: "+str(ex))
-        finally:
-            self.semChecking.release()
+            #self.status.setToolTip("Error updating process status: "+str(ex))
+
+    def updateTimer(self):
+        self.checkStatus()
+        if (self.startResquested and not self.running and not self.waitingForTimer):
+            self.startService()
     def startService(self):
-        if (self.starting):
-            return
-        self.starting=True
         message=self.checkHostCommunication()     
         if message != "OK":
             self.markAsStopped(message)
-            self.starting=False
             return
             
         try:
@@ -105,51 +112,44 @@ class Service(Thread):
                 if self.isProcessRunning(dep):
                     continue
                 else:  # if not running, we will keep asking every 2 seconds
-                    self.status("waiting for "+dep)
-                    while(self.keepChecking):
-                        if self.isProcessRunning():
-                            break
-                        sleep(2)
-                    if not self.keepChecking:  # someone press a button, we will not continue checking neither starting
-                        self.keepChecking=False 
-                        self.starting=False
-                        return
-                    self.keepChecking=False          
-            subprocess.call(shlex.split('ssh -X  '+self.username+'@'+self.host+" "+self.command+" &"))
+                    self.status.setTextColor(QtGui.QColor('brown'))
+                    self.status.setText("waiting for "+dep)
+                    return
+            # here we actually start the process
+            subprocess.Popen(shlex.split('ssh -X  '+self.username+'@'+self.host+" 'export PS1=1;source ~/.bashrc;"+self.command+"' &"))
             self.checkStatus()
-            self.starting=False
-        except:
-            self.starting=False
+        except Exception, e:
+            self.markAsStopped(str(e))
+
                 
     def stopService(self):
-        if (self.stopping):
-            return
-        self.stopping=True
         try:
             #you process should be detected by > ps -fea | egrep "<your regular expression>" |grep -v grep| awk  '{print $2}'
-            commandLine='ssh -X '+self.username+'@'+self.host+' ps -fea | egrep "'+self.grep+'" '+'| grep -v grep'
-            print self.name+"-commandLine:"+commandLine
-            ssh=subprocess.Popen(shlex.split(commandLine),stdout=subprocess.PIPE)
-            awk=subprocess.Popen(['awk','{print $2}'],stdin=ssh.stdout ,stdout=subprocess.PIPE)
-            output=awk.communicate()[0].strip()
-            pids=output.split('\n')
-            ssh.stdout.close() 
+            commandLine='ssh -X '+self.username+'@'+self.host+' ps -fea | egrep "'+self.grep+'" '+'| grep -v grep '
+            p = subprocess.Popen(shlex.split(commandLine), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            pids=[]
+            for line in p.stdout.readlines():
+                line=line.strip()
+                print line
+                if line!='':
+                    line=line.split()[1]
+                    pids.append(line)
+            print pids
+            p.stdout.close() 
             for pid in pids:
                 subprocess.call(shlex.split('ssh '+self.username+'@'+self.host+" kill -9 "+str(pid)))
-                sleep(1)
-            self.stopping=False
-            
-        except:
-            self.stopping=False
+        except Exception,ex:
+            print ex  
+        finally:
+            self.checkStatus()  
+
     def buttonPressed(self):
         if not self.running:
+            self.startResquested=True
             self.startService()
-            self.checkStatus()
         else:
+            self.startResquested=False
             self.stopService()
-            self.checkStatus()
-        if self.keepChecking:  # this is usefull to stop checking for dependencies
-            self.keepChecking=False
        
     def printService(self):
         print "Service: "+self.name
@@ -183,22 +183,8 @@ class Service(Thread):
                 return "OK"
             else: 
                 return "I cannot communicate with the server. Please check manually running `ssh "+self.username+"@"+self.host+" echo 'Hello!' ` at console. You should get a 'Hello!' message (no pass)"
-    def run(self):
-        comStablished=self.checkHostCommunication()     
-        if comStablished != "OK":
-            self.markAsStopped(comStablished)
-            
-        while(True):
-            try:
-                if comStablished == "OK":
-                    self.checkStatus()
-                else:
-                    comStablished=self.checkHostCommunication()     
-            except:
-                pass
-            finally:
-                sleep(5)
-                
+
+                    
 class Panel():
     def __init__(self,name, host,username, command):
         self.name=name
@@ -206,8 +192,7 @@ class Panel():
         self.host=host
         self.command=command
     def launchPanel(self):
-        commandLine='ssh -X '+self.username+'@'+self.host+' "'+ self.command+'" &'
-        subprocess.call(shlex.split(commandLine))
+        subprocess.Popen(shlex.split('ssh -X  '+self.username+'@'+self.host+" 'export PS1=1;source ~/.bashrc;"+self.command+"' &"))
     def printPanel(self):
         print "Panel: "+self.name
         print "\t"+self.host
@@ -225,19 +210,26 @@ class StartupPanel(QtGui.QMainWindow):
         self.servicesList={}
         self.panelList={}
         self.readConfigurationFile()
-        self.threadList=[]
         self.setupUI() # local version
+               
     def isProcessRunning(self,processName):
         try:
             service=self.servicesList[processName]
         except:
-            return False
-        if service == None:
-            return False
-        else:
-            return service.running
+            raise Exception(processName+" not in the list of process defined")
+        return self.servicesList[processName].running
+    def stopAll(self):
+        for service in self.servicesList:
+            self.servicesList[service].stopService()
+            self.servicesList[service].startResquested=False 
+    def startAll(self):
+        for service in self.servicesList:
+            self.servicesList[service].startService()   
+            self.servicesList[service].startResquested=True         
     def setupUI(self):
         ui=self.ui # to make shorter calls
+        QtCore.QObject.connect(ui.startAllB, QtCore.SIGNAL("clicked()"),self.startAll) # connect the start button
+        QtCore.QObject.connect(ui.stopAllB, QtCore.SIGNAL("clicked()"),self.stopAll) # connect the start button
         for panel in self.panelList:
             ui.pbutton = QtGui.QPushButton(self.panelList[panel].name, ui.launchPanelGB)   
             QtCore.QObject.connect(ui.pbutton, QtCore.SIGNAL("clicked()"),self.panelList[panel].launchPanel)
@@ -259,14 +251,12 @@ class StartupPanel(QtGui.QMainWindow):
             ui.servicesListTable.setCellWidget(rowCounter,2,self.servicesList[service].button)
             # now create the status widget     
             ui.servicesListTable.setItem(rowCounter,3,self.servicesList[service].status)
-            # and finally we create the thread that will manage the status of the proc 
-            self.servicesList[service].start()
             rowCounter+=1     
         QtCore.QObject.connect(ui.quitButton, QtCore.SIGNAL("clicked()"), QtCore.QCoreApplication.instance().quit)
-        ui.servicesListTable.setColumnWidth(0,300) # we start column 0 (process name) a little wider
+        ui.servicesListTable.setColumnWidth(0,200) # we start column 0 (process name) a little wider
         ui.servicesListTable.setColumnWidth(1,150) # host
-        ui.servicesListTable.setColumnWidth(3,200) # status message
-
+        ui.servicesListTable.setColumnWidth(3,300) # status message
+                
     def readConfigurationFile(self):
         et=ElementTree()
         tree=et.parse(self.configurationFile)
