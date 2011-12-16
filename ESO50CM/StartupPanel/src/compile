@@ -5,3 +5,4 @@ echo "generated Ui_StartupPanelBase.py"
 cp Ui_StartupPanelBase.py $SWROOT/lib/python/site-packages
 cp ../config/* $SWROOT/config
 cp startupPanel.py $SWROOT/bin
+echo "installed"
