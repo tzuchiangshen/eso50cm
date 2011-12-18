@@ -6,7 +6,7 @@ using namespace std;
 
 LCUImpl::LCUImpl(): 
     logger("LCUControl"),
-    telConfigFileName("/eso50cm/SWROOT/config/ESO50cm.conf")
+    telConfigFileName("ESO50cm.conf")
 {
     logger.logINFO("LCUImpl::LCUImpl LCUControl process started!!");
     m_lcu = new myLCU();

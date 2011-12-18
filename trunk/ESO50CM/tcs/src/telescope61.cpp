@@ -33,8 +33,13 @@
 
 #include "telescope.h"
 
+
 /* Global variable to exit from main loop */
 char quit;
+
+/*Global variable for telescope61 logging */
+LoggerHelper logger = LoggerHelper("telescope61");
+
 
 struct encoder_data_t {
     char i2c_address;
@@ -63,7 +68,6 @@ int stream_status( int m_port ) {
     fd_set fds;
     struct timeval tv;
     int retval;
-    LoggerHelper logger = LoggerHelper("telescope61");
 
     FD_ZERO( & fds );
     FD_SET( m_port, & fds );
@@ -95,16 +99,12 @@ void handle_connection (int connection_fd)
 
 static void exit_handler(int s)
 {
-  LoggerHelper logger = LoggerHelper("telescope61");
-
   logger.logFINE("telescope61::exit_handler Ctrl+C signal catched!!!");
   quit = 1; 
 }
 
 void exit_telescope(void)
 {
-  LoggerHelper logger = LoggerHelper("telescope61");
-  
   logger.logFINE("telescope61::exit_handler Ctrl+C signal catched!!!");
   quit = 1; 
 }
@@ -195,8 +195,6 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
     struct sigaction sigExitHandler;
 
     int init_ok_flag;
-
-    LoggerHelper logger = LoggerHelper("telescope61");
 
     do { 
         logger.logINFO("telescope61::telescope_run process started!!");

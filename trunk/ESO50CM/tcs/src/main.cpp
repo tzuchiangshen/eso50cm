@@ -22,7 +22,6 @@
 
 int keep_running = 1;
 
-
 /** Description of long options for getopt_long.  */
 static const struct option long_options[] = {
     { "baudrate",       1, NULL, 'b' },
@@ -58,7 +57,6 @@ static void print_usage( int is_error ) {
 
 void test_device( char * device ) {
     struct stat dir_info;
-    LoggerHelper logger = LoggerHelper("main");
 
     /** Check that it exists.  */
     if( access( device, F_OK ) != 0 ) {
@@ -110,7 +108,6 @@ int main( int argc, char* const argv[] ) {
     char * module_dir;
     char * socket_path;
     int daemonize = 1;
-    LoggerHelper logger = LoggerHelper("main");
 
     // Setup signal handling before we start
     signal(SIGHUP, signal_handler);
