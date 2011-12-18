@@ -82,7 +82,10 @@ MODROOT_LIST="$BASIC_DIRS  \
 
 # directories that shall be present in both integration and SW area 
 PATCHROOT_LIST="$BASIC_DIRS"
-SWROOT_LIST="$BASIC_DIRS"
+SWROOT_LIST="$BASIC_DIRS \
+             db \
+             logs
+           "
 
 case $OPTION in
 MODROOT)
