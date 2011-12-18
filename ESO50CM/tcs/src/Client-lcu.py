@@ -276,11 +276,11 @@ if __name__ == "__main__":
     ra = [12,0,0]
     dec = [40,0,0]
     connect()
-    setConfiguration()
-    print "#######################################"
-    if isConfigured():
-       getConfiguration()
-       sayHello()
+    #setConfiguration()
+    #print "#######################################"
+    #if isConfigured():
+    #   getConfiguration()
+    #   sayHello()
     #getEncoderPosition()
     #parkTelescope()
     #moveToTarget()
@@ -289,7 +289,7 @@ if __name__ == "__main__":
     #stopTelescope()
     #setTracking()
     #print "#######################################"    
-    #getRawEncoderPosition()
+    getRawEncoderPosition()
     #print "#######################################"
     #getPosition()
     disconnect()

@@ -22,6 +22,9 @@ extern const char * program_name;
 /** If nonzero, print verbose messages.  */
 extern int verbose;
 
+/** Logger variable for telescope61 functions */
+extern LoggerHelper logger;
+
 /** Like malloc, except aborts the program if allocation fails.  */
 extern void* xmalloc (size_t size);
 

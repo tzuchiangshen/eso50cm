@@ -7,13 +7,12 @@
 #include <sys/ioctl.h>
 
 #include <errno.h>
-#include "LoggerHelper.h"
+#include "telescope.h"
 
 /**
  * open_RS232
  */
 int open_RS232( const char * m_device, speed_t m_baudrate ) {
-    LoggerHelper logger = LoggerHelper("rs232");
     int m_port;
     struct termios  oldtio;
     struct termios  newtio;
@@ -48,7 +47,6 @@ int open_RS232( const char * m_device, speed_t m_baudrate ) {
  */
 int close_RS232( int m_port ) {
     int retval;
-    LoggerHelper logger = LoggerHelper("rs232");
 
     if( (retval  = close( m_port )) < 0 ) {
         logger.logFINE( "rs232::close_RS232 close ERROR\n" );
@@ -63,7 +61,6 @@ int close_RS232( int m_port ) {
  */
 int read_RS232( int m_port, char * str, int max ) {
     int retval;
-    LoggerHelper logger = LoggerHelper("rs232");
  
     if( (retval=read( m_port, str, max ) ) > 0 ) {
         //printf( "[myRS232::read_RS232] read OK (%d)\n", retval );
@@ -86,7 +83,6 @@ int read_RS232( int m_port, char * str, int max ) {
  */
 int write_RS232( int m_port, const char * s, int length ) {
     int retval;
-    LoggerHelper logger = LoggerHelper("rs232");
  
     if( (retval = write( m_port, s, length ) ) < 0 ) {
         logger.logFINE( "rs232::write_RS232 write ERROR\n" );
@@ -99,7 +95,6 @@ int write_RS232( int m_port, const char * s, int length ) {
  */
 int flush_RS232( int m_port ) {
     int retval;
-    LoggerHelper logger = LoggerHelper("rs232");
 
     if( ( retval = tcflush(m_port, TCIOFLUSH ) ) == -1 ) {
         logger.logFINE( "rs232::flush_RS232 ioctl ERROR\n" );
@@ -114,7 +109,6 @@ int status_RS232( int m_port, int m_microsecs ) {
     fd_set read_fds;
     struct timeval tv;
     int retval;
-    LoggerHelper logger = LoggerHelper("rs232");
 
     FD_ZERO( & read_fds );
     FD_SET( m_port, & read_fds);

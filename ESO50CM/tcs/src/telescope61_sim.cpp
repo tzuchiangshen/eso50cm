@@ -35,6 +35,9 @@
 /* Global variable to exit from main loop */
 char quit;
 
+/* Global variable for telescope61_sim logger */
+LoggerHelper logger = LoggerHelper("telescope61_sim");
+
 struct encoder_data_t {
     char i2c_address;
     char i2c_status;
@@ -62,8 +65,7 @@ int stream_status( int m_port ) {
     fd_set fds;
     struct timeval tv;
     int retval;
-    LoggerHelper logger = LoggerHelper("telescope61_sim");
-
+    
     FD_ZERO( & fds );
     FD_SET( m_port, & fds );
     tv.tv_sec = 0;
@@ -94,8 +96,6 @@ void handle_connection (int connection_fd)
 
 static void exit_handler(int s)
 {
-    LoggerHelper logger = LoggerHelper("telescope61_sim");
-
     logger.logFINE("telescope61::exit_handler Ctrl+C signal catched!!!");
     quit = 1; 
 }
@@ -187,9 +187,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
     struct sigaction sigExitHandler;
 
     int init_ok_flag;
-
-    LoggerHelper logger = LoggerHelper("telescope61_sim");
-
+    
     do {
         logger.logINFO("telescope61_sim::telescope_run process started!!");
 
@@ -371,7 +369,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
         /**
          * File descriptor for standard in
          */
- 	    fd_stdin = fileno( stdin );
+	fd_stdin = fileno( stdin );
 
         if( fd_stdin == 0 ) {
             init_ok_flag = 1;
@@ -647,9 +645,9 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
             /**
             * Checks for a message in the instrument shared memory... SIMULATION
             */
-			int enc_count;
-			enc_count = 0;
-			char *ptr = (char*)&enc_count;
+	    int enc_count;
+	    enc_count = 0;
+	    char *ptr = (char*)&enc_count;
             if( bin_message_len == 0 ) {
                 for( i = 0; i < 6; i ++ ) {
                     binary_semaphore_wait( semaphore_id );
@@ -833,8 +831,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                     //retval = write_RS232( fd_rs232, msg_buffer, 10  );
                 } else {
                     message_length = 0;
-                    if( verbose )
-                        logger.logFINE( "telescope61_sim::telescope_run Unknown command %s.\n", buffer );
+		    logger.logFINE( "telescope61_sim::telescope_run Unknown command %s.\n", buffer );
                 }// END
             } else if( reply_flag ) { // END if( new_message_flag )
                 if( new_timep_flag ) {
@@ -855,14 +852,12 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
             }
 
         } while( ! quit );
-        if( verbose ) {
-            binary_semaphore_wait( semaphore_id );
-            gettimeofday( & (telescope->gtime), & (telescope->tzone) );
-            localtime_r( & (telescope->gtime.tv_sec), & LTime  );
-            strftime( infoline, 24, "%Y-%m-%d %T", & LTime );
-	    logger.logFINE( "telescope61_sim::telescope_run Main Loop ended at %s\n", infoline );
-            binary_semaphore_post( semaphore_id );
-        }
+	binary_semaphore_wait( semaphore_id );
+	gettimeofday( & (telescope->gtime), & (telescope->tzone) );
+	localtime_r( & (telescope->gtime.tv_sec), & LTime  );
+	strftime( infoline, 24, "%Y-%m-%d %T", & LTime );
+	logger.logFINE( "telescope61_sim::telescope_run Main Loop ended at %s\n", infoline );
+	binary_semaphore_post( semaphore_id );
     } else {
         logger.logFINE( "telescope61_sim::telescope_run Something wrong!\n" );
     }//END if( init_ok_flag )
