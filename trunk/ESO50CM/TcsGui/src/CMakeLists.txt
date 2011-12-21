@@ -2,6 +2,7 @@
 PROJECT(TCSGUI)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+SET(CMAKE_CXX_FLAGS "-lpthread -fpermissive")
 
 #introot definition
 SET(SWROOT $ENV{SWROOT})
@@ -64,7 +65,7 @@ set_property(TARGET qtcli PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR
 
 # link qt libraries
 TARGET_LINK_LIBRARIES(qtcli  
-	Ice
+	Ice IceUtil
     LoggerCore
 	${QT_LIBRARIES} 
 	${QT_QTNETWORK_LIBRARIES}
