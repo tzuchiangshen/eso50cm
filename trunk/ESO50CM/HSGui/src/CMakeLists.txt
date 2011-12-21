@@ -2,6 +2,7 @@
 PROJECT(HSSGUI)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+SET(CMAKE_CXX_FLAGS "-lpthread -fpermissive")
 
 #introot definition
 SET(SWROOT $ENV{SWROOT})
