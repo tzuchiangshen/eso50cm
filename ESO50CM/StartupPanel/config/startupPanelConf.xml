@@ -2,10 +2,11 @@
 <StartupConfiguration>
   <service>
     <name>loggingService</name>
-    <host>localhosto</host>
+    <host>localhost</host>
     <username>tcsmgr</username>
     <grep>loggingService</grep>
     <command>runLoggingService</command>
+    <timeToStart>5</timeToStart>
   </service>
   <service>
     <name>xeyes</name>
@@ -14,7 +15,7 @@
     <grep>xeyes</grep>
     <command>xeyes</command>
     <timeToStart>5</timeToStart>
-    <dependency>xlogo</dependency>
+    <keepItRunning>true</keepItRunning>
     <dependency>loggingService</dependency>
   </service>
   <panel>
