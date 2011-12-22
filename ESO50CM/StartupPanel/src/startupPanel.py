@@ -350,7 +350,7 @@ class StartupPanel(QtGui.QMainWindow):
             for dep in service.findall('dependency'):
                 deplist.append(dep.text)
             self.servicesList[name]=Service(name, host,username, command, grep,deplist,timeToStart,keep,self.isProcessRunning)  
-        for panel in tree.findall('panel'):
+        for panel in tree.findall('button'):
             name=panel.find('name').text
             host=panel.find('host').text
             username=panel.find('username').text
