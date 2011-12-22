@@ -18,16 +18,16 @@
     <keepItRunning>true</keepItRunning>
     <dependency>loggingService</dependency>
   </service>
-  <panel>
+  <button>
     <name>kate</name>
     <host>localhost</host>
     <username>tcsmgr</username>
     <command>kate</command>
-  </panel>
-  <panel>
+  </button>
+  <button>
     <name>LogPanel</name>
     <host>localhost</host>
     <username>tcsmgr</username>
     <command>logPanel</command>
-  </panel>
+  </button>
 </StartupConfiguration>
