@@ -92,6 +92,11 @@
          </property>
          <column>
           <property name="text">
+           <string>K</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
            <string>Process</string>
           </property>
          </column>
@@ -166,7 +171,7 @@
      <x>0</x>
      <y>0</y>
      <width>821</width>
-     <height>27</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

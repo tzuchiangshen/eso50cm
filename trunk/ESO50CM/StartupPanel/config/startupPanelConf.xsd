@@ -12,6 +12,7 @@
             <xs:element name="grep" type="xs:string"/>
             <xs:element name="command" type="xs:string"/>
             <xs:element name="timeToStart" type="xs:integer" default="0"  minOccurs="0" /> 
+            <xs:element name="keepItRunning" type="xs:boolean" default="false" minOccurs="0" />
             <xs:element name="dependency" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
           </xs:sequence>
         </xs:complexType>
