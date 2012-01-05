@@ -87,7 +87,7 @@ class myTEncoder
 
         myBSemaphore * bin_write_semaphore;
         myBSemaphore * bin_read_semaphore;
-	//LoggerHelper logger;
+	LoggerHelper logger;
 };
 
 #endif //_MYTENCODER_H_
