@@ -276,13 +276,13 @@ if __name__ == "__main__":
     ra = [12,0,0]
     dec = [40,0,0]
     connect()
-    #setConfiguration()
-    #print "#######################################"
-    #if isConfigured():
-    #   getConfiguration()
-    #   sayHello()
-    #getEncoderPosition()
-    #parkTelescope()
+    setConfiguration()
+    print "#######################################"
+    if isConfigured():
+       getConfiguration()
+       sayHello()
+    getEncoderPosition()
+    parkTelescope()
     #moveToTarget()
     #setTarget(ra, dec)
     #moveToTarget()
