@@ -30,7 +30,7 @@ string timestampToString(double timestamp)
   timeinfo = localtime ( &rawtime );
   strftime (buffer,80,"%Y-%m-%dT%H:%M:%S",timeinfo); 
   stringstream ss (stringstream::in | stringstream::out);
-  ss << buffer << "." << setfill('0') << setw(3) <<  (timestamp-rawtime)*1000;
+  ss << buffer << "." << setfill('0') << setw(3) <<  (int)((timestamp-rawtime)*1000);
   return ss.str();
   
 }
