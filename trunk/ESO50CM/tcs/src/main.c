@@ -20,7 +20,7 @@
 #define DAEMON_NAME "telescope61"
 #define PID_FILE "/var/run/eso50cm/telescope61.pid"
 
-int keep_running = 0;
+int keep_running = 1;
 
 
 /** Description of long options for getopt_long.  */
@@ -109,7 +109,7 @@ int main( int argc, char* const argv[] ) {
     speed_t baudrate;
     char * module_dir;
     char * socket_path;
-    int daemonize = 1;
+    int daemonize = 0;
 
     // Setup signal handling before we start
     signal(SIGHUP, signal_handler);
