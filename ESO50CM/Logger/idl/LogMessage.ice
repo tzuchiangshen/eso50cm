@@ -37,10 +37,10 @@ module Log
     struct LogMessageData
     {
         LogLevel  level;
+        double    logtimestamp;
         double    timestamp;
         string    source;
         string    data;
-        string    message;
         string    method;
         int       lineNumber;
     };

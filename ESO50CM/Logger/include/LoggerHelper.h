@@ -47,7 +47,6 @@ class LoggerHelper {
        ObjectPrx oneway;
        LoggerPrx m_prx;
        string m_source;
-       LogLevel m_discardLevel;
        string logginServiceProxyStr;
 };
 #endif
