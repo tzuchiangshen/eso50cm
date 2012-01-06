@@ -84,7 +84,6 @@ void LoggerI::logMessage(const LogMessageData &msg, const Ice::Current& c)
     LogMessageData message=msg; 
     // timestamp created when the log is received by the logging system
     message.logtimestamp=(double)tv.tv_sec+(double)tv.tv_usec/1.0E6;  // unix time (sec) + microsec
-    logPublisherPrx->logEvent(message);
 
     int daoIndex;
     if (message.level > getDiscardLevelLocal(message.source)) {
