@@ -20,7 +20,7 @@
 #define DAEMON_NAME "telescope61"
 #define PID_FILE "/var/run/eso50cm/telescope61.pid"
 
-int keep_running = 1;
+int keep_running = 0;
 
 
 /** Description of long options for getopt_long.  */
@@ -314,14 +314,16 @@ int main( int argc, char* const argv[] ) {
     // TODO: Insert core of your daemon processing here
     //****************************************************
     /** Run the server.  */
-    while(keep_running) {
-        if (pid == 0) {
-           telescope_run( device, baudrate, socket_path );
-        } else 
-	   syslog(LOG_INFO, "parent: I'm still alive, you shouldn't see this message!!!"); 
-        if (keep_running) 
-	   syslog(LOG_INFO, "I'm still alive, you shouldn't see this message!!!"); 
-    }
+//    while(keep_running) {
+//        if (pid == 0) {
+//           telescope_run( device, baudrate, socket_path );
+//        } else 
+//	   syslog(LOG_INFO, "parent: I'm still alive, you shouldn't see this message!!!"); 
+//        if (keep_running) 
+//	   syslog(LOG_INFO, "I'm still alive, you shouldn't see this message!!!"); 
+//    }
+
+    telescope_run( device, baudrate, socket_path );
 
  
     syslog(LOG_INFO, "%s daemon exiting", DAEMON_NAME);
