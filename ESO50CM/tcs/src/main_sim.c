@@ -182,7 +182,8 @@ int main( int argc, char* const argv[] ) {
         print_usage( 1 );
 
     if( device == NULL ) {
-      device = (char *) malloc( sizeof( "/dev/ttyS0" ) );
+
+        device = malloc( sizeof( "/dev/ttyS0" ) );
         strcpy( device, "/dev/ttyS0" );
         if( verbose ){
             printf( "No device was secified, using default %s\n", device );

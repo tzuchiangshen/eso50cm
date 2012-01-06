@@ -9,8 +9,6 @@
 const char * program_name;
 int verbose;
 
-//LoggerHelper logger = LoggerHelper("telescope61");
-
 void * xmalloc (size_t size) {
     void * ptr = malloc (size);
     /** Abort if the allocation failed.  */ 
@@ -56,7 +54,6 @@ char * get_self_executable_directory () {
     char* last_slash;
     size_t result_length;
     char* result;
-    logger.logFINE("Helo");
     /** Read the target of the symbolic link /proc/self/exe.  */
     rval = readlink ("/proc/self/exe", link_target, sizeof (link_target));
     if (rval == -1)
