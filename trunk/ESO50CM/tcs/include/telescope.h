@@ -6,24 +6,13 @@
 #include <termios.h>
 //#include <unistd.h>
 
-#include "LoggerHelper.h"
-
-/** Symbols defined in semaphorec.  ************************************/
-extern int binary_semaphore_allocate( key_t key, int sem_flags );
-extern int binary_semaphore_deallocate( int sem_id );
-extern int binary_semaphore_initialize( int sem_id );
-extern int binary_semaphore_wait( int sem_id );
-extern int binary_semaphore_post( int sem_id );
-
 /** Symbols defined in common.c.  ************************************/
+
 /** The name of this program.  */
 extern const char * program_name;
 
 /** If nonzero, print verbose messages.  */
 extern int verbose;
-
-/** Logger variable for telescope61 functions */
-extern LoggerHelper logger;
 
 /** Like malloc, except aborts the program if allocation fails.  */
 extern void* xmalloc (size_t size);
@@ -48,6 +37,7 @@ extern void error (const char* cause, const char* message);
 extern char* get_self_executable_directory ();
 
 /** Symbols defined in module.c  **************************************/
+
 /** An instance of a loaded server module.  */
 struct server_module {
     /** The shared library handle corresponding to the loaded module.  */

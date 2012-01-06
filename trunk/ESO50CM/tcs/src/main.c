@@ -22,6 +22,7 @@
 
 int keep_running = 1;
 
+
 /** Description of long options for getopt_long.  */
 static const struct option long_options[] = {
     { "baudrate",       1, NULL, 'b' },
@@ -62,22 +63,23 @@ void test_device( char * device ) {
     if( access( device, F_OK ) != 0 ) {
         error( device, "device does not exist");
     } else {
-        logger.logFINE( "device %s exists\n", device );
+        if( verbose )
+            printf( "device %s exists\n", device );
     }
     /** Check that it is accessible.  */
     if( access( device, R_OK ) != 0) {
         error (device, "device is not readable");
     } else {
-        logger.logFINE( "main::test_device device %s is readable\n", device );
+        if( verbose )
+            printf( "device %s is readable\n", device );
     }
     if( access( device, W_OK) != 0) {
         error (device, "device is not writable");
     } else {
-        logger.logFINE( "main::test_device device %s is writable\n", device );
+        if( verbose )
+            printf( "device %s is writable\n", device );
     }
 }
-
-extern void exit_telescope(void);
 
 void signal_handler(int sig) {
 
@@ -96,7 +98,7 @@ void signal_handler(int sig) {
             exit_telescope();
             break;
         default:
-            syslog(LOG_WARNING, "Unhandled signal (%d) ", sig);
+            syslog(LOG_WARNING, "Unhandled signal (%d) %s", sig, strsignal(sig));
             break;
     }
 }
@@ -215,14 +217,19 @@ int main( int argc, char* const argv[] ) {
         print_usage( 1 );
 
     if( device == NULL ) {
-        device = (char *) malloc( sizeof( "/dev/ttyS0" ) );
+
+        device = malloc( sizeof( "/dev/ttyS0" ) );
         strcpy( device, "/dev/ttyS0" );
-	logger.logFINE( "main::main No device was secified, using default %s\n", device );
+        if( verbose ){
+            printf( "No device was secified, using default %s\n", device );
+        }
     }
 
     if( baudrate == 0 ) {
         baudrate = B57600;
-        logger.logFINE( "main::main No baudrate was secified, using default %d\n", (int) baudrate );
+        if( verbose ){
+            printf( "No baudrate was secified, using default %d\n", (int) baudrate );
+        }
     }
 
 
@@ -232,25 +239,30 @@ int main( int argc, char* const argv[] ) {
         if( access( device, F_OK ) != 0 ) {
             error( device, "device does not exist");
         } else {
-	    logger.logFINE( "main::main device %s exists\n", device );
+            if( verbose )
+                printf( "device %s exists\n", device );
         }
         /** Check that it is accessible.  */
         if( access( device, R_OK ) != 0) {
             error (device, "device is not readable");
         } else {
-	    logger.logFINE( "main::main device %s is readable\n", device );
+            if( verbose )
+                printf( "device %s is readable\n", device );
         }
         if( access( device, W_OK) != 0) {
             error (device, "device is not writable");
         } else {
-	    logger.logFINE( "main::main device %s is writable\n", device );
+            if( verbose )
+                printf( "device %s is writable\n", device );
         }
     }
 
 
     /** Print  module directory if were running verbose.  */
-    logger.logFINE( "main::main modules will be loaded from %s\n", module_dir );
-    
+    if( verbose ) {
+        printf( "modules will be loaded from %s\n", module_dir );
+        printf( "...\n" );
+    }
 
     syslog(LOG_INFO, "%s daemon starting up", DAEMON_NAME);
     // Setup syslog logging - see SETLOGMASK(3)
@@ -273,7 +285,6 @@ int main( int argc, char* const argv[] ) {
         if (pid > 0) {
             /* parent process */ 
             /* syslog(LOG_INFO, "fork() finished successfully, exit parent process!"); */
-	    logger.logFINE("main::main telescope61 started successfully in the backgroud\n"); 
             exit(EXIT_SUCCESS);
         }
  

@@ -7,7 +7,6 @@
 #include <sys/ioctl.h>
 
 #include <errno.h>
-#include "telescope.h"
 
 /**
  * open_RS232
@@ -18,16 +17,19 @@ int open_RS232( const char * m_device, speed_t m_baudrate ) {
     struct termios  newtio;
 
     if( ( m_port = open( m_device, O_RDWR | O_NDELAY ) ) < 0 ) {
-        logger.logFINE( "rs232::open_RS232 open ERROR\n" );
+        perror( "[myRS232::open_RS232] open" );
+        printf( "[myRS232::open_RS232] open ERROR\n" );
     } else {
-        logger.logFINE( "rs232::open_RS232 open OK\n" );
+        printf( "[myRS232::open_RS232] open OK\n" );
         //if( ioctl( m_port, TCGETA, & oldtio) < 0 ) {
         if( tcgetattr( m_port, & oldtio) < 0 ) {
-            logger.logFINE("rs232::open_RS232 tcgetattr ERROR\n" );
+            perror( "[myRS232::open_RS232] tcgetattr" ) ;
+            printf( "[myRS232::open_RS232] tcgetattr ERROR\n" );
         }
         //if( ioctl( m_port, TCGETA, & newtio) < 0 ) {
         if( tcgetattr( m_port, & newtio) < 0 ) {
-    	    logger.logFINE("rs232::open_RS232 tcgetattr ERROR\n" );
+            perror( "[myRS232::open_RS232] tcgetattr" ) ;
+            printf( "[myRS232::open_RS232] tcgetattr ERROR\n" );
         }
 
         newtio.c_cflag = m_baudrate | CS8 | CLOCAL | CREAD;
@@ -36,8 +38,10 @@ int open_RS232( const char * m_device, speed_t m_baudrate ) {
         newtio.c_lflag = 0;       //ICANON;
         tcflush( m_port, TCIFLUSH );
         if( tcsetattr( m_port, TCSANOW,  & newtio ) < 0 ) {
-            logger.logFINE( "rs232::open_RS232 tcsetattr ERROR\n" );
+            perror( "[myRS232::open_RS232] tcsetattr" ) ;
+            printf( "[myRS232::open_RS232] tcsetattr ERROR\n" );
         }
+
     }
     return m_port;
 }
@@ -49,7 +53,8 @@ int close_RS232( int m_port ) {
     int retval;
 
     if( (retval  = close( m_port )) < 0 ) {
-        logger.logFINE( "rs232::close_RS232 close ERROR\n" );
+        perror( "[myRS232::close_RS232] close" );
+        printf( "[myRS232::close_RS232] close ERROR\n" );
     }
 
     return retval;
@@ -61,14 +66,15 @@ int close_RS232( int m_port ) {
  */
 int read_RS232( int m_port, char * str, int max ) {
     int retval;
- 
+
     if( (retval=read( m_port, str, max ) ) > 0 ) {
         //printf( "[myRS232::read_RS232] read OK (%d)\n", retval );
     } else {
         if( errno == EAGAIN ) {
-            logger.logFINE( "rs232::read_RS232 read ERROR: EAGAIN\n" );
+            printf( "[myRS232::read_RS232] read ERROR: EAGAIN\n" );
         } else {
-            logger.logFINE( "rs232::read_RS232 read ERROR\n" );
+            perror( "[myRS232::read_RS232] read" );
+            printf( "[myRS232::read_RS232] read ERROR\n" );
         }
     }
     return retval; 
@@ -83,9 +89,10 @@ int read_RS232( int m_port, char * str, int max ) {
  */
 int write_RS232( int m_port, const char * s, int length ) {
     int retval;
- 
+
     if( (retval = write( m_port, s, length ) ) < 0 ) {
-        logger.logFINE( "rs232::write_RS232 write ERROR\n" );
+        perror( "[myRS232::write_RS232] write" );
+        printf( "[myRS232::write_RS232] write ERROR\n" );
     }
     return retval;
 }
@@ -97,7 +104,8 @@ int flush_RS232( int m_port ) {
     int retval;
 
     if( ( retval = tcflush(m_port, TCIOFLUSH ) ) == -1 ) {
-        logger.logFINE( "rs232::flush_RS232 ioctl ERROR\n" );
+        perror( "[myRS232::flush_RS232] ioctl" );
+        printf( "[myRS232::flush_RS232] ioctl ERROR\n" );
     }
     return retval;
 }
@@ -116,7 +124,8 @@ int status_RS232( int m_port, int m_microsecs ) {
     tv.tv_usec = m_microsecs;
 
     if( ( retval = select( m_port+1, & read_fds, NULL, NULL, & tv) ) < 0  ) {
-        logger.logFINE( "rs232::status_RS232 select ERROR\n" );
+        perror( "[myRS232::status_RS232] select" );
+        printf( "[myRS232::status_RS232] select ERROR\n" );
     }
     return retval;
 }
