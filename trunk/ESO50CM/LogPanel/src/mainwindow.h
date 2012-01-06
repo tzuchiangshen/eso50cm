@@ -56,7 +56,7 @@ class SimpleClientI : public LogPublisher {
     SimpleClientI(MainWindow *w) { gui=w; }
     void logEvent(const LogMessageData &message, const Ice::Current& c) {
         if (gui)
-	    gui->addLog(message.level, message.timestamp, message.source,message.message);
+	    gui->addLog(message.level, message.timestamp, message.source,message.data);
     }
 };
 
