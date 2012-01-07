@@ -34,6 +34,8 @@ ADD_CUSTOM_TARGET(SWROOT ALL
     COMMAND cmake -E echo "${SWROOT}/db/registry created"
     COMMAND cmake -E make_directory ${SWROOT}/db/nodes
     COMMAND cmake -E echo "${SWROOT}/db/nodes created"
+    COMMAND cmake -E make_directory ${SWROOT}/logs
+    COMMAND cmake -E echo "${SWROOT}/logs created"
     COMMAND cmake -E make_directory ${SWROOT}/include
     COMMAND cmake -E echo "${SWROOT}/include created"
     COMMAND cmake -E make_directory ${SWROOT}/Sources
