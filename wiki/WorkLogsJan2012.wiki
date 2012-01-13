@@ -1,5 +1,17 @@
 = 2012-01-13 = 
   * Technical Time (Vincent Suc, Tzu-Chiang Shen, v244)
+  * park position 
+Time elapsed since last access: 1.057990 sec
+--------------------------------------------------
+            Lecture       Position
+Alpha AxisE:    561           +561
+Alpha WormE:    469           +469
+Alpha Motor:    514        +228514
+
+Delta AxisE:    726           +726
+Delta WormE:    873           +873
+Delta Motor:    241        -221759
+
   * Errors Found: 
     * Logging services: 
       * logging services reset the filter level of TcsGUi to 2 when it is restarted  
