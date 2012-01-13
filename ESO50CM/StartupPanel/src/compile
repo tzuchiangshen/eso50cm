@@ -1,8 +1,0 @@
-#!/bin/bash
-# until I fix CMakeLists, use this to compile
-pyuic4 Ui_StartupPanelBase.ui > Ui_StartupPanelBase.py
-echo "generated Ui_StartupPanelBase.py"
-cp Ui_StartupPanelBase.py $SWROOT/lib/python/site-packages
-cp ../config/* $SWROOT/config
-cp startupPanel.py $SWROOT/bin
-echo "installed"

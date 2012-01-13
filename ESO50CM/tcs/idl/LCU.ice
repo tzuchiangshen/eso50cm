@@ -41,13 +41,6 @@ struct TrackingInfo
 	int ticVel;
 };
 
-struct SlewInfo
-{
-	string rateName;
-	double rate;
-	string direction;
-};
-
 struct TelescopeConfigData
 {
 	double localTime;
@@ -110,7 +103,6 @@ exception ErrorEx {
 
 exception TelescopeNotConfiguredEx extends ErrorEx{};
 exception TargetOutOfLimitsEx extends ErrorEx{};	   
-exception NotConfigurationFileEx extends ErrorEx{};
 
 interface LCU
 {
@@ -128,8 +120,7 @@ interface LCU
     bool isConfigured();
     bool isTracking();
 
-    void setConfiguration(string fileName)
-         throws NotConfigurationFileEx;
+    void setConfiguration(string fileName);
     void setTarget(TelescopePosition targetPos)
     	 throws TelescopeNotConfiguredEx, TargetOutOfLimitsEx;
     void setOffset(TelescopePosition offsetPos)
@@ -141,8 +132,6 @@ interface LCU
     void stopTelescope(TelescopeDirection dir)
          throws TelescopeNotConfiguredEx;
     void moveToTarget()
-         throws TelescopeNotConfiguredEx; 	 
-    void handsetSlew(SlewInfo slew)
          throws TelescopeNotConfiguredEx; 	 
 };
 };

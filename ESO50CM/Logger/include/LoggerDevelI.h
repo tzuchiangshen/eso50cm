@@ -3,7 +3,6 @@
 
 #include "Logger.h"
 #include "LogPublisher.h"
-#include "dbstuff.h"
 #include <IceStorm/IceStorm.h>
 #include <Ice/Application.h>
 
@@ -30,7 +29,6 @@ namespace Log {
       int globalDiscardLevel;
       string levelDesc[10];  
       bool isDBConnected;
-      MySQLCon db;
   };
 };
 #endif

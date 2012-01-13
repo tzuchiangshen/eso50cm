@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->logTable->setColumnWidth(1,90);
     ui->logTable->setColumnWidth(2,100);
     ui->logTable->setColumnWidth(3,500);
-    ui->logTable->setSortingEnabled (false);
+
 
      // DETAIL table
     QTableWidgetItem *prototype = new QTableWidgetItem();
@@ -106,9 +106,9 @@ void MainWindow::addLog(int level, double timestamp, int sourceId,string data)
     sourceItem->setText(getSourceDesc(sourceId).c_str());
     dataItem->setText(data.c_str());
 
+    ui->logTable->setSortingEnabled (false);
 
-
-    ui->logTable->insertRow(0);    
+    ui->logTable->insertRow(0);
     ui->logTable->setItem(0,0,timeItem);
     if (level>5)
         levelItem->setForeground(Qt::red);
@@ -116,11 +116,10 @@ void MainWindow::addLog(int level, double timestamp, int sourceId,string data)
     ui->logTable->setItem(0,2,sourceItem);
     ui->logTable->setItem(0,3,dataItem);
     // if the level is under the filter, we hide the row
-    if (level < ui->logLevelFilter->currentIndex())
-         ui->logTable->setRowHidden(1,true);
+    if (level<ui->logLevelFilter->currentIndex())
+           ui->logTable->hideRow(0);
 
-
-    //ui->logTable->setSortingEnabled (true);
+    ui->logTable->setSortingEnabled (true);
 
 }
 void MainWindow::addLog(int level, double timestamp, string source,string data)
@@ -141,6 +140,8 @@ void MainWindow::addLog(int level, double timestamp, string source,string data)
     sourceItem->setText(source.c_str());
     dataItem->setText(data.c_str());
 
+    ui->logTable->setSortingEnabled (false);
+
     ui->logTable->insertRow(0);
     ui->logTable->setItem(0,0,timeItem);
     if (level>5)
@@ -148,17 +149,17 @@ void MainWindow::addLog(int level, double timestamp, string source,string data)
     ui->logTable->setItem(0,1,levelItem);
     ui->logTable->setItem(0,2,sourceItem);
     ui->logTable->setItem(0,3,dataItem);
-
     // if the level is under the filter, we hide the row
-    if (level < ui->logLevelFilter->currentIndex())
-         ui->logTable->setRowHidden(1,true);
-   // ui->logTable->setSortingEnabled (true);
+    if (level<ui->logLevelFilter->currentIndex())
+           ui->logTable->hideRow(0);
+
+    ui->logTable->setSortingEnabled (true);
 }
 
 void MainWindow::logEvent(const LogMessageData &message, const Ice::Current& c){
   //printf("\n received event...\n");
   //ui->statusBar->showMessage("Received event");
-  addLog(message.level, message.timestamp, message.source,message.data);
+  addLog(message.level, message.timestamp, message.source,message.message);
 }
 string MainWindow::getSourceDesc(int sourceId){
     return string("DB Not connected");  // hacked for development

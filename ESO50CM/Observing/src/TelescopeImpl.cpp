@@ -249,35 +249,6 @@ void TelescopeImpl::setTarget(const ::OUC::TelescopePosition& targetPos, const I
     }
 }
 
-void TelescopeImpl::handsetSlew(const ::OUC::SlewInfo& slewInfo, const Ice::Current&)
-{
-    extern int verbose;
-
-    if( verbose ) 
-        logger.logFINE( "TelescopeImpl::handsetSlew" ); 
-
-    try
-    {
-        if(!lcuPrx)
-        {
-            OUC::NotLCUReferenceAvailableEx ex;
-            ex.reason = "Not reference to LCU Proxy available!";
-            throw ex;	
-        }
-
-        return  lcuPrx->handsetSlew(slewInfo);
-    } catch (OUC::TelescopeNotConfiguredEx& ex) {
-        cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
-        throw ex;
-    } catch (OUC::TargetOutOfLimitsEx& ex) {
-        cout << "LCU returned: " << ex.reason << "Try another target!!"<< endl;  
-        throw ex;
-    } catch (Ice::Exception& ex) {
-        cerr << "Unexpected run-time error: " << ex << endl;
-        throw ex;
-    }
-}
-
 void TelescopeImpl::setOffset(const ::OUC::TelescopePosition& offsetPos, const Ice::Current&)
 {
     extern int verbose;

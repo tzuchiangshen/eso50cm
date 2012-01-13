@@ -9,9 +9,8 @@
 #include <QLabel>
 
 #include "myRS232.h"
-#include "TcsGuiController.h"
+#include "cppContainerServices.h"
 #include "Observing.h"
-#include "LoggerHelper.h"
 
 
 namespace Ui {
@@ -33,11 +32,11 @@ public slots:
     void showData( const int type, OUC::TelescopeData *data );
     //void displayError( int socketError, const QString & message );
     void processOneThing( void );
-    //void cliConnected( void );
-    //void cliDisconnected( void );
+    void cliConnected( void );
+    void cliDisconnected( void );
     void theSkyMessage( void );
     void handsetMessage( void );
-    //void informationMessage( QString message );
+    void informationMessage( QString message );
 
 private:
     Ui::TelescopeCli *ui;
@@ -57,9 +56,8 @@ private:
     //commandThread handset_command_tread;
     bool m_thesky_waitanswer;
 
-	TcsGuiController *controller;
+	cppContainerServices *cs;
 	TelescopePrx lcu;
-    LoggerHelper logger;
 };
 
 #endif // TELESCOPECLI_H

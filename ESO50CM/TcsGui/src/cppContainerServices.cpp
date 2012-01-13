@@ -1,31 +1,14 @@
 
-#include "TcsGuiController.h"
+#include "cppContainerServices.h"
 
 using namespace std;
 using namespace OUC;
 
-TcsGuiController::TcsGuiController() :
-   logger("TcsGUI")
-{
-    ::Log::LogLevel level = ::Log::FINE;
-    logger.setDiscardLevel(level);
-	lcu = NULL;
-	communicator = NULL;
-	data = new OUC::TelescopeData();
-}
-
-TcsGuiController::~TcsGuiController()
-{
-	disconnect();
-	lcu = NULL;
-	communicator = NULL;
-
-}
 
 //move this to OBSComponent 
 //-------------
 
-char * TcsGuiController::strfdegs( char * string, size_t max_len, const char * format, double degs )
+char * cppContainerServices::strfdegs( char * string, size_t max_len, const char * format, double degs )
 {
     int gg, mm, ss, cc;
     double m_secs;
@@ -64,7 +47,7 @@ char * TcsGuiController::strfdegs( char * string, size_t max_len, const char * f
     return string;
 }
 
-void TcsGuiController::getCurrentPositionRA(char *buffer, int maxlen) 
+void cppContainerServices::getCurrentPositionRA(char *buffer, int maxlen) 
 {
 
 	mutex.lock();
@@ -76,7 +59,7 @@ void TcsGuiController::getCurrentPositionRA(char *buffer, int maxlen)
 	//return buffer;
 }
 
-void TcsGuiController::getCurrentPositionDec(char *buffer, int maxlen) 
+void cppContainerServices::getCurrentPositionDec(char *buffer, int maxlen) 
 {
 
 	mutex.lock();
@@ -88,44 +71,39 @@ void TcsGuiController::getCurrentPositionDec(char *buffer, int maxlen)
 	//return buffer;
 }
 
-void TcsGuiController::formatRAPosition(double ra, char *buffer, int maxlen) 
+void cppContainerServices::formatRAPosition(double ra, char *buffer, int maxlen) 
 {
 	//convert to sexagesimal 
 	strfdegs( buffer, maxlen, "%02d:%02d:%02.0lf\0", ra / 15.0 );
 }
 
-void TcsGuiController::formatDecPosition(double dec, char *buffer, int maxlen) 
+void cppContainerServices::formatDecPosition(double dec, char *buffer, int maxlen) 
 {
 	strfdegs( buffer, maxlen, "%+03d:%02d:%02.0lf\0", dec);
 }
 
 //=============
 
-int TcsGuiController::getPosition()
+int cppContainerServices::getPosition()
 {
 	try 
 	{
-        char buffer[1000];
 		mutex.lock();
 		*data = lcu->getPosition();
-        sprintf(buffer, "currentPos.RA =%.10lf\n", data->currentPos.RA);
-		logger.logFINE(buffer);
-		sprintf(buffer, "crrentPos.Dec = %.10lf \n", data->currentPos.Dec);
-		logger.logFINE(buffer);
+		printf(">>>>>>>>>>>>> currentPos.RA = %.10lf \n", data->currentPos.RA);
+		printf(">>>>>>>>>>>>> crrentPos.Dec = %.10lf \n", data->currentPos.Dec);
 		mutex.unlock();
 		emit newData(1, data);
 	}
 	catch(const Ice::Exception& ex)
 	{
-        logger.logSEVERE("Error in TcsGuiController:getPosition(). %s", ex.ice_name().c_str());
 	    cout << ex << endl;
-        emit newData(2, data);
 	}
 
     return EXIT_SUCCESS;
 }
 
-int TcsGuiController::setTargetPositionRA(const char *ra)
+int cppContainerServices::setTargetPositionRA(const char *ra)
 {
 	printf("<<<<<<<<<<<<<<<<<<<<<<<<< setTargetPosition ra=%s\n", ra);
     int trg_ra_hrs;
@@ -179,7 +157,7 @@ int TcsGuiController::setTargetPositionRA(const char *ra)
     return EXIT_SUCCESS;
 }
 
-int TcsGuiController::setTargetPositionDec(const char *arguments)
+int cppContainerServices::setTargetPositionDec(const char *arguments)
 {
 	printf("<<<<<<<<<<<<<<<<<<<<<<<<< setTargetPosition dec=%s\n", arguments);
     int trg_dec_deg;
@@ -240,7 +218,7 @@ int TcsGuiController::setTargetPositionDec(const char *arguments)
     return EXIT_SUCCESS;
 }
 
-OUC::TelescopeData TcsGuiController::getTelescopeData() 
+OUC::TelescopeData cppContainerServices::getTelescopeData() 
 {
 	OUC::TelescopeData newData;
 	mutex.lock();
@@ -251,9 +229,22 @@ OUC::TelescopeData TcsGuiController::getTelescopeData()
 	return newData;
 }
 
+cppContainerServices::cppContainerServices()
+{
+	lcu = NULL;
+	communicator = NULL;
+	data = new OUC::TelescopeData();
+}
 
+cppContainerServices::~cppContainerServices()
+{
+	disconnect();
+	lcu = NULL;
+	communicator = NULL;
 
-TelescopePrx TcsGuiController::getLCUReference() {
+}
+
+TelescopePrx cppContainerServices::getLCUReference() {
 	if (lcu) 
 		return lcu;
 	else {
@@ -263,7 +254,7 @@ TelescopePrx TcsGuiController::getLCUReference() {
 }
 
 
-int TcsGuiController::connect() 
+int cppContainerServices::connect() 
 {
     int status;
 
@@ -281,43 +272,43 @@ int TcsGuiController::connect()
 		communicator = Ice::initialize(argc, argv, initData);
 		//communicator = Ice::initialize(initData, 0);
 		//status = getPosition(argc, argv, communicator);
-       // get reference to LCUImpl
-   
-        Ice::PropertiesPtr properties = communicator->getProperties();
-        const char* proxyProperty = "ObsAdapter.Proxy";
-        string proxy = properties->getProperty(proxyProperty);
-        if(proxy.empty())
-        {
-   	     fprintf(stderr, "%s: property `%s' not set\n", argv[0], proxyProperty);
-   	     return EXIT_FAILURE;
-        }
-   
-        Ice::ObjectPrx base = communicator->stringToProxy(proxy);
-        obs = ObservingPrx::checkedCast(base->ice_twoway()->ice_timeout(-1));
-        if(!obs)
-        {
-   	     fprintf(stderr, "%s: invalid proxy\n", argv[0]);
-   	     return EXIT_FAILURE;
-        }
-   
-   	    lcu = obs->getTelescope();
-        if(!lcu)
-        {
-   		    fprintf(stderr, "%s: invalid proxy\n", argv[0]);
-   		    return EXIT_FAILURE;
-        }
     }
     catch(const Ice::Exception& ex)
     {
 		cout << ex << endl;
 		status = EXIT_FAILURE;
-		emit newData(2, data);
+    }
+
+    // get reference to LCUImpl
+
+    Ice::PropertiesPtr properties = communicator->getProperties();
+    const char* proxyProperty = "ObsAdapter.Proxy";
+    string proxy = properties->getProperty(proxyProperty);
+    if(proxy.empty())
+    {
+		fprintf(stderr, "%s: property `%s' not set\n", argv[0], proxyProperty);
+		return EXIT_FAILURE;
+    }
+
+    Ice::ObjectPrx base = communicator->stringToProxy(proxy);
+    obs = ObservingPrx::checkedCast(base->ice_twoway()->ice_timeout(-1));
+    if(!obs)
+    {
+		fprintf(stderr, "%s: invalid proxy\n", argv[0]);
+		return EXIT_FAILURE;
+    }
+
+	lcu = obs->getTelescope();
+    if(!lcu)
+    {
+		fprintf(stderr, "%s: invalid proxy\n", argv[0]);
+		return EXIT_FAILURE;
     }
 
     return status;
 }
 
-int TcsGuiController::disconnect() 
+int cppContainerServices::disconnect() 
 {
     int status;
     if(communicator)
@@ -336,21 +327,16 @@ int TcsGuiController::disconnect()
     return status;
 }
 
-void TcsGuiController::run() 
+void cppContainerServices::run() 
 {
 	while(1) 
 	{
-        try { 
-		   getPosition();
-		   sleep(1.0);
-        } catch (...) {
-           cout << "Unexpected exception, continue ... " << endl;
-        }
-
+		getPosition();
+		sleep(1.0);
 	}
 }
 
-void TcsGuiController::test() 
+void cppContainerServices::test() 
 {
 	OUC::TelescopeData data;
 	data = lcu->getPosition();

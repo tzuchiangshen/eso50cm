@@ -12,6 +12,8 @@
 
 class LCUImpl : public OUC::LCU {
 public:
+
+
     LCUImpl();
     virtual void sayHello(const int delay, const Ice::Current&);
     virtual void shutdown(const Ice::Current&);
@@ -24,14 +26,12 @@ public:
     virtual OUC::TelescopeConfigData getConfiguration(const Ice::Current&);
     
     virtual void setConfiguration(const string& fileName, const Ice::Current&);
-    void setConfiguration(const string& fileName);
     virtual void setTarget(const ::OUC::TelescopePosition& targetPos, const Ice::Current&);
     virtual void setOffset(const ::OUC::TelescopePosition& offsetPos, const Ice::Current&);
     virtual void setTracking(const OUC::TrackingInfo& trkInfo, const Ice::Current&);
     virtual void parkTelescope(const Ice::Current&);
     virtual void stopTelescope(OUC::TelescopeDirection dir, const Ice::Current&);
     virtual void moveToTarget(const Ice::Current&);
-    virtual void handsetSlew(const ::OUC::SlewInfo& slewInfo, const Ice::Current&);
 
     virtual void getConfigState();
     virtual void getTrackingState();
@@ -46,9 +46,8 @@ private:
     OUC::EncoderData *encoder_t;
     OUC::TelescopeConfigData *telescopeConfigData_t;
     OUC::TelescopeData *telescopeData_t;
-    LoggerHelper logger;
-    string telConfigFileName;
     myLCU *m_lcu; 
+    
 };
 
 #endif

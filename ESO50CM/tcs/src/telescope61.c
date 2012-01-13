@@ -685,18 +685,18 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
             /**
             * Get Message to TX from stdin
             */
-            //printf( "[telescope_run] checking for a stdio message...\n" );
-            if( ! new_message_flag ) {
-                if( ( retval = stream_status( fd_stdin ) ) > 0 ) {
-                    memset( buffer, 0 , 128 );
-                    retval = read( fd_stdin, buffer, 128 );
-                    buffer[retval-1] = 0;  //enter = 0
-                    fflush( stdin );
-                    new_message_flag = 1;
-                    message_length = strlen( buffer );
-                }
-            }//END if( ! new_message_flag )
-
+//            //printf( "[telescope_run] checking for a stdio message...\n" );
+//            if( ! new_message_flag ) {
+//                if( ( retval = stream_status( fd_stdin ) ) > 0 ) {
+//                    memset( buffer, 0 , 128 );
+//                    retval = read( fd_stdin, buffer, 128 );
+//                    buffer[retval-1] = 0;  //enter = 0
+//                    fflush( stdin );
+//                    new_message_flag = 1;
+//                    message_length = strlen( buffer );
+//                }
+//            }//END if( ! new_message_flag )
+//
             /**
             * Process stdin message
             */

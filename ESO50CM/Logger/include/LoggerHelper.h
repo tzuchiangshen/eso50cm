@@ -18,27 +18,13 @@ class LoggerHelper {
       LoggerHelper(string src);
       ~LoggerHelper();
       void setDiscardLevel(LogLevel level);
-      void logFINEST(int linenumber, string method,const char* Format, ...);    
-      void logFINEST(const char* Format, ... );    
-      void logFINER(int lineNumber,string method, const char* Format, ...);    
-      void logFINER(const char* Format, ... );    
-      void logFINE(int lineNumber,string method,const char* Format, ...);    
-      void logFINE(const char* Format, ... );    
-      void logCONFIG(int lineNumber,string method,const char* Format, ...);    
-      void logCONFIG(const char* Format, ... );    
-      void logINFO(int lineNumber,string method,const char* Format, ...);    
-      void logINFO(const char* Format, ... );    
-      void logWARNING(int lineNumber,string method,const char* Format, ...);    
-      void logWARNING(const char* Format, ... );    
-      void logSEVERE(int lineNumber,string method,const char* Format, ...);    
-      void logSEVERE(const char* Format, ... );    
-      void  logFINEST(string log);
-      void  logFINER(string log);
-      void  logFINE(string log);
-      void  logCONFIG(string log);
-      void  logINFO(string log);
-      void  logWARNING(string log);
-      void  logSEVERE(string log);
+      void logFINEST(string log, string method="", int lineNumber=-1);
+      void logFINER(string log, string method="", int lineNumber=-1);
+      void logFINE(string log, string method="", int lineNumber=-1);    
+      void logCONFIG(string log, string method="", int lineNumber=-1);
+      void logINFO(string log, string method="", int lineNumber=-1);
+      void logWARNING(string log, string method="", int lineNumber=-1);
+      void logSEVERE(string log, string method="", int lineNumber=-1);
       void logMsg(LogLevel, string,string,int);
       double convertDouble(double MEData); // helper for LCU middle endian problem
    private:
@@ -47,6 +33,7 @@ class LoggerHelper {
        ObjectPrx oneway;
        LoggerPrx m_prx;
        string m_source;
+       LogLevel m_discardLevel;
        string logginServiceProxyStr;
 };
 #endif
