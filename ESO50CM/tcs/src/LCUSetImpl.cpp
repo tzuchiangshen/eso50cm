@@ -6,6 +6,12 @@ using namespace std;
 void 
 LCUImpl::setConfiguration(const string& fileName, const Ice::Current& c)
 {
+   setConfiguration(fileName);
+}
+
+void 
+LCUImpl::setConfiguration(const string& fileName)
+{
     extern int verbose;
     
     if( verbose )
@@ -732,3 +738,75 @@ LCUImpl::moveToTarget(const Ice::Current& c)
   }
   m_lcu->postSemaphore();
 }
+
+
+void 
+LCUImpl::handsetSlew(const OUC::SlewInfo& slewInfo, const Ice::Current& c)
+{
+
+    char slew_rate = 255;
+    char slew_dir = 255;
+    bool is_telescope_configured = false;
+    double degs_per_sec;
+    int tics_per_sec;
+
+    slew_rate = slewInfo.rateName[0];
+    slew_dir = slewInfo.direction[0];
+
+    if( slew_rate == 'S' ) {
+        degs_per_sec = 8./15.;         //128x  32['/s]
+    } else if( slew_rate == 's' ) {
+        degs_per_sec = 1./15.;         //128x  32['/s]
+    } else if( slew_rate == 'G' ) {
+        degs_per_sec = 1./120.;         //128x  32['/s]
+    } else if( slew_rate == 'O' ) {
+        degs_per_sec = 1./240.;         //128x  32['/s]
+    }
+	printf( "[handset_command] degs_per_sec = %lf\n", degs_per_sec );
+
+    m_lcu->waitSemaphore();
+    is_telescope_configured = m_lcu->telescope->getIsConfigured();
+    m_lcu->postSemaphore();
+
+    if( is_telescope_configured == 0 ) {
+        printf( "Information: Please, config telescope first!\n" );
+        return;
+    }  
+
+    printf("Start slewing to dir=%c at rate=%c\n", slew_dir, slew_rate );
+    m_lcu->waitSemaphore();
+
+    double tmp;
+    if( slew_dir == 'N' ) {
+        tmp = -(m_lcu->telescope->delta->Motor->getTicsPerRev() *
+                m_lcu->telescope->delta->Motor->getEncoderToAxis_Reduction() *
+                degs_per_sec / 360.);
+        tics_per_sec = (int) tmp;
+        printf("N... tics_per_sec = %d\n", tics_per_sec );
+        m_lcu->telescope->delta->Motor->setDeviceMemory( 6, & tics_per_sec, 0  );
+    } else if( slew_dir == 'S' ) {
+        tmp =  (m_lcu->telescope->delta->Motor->getTicsPerRev() *
+            m_lcu->telescope->delta->Motor->getEncoderToAxis_Reduction() *
+            degs_per_sec / 360.);
+        tics_per_sec = (int) tmp;
+        printf("S... tics_per_sec = %d\n", tics_per_sec );
+        m_lcu->telescope->delta->Motor->setDeviceMemory( 6, & tics_per_sec, 0  );
+    } else if( slew_dir == 'E' ) {
+        tmp = -(m_lcu->telescope->alpha->Motor->getTicsPerRev() *
+                m_lcu->telescope->alpha->Motor->getEncoderToAxis_Reduction() *
+                degs_per_sec / 360.);
+        tics_per_sec = (int) tmp;
+        printf("E... tics_per_sec = %d\n", tics_per_sec );
+        m_lcu->telescope->alpha->Motor->setDeviceMemory( 6, & tics_per_sec, 0  );
+    } else if( slew_dir == 'W' ) {
+        tmp =  (m_lcu->telescope->alpha->Motor->getTicsPerRev() *
+                m_lcu->telescope->alpha->Motor->getEncoderToAxis_Reduction() *
+                degs_per_sec / 360.);
+        tics_per_sec = (int) tmp;
+        printf("N... tics_per_sec = %d\n", tics_per_sec );
+        m_lcu->telescope->alpha->Motor->setDeviceMemory( 6, & tics_per_sec, 0  );
+    }
+
+    m_lcu->postSemaphore();
+}
+

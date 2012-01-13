@@ -4,7 +4,9 @@
 
 using namespace std;
 
-LCUImpl::LCUImpl() {
+LCUImpl::LCUImpl(): 
+    telConfigFileName("ESO50cm.conf")    
+{
     m_lcu = new myLCU();
     rawEncoder_t = new OUC::RawEncoderData(); 
     encoder_t = new OUC::EncoderData();
@@ -12,6 +14,18 @@ LCUImpl::LCUImpl() {
     telescopeData_t = new OUC::TelescopeData();
     m_lcu->createTelescope();
     m_lcu->telescope->attachInstrumentMemory();
+
+    //Configure Telescope
+    string configPath =  getenv("SWROOT");
+    configPath = configPath + "/config/" + telConfigFileName;
+    try {
+        setConfiguration(configPath);
+    } catch (OUC::NotConfigurationFileEx& ex) {
+        printf("LCUImpl::LCUImpl Telescope could not be configured."); 
+    } catch(const Ice::Exception& ex) {
+        printf("LCUImpl::LCUImpl Uncaught exception ."); 
+        throw ex;
+    } 
 
     //Get telescope configuration & tracking state
     getConfigState();
