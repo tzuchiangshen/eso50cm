@@ -3,6 +3,8 @@
   * Errors Found: 
     * Logging services: 
       * logging services reset the filter level of TcsGUi to 2 when it is restarted  
-
+    * eso50cm command line:
+      * missing wrapper commands 
+        * stopTelescope, moveToTarget, startTracking 
 = 2012-01-06 = 
   * Technical Time (Johnny Reveco, Vincent Suc, Tzu-Chiang Shen, Ruben Soto version r321)
