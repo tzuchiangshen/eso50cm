@@ -3,6 +3,8 @@
   * Errors Found: 
     * Logging services: 
       * logging services reset the filter level of TcsGUi to 2 when it is restarted  
+    * qtcli 
+      * SEVERE | 1326471569.996382 | TcsGUI | not specified | 0 | Error in TcsGuiController:getPosition(). Ice::TimeoutException |
     * eso50cm command line:
       * missing wrapper commands 
         * stopTelescope, moveToTarget, startTracking 
