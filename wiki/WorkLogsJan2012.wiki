@@ -1,17 +1,30 @@
 = 2012-01-13 = 
   * Technical Time (Vincent Suc, Tzu-Chiang Shen, v244)
-  * park position 
-Time elapsed since last access: 1.057990 sec
+  * park telescope at 
+
+{{
+operador@ouc1:~$ ./eso50cm -v read_encoders
+Hello World!
+command: [read_encoders]
+traying to connect to 192.168.0.10:4000...
+connected to server...
+executing command: [read_encoders]...
+
+
+Time elapsed since last access: 17.322005 sec
 --------------------------------------------------
             Lecture       Position
 Alpha AxisE:    561           +561
-Alpha WormE:    469           +469
-Alpha Motor:    514        +228514
+Alpha WormE:    515           +515
+Alpha Motor:      0             +0
 
-Delta AxisE:    726           +726
-Delta WormE:    873           +873
-Delta Motor:    241        -221759
+Delta AxisE:    740           +740
+Delta WormE:    894           +894
+Delta Motor:      0             +0
+--------------------------------------------------
+Page generated at: [2012-01-13, 15:45:08]
 
+}}
   * Errors Found: 
     * Logging services: 
       * logging services reset the filter level of TcsGUi to 2 when it is restarted  
