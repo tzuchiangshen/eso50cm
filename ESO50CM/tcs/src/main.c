@@ -109,7 +109,7 @@ int main( int argc, char* const argv[] ) {
     speed_t baudrate;
     char * module_dir;
     char * socket_path;
-    int daemonize = 1;
+    int daemonize = 0;
 
     // Setup signal handling before we start
     signal(SIGHUP, signal_handler);
@@ -314,15 +314,16 @@ int main( int argc, char* const argv[] ) {
     // TODO: Insert core of your daemon processing here
     //****************************************************
     /** Run the server.  */
-    while(keep_running) {
-        if (pid == 0) {
-           telescope_run( device, baudrate, socket_path );
-        } else 
-	   syslog(LOG_INFO, "parent: I'm still alive, you shouldn't see this message!!!"); 
-        if (keep_running) 
-	   syslog(LOG_INFO, "I'm still alive, you shouldn't see this message!!!"); 
-    }
+//    while(keep_running) {
+//        if (pid == 0) {
+//           telescope_run( device, baudrate, socket_path );
+//        } else 
+//	   syslog(LOG_INFO, "parent: I'm still alive, you shouldn't see this message!!!"); 
+//        if (keep_running) 
+//	   syslog(LOG_INFO, "I'm still alive, you shouldn't see this message!!!"); 
+//    }
 
+    telescope_run( device, baudrate, socket_path );
  
     syslog(LOG_INFO, "%s daemon exiting", DAEMON_NAME);
     //****************************************************
