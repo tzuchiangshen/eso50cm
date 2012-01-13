@@ -1,2 +1,7 @@
-= 2011-12-10 = 
+= 2012-01-13 = 
+  * Technical Time (Vincent Suc, Tzu-Chiang Shen, v244)
+  * Logging services: 
+     * logging services reset the filter level of TcsGUi to 2 when it is restared  
+
+= 2012-01-06 = 
   * Technical Time (Johnny Reveco, Vincent Suc, Tzu-Chiang Shen, Ruben Soto version r321)
