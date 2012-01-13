@@ -2,7 +2,7 @@
   * Technical Time (Vincent Suc, Tzu-Chiang Shen, v244)
   * park telescope at 
 
-{{
+{{{
 operador@ouc1:~$ ./eso50cm -v read_encoders
 Hello World!
 command: [read_encoders]
@@ -24,7 +24,7 @@ Delta Motor:      0             +0
 --------------------------------------------------
 Page generated at: [2012-01-13, 15:45:08]
 
-}}
+}}}
   * Errors Found: 
     * Logging services: 
       * logging services reset the filter level of TcsGUi to 2 when it is restarted  
