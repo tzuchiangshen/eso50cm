@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<StartupConfiguration>
+  <service>
+    <name>loggingService</name>
+    <host>localhost</host>
+    <username>tcsmgr</username>
+    <grep>loggingService</grep>
+    <command>runLoggingService</command>
+    <timeToStart>5</timeToStart>
+  </service>
+  <service>
+    <name>xeyes</name>
+    <host>localhost</host>
+    <username>tcsmgr</username>
+    <grep>xeyes</grep>
+    <command>xeyes</command>
+    <timeToStart>5</timeToStart>
+    <keepItRunning>true</keepItRunning>
+    <dependency>loggingService</dependency>
+  </service>
+  <button>
+    <name>kate</name>
+    <host>localhost</host>
+    <username>tcsmgr</username>
+    <command>kate</command>
+  </button>
+  <button>
+    <name>LogPanel</name>
+    <host>localhost</host>
+    <username>tcsmgr</username>
+    <command>logPanel</command>
+  </button>
+</StartupConfiguration>
