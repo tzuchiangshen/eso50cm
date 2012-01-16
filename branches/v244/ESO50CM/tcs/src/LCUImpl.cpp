@@ -39,7 +39,13 @@ LCUImpl::sayHello(int delay, const Ice::Current&)
     {
         IceUtil::ThreadControl::sleep(IceUtil::Time::milliSeconds(delay));
     }
-    printf("Hello World!\n");
+	int alpha_mtr_counts = delay * 3000;
+    printf("\nHello World!\n");
+    m_lcu->telescope->alpha->Motor->setDeviceMemory( 7, & alpha_mtr_counts, 0  );
+	printf("setDeviceMemory = %d\n", alpha_mtr_counts);
+    m_lcu->telescope->alpha->Motor->readDeviceMemory( 7, & alpha_mtr_counts, 0  );
+	printf("readDeviceMemory = %d\n", alpha_mtr_counts);
+    printf("Bye World!\n");
 }
 
 void
