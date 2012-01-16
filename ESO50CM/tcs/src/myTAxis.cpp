@@ -63,10 +63,10 @@ int myTAxis::offsetAxisInDeg( double degs )
 
     mtr_counts = (int) round( degs );
     if( mtr_counts > 0 ) {
-        if( verbose ) printf( "[myTAxis::offsetAxisInDeg] Running motor %d\n", mtr_counts );
+        if( verbose ) printf( "[myTAxis::offsetAxisInDeg] Axis: %c  Running motor %d\n", m_id, mtr_counts );
         Motor->runEncSteps( mtr_counts );
     } else {
-        if( verbose ) printf( "[myTAxis::offsetAxisInDeg] Nothing to do!\n" );
+        if( verbose ) printf( "[myTAxis::offsetAxisInDeg] Axis: %c Nothing to do!\n", m_id );
     }
 
     return mtr_counts;

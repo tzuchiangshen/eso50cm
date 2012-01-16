@@ -686,6 +686,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
 			int enc_count;
 			enc_count = 0;
 			char *ptr = (char*)&enc_count;
+			char *ptr2;
             if( bin_message_len == 0 ) {
                 for( i = 0; i < 6; i ++ ) {
                     binary_semaphore_wait( semaphore_id );
@@ -694,46 +695,68 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                         startT  = ((double) gtime.tv_usec)/1000000.;
                         startT += (double) gtime.tv_sec;
 
-                        if( verbose ) {
-							*ptr = telescope->encoder[i].message[3];
-							ptr++;
-							*ptr = telescope->encoder[i].message[4];
-							ptr++;
-							*ptr = telescope->encoder[i].message[5];
-							ptr++;
-							*ptr = telescope->encoder[i].message[6];
-							ptr++;
-                            printf( "\n[telescope_run] Sending new message to PIC for 0x%02X enc_count=%d mem_address=%d\n", telescope->encoder[i].message[1], enc_count, telescope->encoder[i].message[2] );
-                            printf( "[telescope_run] enc_count=0x%X 0x%X 0x%X 0x%X\n", telescope->encoder[i].message[3], telescope->encoder[i].message[4], telescope->encoder[i].message[5], telescope->encoder[i].message[6]);
-						}
-
-                        length = 0;
-                        nums_of_time_outs = 0;
-                        timeout_error_flag = 0;
-
-						//Emulate the response of the PIC which control the encoders and servos
 						int check_sum = 0;
 
 						int rest = telescope->encoder[i].message[1] % 2;
 						int mem_address  = telescope->encoder[i].message[2];
-						printf("[telescope_run] address=%d type=%d\n", telescope->encoder[i].message[1], rest);
+						printf("\n[telescope_run] -----------------------------------------\n");
+						if (rest == 0)
+						    printf("[telescope_run] New message received from LCUControl type=Set\n");
+						else
+						    printf("[telescope_run] New message received from LCUControl type=Get\n");
 
+						printf( "[telescope_run] Sending new message to PIC for 0x%02X mem_address=%d\n", telescope->encoder[i].message[1], mem_address /*telescope->encoder[i].message[2]*/ );
 						if(rest == 0) {
-							printf("es un write: \n");
+							//printf("es un write: \n");
 							//even => comes from setDeviceMemory, save the encoder value for later the next readDeviceMemory()
-							telescope_sim->encoder[i].data[telescope->encoder[i].message[2]] = enc_count;
+				    		//Emulate sending data to the PIC (RS232)
+				    		//it will save the target encoder value in a internal memory structure 
+				    		//when the readMemory is received, it will return the target encoder value
+                            length = 0;
+                            nums_of_time_outs = 0;
+                            timeout_error_flag = 0;
+							//maybe its better to use memcopy
+   							*ptr = telescope->encoder[i].message[3];
+   							ptr++;
+   							*ptr = telescope->encoder[i].message[4];
+   							ptr++;
+   							*ptr = telescope->encoder[i].message[5];
+   							ptr++;
+   							*ptr = telescope->encoder[i].message[6];
+			                //memcpy(telescope_sim->encoder[i].data[mem_address], &telescope->encoder[i].message[3], 4);
+							ptr = (char*)&telescope->encoder[i].data[mem_address];
+							*ptr = telescope->encoder[i].message[3];
+   							ptr++;
+   							*ptr = telescope->encoder[i].message[4];
+   							ptr++;
+   							*ptr = telescope->encoder[i].message[5];
+   							ptr++;
+   							*ptr = telescope->encoder[i].message[6];
+                            if( verbose ) {
+                                printf( "[telescope_run] telescope->encoder[%d].message = 0x%X 0x%X 0x%X 0x%X\n", i, telescope->encoder[i].message[3], telescope->encoder[i].message[4], telescope->encoder[i].message[5], telescope->encoder[i].message[6]);
+								printf( "[telescope_run] telescope->encoder[%d].data[%d] = %d\n", i, mem_address, telescope->encoder[i].data[mem_address]);
+//                                printf( "[telescope_run] enc_count[%d].data[%d] = 0x%X 0x%X 0x%X 0x%X\n", i, mem_address, telescope->encoder[i].data[mem_address], telescope->encoder[i].data[4], telescope->encoder[i].data[5], telescope->encoder[i].data[6]);
+   						    }
+
 						}  else {
 							//odd => read 
-							printf("es un read: \n");
-							ptr = (char*)&telescope_sim->encoder[i].data[mem_address];
-							memcpy(&telescope->encoder[i].answer[3], ptr, 1);
-							ptr++;
-							memcpy(&telescope->encoder[i].answer[4], ptr, 1);
-							ptr++;
-							memcpy(&telescope->encoder[i].answer[5], ptr, 1);
-							ptr++;
-							memcpy(&telescope->encoder[i].answer[6], ptr, 1);
+							//printf("es un read: \n");
+							printf( "[telescope_run] telescope->encoder[%d].data[%d] = %d\n", i, mem_address, telescope->encoder[i].data[mem_address]);
+							
+							int val = telescope->encoder[i].data[mem_address];
+							val = 40;
+							printf( "[telescope_run] val = %d\n", val);
 
+							char *ptr_val = (char*)&val;
+                            telescope->encoder[i].answer[3] = *ptr_val;
+							ptr_val ++;
+							telescope->encoder[i].answer[4] = *ptr_val;
+							ptr_val ++;
+							telescope->encoder[i].answer[5] = *ptr_val;
+							ptr_val ++;
+							telescope->encoder[i].answer[6] = *ptr_val;
+
+							printf( "[telescope_run] telescope->encoder[%d].answer = 0x%X 0x%X 0x%X 0x%X\n", i, telescope->encoder[i].answer[3], telescope->encoder[i].answer[4], telescope->encoder[i].answer[5], telescope->encoder[i].answer[6]);
 
 							int z;
 							for (z=0; z<7; z++) 
@@ -743,20 +766,26 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
 							telescope->encoder[i].answer[9] = '#';
 						}
 
+						//Emulate the response of the PIC, which control the encoders and servos
 						memset( telescope->encoder[i].message, 0, 16 );
 
 						if( timeout_error_flag ) {
                             printf( "[telescope_run] timeout ERROR\n" );
                         } else {
-                            if( verbose )
-                                printf( "[telescope_run] Received the answer from PIC for 0x%02X enc_value= 0x%X 0x%X 0x%X 0x%X val=%d\n", telescope->encoder[i].i2c_address, telescope->encoder[i].answer[3], telescope->encoder[i].answer[4], telescope->encoder[i].answer[5], telescope->encoder[i].answer[6],telescope_sim->encoder[i].data[mem_address]);
+                            if( verbose ) { 
+								if (rest  == 0) 
+                                	printf( "[telescope_run] Received the answer from PIC for 0x%02X enc_value= 0x%X 0x%X 0x%X 0x%X val=%d\n", telescope->encoder[i].i2c_address, telescope->encoder[i].answer[3], telescope->encoder[i].answer[4], telescope->encoder[i].answer[5], telescope->encoder[i].answer[6],telescope->encoder[i].data[mem_address]);
+								else 
+                                	printf( "[telescope_run] Received the answer from PIC for 0x%02X enc_value= 0x%X 0x%X 0x%X 0x%X val=%d\n", telescope->encoder[i].i2c_address+1, telescope->encoder[i].answer[3], telescope->encoder[i].answer[4], telescope->encoder[i].answer[5], telescope->encoder[i].answer[6],telescope->encoder[i].data[mem_address]);
+
+							}
                         }
                         binary_semaphore_post( read_semaphore_id );
                         gettimeofday( & gtime, & tzone );
                         endT  = ((double) gtime.tv_usec)/1000000.;
                         endT += (double) gtime.tv_sec;
-                        if( verbose )
-                            printf( "[telescope_run] dT=%10.6lf[s]\n", endT - startT );
+                        if( verbose ) 
+                            printf( "[telescope_run] message processed in dT=%10.6lf[s]\n", endT - startT );
                     }
                     binary_semaphore_post( semaphore_id );
 
