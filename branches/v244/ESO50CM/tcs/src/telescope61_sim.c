@@ -701,9 +701,9 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
 						int mem_address  = telescope->encoder[i].message[2];
 						printf("\n[telescope_run] -----------------------------------------\n");
 						if (rest == 0)
-						    printf("[telescope_run] New message received from LCUControl type=Set\n");
+						    printf("[telescope_run] New message received from LCUControl type=SET\n");
 						else
-						    printf("[telescope_run] New message received from LCUControl type=Get\n");
+						    printf("[telescope_run] New message received from LCUControl type=GET\n");
 
 						printf( "[telescope_run] Sending new message to PIC for 0x%02X mem_address=%d\n", telescope->encoder[i].message[1], mem_address /*telescope->encoder[i].message[2]*/ );
 						if(rest == 0) {
