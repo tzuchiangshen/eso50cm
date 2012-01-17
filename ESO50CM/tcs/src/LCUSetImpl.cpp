@@ -464,8 +464,7 @@ LCUImpl::parkTelescope(const Ice::Current& c)
     	            m_lcu->telescope->alpha->Motor->readDeviceMemory( 7, & alpha_mtr_counts, 0  );
     	            printf("LCUImpl::parkTelescope: HW returns alpha_counts: %d\n", alpha_mtr_counts);
     	            if( -50 < alpha_mtr_counts && alpha_mtr_counts < 50 ) {
-						printf("LCUImpl::parkTelescope: reached to the target, stopping the motor in RA\n");A
-						alpha_metr_counts = 0;
+						printf("LCUImpl::parkTelescope: reached to the target, stopping the motor in RA\n");
     	                m_lcu->telescope->alpha->Motor->readDeviceMemory( 7, & alpha_mtr_counts, 0  );
     	                goto_alpha_flag = false;
 					}
@@ -476,7 +475,6 @@ LCUImpl::parkTelescope(const Ice::Current& c)
     	            printf("LCUImpl::parkTelescope: HW returns delta_mtr_counts: %d\n",delta_mtr_counts);
     	            if( -50 < delta_mtr_counts && delta_mtr_counts < 50 ) {
 						printf("LCUImpl::parkTelescope: reached to the target, stopping the motor in Dec\n");
-						delta_mtr_counts = 0;
     	                m_lcu->telescope->delta->Motor->readDeviceMemory( 7, & delta_mtr_counts, 0  );
     	                goto_delta_flag = false;
 					}
