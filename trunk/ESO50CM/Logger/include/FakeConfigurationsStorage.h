@@ -28,6 +28,7 @@ class ConfigurationsStorage {
     virtual vector<string> getStringVector(string section,string key) {  };
     virtual vector<double> getDoubleVector(string section,string key) {  };
     virtual vector<string> getKeys(string section) {   };
+    virtual vector<string> getSections() {} ;
     
     // setters
     //   throws SectionNotFound Exception or KeyNotFound Exception
@@ -37,6 +38,7 @@ class ConfigurationsStorage {
     virtual void setIntVector(string section,string key, vector<int> values) {};    
     virtual void setStringVector(string section,string key,vector<string> values) {};
     virtual void setDoubleVector(string section,string key,vector<double> values) {};
+    
     
 };
 
