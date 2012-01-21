@@ -95,6 +95,34 @@ static void exit_handler(int s)
   quit = 1; 
 }
 
+void myMemcpy(char *dst, char *src, unsigned int size) {
+    //TSH: don't understand why memcpy doesn't work. Until so, I will use mine version
+	//memcpy(telescope_sim->encoder[i].data[mem_address], &telescope->encoder[i].message[3], 4);
+    char *ptr = (char*)dst;
+	int i=0;
+	for( i=0; i<size; i++) {
+	   *ptr = *src;
+   	   ptr++;
+	   src++;
+	}	
+}
+
+/**
+ *  alpha motor_enc_to_worm_enc
+ */
+int alpha_motor_enc_to_worm_enc(int motor_enc) {
+	//see configuration file
+	return (int)(((281.0 / (1024.0*360.0)) + (motor_enc / (3000.0 * 17280.0)))*(1024.0 * 360.0));
+}
+
+/**
+ *  delta motor_enc_to_worm_enc
+ */
+int delta_motor_enc_to_worm_enc(int motor_enc) {
+	//see configuration files for delta 
+    return (int)(((794.0 / (1024.0 * -288.0)) + (motor_enc / (3000.0 * 13824.0)))*(1024.0 * -288.0));
+}	
+
 /**
  *  telescope run
  */
@@ -683,10 +711,12 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
             /**
             * Checks for a message in the instrument shared memory... SIMULATION
             */
-			int enc_count;
-			enc_count = 0;
-			char *ptr = (char*)&enc_count;
-			char *ptr2;
+			//int enc_count;
+			//enc_count = 0;
+			char *ptr;
+			//char *ptr2;
+			char *src;
+			char *dst;
             if( bin_message_len == 0 ) {
                 for( i = 0; i < 6; i ++ ) {
                     binary_semaphore_wait( semaphore_id );
@@ -697,17 +727,12 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
 
 						int check_sum = 0;
 
-						int rest = telescope->encoder[i].message[1] % 2;
+						int message_type = telescope->encoder[i].message[1] % 2;
 						int mem_address  = telescope->encoder[i].message[2];
 						printf("\n[telescope_run] -----------------------------------------\n");
-						if (rest == 0)
+						printf( "[telescope_run] New message received, to be sent to PIC for 0x%02X mem_address=%d\n", telescope->encoder[i].message[1], mem_address );
+						if(message_type == 0) {
 						    printf("[telescope_run] New message received from LCUControl type=SET\n");
-						else
-						    printf("[telescope_run] New message received from LCUControl type=GET\n");
-
-						printf( "[telescope_run] Sending new message to PIC for 0x%02X mem_address=%d\n", telescope->encoder[i].message[1], mem_address /*telescope->encoder[i].message[2]*/ );
-						if(rest == 0) {
-							//printf("es un write: \n");
 							//even => comes from setDeviceMemory, save the encoder value for later the next readDeviceMemory()
 				    		//Emulate sending data to the PIC (RS232)
 				    		//it will save the target encoder value in a internal memory structure 
@@ -715,48 +740,92 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                             length = 0;
                             nums_of_time_outs = 0;
                             timeout_error_flag = 0;
-							//maybe its better to use memcopy
-   							*ptr = telescope->encoder[i].message[3];
-   							ptr++;
-   							*ptr = telescope->encoder[i].message[4];
-   							ptr++;
-   							*ptr = telescope->encoder[i].message[5];
-   							ptr++;
-   							*ptr = telescope->encoder[i].message[6];
-			                //memcpy(telescope_sim->encoder[i].data[mem_address], &telescope->encoder[i].message[3], 4);
-							ptr = (char*)&telescope->encoder[i].data[mem_address];
-							*ptr = telescope->encoder[i].message[3];
-   							ptr++;
-   							*ptr = telescope->encoder[i].message[4];
-   							ptr++;
-   							*ptr = telescope->encoder[i].message[5];
-   							ptr++;
-   							*ptr = telescope->encoder[i].message[6];
-                            if( verbose ) {
-                                printf( "[telescope_run] telescope->encoder[%d].message = 0x%X 0x%X 0x%X 0x%X\n", i, telescope->encoder[i].message[3], telescope->encoder[i].message[4], telescope->encoder[i].message[5], telescope->encoder[i].message[6]);
-								printf( "[telescope_run] telescope->encoder[%d].data[%d] = %d\n", i, mem_address, telescope->encoder[i].data[mem_address]);
-//                                printf( "[telescope_run] enc_count[%d].data[%d] = 0x%X 0x%X 0x%X 0x%X\n", i, mem_address, telescope->encoder[i].data[mem_address], telescope->encoder[i].data[4], telescope->encoder[i].data[5], telescope->encoder[i].data[6]);
-   						    }
 
+							//copy message to data
+							dst = (char*)&telescope->encoder[i].data[mem_address];
+							src = (char*)&telescope->encoder[i].message[3];
+							myMemcpy(dst, src, 4);
+							printf( "[telescope_run] saving received meesage to telescope->encoder[%d].data[%d] = %d\n", 
+								                          i, 
+														  mem_address, 
+														  *(int *)&telescope->encoder[i].data[mem_address]);
+                            //copy message to answer
+							dst = (char*)&telescope->encoder[i].answer[3];
+							src = (char*)&telescope->encoder[i].message[3];
+							myMemcpy(dst, src, 4);
+						    printf( "[telescope_run] preparing answer to the requested message, telescope->encoder[%d].message = 0x%X 0x%X 0x%X 0x%X val=%d\n", 
+								                          i, 
+								                          telescope->encoder[i].message[3], 
+														  telescope->encoder[i].message[4], 
+														  telescope->encoder[i].message[5], 
+														  telescope->encoder[i].message[6], 
+														  *(int *)&telescope->encoder[i].message[3]);
+
+							if ( mem_address == 7)  {
+								//it's a command to move the ALPHA motor, we need to adjust the equivalent values in the enc of the WORM in order to 
+								//simluate the telescope movement, but the encoder count needs to be transform from motor->worm
+								if ( telescope->encoder[i].message[1] == 0xA2) {
+									//alpha-motor, then set the alpha-worm encoder 
+									// first, convert the resolution then enc from motor into worm 
+									int worm_enc = 0;
+									int motor_enc = 0;
+									dst = (char*)&motor_enc;
+							        src = (char*)&telescope->encoder[i].message[3];
+							        myMemcpy(dst, src, 4);
+									worm_enc = alpha_motor_enc_to_worm_enc(motor_enc);
+								    printf("[telescope_run] converted alpha motor enc to alpha worm enc (0xA6 mem_address=4), motor enc = %d, worm enc=%d\n", motor_enc,  worm_enc);
+                                    // second, save the converted enc value so the next readMemory(4) will return this value 
+							        dst = (char*)&telescope->encoder[2].data[4];
+									src = (char*)&worm_enc;
+							        myMemcpy(dst, src, 4);
+								    printf("[telescope_run] Simulate movement of aplha-motor at worm encoder (0xA6 mem_address=4), value = %d\n", worm_enc);
+								} else if( telescope->encoder[i].message[1] == 0xA4 ) {
+									//delta-motor, then set the delta-worm encoder 
+									//first, convert the resolution then enc from motor into worm 
+									int worm_enc = 0;
+									int motor_enc = 0;
+									dst = (char*)&motor_enc;
+							        src = (char*)&telescope->encoder[i].message[3];
+							        myMemcpy(dst, src, 4);
+									worm_enc = delta_motor_enc_to_worm_enc(motor_enc);
+								    printf("[telescope_run] converted delta motor enc to delta worm enc (0xAA mem_address=4), motor enc = %d, worm enc=%d\n", motor_enc,  worm_enc);
+
+                                    // second, save the converted enc value so the next readMemory(4) will return this value 
+							        dst = (char*)&telescope->encoder[4].data[4];
+							        src = (char*)&worm_enc;
+							        myMemcpy(dst, src, 4);
+								    printf("[telescope_run] Simulate movement of delta-motor at worm enc (0xAA mem_address=4), value = %d\n", worm_enc);
+								}
+							}
 						}  else {
 							//odd => read 
-							//printf("es un read: \n");
-							printf( "[telescope_run] telescope->encoder[%d].data[%d] = %d\n", i, mem_address, telescope->encoder[i].data[mem_address]);
-							
-							int val = telescope->encoder[i].data[mem_address];
-							val = 40;
-							printf( "[telescope_run] val = %d\n", val);
+						    printf("[telescope_run] New message received from LCUControl type=GET\n");
+						    if (mem_address == 7) {
+							   int val = telescope->encoder[i].data[mem_address];
+							   //simulate the movement is finished, 
+							   //TSH: move to thread and add some delay before reaching stop condition (< 50 enc)
+							   val = 23; 
+							   dst = (char*)&telescope->encoder[i].answer[3];
+							   src = (char*)&val;
+							   myMemcpy(dst, src, 4);
+							} else {
+							   int val = telescope->encoder[i].data[mem_address];
+							   dst = (char*)&telescope->encoder[i].answer[3];
+							   src = (char*)&val;
+							   myMemcpy(dst, src, 4);
+							}
 
-							char *ptr_val = (char*)&val;
-                            telescope->encoder[i].answer[3] = *ptr_val;
-							ptr_val ++;
-							telescope->encoder[i].answer[4] = *ptr_val;
-							ptr_val ++;
-							telescope->encoder[i].answer[5] = *ptr_val;
-							ptr_val ++;
-							telescope->encoder[i].answer[6] = *ptr_val;
-
-							printf( "[telescope_run] telescope->encoder[%d].answer = 0x%X 0x%X 0x%X 0x%X\n", i, telescope->encoder[i].answer[3], telescope->encoder[i].answer[4], telescope->encoder[i].answer[5], telescope->encoder[i].answer[6]);
+							printf("[telescope_run] current values of telescope->encoder[%d].data[%d] = %d\n", 
+							                              i, 
+							                              mem_address, 
+														  telescope->encoder[i].data[mem_address]);
+							printf( "[telescope_run] answering the requested message, telescope->encoder[%d].answer = 0x%X 0x%X 0x%X 0x%X val=%d\n", 
+							                              i, 
+														  telescope->encoder[i].answer[3], 
+														  telescope->encoder[i].answer[4], 
+														  telescope->encoder[i].answer[5], 
+														  telescope->encoder[i].answer[6], 
+														  *(int *)&telescope->encoder[i].answer[3]);
 
 							int z;
 							for (z=0; z<7; z++) 
@@ -767,17 +836,30 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
 						}
 
 						//Emulate the response of the PIC, which control the encoders and servos
+						//if you don't reset the message, it will be process again by the telescope61 for ever!!!!!!!!!
 						memset( telescope->encoder[i].message, 0, 16 );
 
 						if( timeout_error_flag ) {
                             printf( "[telescope_run] timeout ERROR\n" );
                         } else {
                             if( verbose ) { 
-								if (rest  == 0) 
-                                	printf( "[telescope_run] Received the answer from PIC for 0x%02X enc_value= 0x%X 0x%X 0x%X 0x%X val=%d\n", telescope->encoder[i].i2c_address, telescope->encoder[i].answer[3], telescope->encoder[i].answer[4], telescope->encoder[i].answer[5], telescope->encoder[i].answer[6],telescope->encoder[i].data[mem_address]);
-								else 
-                                	printf( "[telescope_run] Received the answer from PIC for 0x%02X enc_value= 0x%X 0x%X 0x%X 0x%X val=%d\n", telescope->encoder[i].i2c_address+1, telescope->encoder[i].answer[3], telescope->encoder[i].answer[4], telescope->encoder[i].answer[5], telescope->encoder[i].answer[6],telescope->encoder[i].data[mem_address]);
-
+								if (message_type  == 0) { 
+                                	printf( "[telescope_run] Replying answer (received from PIC) to LCUControl for 0x%02X enc_value= 0x%X 0x%X 0x%X 0x%X val=%d\n", 
+									                      telescope->encoder[i].i2c_address, 
+														  telescope->encoder[i].answer[3], 
+														  telescope->encoder[i].answer[4], 
+														  telescope->encoder[i].answer[5], 
+														  telescope->encoder[i].answer[6],
+														  telescope->encoder[i].data[mem_address]);
+								} else {
+                                	printf( "[telescope_run] Received the answer from PIC for 0x%02X enc_value= 0x%X 0x%X 0x%X 0x%X val=%d\n", 
+									                      telescope->encoder[i].i2c_address+1, 
+														  telescope->encoder[i].answer[3], 
+														  telescope->encoder[i].answer[4], 
+														  telescope->encoder[i].answer[5], 
+														  telescope->encoder[i].answer[6],
+														  telescope->encoder[i].data[mem_address]);
+								}
 							}
                         }
                         binary_semaphore_post( read_semaphore_id );

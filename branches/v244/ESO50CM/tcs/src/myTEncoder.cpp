@@ -131,6 +131,7 @@ double myTEncoder::getDegPosition( void )
     double degs;
     int value;
     readDeviceMemory( 4, & value, 0 );
+	printf("[myTEncoder::getDegPosition] readMemory(4)= %d \n", value);
     if( m_encoder->TicsPerRev != 0 ) {
         degs  = (double) value;                            //tics;
         degs -= m_encoder->HomePosition;

@@ -27,7 +27,7 @@ void LCUImpl::getConfigState()
   extern int verbose;
   
   if( verbose ) 
-      printf( "LCUImpl::getConfigState" );
+      printf( "[LCUImpl::getConfigState]\n" );
 
   /** Acquire Semaphore for SHM */
   m_lcu->waitSemaphore();
@@ -43,7 +43,7 @@ void LCUImpl::getTrackingState()
   extern int verbose;
   
   if( verbose ) 
-      printf( "LCUImpl::getTrackingState" );
+      printf( "[LCUImpl::getTrackingState]\n" );
 
   /** Acquire Semaphore for SHM */
   m_lcu->waitSemaphore();
@@ -59,7 +59,7 @@ bool LCUImpl::isConfigured(const Ice::Current& c)
 
   extern int verbose;
   if( verbose ) 
-    printf( "[LCUImpl::isConfigured" );
+    printf( "[LCUImpl::isConfigured]\n" );
 
   return m_configured;
 }
@@ -69,7 +69,7 @@ bool LCUImpl::isTracking(const Ice::Current& c)
 
   extern int verbose;
   if( verbose ) 
-    printf( "[LCUImpl::isTracking" );
+    printf( "[LCUImpl::isTracking]\n" );
 
   return m_tracking;
 }

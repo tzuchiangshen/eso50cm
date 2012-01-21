@@ -455,7 +455,7 @@ int myTelescope::getIfNewData( void )
 
 
 
-/** * currentPosition
+/** * targetPosition
  */
 int myTelescope::targetPosition( double * lst, double * ra, double * dec, double * alt, double * az, double * ha  )
 {

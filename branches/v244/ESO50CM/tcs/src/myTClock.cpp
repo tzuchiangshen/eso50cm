@@ -51,11 +51,14 @@ double myTClock::getClockLongitude( void  )
  */
 double myTClock::currentTime( void )
 {
+	printf("[myTClock::currentTime]\n"); 
     gettimeofday( & m_clock_data->gtime, & m_clock_data->tzone );
     /** UTC */
     gmtime_r( & m_clock_data->gtime.tv_sec, & m_clock_data->UTime  );
+	printf("[myTClock::currentTime] UTC = %s", asctime(&m_clock_data->UTime)); 
     /** LTime */
     localtime_r( & m_clock_data->gtime.tv_sec, & m_clock_data->LTime  );
+	printf("[myTClock::currentTime] LST = %s", asctime(&m_clock_data->LTime)); 
 	/** Local Time in milliseconds **/
 	m_clock_data->MlTime = (m_clock_data->gtime.tv_sec)+((m_clock_data->gtime.tv_usec/1000000.0));
 
