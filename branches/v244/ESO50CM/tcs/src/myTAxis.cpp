@@ -86,17 +86,19 @@ int myTAxis::offsetAxisInDeg( double degs )
 
 
 /**
- *  degToCount
+ *  degToCountMotorEnc
  */
-int myTAxis::degToCount( double degs )
+int myTAxis::degToCountMotorEnc( double degs )
 {
     int mtr_counts;
 	double reduction;
 	double tics;
+	double home;
 	double tmp;
 
 	reduction = Motor->getEncoderToAxis_Reduction();
 	tics = Motor->getTicsPerRev();
+	home = Motor->getHomePosition();
 
     tmp = degs / 360.0; 
     tmp *= reduction;
@@ -104,7 +106,63 @@ int myTAxis::degToCount( double degs )
 
     mtr_counts = (int) round( tmp );
 	if(verbose)
-	    printf("[myTAxis::offsetAxisInDeg] degs= %lf, reduction=%.lf, tics=%.lf, mtr_count=%d\n", degs, reduction, tics, mtr_counts);
+	    printf("[myTAxis::degToCountMotorEnc] axis=%c,  degs= %lf, reduction=%.lf, tics=%.lf, home=%.lf, mtr_count=%d\n", m_id, degs, reduction, tics, home, mtr_counts);
 
 	return mtr_counts;
 }
+
+
+/**
+ *  degToCountAxisEnc
+ */
+int myTAxis::degToCountAxisEnc( double degs )
+{
+    int mtr_counts;
+	double reduction;
+	double tics;
+	double home;
+	double tmp;
+
+	reduction = AxisE->getEncoderToAxis_Reduction();
+	tics = AxisE->getTicsPerRev();
+	home = AxisE->getHomePosition();
+
+    tmp = degs / (360.0/reduction); 
+	tmp *= tics;
+	tmp += home;
+
+    mtr_counts = (int) round( tmp );
+	if(verbose)
+	    printf("[myTAxis::degToCountAxisEnc] axis=%c,  degs= %lf, reduction=%.lf, tics=%.lf, home=%.lf, mtr_count=%d\n", m_id, degs, reduction, tics, home, mtr_counts);
+
+	return mtr_counts;
+}
+
+
+/**
+ *  degToCountWormEnc
+ */
+int myTAxis::degToCountWormEnc( double degs )
+{
+    int mtr_counts;
+	double reduction;
+	double tics;
+	double home;
+	double tmp;
+
+	reduction = WormE->getEncoderToAxis_Reduction();
+	tics = WormE->getTicsPerRev();
+	home = WormE->getHomePosition();
+
+    tmp = degs / (360.0/reduction); 
+	tmp *= tics;
+	tmp += home;
+
+    mtr_counts = (int) round( tmp );
+	if(verbose)
+	    printf("[myTAxis::degToCountWormEnc] axis=%c,  degs= %lf, reduction=%.lf, tics=%.lf, home=%.lf, mtr_count=%d\n", m_id, degs, reduction, tics, home, mtr_counts);
+
+	return mtr_counts;
+}
+
+
