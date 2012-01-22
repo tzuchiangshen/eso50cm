@@ -33,7 +33,7 @@ LCUImpl::LCUImpl():
 }
 
 void
-LCUImpl::sayHello(int delay, const Ice::Current&)
+LCUImpl::sayHello(int delay, const Ice::Current& c)
 {
     if(delay != 0)
     {
@@ -41,10 +41,11 @@ LCUImpl::sayHello(int delay, const Ice::Current&)
     }
 	int alpha_mtr_counts = delay * 3000;
     printf("\nHello World!\n");
-    m_lcu->telescope->alpha->Motor->setDeviceMemory( 7, & alpha_mtr_counts, 0  );
-	printf("setDeviceMemory = %d\n", alpha_mtr_counts);
-    m_lcu->telescope->alpha->Motor->readDeviceMemory( 7, & alpha_mtr_counts, 0  );
-	printf("readDeviceMemory = %d\n", alpha_mtr_counts);
+    OUC::TelescopePosition offset;
+	offset.RA = 30.0;
+	offset.Dec = 10.0;
+	offset = (const ::OUC::TelescopePosition&)offset;
+	setOffset(offset);
     printf("Bye World!\n");
 }
 

@@ -124,6 +124,22 @@ int delta_motor_enc_to_worm_enc(int motor_enc) {
 }	
 
 /**
+ *  alpha motor_enc_to_axis_enc
+ */
+int alpha_motor_enc_to_axis_enc(int motor_enc) {
+	//see configuration file
+	return (int)(((281.0 / (1024.0*360.0)) + (motor_enc / (3000.0 * 17280.0)))*(1024.0 * 360.0));
+}
+
+/**
+ *  delta motor_enc_to_axis_enc
+ */
+int delta_motor_enc_to_axis_enc(int motor_enc) {
+	//see configuration files for delta 
+    return (int)(((794.0 / (1024.0 * -288.0)) + (motor_enc / (3000.0 * 13824.0)))*(1024.0 * -288.0));
+}
+
+/**
  *  telescope run
  */
 void telescope_run( const char * device, speed_t baudrate, const char * socket_name ) {
@@ -729,10 +745,13 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
 
 						int message_type = telescope->encoder[i].message[1] % 2;
 						int mem_address  = telescope->encoder[i].message[2];
-						printf("\n[telescope_run] -----------------------------------------\n");
+						if(message_type == 0) {
+						    printf("\n[telescope_run] --------------------SET ---------------------\n");
+						} else {
+						    printf("\n[telescope_run] --------------------GET----------------------\n");
+						}
 						printf( "[telescope_run] New message received, to be sent to PIC for 0x%02X mem_address=%d\n", telescope->encoder[i].message[1], mem_address );
 						if(message_type == 0) {
-						    printf("[telescope_run] New message received from LCUControl type=SET\n");
 							//even => comes from setDeviceMemory, save the encoder value for later the next readDeviceMemory()
 				    		//Emulate sending data to the PIC (RS232)
 				    		//it will save the target encoder value in a internal memory structure 
@@ -766,7 +785,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
 								//simluate the telescope movement, but the encoder count needs to be transform from motor->worm
 								if ( telescope->encoder[i].message[1] == 0xA2) {
 									//alpha-motor, then set the alpha-worm encoder 
-									// first, convert the resolution then enc from motor into worm 
+									// 1.1. convert the resolution then enc from motor into worm 
 									int worm_enc = 0;
 									int motor_enc = 0;
 									dst = (char*)&motor_enc;
@@ -774,14 +793,43 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
 							        myMemcpy(dst, src, 4);
 									worm_enc = alpha_motor_enc_to_worm_enc(motor_enc);
 								    printf("[telescope_run] converted alpha motor enc to alpha worm enc (0xA6 mem_address=4), motor enc = %d, worm enc=%d\n", motor_enc,  worm_enc);
-                                    // second, save the converted enc value so the next readMemory(4) will return this value 
+                                    // 1.2. save the converted enc value so the next readMemory(4) will return this value 
 							        dst = (char*)&telescope->encoder[2].data[4];
 									src = (char*)&worm_enc;
 							        myMemcpy(dst, src, 4);
 								    printf("[telescope_run] Simulate movement of aplha-motor at worm encoder (0xA6 mem_address=4), value = %d\n", worm_enc);
-								} else if( telescope->encoder[i].message[1] == 0xA4 ) {
+								    // 1.3. accumulate the converted enc value so the next readMemory(2) will return this correct value 
+									int current_val; 
+							        dst = (char*)&current_val;
+									src = (char*)&telescope->encoder[2].data[2];
+							        myMemcpy(dst, src, 4);
+									current_val += worm_enc;
+							        dst = (char*)&telescope->encoder[2].data[2];
+									src = (char*)&current_val;
+							        myMemcpy(dst, src, 4);
+								    printf("[telescope_run] Simulate abs movement of aplha-motor at worm encoder (0xA6 mem_address=2), value = %d\n", worm_enc);
+   									// 2.1. convert the resolution then enc from motor into axis
+									int axis_enc = 0;
+									axis_enc = alpha_motor_enc_to_axis_enc(motor_enc);
+								    printf("[telescope_run] converted alpha motor enc to alpha axis enc (0xA6 mem_address=4), motor enc = %d, worm enc=%d\n", motor_enc,  axis_enc);
+                                    // 2.2. save the converted enc value so the next readMemory(4) will return this value 
+							        dst = (char*)&telescope->encoder[3].data[4];
+									src = (char*)&axis_enc;
+							        myMemcpy(dst, src, 4);
+								    printf("[telescope_run] Simulate movement of aplha-motor at worm encoder (0xA8 mem_address=4), value = %d\n", worm_enc);
+								    // 2.3. accumulate the converted enc value so the next readMemory(2) will return this correct value 
+									current_val = 0;
+							        dst = (char*)&current_val;
+									src = (char*)&telescope->encoder[3].data[2];
+							        myMemcpy(dst, src, 4);
+									current_val += axis_enc;
+							        dst = (char*)&telescope->encoder[3].data[2];
+									src = (char*)&current_val;
+							        myMemcpy(dst, src, 4);
+								    printf("[telescope_run] Simulate abs movement of aplha-motor at axis encoder (0xA8 mem_address=2), value = %d\n", worm_enc);
+                             } else if( telescope->encoder[i].message[1] == 0xA4 ) {
 									//delta-motor, then set the delta-worm encoder 
-									//first, convert the resolution then enc from motor into worm 
+									//1.1 convert the resolution then enc from motor into worm 
 									int worm_enc = 0;
 									int motor_enc = 0;
 									dst = (char*)&motor_enc;
@@ -790,16 +838,44 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
 									worm_enc = delta_motor_enc_to_worm_enc(motor_enc);
 								    printf("[telescope_run] converted delta motor enc to delta worm enc (0xAA mem_address=4), motor enc = %d, worm enc=%d\n", motor_enc,  worm_enc);
 
-                                    // second, save the converted enc value so the next readMemory(4) will return this value 
+                                    // 1.2. save the converted enc value so the next readMemory(4) will return this value 
 							        dst = (char*)&telescope->encoder[4].data[4];
 							        src = (char*)&worm_enc;
 							        myMemcpy(dst, src, 4);
 								    printf("[telescope_run] Simulate movement of delta-motor at worm enc (0xAA mem_address=4), value = %d\n", worm_enc);
-								}
+								    // 1.3. accumulate the converted enc value so the next readMemory(2) will return this correct value 
+									int current_val; 
+							        dst = (char*)&current_val;
+									src = (char*)&telescope->encoder[4].data[2];
+							        myMemcpy(dst, src, 4);
+									current_val += worm_enc;
+							        dst = (char*)&telescope->encoder[4].data[2];
+									src = (char*)&current_val;
+							        myMemcpy(dst, src, 4);
+								    printf("[telescope_run] Simulate abs movement of delta-motor at worm encoder (0xAA mem_address=2), value = %d\n", worm_enc);
+   									// 2.1. convert the resolution then enc from motor into axis
+									int axis_enc = 0;
+									axis_enc = delta_motor_enc_to_axis_enc(motor_enc);
+								    printf("[telescope_run] converted delta-motor enc to alpha axis enc (0xAC mem_address=4), motor enc = %d, worm enc=%d\n", motor_enc,  axis_enc);
+                                    // 2.2. save the converted enc value so the next readMemory(4) will return this value 
+							        dst = (char*)&telescope->encoder[5].data[4];
+									src = (char*)&axis_enc;
+							        myMemcpy(dst, src, 4);
+								    printf("[telescope_run] Simulate movement of delta-motor at axis enc (0xAC mem_address=4), value = %d\n", worm_enc);
+								    // 2.3. accumulate the converted enc value so the next readMemory(2) will return this correct value 
+									current_val = 0;
+							        dst = (char*)&current_val;
+									src = (char*)&telescope->encoder[5].data[2];
+							        myMemcpy(dst, src, 4);
+									current_val += axis_enc;
+							        dst = (char*)&telescope->encoder[5].data[2];
+									src = (char*)&current_val;
+							        myMemcpy(dst, src, 4);
+								    printf("[telescope_run] Simulate abs movement of aplha-motor at axis encoder (0xAC mem_address=2), value = %d\n", worm_enc);
+                                }								
 							}
 						}  else {
 							//odd => read 
-						    printf("[telescope_run] New message received from LCUControl type=GET\n");
 						    if (mem_address == 7) {
 							   int val = telescope->encoder[i].data[mem_address];
 							   //simulate the movement is finished, 

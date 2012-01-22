@@ -271,19 +271,39 @@ LCUImpl::setTarget(const OUC::TelescopePosition& targetPos, const Ice::Current& 
 }
 
 void 
-LCUImpl::setOffset(const OUC::TelescopePosition& offsetPos, const Ice::Current& c)
+LCUImpl::setOffset(const ::OUC::TelescopePosition& offset, const Ice::Current& c)
 {
+    setOffset(offset); 
+}
+
+void LCUImpl::setOffset(const ::OUC::TelescopePosition& offset) {
+	/** 1. Stop tracking 
+	    2. Calculate the offset 
+		2.1. Set & retrieve the current position  RA, Dec in degree
+		2.2. Set & retrieve tht target position   RA, Dec in degree (may be done in advance)
+		2.3. Calculate the difference (offset) RA, Dec in degree
+		2.4. Convert offset in term of count of encoders in the motors (incremental encoders)
+		3. Move the telescope 
+		3.1. Set the amount of counts of encoders to be move in the motors, and start the movement
+		3.2. Monitor until the abs(counts) < 50
+		4. Start tracking 
+	**/
 	extern int verbose;
 	int  alpha_mtr_counts;
 	int  delta_mtr_counts;
+	int  alpha_axisE_counts;
+	int  delta_axisE_counts;
+	int  alpha_wormE_counts;
+	int  delta_wormE_counts;
 	char mem_address;
+    OUC::TelescopePosition offsetPos;
 	
 	int no_quit;
 	int goto_alpha_flag = false;
 	int goto_delta_flag = false;
 
 	if( verbose )
-		printf( "LCUImpl::setTarget" );
+		printf( "LCUImpl::setOffset\n" );
 	
 	/** Is telescope configured **/
 	if(!m_configured)
@@ -292,53 +312,74 @@ LCUImpl::setOffset(const OUC::TelescopePosition& offsetPos, const Ice::Current& 
 		ex.reason = "Telecope Not Configured";
 		throw ex;
 	}
+	/** 2.3. Calculate the difference (offset) RA, Dec in degree **/
+	offsetPos.RA = offset.RA;
+	offsetPos.Dec = offset.Dec;
     
-	/** Set telescope in running state and define offset **/
+	/** 2.4. Convert offset in term of count of encoders in the motors (incremental encoders) **/
 	m_lcu->waitSemaphore();
 	m_lcu->telescope->setIsRunningGoto(true);
-	alpha_mtr_counts = m_lcu->telescope->alpha->offsetAxisInDeg(offsetPos.RA);
-	//offsetPos.Dec *= -1.;
-	double offsetDec = offsetPos.Dec * -1.0;
-	delta_mtr_counts = m_lcu->telescope->delta->offsetAxisInDeg(offsetDec);
+    //TSH: why we need to change the sign??
+	//offsetPos.RA *= -1.;
+    alpha_mtr_counts = m_lcu->telescope->alpha->degToCountMotorEnc(offsetPos.RA);
+    offsetPos.Dec *= -1.;
+    delta_mtr_counts = m_lcu->telescope->delta->degToCountMotorEnc(offsetPos.Dec);
+    printf("LCUImpl::setOffset: Will add an offset in the telescope position in RA: %lf, Dec: %lf\n", offsetPos.RA, offsetPos.Dec);
+    printf("LCUImpl::setOffset: Will move the motors to alpha_mtr_counts: %d, delta_mtr_counts: %d\n", alpha_mtr_counts, delta_mtr_counts);
+    alpha_axisE_counts = m_lcu->telescope->alpha->degToCountAxisEnc(offsetPos.RA);
+    delta_axisE_counts = m_lcu->telescope->delta->degToCountAxisEnc(offsetPos.Dec);
+    printf("LCUImpl::setOffset: Will move the axisE to alpha_axisE_counts: %d, delta_axisE_counts: %d\n", alpha_axisE_counts, delta_axisE_counts);
+    alpha_wormE_counts = m_lcu->telescope->alpha->degToCountWormEnc(offsetPos.RA);
+    delta_wormE_counts = m_lcu->telescope->delta->degToCountWormEnc(offsetPos.Dec);
+    printf("LCUImpl::setOffset: Will move the WormE to alpha_wormE_counts: %d, delta_wormE_counts: %d\n", alpha_wormE_counts, delta_wormE_counts);
+     
+	/** 3. Move the telescope  **/
+	/**	3.1. Set the amount of counts of encoders to be move in the motors, and start the movement **/
+
 	if( alpha_mtr_counts < -50 || 50 < alpha_mtr_counts ) {
-		m_lcu->telescope->alpha->Motor->setDeviceMemory( 7, & alpha_mtr_counts, 0  );
+        m_lcu->telescope->alpha->Motor->runEncSteps(alpha_mtr_counts);
 		goto_alpha_flag = true;
 	}
 	if( delta_mtr_counts < -50 || 50 < delta_mtr_counts ) 
 	{
-		m_lcu->telescope->delta->Motor->setDeviceMemory( 7, & delta_mtr_counts, 0  );
+        m_lcu->telescope->delta->Motor->runEncSteps(delta_mtr_counts);
 		goto_delta_flag = true;
 	}
 	m_lcu->postSemaphore();
 
+	/** 3.2. Monitor until the abs(counts) < 50 **/
 	/** Goto target loop */
 	no_quit = 180;
 	do 
 	{
-		sleep( 1 );
-		mem_address = 7;
+		/** Reading current position */
 		m_lcu->waitSemaphore();
 		if( goto_alpha_flag ) 
 		{
 			m_lcu->telescope->alpha->Motor->readDeviceMemory( 7, & alpha_mtr_counts, 0  );
-			if( -50 < alpha_mtr_counts && alpha_mtr_counts < 50 )
+			printf("LCUImpl::setOffset: MotorE returns alpha_counts: %d\n", alpha_mtr_counts);
+			if( -50 < alpha_mtr_counts && alpha_mtr_counts < 50 ) {
+				printf("LCUImpl::setOffset: reached to the target, stopping the motor in RA\n");
 				goto_alpha_flag = false;
+			}
 		}
 		if( goto_delta_flag ) 
 		{
-		m_lcu->telescope->delta->Motor->readDeviceMemory( 7, & delta_mtr_counts, 0  );
-		if( -50 < delta_mtr_counts && delta_mtr_counts < 50 )
-			goto_delta_flag = false;
+		    m_lcu->telescope->delta->Motor->readDeviceMemory( 7, & delta_mtr_counts, 0  );
+			printf("LCUImpl::setOffset: MotorE returns delta_counts: %d\n", delta_mtr_counts);
+		    if( -50 < delta_mtr_counts && delta_mtr_counts < 50 ) {
+			   printf("LCUImpl::setOffset: reached to the target, stopping the motor in Dec\n");
+			   goto_delta_flag = false;
+			}
 		}
 		m_lcu->postSemaphore();
   	    
 		if( ! goto_delta_flag && ! goto_alpha_flag ) 
-		{
 			no_quit = false;
-		} else 
-		{
+		else 
 			no_quit --;
-		}
+
+	    sleep(1);
 	} while( no_quit );
 
 	/** Stop telescope status */
@@ -387,9 +428,25 @@ LCUImpl::setTracking(const OUC::TrackingInfo& trkInfo, const Ice::Current& c)
 void 
 LCUImpl::parkTelescope(const Ice::Current& c)
 {
+	/** 1. Stop tracking 
+	    2. Calculate the offset 
+		2.1. Set & retrieve the current position  RA, Dec in degree
+		2.2. Set & retrieve tht target position   RA, Dec in degree (may be done in advance)
+		2.3. Calculate the difference (offset) RA, Dec in degree
+		2.4. Convert offset in term of count of encoders in the motors (incremental encoders)
+		3. Move the telescope 
+		3.1. Set the amount of counts of encoders to be move in the motors, and start the movement
+		3.2. Monitor until the abs(counts) < 50
+		4. Start tracking 
+	**/
+
     extern int verbose;
     int  alpha_mtr_counts;
     int  delta_mtr_counts;
+    int  alpha_axisE_counts;
+    int  delta_axisE_counts;
+    int  alpha_wormE_counts;
+    int  delta_wormE_counts;
     int goto_alpha_flag = true;
     int goto_delta_flag = true;
     OUC::TelescopePosition targetPos;
@@ -405,7 +462,7 @@ LCUImpl::parkTelescope(const Ice::Current& c)
         throw ex;
     }  
     
-    /** Stop Tracking **/
+    /** 1. Stop Tracking **/
     if(m_lcu->telescope->getIsTracking()) {
         int ticVel = 0;
         m_lcu->telescope->alpha->Motor->setDeviceMemory(3, &ticVel);
@@ -414,47 +471,58 @@ LCUImpl::parkTelescope(const Ice::Current& c)
         m_tracking = false;
   	    printf("LCUImpl::parkTelescope: Tracking OFF!!");
     }
-     /**Calculate Parking Position **/
+
+	/**    2. Calculate the offset  **/
+
+	/**	2.1. Retrieve the current position  RA, Dec in degree **/
     m_lcu->waitSemaphore();
-     /** Current Position */
     m_lcu->telescope->currentPosition(&targetPos.localSideralTime, &targetPos.RA, &targetPos.Dec, &targetPos.Alt, &targetPos.Az, &targetPos.HA);
+
+	/**2.2. Set & retrieve tht target position   RA, Dec in degree (may be done in advance) **/
     /** Set target = zenith */
 	printf("LCUImpl::parkTelescope: LST for setTarget: %lf, Latitude for setTarget: %lf \n", targetPos.localSideralTime, m_lcu->telescope->getLatitude());
     targetPos.RA =  targetPos.localSideralTime;
     targetPos.Dec = m_lcu->telescope->getLatitude();
     printf("LCUImpl::parkTelescope: RA for setTarget: %lf, Dec for setTarget: %lf \n", targetPos.RA, targetPos.Dec);
     m_lcu->telescope->setTarget(targetPos.RA, targetPos.Dec, &targetPos.Alt, &targetPos.Az);
-    /** Set Offsets **/
+
+	/** 2.3. Calculate the difference (offset) RA, Dec in degree **/
     targetPos.RA = m_lcu->telescope->getDifferenceRA();
     targetPos.Dec = m_lcu->telescope->getDifferenceDec();
-    printf("---------------> %lf\n", targetPos.RA);
-    printf("---------------> %lf\n", targetPos.Dec);
-    targetPos.RA *= -1.;
-	//calculalate the amount of encoder counts (motor) to move in RA
-    alpha_mtr_counts = m_lcu->telescope->alpha->degToCount(targetPos.RA);
-    targetPos.Dec *= -1.;
-	//calculate the amount of encoder counts (motor) to move in Dec
-    delta_mtr_counts = m_lcu->telescope->delta->degToCount(targetPos.Dec);
-    printf("LCUImpl::parkTelescope: Will move the telescope to RA: %lf, Dec: %lf\n", targetPos.RA, targetPos.Dec);
-    printf("LCUImpl::parkTelescope: Will move the motors to alpha_counts: %d, delta_mtr_counts: %d\n", alpha_mtr_counts, delta_mtr_counts);
-  
-    /** Move telescope to zenith **/
-    if( alpha_mtr_counts < -50 || 50 < alpha_mtr_counts ) 
-      {
-        //m_lcu->telescope->alpha->Motor->setDeviceMemory( 7, & alpha_mtr_counts, 0  );
-        m_lcu->telescope->alpha->Motor->runEncSteps(alpha_mtr_counts);
+    printf("required offset in RA---------------> %lf\n", targetPos.RA);
+    printf("required offset in Dec--------------> %lf\n", targetPos.Dec);
 
+	/** 2.4. Convert offset in term of count of encoders in the motors (incremental encoders) **/
+	//calculalate the amount of encoder counts (motor) to move in RA
+    targetPos.RA *= -1.;
+    alpha_mtr_counts = m_lcu->telescope->alpha->degToCountMotorEnc(targetPos.RA);
+    targetPos.Dec *= -1.;
+    delta_mtr_counts = m_lcu->telescope->delta->degToCountMotorEnc(targetPos.Dec);
+    printf("LCUImpl::parkTelescope: Will move the telescope to RA: %lf, Dec: %lf\n", targetPos.RA, targetPos.Dec);
+    printf("LCUImpl::parkTelescope: Will move the motors to alpha_mtr_counts: %d, delta_mtr_counts: %d\n", alpha_mtr_counts, delta_mtr_counts);
+    alpha_axisE_counts = m_lcu->telescope->alpha->degToCountAxisEnc(targetPos.RA);
+    delta_axisE_counts = m_lcu->telescope->delta->degToCountAxisEnc(targetPos.Dec);
+    printf("LCUImpl::parkTelescope: Will move the axisE to alpha_axisE_counts: %d, delta_axisE_counts: %d\n", alpha_axisE_counts, delta_axisE_counts);
+    alpha_wormE_counts = m_lcu->telescope->alpha->degToCountWormEnc(targetPos.RA);
+    delta_wormE_counts = m_lcu->telescope->delta->degToCountWormEnc(targetPos.Dec);
+    printf("LCUImpl::parkTelescope: Will move the WormE to alpha_wormE_counts: %d, delta_wormE_counts: %d\n", alpha_wormE_counts, delta_wormE_counts);
+     
+	/** 3. Move the telescope  **/
+	/**	3.1. Set the amount of counts of encoders to be move in the motors, and start the movement **/
+    // Move telescope to zenith 
+    if( alpha_mtr_counts < -50 || 50 < alpha_mtr_counts ) {
+        m_lcu->telescope->alpha->Motor->runEncSteps(alpha_mtr_counts);
         goto_alpha_flag = true;
-      }
-    if( delta_mtr_counts < -50 || 50 < delta_mtr_counts ) 
-      {
-        //m_lcu->telescope->delta->Motor->setDeviceMemory( 7, & delta_mtr_counts, 0  );
+    }
+
+    if( delta_mtr_counts < -50 || 50 < delta_mtr_counts ) {
         m_lcu->telescope->delta->Motor->runEncSteps(delta_mtr_counts);
         goto_delta_flag = true;
-      }
+    }
+
     m_lcu->postSemaphore();
   
-    /** Goto target loop*/
+	/** 3.2. Monitor until the abs(counts) < 50 **/
     //setup_ready = NUM_OF_TRY;
 	// TSH: if the HW works properly, there is no reason to send the same command 4 times
     setup_ready = 0;
@@ -469,7 +537,7 @@ LCUImpl::parkTelescope(const Ice::Current& c)
     	            printf("LCUImpl::parkTelescope: HW returns alpha_counts: %d\n", alpha_mtr_counts);
     	            if( -50 < alpha_mtr_counts && alpha_mtr_counts < 50 ) {
 						printf("LCUImpl::parkTelescope: reached to the target, stopping the motor in RA\n");
-    	                m_lcu->telescope->alpha->Motor->readDeviceMemory( 7, & alpha_mtr_counts, 0  );
+    	                //m_lcu->telescope->alpha->Motor->readDeviceMemory( 7, & alpha_mtr_counts, 0  );
     	                goto_alpha_flag = false;
 					}
 
@@ -479,7 +547,7 @@ LCUImpl::parkTelescope(const Ice::Current& c)
     	            printf("LCUImpl::parkTelescope: HW returns delta_mtr_counts: %d\n",delta_mtr_counts);
     	            if( -50 < delta_mtr_counts && delta_mtr_counts < 50 ) {
 						printf("LCUImpl::parkTelescope: reached to the target, stopping the motor in Dec\n");
-    	                m_lcu->telescope->delta->Motor->readDeviceMemory( 7, & delta_mtr_counts, 0  );
+    	                //m_lcu->telescope->delta->Motor->readDeviceMemory( 7, & delta_mtr_counts, 0  );
     	                goto_delta_flag = false;
 					}
     	        }
@@ -498,6 +566,9 @@ LCUImpl::parkTelescope(const Ice::Current& c)
 //            setup_ready --;    
     } while(setup_ready);
 
+
+	/** 4. Start tracking  **/ 
+	//no necessary in parkTelescope
 	printf("LCUImpl::parkTelescope: telescope parked\n");
   
     /** Stop telescope status */
