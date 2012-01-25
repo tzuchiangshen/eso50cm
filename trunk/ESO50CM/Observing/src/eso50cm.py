@@ -372,6 +372,13 @@ if __name__ == "__main__":
             print "Telescope Not Configured !!!"
             traceback.print_exc()
             status = 1
+    elif (command == "stop_telescope"):
+        try:
+            telescope = obsImpl.getTelescope()
+            telescope.stopTelescope(OUC.TelescopeDirection.North)
+        except:
+            traceback.print_exc()
+            status = 1
     elif (command == "get_config"):
         getConfiguration()
     elif (command == "get_position"):
@@ -384,6 +391,8 @@ if __name__ == "__main__":
         isConfigured()
     elif (command == "istracking"):
         isTracking()
+    else:
+        print "unknown command" 
 
     disconnect()
 
