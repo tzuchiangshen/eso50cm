@@ -273,7 +273,12 @@ LCUImpl::setTarget(const OUC::TelescopePosition& targetPos, const Ice::Current& 
 void 
 LCUImpl::setOffset(const ::OUC::TelescopePosition& offset, const Ice::Current& c)
 {
-    setOffset(offset); 
+    OUC::TelescopePosition tmp;
+	tmp.RA = MiddleEndianToLittleEndian(offset.RA);
+	tmp.Dec = MiddleEndianToLittleEndian(offset.Dec);
+	tmp = (const ::OUC::TelescopePosition&)tmp;
+    setOffset(tmp); 
+    
 }
 
 void LCUImpl::setOffset(const ::OUC::TelescopePosition& offset) {
@@ -313,8 +318,10 @@ void LCUImpl::setOffset(const ::OUC::TelescopePosition& offset) {
 		throw ex;
 	}
 	/** 2.3. Calculate the difference (offset) RA, Dec in degree **/
+	printf("[LCUImpl::setOffset] ra=%.lf, dec=%.lf\n", offset.RA, offset.Dec);
 	offsetPos.RA = offset.RA;
 	offsetPos.Dec = offset.Dec;
+	printf("[LCUImpl::setOffset] ra=%.lf, dec=%.lf\n", offsetPos.RA, offsetPos.Dec);
     
 	/** 2.4. Convert offset in term of count of encoders in the motors (incremental encoders) **/
 	m_lcu->waitSemaphore();
