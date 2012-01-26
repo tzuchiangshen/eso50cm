@@ -18,6 +18,7 @@ class LoggerHelper {
       LoggerHelper(string src);
       ~LoggerHelper();
       void setDiscardLevel(LogLevel level);
+      LogLevel getDiscardLevel(string source);
       void logFINEST(int linenumber, string method,const char* Format, ...);    
       void logFINEST(const char* Format, ... );    
       void logFINER(int lineNumber,string method, const char* Format, ...);    
