@@ -92,6 +92,10 @@ void LoggerHelper::setDiscardLevel(LogLevel level)
 {
     m_prx->setDiscardLevel(m_source,level);
 };
+LogLevel LoggerHelper::getDiscardLevel(string source)
+{
+    m_prx->getDiscardLevel(source);
+};
 void LoggerHelper::logMsg(LogLevel level,string log, string method, int lineNumber){
     // created an empty message
     LogMessageData message;
