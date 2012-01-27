@@ -22,6 +22,9 @@ class myTAxis {
 
         double getPosition( void );
         int offsetAxisInDeg( double degs );
+        int degToCountMotorEnc( double degs );
+        int degToCountWormEnc( double degs );
+        int degToCountAxisEnc( double degs );
 
         myTEncoder * AxisE;
         myTEncoder * WormE;
