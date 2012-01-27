@@ -255,11 +255,13 @@ LCUImpl::setTarget(const OUC::TelescopePosition& targetPos, const Ice::Current& 
     /** Send new target **/
     if(m_lcu->telescope->setTarget(RA, Dec, (double*)&targetPos.Alt, (double*)&targetPos.Az) == 0) 
       {
-	char *limits;
+	char limits[255];
 	OUC::TargetOutOfLimitsEx ex;
-	sprintf(limits, "Low Elevation: %lf, High Elevation: %lf", m_lcu->telescope->getHighElevation(), m_lcu->telescope->getHighElevation());
-	ex.reason = "Target Out of Limits. Try a new one\n";
+	sprintf(limits, "Target out of limits: Low Elevation: %lf, High Elevation: %lf", m_lcu->telescope->getLowElevation(), m_lcu->telescope->getHighElevation());
+	printf("[myTelescope::setTarget] %s \n", limits);
+	ex.reason = "Target out of limits. Try a new one\n";
 	ex.reason.append(limits); 
+    m_lcu->postSemaphore();
 	throw ex;
       }
     
