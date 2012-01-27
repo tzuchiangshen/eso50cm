@@ -86,7 +86,7 @@ void LoggerI::logMessage(const LogMessageData &msg, const Ice::Current& c)
     message.logtimestamp=(double)tv.tv_sec+(double)tv.tv_usec/1.0E6;  // unix time (sec) + microsec
 
     int daoIndex;
-    if (message.level > getDiscardLevelLocal(message.source)) {
+    if (message.level >= getDiscardLevelLocal(message.source)) {
         logPublisherPrx->logEvent(message);  // publishing the event on IceStorm
         for (daoIndex=0; daoIndex < messageStorages.size() ; daoIndex++)
         {
