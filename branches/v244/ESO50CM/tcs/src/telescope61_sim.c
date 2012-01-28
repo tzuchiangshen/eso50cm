@@ -502,24 +502,9 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
             printf( "[telescope_run] user segment size: %d\n", segment_size );
         }
 
-	printf("-------------->init_ok_flag=%d\n", init_ok_flag);
+	    printf("-------------->init_ok_flag=%d\n", init_ok_flag);
 
 
-        /**
-         * Open rs232
-         */
-//        if( verbose ) {
-//            printf( "[telescope_run] Opening rs232 device\n" );
-//            printf( "[telescope_run] device = %s\n", device );
-//            printf( "[telescope_run] baudrate = %d\n", (int) baudrate );
-//        }
-//        fd_rs232 = open_RS232( device, baudrate );
-//        if( fd_rs232 == 0 ) {
-//            init_ok_flag = 0;
-//            if( verbose )
-//                printf( "[telescope_run] fd_rs232 = 0\n" );
-//        }
-//
         /**
          * File descriptor for standard in
          */
@@ -599,215 +584,12 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
             nums_of_time_outs   = 0;
             timeout_error_flag  = 0;
             rx_msg_length       = 0;
-//            do {
-//                if( (rx = status_RS232( fd_rs232, 1000 )) > 0 ) {
-//                    /** There are bytes, then read them */
-//                    if( (rx = read_RS232( fd_rs232, tty_buffer, 256 )) > 0 ) {
-//                        for( k = 0; k < rx; k ++ ) {
-//                            if( rx_msg_length == 0 ) {
-//                                /** Check for a valid message starting character */
-//                                if( tty_buffer[k] == ':' ) {
-//                                    /** The starting character exists... */
-//                                    msg_buffer[rx_msg_length] = tty_buffer[k];
-//                                    rx_msg_length ++ ;
-//                                    /** Then, there is an incomming message.
-//                                        Wait until the message is completes or
-//                                        max number of timeouts is reached */
-//                                    wait_for_message = 1;
-//                                }
-//                            } else {
-//                                /** The rest of the message */
-//                                msg_buffer[rx_msg_length] = tty_buffer[k];
-//                                rx_msg_length ++;
-//                                /** Check if the message is complete... */
-//                                if( msg_buffer[1] == 0xA0 && rx_msg_length == 10 ) {
-//                                    /** A short message was received */
-//                                    msg_buffer[rx_msg_length] = 0;
-//                                    new_ttymssg_flag = 1;
-//                                    wait_for_message = 0;
-//                                } else if( msg_buffer[1] == 0xA1 && rx_msg_length == 42 ) {
-//                                    /** A large message was received */
-//                                    msg_buffer[rx_msg_length] = 0;
-//                                    new_ttymssg_flag = 1;
-//                                    wait_for_message = 0;
-//                                }
-//                            }// END else if( rx_msg_length > 0 )
-//                        } // END for( k = 0; k < rx; k ++ )
-//                    } else {
-//                        if( verbose )
-//                            printf( "[telescope_run] read ERROR\n" );
-//                    } //END if( (rx = read_RS232( fd_rs232, tty_buffer, 256 )) > 0 )
-//                } else {
-//                    /** No bytes available. */
-//                    nums_of_time_outs ++;
-//                    if( wait_for_message && (nums_of_time_outs > 10 ) ) {
-//                        /** Max number of timeouts has been reached while waiting
-//                            for a message... */
-//                        printf( "[telescope_run] timeout ERROR: bytes received = %d\n", rx_msg_length  );
-//                        rx_msg_length = 0;
-//                        wait_for_message = 0;
-//                        new_ttymssg_flag = 0;
-//                        /** The error flag is set true. */
-//                        timeout_error_flag = 1;
-//                    }
-//                }// END if( (rx = status_RS232( fd_rs232, 250 )) > 0 )
-//            } while( wait_for_message );
-//            if( timeout_error_flag ) {
-//                timeout_error_flag = 0;
-//            }// END if( timeout_error_flag )
-//
-//            /**
-//            * Process New RX Message
-//            */
-//            binary_semaphore_wait( semaphore_id );
-//            if( new_ttymssg_flag ) {
-//                if( (unsigned char) msg_buffer[1] == 0xA0 ) {
-//                    if( verbose ) {
-//                        printf( "[telescope_run] Short message received\n" );
-//                        if( msg_buffer[9] == '#' ) {
-//                            printf( "[telescope_run] Last char OK\n" );
-//                        } else {
-//                            printf( "[telescope_run] Last char Wrong\n" );
-//                        }
-//                        if( msg_buffer[2] == 'P' ) {
-//                            new_timep_flag = 1;
-//                            gettimeofday( & (telescope->gtime), & (telescope->tzone) );
-//                            localtime_r( & (telescope->gtime.tv_sec), & LTime  );
-//                            strftime( infoline, 24, "%Y-%m-%d %T", & LTime );
-//                            printf( "[telescope_run] %s\n", infoline );
-//                        }
-//                    }
-//                } else if( (unsigned char) msg_buffer[1] == 0xA1 ) {
-//                    if( verbose ) {
-//                        printf( "[telescope_run] Long message received\n" );
-//                        if( msg_buffer[41] == '#' ) {
-//                            printf( "[telescope_run] Last char OK\n" );
-//                        } else {
-//                            printf( "[telescope_run] Last char Wrong\n" );
-//                        }
-//                        if( msg_buffer[2] == 'N' ) {
-//                            printf( "[telescope_run] Version number: %s\n", & msg_buffer[3] );
-//                        } else if( msg_buffer[2] == 'D' ) {
-//                            printf( "[telescope_run] Version date  : %s\n", & msg_buffer[3] );
-//                        } else if( msg_buffer[2] == 'T' ) {
-//                            printf( "[telescope_run] Version time  : %s\n", & msg_buffer[3] );
-//                        } else if( msg_buffer[2] == 'P' ) {
-//                            telescope->new_data = 1;
-//                            //printf( "[telescope_run] " );
-//                            //for( i = 0; i < 24; i ++ ) {
-//                            //    printf( "[%02X]", (unsigned int) msg_buffer[3+i] );
-//                            //}
-//                            //printf( " (%d)\n", (unsigned int) msg_buffer[41] );
-//                            char i2c;
-//                            char mem;
-//                            int numero;
-//                            unsigned char chksum;
-//
-//                            chksum = 0;
-//                            i = 3;
-//
-//                            for( j = 0; j < 4; j ++ ) {
-//                                i2c     = msg_buffer[i];;
-//                                chksum += (unsigned char) msg_buffer[i];
-//                                mem     = msg_buffer[i+1];
-//                                chksum += (unsigned char) msg_buffer[i+1];
-//                                ((char *) & numero)[0] =  msg_buffer[i+2];
-//                                chksum += (unsigned char) msg_buffer[i+2];
-//                                ((char *) & numero)[1] =  msg_buffer[i+3];
-//                                chksum += (unsigned char) msg_buffer[i+3];
-//                                ((char *) & numero)[2] =  msg_buffer[i+4];
-//                                chksum += (unsigned char) msg_buffer[i+4];
-//                                ((char *) & numero)[3] =  msg_buffer[i+5];
-//                                chksum += (unsigned char) msg_buffer[i+5];
-//                                //printf( "[telescope_run] 0x%02X %d %d\n", (unsigned int) i2c, (int) mem, numero );
-//
-//                                for( k = 0; k < 6; k ++ ) {
-//                                    if( telescope->encoder[k].i2c_address + 1 == i2c ) {
-//                                        telescope->encoder[k].data[mem] = numero;
-//                                        printf( "[telescope_run] 0x%02X %d %d\n",
-//                                                (unsigned int) telescope->encoder[k].i2c_address,
-//                                                (int) mem,
-//                                                telescope->encoder[k].data[mem] );
-//                                        break;
-//                                    }
-//                                }
-//                                i += 6;
-//                            }
-//                            if( (unsigned char) msg_buffer[40] != chksum ) {
-//                                printf( "[telescope_run] ChkSum Error(%d,%d)\n",
-//                                        (unsigned char) msg_buffer[40], chksum );
-//                            }
-//                        }
-//                    }
-//                }
-//                new_ttymssg_flag = 0;
-//                rx_msg_length = 0;
-//            }//END if( new_ttymssg_flag )
-//
-//            if( checksum_error_flag ) {
-//            }//END if( checksum_error_flag )
-//            binary_semaphore_post( semaphore_id );
-//
-//            /**
-//            * Checks for a message in the instrument shared memory...
-//            */
-//            if( bin_message_len == 0 ) {
-//                for( i = 0; i < 6; i ++ ) {
-//                    binary_semaphore_wait( semaphore_id );
-//                    if( telescope->encoder[i].message[0] == ':' ) {
-//                        gettimeofday( & gtime, & tzone );
-//                        startT  = ((double) gtime.tv_usec)/1000000.;
-//                        startT += (double) gtime.tv_sec;
-//                        if( verbose )
-//                            printf( "[telescope_run] Sending new message for 0x%02X\n", telescope->encoder[i].i2c_address );
-//                        retval = write_RS232( fd_rs232, telescope->encoder[i].message, 10  );
-//                        memset( telescope->encoder[i].message, 0, 16 );
-//                        length = 0;
-//                        nums_of_time_outs = 0;
-//                        timeout_error_flag = 0;
-//                        do {
-//                            if( (retval = status_RS232( fd_rs232, 1000 )) > 0 ) {
-//                                //bytes_read = read_RS232( fd_rs232, & m_line[length], 128 - length );
-//                                bytes_read = read_RS232( fd_rs232, & telescope->encoder[i].answer[length], 16 - length );
-//                                if( bytes_read > 0 ) {
-//                                    //printf( "[telescope_run] bytes_read = %d\n", bytes_read );
-//                                    length += bytes_read;
-//                                    telescope->encoder[i].answer[length] = '\0';
-//                                }
-//                            } else {
-//                                nums_of_time_outs ++;
-//                                if( nums_of_time_outs > 10 ) {
-//                                    timeout_error_flag = 1;
-//                                    break;
-//                                }
-//                                //printf( "[telescope_run] still waiting for answer...\n" );
-//                            }
-//                        } while( length < 10 );
-//                        if( timeout_error_flag ) {
-//                            printf( "[telescope_run] timeout ERROR\n" );
-//                        } else {
-//                            if( verbose )
-//                                printf( "[telescope_run] Received the answer from 0x%02X\n", telescope->encoder[i].i2c_address );
-//                        }
-//                        binary_semaphore_post( read_semaphore_id );
-//                        gettimeofday( & gtime, & tzone );
-//                        endT  = ((double) gtime.tv_usec)/1000000.;
-//                        endT += (double) gtime.tv_sec;
-//                        if( verbose )
-//                            printf( "[telescope_run] dT=%10.6lf[s]\n", endT - startT );
-//                    }
-//                    binary_semaphore_post( semaphore_id );
-//
-//                }
-//            }
-
             /**
             * Checks for a message in the instrument shared memory... SIMULATION
             */
 			//int enc_count;
 			//enc_count = 0;
 			char *ptr;
-			//char *ptr2;
 			char *src;
 			char *dst;
             if( bin_message_len == 0 ) {
@@ -1017,54 +799,6 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
 									src = (char*)&current_val;
 							        myMemcpy(dst, src, 4);
 								    printf("[telescope_run] Simulate movement at delta axis encoder (0xAC mem_address=2), value = %d\n", axis_enc);
-
-
-
-
-//									//delta-motor, then set the delta-worm encoder 
-//									//1.1 convert the resolution then enc from motor into worm 
-//									int worm_enc = 0;
-//									int motor_enc = 0;
-//									dst = (char*)&motor_enc;
-//							        src = (char*)&telescope->encoder[i].message[3];
-//							        myMemcpy(dst, src, 4);
-//									worm_enc = rel_delta_motor_enc_to_worm_enc(motor_enc);
-//								    printf("[telescope_run] converted delta motor enc to delta worm enc (0xAA mem_address=4), motor enc = %d, worm enc=%d\n", motor_enc,  worm_enc);
-//
-//                                    // 1.2. save the converted enc value so the next readMemory(4) will return this value 
-//							        dst = (char*)&telescope->encoder[4].data[4];
-//							        src = (char*)&worm_enc;
-//							        myMemcpy(dst, src, 4);
-//								    printf("[telescope_run] Simulate movement of delta-motor at worm enc (0xAA mem_address=4), value = %d\n", worm_enc);
-//								    // 1.3. accumulate the converted enc value so the next readMemory(2) will return this correct value 
-//									int current_val; 
-//							        dst = (char*)&current_val;
-//									src = (char*)&telescope->encoder[4].data[2];
-//							        myMemcpy(dst, src, 4);
-//									current_val += worm_enc;
-//							        dst = (char*)&telescope->encoder[4].data[2];
-//									src = (char*)&current_val;
-//							        myMemcpy(dst, src, 4);
-//								    printf("[telescope_run] Simulate abs movement of delta-motor at worm encoder (0xAA mem_address=2), value = %d\n", worm_enc);
-//   									// 2.1. convert the resolution then enc from motor into axis
-//									int axis_enc = 0;
-//									axis_enc = rel_delta_motor_enc_to_axis_enc(motor_enc);
-//								    printf("[telescope_run] converted delta-motor enc to alpha axis enc (0xAC mem_address=4), motor enc = %d, worm enc=%d\n", motor_enc,  axis_enc);
-//                                    // 2.2. save the converted enc value so the next readMemory(4) will return this value 
-//							        dst = (char*)&telescope->encoder[5].data[4];
-//									src = (char*)&axis_enc;
-//							        myMemcpy(dst, src, 4);
-//								    printf("[telescope_run] Simulate movement of delta-motor at axis enc (0xAC mem_address=4), value = %d\n", worm_enc);
-//								    // 2.3. accumulate the converted enc value so the next readMemory(2) will return this correct value 
-//									current_val = 0;
-//							        dst = (char*)&current_val;
-//									src = (char*)&telescope->encoder[5].data[2];
-//							        myMemcpy(dst, src, 4);
-//									current_val += axis_enc;
-//							        dst = (char*)&telescope->encoder[5].data[2];
-//									src = (char*)&current_val;
-//							        myMemcpy(dst, src, 4);
-//								    printf("[telescope_run] Simulate abs movement of aplha-motor at axis encoder (0xAC mem_address=2), value = %d\n", worm_enc);
                                 }								
 							}
 						}  else {
@@ -1288,20 +1022,6 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
     } else {
         printf( "[telescope_run] Something wrong!\n" );
     }//END if( init_ok_flag )
-
-//    /** Close RS232 device */
-//    if( fd_rs232 > 0 ) {
-//        if( verbose )
-//            printf( "[telescope_run] Closing fd_rs232...\n");
-//        if( close( fd_rs232 ) < 0 ) {
-//            perror( "[telescope_run] close");
-//            if( verbose )
-//                printf( "[telescope_run] close ERROR.\n");
-//        } else {
-//            if( verbose )
-//                printf( "[telescope_run] close OK.\n");
-//        }
-//    }
 
     /**
      * INSTRUMENT SHARED MEMORY
