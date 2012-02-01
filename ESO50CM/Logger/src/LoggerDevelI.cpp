@@ -1,8 +1,7 @@
-#include "LoggerI.h"
+#include "LoggerDevelI.h"
 #include <stdio.h>
 #include <string.h>
 
-#include "dbstuff.h"
 
 using namespace Log;
 LoggerI::LoggerI(CommunicatorPtr ic):communicator(ic)
@@ -18,13 +17,7 @@ LoggerI::LoggerI(CommunicatorPtr ic):communicator(ic)
     levelDesc[SEVERE]="SEVERE";
     levelDesc[9]="Unknown log level";
 
-    if (!db.connect("tcp://127.0.0.1:3306","logmgr","logpass"))
-    {
-        cout << "Warning! I couldn't connect to the DB!" << endl;
-        isDBConnected=false;
-    }
-    else
-        isDBConnected=true;
+    isDBConnected=false;
     // Obtaining environment for publishing
     TopicManagerPrx topic_mgr = getTopicManager();
     if(!topic_mgr){
@@ -47,25 +40,15 @@ LoggerI::LoggerI(CommunicatorPtr ic):communicator(ic)
 }
 void LoggerI::logMessage(const LogMessageData &message, const Ice::Current& c)
 {
-    if (!isDBConnected)
-    {
         logPublisherPrx->logEvent(message);
         //  |level | timestamp | source | method | linenumber | message |
-        //printf("| %s | %lf | %s | %s | %i | %s |\n",levelDesc[message.level].c_str(), message.timestamp, message.source.c_str(),message.method.c_str(), message.lineNumber, message.message.c_str());
-    } else {
-        // we're accessing the DB!
-        int discardLevel=db.getDiscardLevel(message.source);
-        if ((message.level > discardLevel) && (message.level > globalDiscardLevel)) {
-            logPublisherPrx->logEvent(message);  // publishing the event on IceStorm
-            db.logMessage(message.level, message.source,message.timestamp, message.method,message.lineNumber,message.message);
-        }
-    }       
+        printf("| %s | %lf | %s | %s | %i | %s |\n",levelDesc[message.level].c_str(), message.timestamp, message.source.c_str(),message.method.c_str(), message.lineNumber, message.message.c_str());
+        
 }
 
 void LoggerI::setDiscardLevel(const string& source, LogLevel level,const Ice::Current&)
 {
-    if (isDBConnected)
-        db.setDiscardLevel(source,level);
+     // we're not managin discard levels at server side without accesing the DB
 }
 void LoggerI::setGlobalDiscardLevel(LogLevel level,const Ice::Current& c)
 {
@@ -73,9 +56,9 @@ void LoggerI::setGlobalDiscardLevel(LogLevel level,const Ice::Current& c)
 }
 int LoggerI::getDiscardLevel(const string& source,const Ice::Current&)
 {
-    if (isDBConnected)
-        return db.getDiscardLevel(source);
-    return -1;  /// If the DB is not connected
+   // if (isDBConnected)
+  //      return db.getDiscardLevel(source);
+    return 1;  /// we will asume it's always 1
 }
 int LoggerI::getGlobalDiscardLevel(const Ice::Current& c)
 {

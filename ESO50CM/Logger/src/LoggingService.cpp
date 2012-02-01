@@ -1,6 +1,7 @@
 #include <Ice/Ice.h>
 #include <Ice/Application.h>
 #include "LoggerI.h"
+
 using namespace std;
 using namespace Ice;
 using namespace Log;

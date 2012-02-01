@@ -324,7 +324,6 @@ int main( int argc, char* const argv[] ) {
 //    }
 
     telescope_run( device, baudrate, socket_path );
-
  
     syslog(LOG_INFO, "%s daemon exiting", DAEMON_NAME);
     //****************************************************

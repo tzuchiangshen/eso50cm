@@ -1,22 +1,24 @@
 #include <myTAxis.h>
 
+extern int verbose;
 
 /**
  *  myTAxis
  */
-myTAxis::myTAxis( char id, struct my_TAxis_data_t * axis ):
-    logger("myTAxis")
+myTAxis::myTAxis( char id, struct my_TAxis_data_t * axis )
 {
     m_id = id;
-    logger.logFINE("myTAxis::myTAxis %c Hello World!", m_id );
-    logger.logFINE("myTAxis::myTAxis %c axis_data at %p", m_id, (void *) axis );
-    logger.logFINE("myTAxis::myTAxis %c motorE at    %p", m_id, (void *) & axis->motorE );
-    logger.logFINE("myTAxis::myTAxis %c wormE at     %p", m_id, (void *) & axis->wormE );
-    logger.logFINE("myTAxis::myTAxis %c axisE at     %p", m_id, (void *) & axis->axisE );
+    if( verbose ) printf( "[myTAxis::myTAxis] %c Hello World!\n", m_id );
+    if( verbose ) printf( "[myTAxis::myTAxis] %c axis_data at %p\n", m_id, (void *) axis );
+    if( verbose ) printf( "[myTAxis::myTAxis] %c motorE at    %p\n", m_id, (void *) & axis->motorE );
+    if( verbose ) printf( "[myTAxis::myTAxis] %c wormE at     %p\n", m_id, (void *) & axis->wormE );
+    if( verbose ) printf( "[myTAxis::myTAxis] %c axisE at     %p\n", m_id, (void *) & axis->axisE );
 
     Motor = new myTMotor( m_id, 'M',  & axis->motorE );
     WormE = new myTEncoder( m_id, 'W', & axis->wormE );
     AxisE = new myTEncoder( m_id, 'A', & axis->axisE );
+	// Tzu: temporary hack, this should be done by reading the configuration files
+	//Motor->setSimulationMode(true);
 }
 
 /**
@@ -26,7 +28,7 @@ myTAxis::~myTAxis() {
     delete Motor;
     delete WormE;
     delete AxisE;
-    logger.logFINE("myTAxis::~myTAxis %c Good Bye!", m_id );
+    if( verbose ) printf( "[myTAxis::~myTAxis] %c Good Bye!\n", m_id );
 }
 
 
@@ -56,20 +58,111 @@ double myTAxis::getPosition( void )
 int myTAxis::offsetAxisInDeg( double degs )
 {
     int mtr_counts;
+	double reduction;
+	double tics;
+	double tmp;
 
-    degs /= 360.0;
-    degs *= Motor->getEncoderToAxis_Reduction();
-    degs *= Motor->getTicsPerRev();
+	reduction = Motor->getEncoderToAxis_Reduction();
+	tics = Motor->getTicsPerRev();
 
-    mtr_counts = (int) round( degs );
+    tmp = degs / 360.0; 
+    tmp *= reduction;
+	tmp *= tics;
+
+    mtr_counts = (int) round( tmp );
+	if(verbose)
+	    printf("[myTAxis::offsetAxisInDeg] degs= %lf, reduction=%.lf, tics=%.lf, mtr_count=%d\n", degs, reduction, tics, mtr_counts);
+
+    //TSH: should be abs(mtr_counts), deg can comes in negative
     if( mtr_counts > 0 ) {
-        logger.logFINE("myTAxis::offsetAxisInDeg Running motor %d", mtr_counts);
+        if( verbose ) printf( "[myTAxis::offsetAxisInDeg] Axis: %c  Running motor %d\n", m_id, mtr_counts );
         Motor->runEncSteps( mtr_counts );
     } else {
-        logger.logFINE("myTAxis::offsetAxisInDeg Nothing to do!");
+        if( verbose ) printf( "[myTAxis::offsetAxisInDeg] Axis: %c Nothing to do!\n", m_id );
     }
+
     return mtr_counts;
 }
 
+
+/**
+ *  degToCountMotorEnc
+ */
+int myTAxis::degToCountMotorEnc( double degs )
+{
+    int mtr_counts;
+	double reduction;
+	double tics;
+	double home;
+	double tmp;
+
+	reduction = Motor->getEncoderToAxis_Reduction();
+	tics = Motor->getTicsPerRev();
+	home = Motor->getHomePosition();
+
+    tmp = degs / 360.0; 
+    tmp *= reduction;
+	tmp *= tics;
+
+    mtr_counts = (int) round( tmp );
+	if(verbose)
+	    printf("[myTAxis::degToCountMotorEnc] axis=%c,  degs= %lf, reduction=%.lf, tics=%.lf, home=%.lf, mtr_count=%d\n", m_id, degs, reduction, tics, home, mtr_counts);
+
+	return mtr_counts;
+}
+
+
+/**
+ *  degToCountAxisEnc
+ */
+int myTAxis::degToCountAxisEnc( double degs )
+{
+    int mtr_counts;
+	double reduction;
+	double tics;
+	double home;
+	double tmp;
+
+	reduction = AxisE->getEncoderToAxis_Reduction();
+	tics = AxisE->getTicsPerRev();
+	home = AxisE->getHomePosition();
+
+    tmp = degs / (360.0/reduction); 
+	tmp *= tics;
+	tmp += home;
+
+    mtr_counts = (int) round( tmp );
+	if(verbose)
+	    printf("[myTAxis::degToCountAxisEnc] axis=%c,  degs= %lf, reduction=%.lf, tics=%.lf, home=%.lf, mtr_count=%d\n", m_id, degs, reduction, tics, home, mtr_counts);
+
+	return mtr_counts;
+}
+
+
+/**
+ *  degToCountWormEnc
+ */
+int myTAxis::degToCountWormEnc( double degs )
+{
+    int mtr_counts;
+	double reduction;
+	double tics;
+	double home;
+	double tmp;
+
+	reduction = WormE->getEncoderToAxis_Reduction();
+	tics = WormE->getTicsPerRev();
+	home = WormE->getHomePosition();
+
+    tmp = degs / (360.0/reduction); 
+	tmp *= tics;
+	tmp += home;
+
+    mtr_counts = (int) round( tmp );
+	if(verbose)
+	    printf("[myTAxis::degToCountWormEnc] axis=%c,  degs= %lf, reduction=%.lf, tics=%.lf, home=%.lf, mtr_count=%d\n", m_id, degs, reduction, tics, home, mtr_counts);
+
+	return mtr_counts;
+}
 
 

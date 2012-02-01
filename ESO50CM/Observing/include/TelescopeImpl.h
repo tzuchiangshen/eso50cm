@@ -25,7 +25,6 @@ class TelescopeImpl : public OUC::Telescope
 
         virtual void setConfiguration(const string& fileName, const Ice::Current&);
         virtual void setTarget(const ::OUC::TelescopePosition& targetPos, const Ice::Current&);
-        virtual void handsetSlew(const ::OUC::SlewInfo& slewInfo, const Ice::Current&);
         virtual void setOffset(const ::OUC::TelescopePosition& offsetPos, const Ice::Current&);
         virtual void setTracking(const OUC::TrackingInfo& trkInfo, const Ice::Current&);
         virtual void parkTelescope(const Ice::Current&);

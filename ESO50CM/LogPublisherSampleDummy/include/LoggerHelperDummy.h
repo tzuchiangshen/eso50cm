@@ -1,16 +1,8 @@
-#ifndef __LOGGER_HELPER_H_
-#define __LOGGER_HELPER_H_
+#ifndef __LOGGER_HELPER_DUMMY_H_
+#define __LOGGER_HELPER_DUMMY_H_
+#include<string>
+typedef enum { FINEST,FINER, FINE,CONFIG, INFO,WARNING,SEVERE} LogLevel;
 
-#ifdef ARM
-    #include <IceE/IceE.h>
-#else
-    #include <Ice/Ice.h>
-#endif
-
-#include "Logger.h"
-
-using namespace Ice;
-using namespace Log;
 using namespace std;
 class LoggerHelper {
 // Local methods
@@ -28,10 +20,10 @@ class LoggerHelper {
       void logMsg(LogLevel, string,string,int);
       double convertDouble(double MEData); // helper for LCU middle endian problem
    private:
-       CommunicatorPtr m_ic;
-       ObjectPrx m_base;
-       ObjectPrx oneway;
-       LoggerPrx m_prx;
+//       CommunicatorPtr m_ic;
+//       ObjectPrx m_base;
+//       ObjectPrx oneway;
+//       LoggerPrx m_prx;
        string m_source;
        LogLevel m_discardLevel;
        string logginServiceProxyStr;

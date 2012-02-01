@@ -5,24 +5,19 @@
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
-#include <stdio.h>
-#include <stdarg.h>
-#include <wchar.h>
 using namespace std;
+string findFilePath(string relFileName);
 
 LoggerHelper::LoggerHelper(string src) 
 {  
-    string filename,swroot;
+    string filename;
     ifstream configFile;
     size_t found;
     logginServiceProxyStr="";
     try {
-        if (getenv("SWROOT")!=NULL) {
-            swroot=getenv("SWROOT");
-        } else {
-            throw "SWROOT environmental variable not defined";
-        }
-        filename=swroot+string("/config/loggingService.config");
+        filename=findFilePath("config/loggingService.config");
+        if (filename.empty()) 
+            throw "config/loggingService.config not found";
         configFile.open(filename.c_str());
         if (configFile.is_open()) {
             // we have patches! we look for the file in every directory
@@ -69,7 +64,7 @@ LoggerHelper::LoggerHelper(string src)
     //    if (!m_prx) throw "Invalid proxy";   
         if (!m_prx) printf("Invalid proxy");   
         m_source=src;
-       // setDiscardLevel(CONFIG);
+        setDiscardLevel(CONFIG);
     } catch (const Ice::Exception& ex) {
 #ifdef ARM
         cout << ex.toString() << endl;
@@ -91,12 +86,11 @@ LoggerHelper::~LoggerHelper()
 void LoggerHelper::setDiscardLevel(LogLevel level)
 {
     m_prx->setDiscardLevel(m_source,level);
-};
-LogLevel LoggerHelper::getDiscardLevel(string source)
-{
-    m_prx->getDiscardLevel(source);
+    m_discardLevel=level;
 };
 void LoggerHelper::logMsg(LogLevel level,string log, string method, int lineNumber){
+    if (level<m_discardLevel)  // we discard the message if it's lower than the discard level
+        return;  
     // created an empty message
     LogMessageData message;
     // level
@@ -106,161 +100,33 @@ void LoggerHelper::logMsg(LogLevel level,string log, string method, int lineNumb
     gettimeofday(&tv, NULL); 
     message.timestamp=convertDouble((double)tv.tv_sec+(double)tv.tv_usec/1.0E6);  // unix time (sec) + milisec
     message.source=m_source;
-    message.data=log;
+    message.message=log;
     message.method=method;
     message.lineNumber=lineNumber;
     m_prx->logMessage(message);
     
 }
-void LoggerHelper::logFINEST(int lineNumber,string method,const char* Format, ...){    
-      char buffer[1000];
-      va_list Arguments;
-      va_start(Arguments, Format);      
-      vsprintf(buffer,Format,Arguments);
-      va_end(Arguments);
-      string str(buffer);
-      logMsg(FINEST,buffer, method,lineNumber);
+void LoggerHelper::logFINEST(string log, string method, int lineNumber){    
+    logMsg(FINEST,log, method, lineNumber);
 };
-void LoggerHelper::logFINEST(const char* Format, ... ){    
-      char buffer[1000];
-      va_list Arguments;
-      va_start(Arguments, Format);      
-      vsprintf(buffer,Format,Arguments);
-      va_end(Arguments);
-      string str(buffer);
-      logMsg(FINEST,buffer, "not specified", 0);
+void LoggerHelper::logFINER(string log, string method, int lineNumber){    
+    logMsg(FINER,log, method, lineNumber);
 };
-void LoggerHelper::logFINER(int lineNumber,string method,const char* Format, ...){    
-      char buffer[1000];
-      va_list Arguments;
-      va_start(Arguments, Format);      
-      vsprintf(buffer,Format,Arguments);
-      va_end(Arguments);
-      string str(buffer);
-      logMsg(FINER,buffer, method,lineNumber);
+void LoggerHelper::logFINE(string log, string method, int lineNumber){    
+    logMsg(FINE,log, method, lineNumber);
 };
-void LoggerHelper::logFINER(const char* Format, ... ){    
-      char buffer[1000];
-      va_list Arguments;
-      va_start(Arguments, Format);      
-      vsprintf(buffer,Format,Arguments);
-      va_end(Arguments);
-      string str(buffer);
-      logMsg(FINER,buffer,  "not specified", 0);
+void LoggerHelper::logCONFIG(string log, string method, int lineNumber){    
+    logMsg(CONFIG,log, method, lineNumber);
 };
-void LoggerHelper::logFINE(int lineNumber,string method,const char* Format, ...){    
-      char buffer[1000];
-      va_list Arguments;
-      va_start(Arguments, Format);      
-      vsprintf(buffer,Format,Arguments);
-      va_end(Arguments);
-      string str(buffer);
-      logMsg(FINE,buffer, method,lineNumber);
+void LoggerHelper::logINFO(string log, string method, int lineNumber){    
+    logMsg(INFO,log, method, lineNumber);
 };
-void LoggerHelper::logFINE(const char* Format, ... ){    
-      char buffer[1000];
-      va_list Arguments;
-      va_start(Arguments, Format);      
-      vsprintf(buffer,Format,Arguments);
-      va_end(Arguments);
-      string str(buffer);
-      logMsg(FINE,buffer,  "not specified", 0);
+void LoggerHelper::logWARNING(string log, string method, int lineNumber){    
+    logMsg(WARNING,log, method, lineNumber);
 };
-void LoggerHelper::logCONFIG(int lineNumber,string method,const char* Format, ...){    
-      char buffer[1000];
-      va_list Arguments;
-      va_start(Arguments, Format);      
-      vsprintf(buffer,Format,Arguments);
-      va_end(Arguments);
-      string str(buffer);
-      logMsg(CONFIG,buffer, method,lineNumber);
+void LoggerHelper::logSEVERE(string log, string method, int lineNumber){    
+    logMsg(SEVERE,log, method, lineNumber);
 };
-void LoggerHelper::logCONFIG(const char* Format, ... ){    
-      char buffer[1000];
-      va_list Arguments;
-      va_start(Arguments, Format);      
-      vsprintf(buffer,Format,Arguments);
-      va_end(Arguments);
-      string str(buffer);
-      logMsg(CONFIG,buffer,  "not specified", 0);
-};
-void LoggerHelper::logINFO(int lineNumber,string method,const char* Format, ...){    
-      char buffer[1000];
-      va_list Arguments;
-      va_start(Arguments, Format);      
-      vsprintf(buffer,Format,Arguments);
-      va_end(Arguments);
-      string str(buffer);
-      logMsg(INFO,buffer, method,lineNumber);
-};
-void LoggerHelper::logINFO(const char* Format, ... ){    
-      char buffer[1000];
-      va_list Arguments;
-      va_start(Arguments, Format);      
-      vsprintf(buffer,Format,Arguments);
-      va_end(Arguments);
-      string str(buffer);
-      logMsg(INFO,buffer, "not specified", 0);
-};
-void LoggerHelper::logWARNING(int lineNumber,string method,const char* Format, ...){    
-      char buffer[1000];
-      va_list Arguments;
-      va_start(Arguments, Format);      
-      vsprintf(buffer,Format,Arguments);
-      va_end(Arguments);
-      string str(buffer);
-      logMsg(WARNING,buffer, method,lineNumber);
-};
-void LoggerHelper::logWARNING(const char* Format, ... ){    
-      char buffer[1000];
-      va_list Arguments;
-      va_start(Arguments, Format);      
-      vsprintf(buffer,Format,Arguments);
-      va_end(Arguments);
-      string str(buffer);
-      logMsg(WARNING,buffer,  "not specified", 0);
-};
-
-void LoggerHelper::logSEVERE(int lineNumber,string method,const char* Format, ...){    
-      char buffer[1000];
-      va_list Arguments;
-      va_start(Arguments, Format);      
-      vsprintf(buffer,Format,Arguments);
-      va_end(Arguments);
-      string str(buffer);
-      logMsg(SEVERE,buffer, method,lineNumber);
-};
-void LoggerHelper::logSEVERE(const char* Format, ... ){    
-      char buffer[1000];
-      va_list Arguments;
-      va_start(Arguments, Format);      
-      vsprintf(buffer,Format,Arguments);
-      va_end(Arguments);
-      string str(buffer);
-      logMsg(SEVERE,buffer,  "not specified", 0);
-};
-void  LoggerHelper::logFINEST(string log){
-      logMsg(FINEST,log, "not specified", 0);
-}
-void  LoggerHelper::logFINER(string log){
-      logMsg(FINER,log,  "not specified", 0);
-}
-void  LoggerHelper::logFINE(string log){
-      logMsg(FINE,log,  "not specified", 0);
-}
-void  LoggerHelper::logCONFIG(string log){
-      logMsg(CONFIG,log,  "not specified", 0);
-}
-void  LoggerHelper::logINFO(string log){
-      logMsg(INFO,log, "not specified", 0);
-}
-void  LoggerHelper::logWARNING(string log){
-      logMsg(WARNING,log,  "not specified", 0);
-}
-void  LoggerHelper::logSEVERE(string log){
-      logMsg(SEVERE,log,  "not specified", 0);
-}
-
 #ifdef ARM
 double LoggerHelper::convertDouble(double MEData)
 {
@@ -288,3 +154,48 @@ double LoggerHelper::convertDouble(double MEData)
 }
 #endif
 
+// This method looks for the specified file in several dirs:
+// TODO: move it to a common 'utils' library
+string findFilePath(string relFileName)
+{
+    string fileName;
+    string swroot,introot;
+    if (getenv("SWROOT")!=NULL) {
+        swroot=getenv("SWROOT");
+    }
+    else { 
+        cout << "SWROOT not set, check you environmental variables";
+        return string("");     
+    }
+    ifstream file;
+    if (getenv("INTROOT")!=NULL) {
+        // If we found and introot, we will check there first
+        introot=getenv("INTROOT");
+        fileName=introot+string("/")+relFileName;
+        file.open(fileName.c_str());
+        if (file.is_open())
+            return fileName;
+    }
+    // Now we look in the patches files  
+    ifstream patchesListFile((swroot+string("/patches/patches.list")).c_str());
+    if (patchesListFile.is_open()) 
+        // we have patches! we look for the file in every directory
+    while( !patchesListFile.eof() ) {
+        string line;
+        getline(patchesListFile, line);
+        // got a line, checking if the file exist
+        if (!line.empty())
+            fileName=swroot+string("/patches/")+line+string("/")+relFileName;
+        file.open(fileName.c_str());
+        if (file.is_open())
+            return fileName;           
+    }
+    // at this point, we couldn't find the file in the patches or INTROOT
+    // so we'll test our last chance: the SWROOT
+    fileName=swroot+string("/")+relFileName;
+    file.open(fileName.c_str());
+    if (file.is_open())
+        return fileName;
+    // fuuuuuu. We cannot find the file, so we return an empy string
+        return string("");
+}

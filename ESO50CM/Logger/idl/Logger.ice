@@ -20,8 +20,9 @@ module Log
     {
             void logMessage(LogMessageData log);
             idempotent void setDiscardLevel(string source, LogLevel level);
+            idempotent void setGlobalDiscardLevel(LogLevel level);     
             int getDiscardLevel(string source);
+            int getGlobalDiscardLevel();     
     };
 };
 #endif
-

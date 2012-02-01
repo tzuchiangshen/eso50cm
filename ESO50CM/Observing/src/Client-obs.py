@@ -20,29 +20,29 @@ def connect():
 
     print "Connecting.."
     status = 0
-    try:
-        # Reading configuration info 
-        configPath = os.environ.get("SWROOT")
-        configPath = configPath + "/config/Obs-config" 
-        initData = Ice.InitializationData()
-        initData.properties = Ice.createProperties()
-        initData.properties.load(configPath)
-        ic = Ice.initialize(sys.argv, initData)
+        try:
+            # Reading configuration info 
+            configPath = os.environ.get("SWROOT")
+            configPath = configPath + "/config/Obs-config" 
+            initData = Ice.InitializationData()
+            initData.properties = Ice.createProperties()
+            initData.properties.load(configPath)
+            ic = Ice.initialize(sys.argv, initData)
 
-        # Create proxy
-        properties = ic.getProperties();
-        proxyProperty = "ObsAdapter.Proxy"
-        proxy = properties.getProperty(proxyProperty);
-        print proxy
-        obj = ic.stringToProxy(proxy);
-        obsImpl = OUC.ObservingPrx.checkedCast(obj)
-        print "Connected to ObsControl"
-        if not obsImpl: 
-            raise RuntimeError("Invalid proxy")
-    except:
-        traceback.print_exc()
-        status = 1
-        sys.exit(status)
+            # Create proxy
+            properties = ic.getProperties();
+            proxyProperty = "ObsAdapter.Proxy"
+            proxy = properties.getProperty(proxyProperty);
+            print proxy
+            obj = ic.stringToProxy(proxy);
+            obsImpl = OUC.ObservingPrx.checkedCast(obj)
+            print "Connected to ObsControl"
+            if not obsImpl: 
+                raise RuntimeError("Invalid proxy")
+         except:
+             traceback.print_exc()
+             status = 1
+             sys.exit(status)
 
 def disconnect():
     global status

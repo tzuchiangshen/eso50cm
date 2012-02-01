@@ -32,7 +32,7 @@ class SimpleClientI : public LogPublisher {
         levelDesc[6]="WARNING";
         levelDesc[7]="SEVERE";
         levelDesc[9]="Unknown log level";
-        printf("| %s | %lf | %s | %s | %i | %s |\n",levelDesc[message.level].c_str(), message.timestamp, message.source.c_str(),message.method.c_str(), message.lineNumber, message.data.c_str());
+        printf("| %s | %lf | %s | %s | %i | %s |\n",levelDesc[message.level].c_str(), message.timestamp, message.source.c_str(),message.method.c_str(), message.lineNumber, message.message.c_str());
 	}
 };
 

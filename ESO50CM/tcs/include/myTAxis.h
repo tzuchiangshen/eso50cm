@@ -3,7 +3,6 @@
 
 #include <myTEncoder.h>
 #include <myTMotor.h>
-#include "LoggerHelper.h"
 
 struct my_TAxis_data_t
 {
@@ -23,6 +22,9 @@ class myTAxis {
 
         double getPosition( void );
         int offsetAxisInDeg( double degs );
+        int degToCountMotorEnc( double degs );
+        int degToCountWormEnc( double degs );
+        int degToCountAxisEnc( double degs );
 
         myTEncoder * AxisE;
         myTEncoder * WormE;
@@ -30,6 +32,10 @@ class myTAxis {
 
     private:
         char m_id;
-        LoggerHelper logger;
+
 };
+
+
+
+
 #endif // * _MYTAXIS_H_ *

@@ -2,8 +2,9 @@
 #ifndef ____client_cpp__
 #define ____client_cpp__
 
-#include "LoggerHelper.h"
+#include "LoggerHelperDummy.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include <cstdlib>
 #include <string.h>
 
