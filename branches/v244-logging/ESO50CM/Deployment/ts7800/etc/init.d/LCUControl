@@ -1,0 +1,50 @@
+#!/bin/bash
+#
+# chkconfig: 35 90 12
+# description: Foo server
+#
+
+# Get function from functions library
+. /lib/lsb/init-functions
+
+# Start the service FOO
+start() {
+        log_daemon_msg "Starting LCUControl" "LCUControl" 
+        /eso50cm/SWROOT/bin/LCUControl &> /tmp/LCUControl &
+        ### Create the lock file ###
+        PID=`pidof LCUControl`
+        echo $PID > /var/run/eso50cm/LCUControl.pid
+        log_end_msg 0
+}
+
+# Restart the service FOO
+stop() {
+        log_daemon_msg "Stopping LCUControl " ""
+        read PID < /var/run/eso50cm/LCUControl.pid
+        ### Now, delete the lock file ###
+        echo " PID = $PID" 
+	kill -2 $PID 
+        rm -f /var/run/eso50cm/LCUControl.pid
+}
+
+### main logic ###
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  status)
+	status_of_proc -p /var/run/eso50cm/telescope61.pid /eso50cm/SWROOT/bin/LCUControl LCUControl && exit 0 || exit $?
+        ;;
+  restart|reload|condrestart)
+        stop
+        start
+        ;;
+  *)
+        echo $"Usage: $0 {start|stop|restart|reload|status}"
+        exit 1
+esac
+
+exit 0
