@@ -3,6 +3,7 @@
 
 #include "LCU.h"
 #include "myLCU.h"
+#include "LoggerHelper.h"
 
 #ifdef ARM
    #include <IceE/IceE.h>
@@ -51,7 +52,8 @@ private:
     OUC::TelescopeData *telescopeData_t;
     string telConfigFileName;
     myLCU *m_lcu; 
-    
+
+    LoggerHelper logger;
 };
 
 #endif
