@@ -50,6 +50,19 @@ LCUImpl::sayHello(int delay, const Ice::Current& c)
 }
 
 void
+LCUImpl::readDeviceMemory(int axis, int address, int value, const Ice::Current& c)
+{
+    if (axis == 1) {
+        //alpha
+        m_lcu->telescope->alpha->Motor->readDeviceMemory(&address, &value, 0);
+    } else if (axis == 2) {
+        m_lcu->telescope->delta->Motor->readDeviceMemory(&address, &value, 0);
+    } else {
+        printf(" axis should be alpha=1, delta=2. Received=%d\n", axis);
+    }
+}
+
+void
 LCUImpl::shutdown(const Ice::Current& c)
 {
     printf("Shutting down...\n");
