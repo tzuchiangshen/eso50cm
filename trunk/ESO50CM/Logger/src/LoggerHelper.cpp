@@ -9,13 +9,22 @@
 #include <stdarg.h>
 #include <wchar.h>
 using namespace std;
+LoggerHelper::LoggerHelper(string src)
+{
+    initialize(src,true);
+}
+LoggerHelper::LoggerHelper(string src,bool oneWayCom)
+{
+    initialize(src,oneWayCom);
+}
 
-LoggerHelper::LoggerHelper(string src) 
+void LoggerHelper::initialize(string src,bool oneWayCom)
 {  
     string filename,swroot;
     ifstream configFile;
     size_t found;
     logginServiceProxyStr="";
+    oneWayCommunication=oneWayCom;
     try {
         if (getenv("SWROOT")!=NULL) {
             swroot=getenv("SWROOT");
@@ -49,7 +58,7 @@ LoggerHelper::LoggerHelper(string src)
             throw string(string("Couldn't find the property LoggingService.Endpoints in ")+filename).c_str();
         }
         
-        cout << "Proxy for logging service: " << logginServiceProxyStr << endl;
+        cout << "Established connection with Logging Service service: " << logginServiceProxyStr << endl;
 #ifdef ARM
         int dummy=0;
         m_ic =  Ice::initialize(dummy,0);
@@ -60,16 +69,23 @@ LoggerHelper::LoggerHelper(string src)
         m_base = m_ic->stringToProxy(logginServiceProxyStr.c_str());
         if (!m_base)
             printf("wrong m_base");
-        try {
-             oneway =  m_base->ice_oneway();
-        } catch (const NoEndpointException) {
-             cerr << "No endpoint for oneway invocations" << endl;
-        }
-        m_prx = LoggerPrx::uncheckedCast(oneway);
-    //    if (!m_prx) throw "Invalid proxy";   
+        if (oneWayCommunication){
+            try {
+                oneway =  m_base->ice_oneway();
+            } catch (const NoEndpointException) {
+                cerr << "No endpoint for oneway invocations" << endl;
+            }
+	    m_prx = LoggerPrx::uncheckedCast(oneway);
+        } else {
+	    try {
+    	        m_base->ice_twoway()->ice_ping();
+	    } catch(const Ice::Exception&) {
+    		cerr << "object not reachable" << endl;
+	    }
+            m_prx = LoggerPrx::uncheckedCast( m_base->ice_twoway());
+	}
         if (!m_prx) printf("Invalid proxy");   
         m_source=src;
-       // setDiscardLevel(CONFIG);
     } catch (const Ice::Exception& ex) {
 #ifdef ARM
         cout << ex.toString() << endl;
@@ -88,13 +104,34 @@ LoggerHelper::~LoggerHelper()
 /*    if (m_ic)
         m_ic->destroy();    */
 };
+void LoggerHelper::setDiscardLevel(LogLevel level, string source)
+{
+    m_prx->setDiscardLevel(source,level);
+};
+StringsVector LoggerHelper::getSources(int fromSource)
+{
+    if (oneWayCommunication)
+    {
+        cout  << "getSources: This method cannot be used when using One Way communication" << endl;
+        StringsVector empty;
+        return empty;
+    } else
+    	return m_prx->getSources(fromSource);
+};
+
 void LoggerHelper::setDiscardLevel(LogLevel level)
 {
     m_prx->setDiscardLevel(m_source,level);
 };
-LogLevel LoggerHelper::getDiscardLevel(string source)
+
+Log::LogLevel LoggerHelper::getDiscardLevel(string source)
 {
-    m_prx->getDiscardLevel(source);
+    if (oneWayCommunication)
+    {
+        cout  << "getDiscardLevel: This method cannot be used when using One Way communication" << endl;
+        return (LogLevel)0;
+    } else
+    return m_prx->getDiscardLevel(source);
 };
 void LoggerHelper::logMsg(LogLevel level,string log, string method, int lineNumber){
     // created an empty message
