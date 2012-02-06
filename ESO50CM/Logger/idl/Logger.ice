@@ -16,11 +16,13 @@ module Log
      * This loggInterface represents a Logger class.
      *
      **/
+    sequence<string> StringsVector;
     interface Logger
     {
             void logMessage(LogMessageData log);
             idempotent void setDiscardLevel(string source, LogLevel level);
-            int getDiscardLevel(string source);
+            LogLevel getDiscardLevel(string source);
+            StringsVector getSources(int fromSource);
     };
 };
 #endif
