@@ -35,6 +35,7 @@ public:
     virtual void stopTelescope(OUC::TelescopeDirection dir, const Ice::Current&);
     virtual void moveToTarget(const Ice::Current&);
     virtual void handsetSlew(const ::OUC::SlewInfo& slewInfo, const Ice::Current&);
+    virtual void readDeviceMemory(const int axis, const int address, const int value, const Ice::Current&);
 
     virtual void getConfigState();
     virtual void getTrackingState();
