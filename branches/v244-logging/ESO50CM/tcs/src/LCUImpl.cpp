@@ -41,7 +41,7 @@ LCUImpl::sayHello(int delay, const Ice::Current& c)
         IceUtil::ThreadControl::sleep(IceUtil::Time::milliSeconds(delay));
     }
 	int alpha_mtr_counts = delay * 3000;
-    logger.logINFO("\nHello World!\n");
+    logger.logINFO("Hello World!");
     OUC::TelescopePosition offset;
 	offset.RA = -30.0;
 	offset.Dec = -10.0;
@@ -53,7 +53,7 @@ LCUImpl::sayHello(int delay, const Ice::Current& c)
 void
 LCUImpl::shutdown(const Ice::Current& c)
 {
-    logger.logINFO("Shutting down...\n");
+    logger.logINFO("Shutting down...");
     c.adapter->getCommunicator()->shutdown();
 }
 
