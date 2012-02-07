@@ -1,24 +1,20 @@
 #include "myTClock.h"
 
-extern int verbose;
-
-myTClock::myTClock( struct my_tClock_data_t * clock_data )
+myTClock::myTClock( struct my_tClock_data_t * clock_data, LoggerHelper *logLCUImpl )
 {
-    if( verbose ) printf( "[myTClock::myTClock] Hello World!\n" );
-
+    logger = logLCUImpl;
+    logger->logINFO( "[myTClock::myTClock] Hello World!" );
     m_clock_data = clock_data;
-
-    if( verbose ) printf( "[myTClock::myTClock] aam_clock_data at %p\n", (void *) m_clock_data );
-
+    logger->logINFO( "[myTClock::myTClock] aam_clock_data at %p", (void *) m_clock_data );
     m_clock_data->old_t = 0.;
-    if( verbose ) printf( "[myTClock::myTClock] ready\n");
+    logger->logINFO( "[myTClock::myTClock] ready");
     
 }
 
 
 myTClock::~myTClock( void )
 {
-    if( verbose ) printf( "[myTClock::~myTClock] Good Bye!\n" );
+    logger->logINFO( "[myTClock::~myTClock] Good Bye!" );
 }
 
 /**
@@ -51,25 +47,25 @@ double myTClock::getClockLongitude( void  )
  */
 double myTClock::currentTime( void )
 {
-	printf("[myTClock::currentTime]\n"); 
+    logger->logINFO("[myTClock::currentTime]"); 
     gettimeofday( & m_clock_data->gtime, & m_clock_data->tzone );
     /** UTC */
     gmtime_r( & m_clock_data->gtime.tv_sec, & m_clock_data->UTime  );
-	printf("[myTClock::currentTime] UTC = %s", asctime(&m_clock_data->UTime)); 
+    logger->logINFO("[myTClock::currentTime] UTC = %s", asctime(&m_clock_data->UTime)); 
     /** LTime */
     localtime_r( & m_clock_data->gtime.tv_sec, & m_clock_data->LTime  );
-	printf("[myTClock::currentTime] LST = %s", asctime(&m_clock_data->LTime)); 
-	/** Local Time in milliseconds **/
-	m_clock_data->MlTime = (m_clock_data->gtime.tv_sec)+((m_clock_data->gtime.tv_usec/1000000.0));
+    logger->logINFO("[myTClock::currentTime] LST = %s", asctime(&m_clock_data->LTime)); 
+    /** Local Time in milliseconds **/
+    m_clock_data->MlTime = (m_clock_data->gtime.tv_sec)+((m_clock_data->gtime.tv_usec/1000000.0));
 
     /** Julian Date */
     julianDate();
     /** Local Sideral Time */
     localSiderealTime();
     //strftime( infoline, 24, "LT %Y-%m-%d %T", & m_clock_data->LTime );
-    //printf( "%s\n", infoline );
+    //printf( "%s", infoline );
     //strftime( infoline, 24, "UT %Y-%m-%d %T", & m_clock_data->UTime );
-    //printf( "%s\n", infoline );
+    //printf( "%s", infoline );
 
     return m_clock_data->LSTime;
 }
@@ -87,9 +83,9 @@ double myTClock::currentTime( struct timeval * gtime )
     /** Local Sideral Time */
     localSiderealTime();
     //strftime( infoline, 24, "LT %Y-%m-%d %T", & m_clock_data->LTime );
-    //printf( "%s\n", infoline );
+    //printf( "%s", infoline );
     //strftime( infoline, 24, "UT %Y-%m-%d %T", & m_clock_data->UTime );
-    //printf( "%s\n", infoline );
+    //printf( "%s", infoline );
 
     return m_clock_data->LSTime;
 }
@@ -118,10 +114,12 @@ double myTClock::julianDate( void )
     int A, B, AA, MM;
     double x1, x2, x3, x4;
 
-    if( m_clock_data->UTime.tm_mon == 0 || m_clock_data->UTime.tm_mon == 1 ){
+    if( m_clock_data->UTime.tm_mon == 0 || m_clock_data->UTime.tm_mon == 1 )
+    {
         AA = m_clock_data->UTime.tm_year + 1899;
         MM = m_clock_data->UTime.tm_mon + 14; //= mes+1+12=(date->tm_mon + 1) + 1 + 12
-    } else {
+    } else 
+    {
         AA = m_clock_data->UTime.tm_year + 1900;
         MM = m_clock_data->UTime.tm_mon + 2;  //= mes+1= (date->tm_mon + 1) + 1
     }
