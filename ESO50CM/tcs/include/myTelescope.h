@@ -16,6 +16,8 @@
 #include <myTClock.h>
 #include <myBSemaphore.h>
 
+#include "LoggerHelper.h"
+
 #define TELSHMKEY   0xFAFAFA00
 #define TELSEMKEY   0xFAFAFA00
 
@@ -78,7 +80,7 @@ struct my_lcu_data_t
 class myTelescope : public myTClock
 {
     public:
-        myTelescope( struct my_lcu_data_t * lcu_data );
+        myTelescope( struct my_lcu_data_t * lcu_data, LoggerHelper *logLCUImpl );
         ~myTelescope( void );
 
         int attachInstrumentMemory( void );

@@ -1,19 +1,19 @@
 #include <myTelescope.h>
 
-extern int verbose;
 /**
   * myTelescope::myTelescope
   */
-myTelescope::myTelescope( struct my_lcu_data_t * lcu_data ) : myTClock( & lcu_data->clock_data )
+myTelescope::myTelescope( struct my_lcu_data_t * lcu_data, LoggerHelper *logLCUImpl ) : myTClock( & lcu_data->clock_data, logLCUImpl )
 {
     //int retval;
-    if( verbose ) printf( "[myTelescope::myTelescope] Hello World!\n" );
+    logger = logLCUImpl;
+    logger->logINFO( "[myTelescope::myTelescope] Hello World!" );
 
     m_telescope_data = & lcu_data->telescope_data;
-    if( verbose ) printf( "[myTelescope::myTelescope] m_telescope_data at %p\n", (void *) m_telescope_data );
-    if( verbose ) printf( "[myTelescope::myTelescope] m_clock_data at     %p\n", (void *) & lcu_data->clock_data );
-    if( verbose ) printf( "[myTelescope::myTelescope] m_alpha_data at     %p\n", (void *) & lcu_data->alpha_data );
-    if( verbose ) printf( "[myTelescope::myTelescope] m_delta_data at     %p\n", (void *) & lcu_data->delta_data );
+    logger->logINFO( "[myTelescope::myTelescope] m_telescope_data at %p", (void *) m_telescope_data );
+    logger->logINFO( "[myTelescope::myTelescope] m_clock_data at     %p", (void *) & lcu_data->clock_data );
+    logger->logINFO( "[myTelescope::myTelescope] m_alpha_data at     %p", (void *) & lcu_data->alpha_data );
+    logger->logINFO( "[myTelescope::myTelescope] m_delta_data at     %p", (void *) & lcu_data->delta_data );
 
     //clock = new myTClock( & lcu_data->clock_data );
     alpha = new myTAxis( 'A', & lcu_data->alpha_data );
@@ -31,8 +31,7 @@ myTelescope::~myTelescope( void )
     //delete clock;
 
     detachInstrumentMemory();
-
-    if( verbose ) printf( "[myTelescope::~myTelescope] Good bye!\n" );
+    logger->logINFO( "[myTelescope::~myTelescope] Good bye!" );
 
 }
 
@@ -65,25 +64,28 @@ int myTelescope::attachInstrumentMemory( void )
     m_segment_size = m_shmbuffer.shm_segsz;
 
     bin_telescope = (struct telescope_data_t *) m_shared_memory;
-    if( verbose ) printf( "[myTelescope::attachTelescope] bin_telescope at %p\n", (void *) bin_telescope );
-    for( int i = 0; i < 6; i ++ ) {
-        if( verbose ) printf( "[myTelescope::attachTelescope] encoder[%d] at %p\n",
-                i,
-                (void *) & bin_telescope->encoder[i] );
+    logger->logINFO( "[myTelescope::attachTelescope] bin_telescope at %p", (void *) bin_telescope );
+    for( int i = 0; i < 6; i ++ ) 
+    {
+        logger->logINFO( "[myTelescope::attachTelescope] encoder[%d] at %p",
+			 i,
+			 (void *) & bin_telescope->encoder[i] );
     }
 
     /** Create Semaphore to control the access to the Instrument Shared Memory */
     bin_telescope_semaphore = new myBSemaphore( TELSEMKEY, S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH );
-    if( (retval = bin_telescope_semaphore->allocate()) < 0 ) {
-        if( verbose ) printf( "[myTelescope::attachTelescope] Error allocating semaphore\n" );
+    if( (retval = bin_telescope_semaphore->allocate()) < 0 ) 
+    {
+        logger->logINFO( "[myTelescope::attachTelescope] Error allocating semaphore" );
         return retval;
     }
 
     bin_telescope_semaphore->wait();
-    for( int i = 0; i < 6; i ++ ) {
-        if( verbose ) printf( "[myTelescope::initializeTelescope] encoder[0x%02X] at %p\n",
-                bin_telescope->encoder[i].i2c_address,
-                (void *) & bin_telescope->encoder[i] );
+    for( int i = 0; i < 6; i ++ ) 
+    {
+        logger->logINFO( "[myTelescope::initializeTelescope] encoder[0x%02X] at %p",
+			 bin_telescope->encoder[i].i2c_address,
+			 (void *) & bin_telescope->encoder[i] );
     }
     alpha->setInstrumentMemorySpace( & bin_telescope->encoder[0],
                                        & bin_telescope->encoder[2],
@@ -108,9 +110,9 @@ int myTelescope::detachInstrumentMemory( void )
             return errno;
         }
         bin_telescope = NULL;
-        if( verbose ) printf( "[myTelescope::detachTelescope] Done!\n" );
+        logger->logINFO( "[myTelescope::detachTelescope] Done!" );
     } else {
-        if( verbose ) printf( "[myTelescope::detachTelescope] Nothing to do\n" );
+        logger->logINFO( "[myTelescope::detachTelescope] Nothing to do" );
     }
     return 0;
 }
@@ -125,9 +127,9 @@ int myTelescope::connectTelescope( void )
     m_socket_fd = socket( PF_LOCAL, SOCK_STREAM, 0 );
     if( m_socket_fd < 0 ) {
         perror( "[myTelescope::myTelescope] socket" );
-        printf( "[myTelescope::myTelescope] socket ERROR\n" );
+        logger->logINFO( "[myTelescope::myTelescope] socket ERROR" );
     } else {
-        printf( "[myTelescope::myTelescope] socket OK\n" );
+        logger->logINFO( "[myTelescope::myTelescope] socket OK" );
     }
     m_server_name.sun_family= AF_LOCAL;
     strcpy( m_server_name.sun_path, "/tmp/mbux" );
@@ -135,9 +137,9 @@ int myTelescope::connectTelescope( void )
     retval = connect( m_socket_fd, (struct sockaddr *) & m_server_name, SUN_LEN( & m_server_name ) );
     if( retval < 0 ) {
         perror( "[myTelescope::myTelescope] connect" );
-        printf( "[myTelescope::myTelescope] connect ERROR\n" );
+        logger->logINFO( "[myTelescope::myTelescope] connect ERROR" );
     } else {
-        printf( "[myTelescope::myTelescope] connect OK\n" );
+        logger->logINFO( "[myTelescope::myTelescope] connect OK" );
     }
     return retval;
 }
@@ -152,9 +154,9 @@ int myTelescope::disconnectTelescope( void )
     retval = close( m_socket_fd );
     if( retval < 0 ) {
         perror( "[myTelescope::myTelescope] close" );
-        printf( "[myTelescope::myTelescope] close ERROR\n" );
+        logger->logINFO( "[myTelescope::myTelescope] close ERROR" );
     } else {
-        printf( "[myTelescope::myTelescope] close OK\n" );
+        logger->logINFO( "[myTelescope::myTelescope] close OK" );
     }
     return retval;
 }
@@ -475,7 +477,7 @@ int myTelescope::currentPosition( double * lst, double * ra, double * dec, doubl
     //char new_data;
 
     //if( m_shared_memory == NULL ) {
-    //    if( verbose ) printf( "[myTelescope::currentPosition] Error: m_shared_memory %p\n",
+    //    if( verbose ) printf( "[myTelescope::currentPosition] Error: m_shared_memory %p",
     //            m_shared_memory );
     //   return -1;
     //}
@@ -483,7 +485,7 @@ int myTelescope::currentPosition( double * lst, double * ra, double * dec, doubl
     //new_data = bin_telescope->new_data;
     //if( new_data ) {
     //    bin_telescope->new_data = 0;
-    //    if( verbose ) printf( "[myTelescope::currentPosition] New data = TRUE\n" );
+    //    if( verbose ) printf( "[myTelescope::currentPosition] New data = TRUE" );
     //}
     /** current LST */
     //* lst = currentTime( & bin_telescope->gtime );
@@ -530,11 +532,11 @@ int myTelescope::currentPosition( double * lst, double * ra, double * dec, doubl
 
     equatorialToHorizontal( m_telescope_data->currentHA, m_telescope_data->currentDec, alt, az  );
     //if( m_telescope_data->HighElevation >= * alt  && * alt >= m_telescope_data->LowElevation ) {
-        //printf( "[myTelescope::setTarget] Te [alt = %lf] [az = %lf]\n", * alt, * az );
+        //printf( "[myTelescope::setTarget] Te [alt = %lf] [az = %lf]", * alt, * az );
     //} else {
     //    if( verbose ) {
-    //        printf( "[myTelescope::currentPosition] Telescope [lst = %lf] [ra = %lf] [dec = %lf]\n", * lst, * ra, * dec );
-    //        printf( "[myTelescope::currentPosition] Telescope [alt = %lf] [az = %lf] bellow horizon (%lf).\n", alt, az, m_telescope_data->LowElevation );
+    //        printf( "[myTelescope::currentPosition] Telescope [lst = %lf] [ra = %lf] [dec = %lf]", * lst, * ra, * dec );
+    //        printf( "[myTelescope::currentPosition] Telescope [alt = %lf] [az = %lf] bellow horizon (%lf).", alt, az, m_telescope_data->LowElevation );
     //   }
     //    return 0;
     //}
@@ -587,25 +589,26 @@ int myTelescope::setTarget( double trg_ra, double trg_dec, double * trgAlt, doub
     m_telescope_data->currentRA = degs;
 
 
-    printf( "[myTelescope::setTarget] Target [lst = %lf] [ra = %lf] [dec = %lf]\n", lst, trg_ra, trg_dec );
+    logger->logINFO( "[myTelescope::setTarget] Target [lst = %lf] [ra = %lf] [dec = %lf]", lst, trg_ra, trg_dec );
     equatorialToHorizontal( lst - trg_ra, trg_dec, trgAlt, trgAz  );
     if( m_telescope_data->HighElevation >= * trgAlt  && * trgAlt >= m_telescope_data->LowElevation ) {
         m_telescope_data->targetRA  = trg_ra;
         m_telescope_data->targetDec = trg_dec;
-        printf( "[myTelescope::setTarget] Target [alt = %lf] [az = %lf]\n", * trgAlt, * trgAz );
-    } else {
-        if( verbose ) {
-            printf( "[myTelescope::setTarget] Target [lst = %lf] [ra = %lf] [dec = %lf]\n", lst, trg_ra, trg_dec );
-            printf( "[myTelescope::setTarget] Target [alt = %lf] [az = %lf] bellow horizon (%lf).\n", * trgAlt, * trgAz, m_telescope_data->LowElevation );
-        }
+        logger->logINFO( "[myTelescope::setTarget] Target [alt = %lf] [az = %lf]", * trgAlt, * trgAz );
+    } else 
+    {  
+        logger->logINFO( "[myTelescope::setTarget] Target [lst = %lf] [ra = %lf] [dec = %lf]", lst, trg_ra, trg_dec );
+        logger->logINFO( "[myTelescope::setTarget] Target [alt = %lf] [az = %lf] bellow horizon (%lf).", * trgAlt, * trgAz, m_telescope_data->LowElevation );
         return 0;
     }
 
     /** current Target HA */
     degs = lst - m_telescope_data->targetRA;
-    if( degs < -180.0  ) {
+    if( degs < -180.0  ) 
+    {
         degs += 360.0;
-    } else if( degs > 180.0 ) {
+    } else if( degs > 180.0 ) 
+    {
         degs -= 360.0;
     }
     m_telescope_data->targetHA = degs;
@@ -632,8 +635,8 @@ int myTelescope::setTarget( double trg_ra, double trg_dec, double * trgAlt, doub
 double myTelescope::equatorialToHorizontal( double ha, double dec, double * alt, double * az )
 {
     //if( verbose ) {
-    //    printf( "[myTelescope::equatorialToHorizontal] [ha  = %+11.6lf]\n", ha );
-    //    printf( "[myTelescope::equatorialToHorizontal] [dec = %+11.6lf]\n", dec );
+    //    printf( "[myTelescope::equatorialToHorizontal] [ha  = %+11.6lf]", ha );
+    //    printf( "[myTelescope::equatorialToHorizontal] [dec = %+11.6lf]", dec );
     //}
     double cosAlt;
 
@@ -644,8 +647,8 @@ double myTelescope::equatorialToHorizontal( double ha, double dec, double * alt,
     double sinAz_cosAlt = - cos( dec * M_PI / 180. ) * sin( ha * M_PI / 180. );
 
     //if( verbose ) {
-    //    printf( "[myTelescope::equatorialToHorizontal] [cosAz_cosAlt = %+11.6lf]\n", cosAz_cosAlt );
-    //    printf( "[myTelescope::equatorialToHorizontal] [sinAz_cosAlt = %+11.6lf]\n", sinAz_cosAlt );
+    //    printf( "[myTelescope::equatorialToHorizontal] [cosAz_cosAlt = %+11.6lf]", cosAz_cosAlt );
+    //    printf( "[myTelescope::equatorialToHorizontal] [sinAz_cosAlt = %+11.6lf]", sinAz_cosAlt );
     //}
     if( cosAz_cosAlt == 0 ) {
         if( sinAz_cosAlt < 0 ) {
@@ -656,7 +659,7 @@ double myTelescope::equatorialToHorizontal( double ha, double dec, double * alt,
             cosAlt = sinAz_cosAlt;
         }
         //if( verbose )
-        //    printf( "[myTelescope::equatorialToHorizontal] [cosAlt = %+11.6lf]\n", cosAlt );
+        //    printf( "[myTelescope::equatorialToHorizontal] [cosAlt = %+11.6lf]", cosAlt );
     } else {
         if( cosAz_cosAlt < 0 ) {
             if( sinAz_cosAlt < 0 ) {
@@ -673,14 +676,14 @@ double myTelescope::equatorialToHorizontal( double ha, double dec, double * alt,
         }
         cosAlt = cosAz_cosAlt / cos( * az );
         //if( verbose )
-        //    printf( "[myTelescope::equatorialToHorizontal] [cosAlt = %+11.6lf]\n", cosAlt );
+        //    printf( "[myTelescope::equatorialToHorizontal] [cosAlt = %+11.6lf]", cosAlt );
         //cosAlt = sinAz_cosAlt / sin( * az );
         //if( verbose )
-        //    printf( "[myTelescope::equatorialToHorizontal] [cosAlt = %+11.6lf]\n", cosAlt );
+        //    printf( "[myTelescope::equatorialToHorizontal] [cosAlt = %+11.6lf]", cosAlt );
         //* az *= 180./ M_PI;
         //if( verbose ) {
-        //    printf( "[myTelescope::equatorialToHorizontal] [Az = %+11.6lf]\n", * az );
-        //    printf( "[myTelescope::equatorialToHorizontal] [Az = %+11.6lf]\n", 180./ M_PI * atan( fabs( sinAz_cosAlt / cosAz_cosAlt ) ) );
+        //    printf( "[myTelescope::equatorialToHorizontal] [Az = %+11.6lf]", * az );
+        //    printf( "[myTelescope::equatorialToHorizontal] [Az = %+11.6lf]", 180./ M_PI * atan( fabs( sinAz_cosAlt / cosAz_cosAlt ) ) );
         //}
         * az *= 180. / M_PI;
     }
@@ -689,7 +692,7 @@ double myTelescope::equatorialToHorizontal( double ha, double dec, double * alt,
     double rad2    = cos2Alt + sinAlt * sinAlt;
 
     //if( verbose )
-    //    printf( "[myTelescope::equatorialToHorizontal] [sinAlt = %+11.6lf cosAlt = %+11.6lf]\n",
+    //    printf( "[myTelescope::equatorialToHorizontal] [sinAlt = %+11.6lf cosAlt = %+11.6lf]",
     //            sinAlt, cosAlt );
 
     if( cosAlt == 0 ) {
@@ -714,7 +717,7 @@ double myTelescope::equatorialToHorizontal( double ha, double dec, double * alt,
     }
 
     //if( verbose ) {
-    //    printf( "[myTelescope::equatorialToHorizontal] [r2 = %+11.6lf alt = %+11.6lf az = %+11.6lf]\n",
+    //    printf( "[myTelescope::equatorialToHorizontal] [r2 = %+11.6lf alt = %+11.6lf az = %+11.6lf]",
     //            rad2, * alt, * az );
     //}
     return rad2;

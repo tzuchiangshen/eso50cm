@@ -22,6 +22,7 @@ using namespace std;
 
 #include "myTelescope.h"
 #include "myBSemaphore.h"
+#include "LoggerHelper.h"
 //#include "myTCP.h"
 //#include <arpa/inet.h>              //inet_ntoa
 
@@ -33,7 +34,7 @@ using namespace std;
 class myLCU
 {
     public:
-         myLCU(void );
+        myLCU(LoggerHelper *logLCUImpl);
         ~myLCU( void );
 
         int waitSemaphore( void );
@@ -66,6 +67,7 @@ class myLCU
         struct tm               m_LCU_Time;
         struct tm               m_LCU_UniversalTime;
 
+	LoggerHelper            *logger;
 };
 
 #endif //MYTCS_H
