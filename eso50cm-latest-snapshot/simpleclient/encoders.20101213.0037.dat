@@ -1,0 +1,24 @@
+Hello World!
+command: [read_encoders]
+traying to connect to 192.168.0.10:4000...
+connected to server...
+executing command: [read_encoders]...
+
+
+Time elapsed since last access: 35.971606 sec
+--------------------------------------------------
+            Lecture       Position
+Alpha AxisE:    511           +511
+Alpha WormE:    466           +466
+Alpha Motor:   2828           -172
+
+Delta AxisE:    740           +740
+Delta WormE:    830           +831
+Delta Motor:    259           +259
+--------------------------------------------------
+Page generated at: [2010-12-13, 00:37:21]
+
+
+END of data!
+Connection closed!
+Good bye!

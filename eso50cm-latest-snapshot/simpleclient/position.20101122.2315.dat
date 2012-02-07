@@ -1,0 +1,19 @@
+Hello World!
+command: [get_position]
+traying to connect to 192.168.0.10:4000...
+connected to server...
+executing command: [get_position]...
+
+
+Time elapsed since last access: 0.889926 sec
+LST = | 01:41:32|  LT  = | 23:15:52|    LD  = |2010-11-22| JD  = |2455523.594352|
+RA  = | 01:41:32|  Dec = |-33:16:09|    HA  = |+00:00:00|  D-L = |+00:00:00|
+tRA = | 01:37:58|  tDec= |-33:16:09|    tHA = |+00:03:33|  tD-L= |+00:00:00|
+dRA = |+00:03:33|  dDec= |+00:00:00|
+--------------------------------------------------
+Page generated at: [2010-11-22, 23:15:52]
+
+
+END of data!
+Connection closed!
+Good bye!
