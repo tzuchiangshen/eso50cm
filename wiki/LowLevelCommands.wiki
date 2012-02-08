@@ -4,6 +4,44 @@ ESO50CM low level commands
 
 Documentation of low level control commands for eso50cm
 
+= get_position =
+{{{
+tcs@dev:~$ ./eso50cm -v get_position 
+Hello World!
+command: [get_position]
+traying to connect to 192.168.0.10:4000...
+connected to server...
+executing command: [get_position]...
+
+
+Time elapsed: 7.324226 > 0.8 sec: Getting new position
+LST = | 20:52:06|  LT  = | 11:21:30|    LD  = |2012-02-08| JD  = |2455966.181597|
+RA  = | 12:38:49|  Dec = |+39:59:59|    HA  = |+08:13:17|  D-L = |+73:16:08|
+tRA = | 12:30:00|  tDec= |+40:00:00|    tHA = |+08:22:06|  tD-L= |+73:16:09|
+dRA = |+00:08:49|  dDec= |+00:00:00|
+
+Alt = |-44.785865 (-44.785865)|
+Az  = |+295.592580 (+295.592580)|
+--------------------------------------------------
+Page generated at: [2012-02-08, 11:21:30]
+
+
+END of data!
+Connection closed!
+Good bye!
+
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA7 mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xA7 enc_value= 0x62 0xEE 0x1 0x0 val=126562
+[telescope_run] message processed in dT=  0.001715[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xAB mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xAB enc_value= 0x90 0xED 0x0 0x0 val=60816
+[telescope_run] message processed in dT=  0.000657[s]
+
+}}}
 = read_encoders =
 
 {{{ 
@@ -1244,7 +1282,5 @@ Good bye!
 [telescope_run] message processed in dT=  0.000592[s]
 
 }}}
-
-
 
 
