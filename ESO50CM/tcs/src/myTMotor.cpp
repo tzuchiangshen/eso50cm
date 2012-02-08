@@ -5,8 +5,8 @@ extern int verbose;
 /**
  * myTMotor
  */
-myTMotor::myTMotor( char ax, char id, struct my_tEncoder_data_t * encoder )
-    : myTEncoder( ax, id, encoder ), m_simulated(false)
+myTMotor::myTMotor( char ax, char id, struct my_tEncoder_data_t * encoder, LoggerHelper *logLCUImpl )
+  : myTEncoder( ax, id, encoder, logLCUImpl ), m_simulated(false)
 {
 }
 
@@ -38,15 +38,15 @@ int myTMotor::setSpeed( double degs_per_sec )
  */
 int myTMotor::runEncSteps( int enc_steps )
 {
-	printf("[myTMotor::runEncSteps]\n");
+	logger->logINFO("[myTMotor::runEncSteps]");
 	if(m_simulated) {
 		/**
 		Also set the values in the encoders in the Worm in order to simulate the movement
 		**/
-		printf("-----------------------------------> En Simulation -----------------------\n");
+		logger->logINFO("-----------------------------------> En Simulation -----------------------");
 
 	}
-	printf("[myTMotor::runEncSteps] moving the motor to %d\n", enc_steps);
+	logger->logINFO("[myTMotor::runEncSteps] moving the motor to %d", enc_steps);
     return setDeviceMemory( 7, & enc_steps, 0 );
 }
 
