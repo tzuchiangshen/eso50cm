@@ -1,0 +1,72 @@
+#eso50cm low level commands
+
+= Introduction =
+
+Documentation of low level control commands for eso50cm
+
+= read_encoders =
+
+{{{ 
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA9 mem_address=2 message=0
+[telescope_run] Received the answer from PIC for 0xA9 enc_value= 0xFE 0x1 0x0 0x0 val=510
+[telescope_run] message processed in dT=  0.020536[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA9 mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xA9 enc_value= 0xFE 0x1 0x0 0x0 val=510
+[telescope_run] message processed in dT=  0.001603[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA7 mem_address=2 message=0
+[telescope_run] Received the answer from PIC for 0xA7 enc_value= 0x19 0x1 0x0 0x0 val=281
+[telescope_run] message processed in dT=  0.016795[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA7 mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xA7 enc_value= 0x19 0x1 0x0 0x0 val=281
+[telescope_run] message processed in dT=  0.001958[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA3 mem_address=2 message=0
+[telescope_run] Received the answer from PIC for 0xA3 enc_value= 0x0 0x0 0x0 0x0 val=0
+[telescope_run] message processed in dT=  0.016726[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA3 mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xA3 enc_value= 0x0 0x0 0x0 0x0 val=0
+[telescope_run] message processed in dT=  0.018835[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xAD mem_address=2 message=0
+[telescope_run] Received the answer from PIC for 0xAD enc_value= 0xE5 0x2 0x0 0x0 val=741
+[telescope_run] message processed in dT=  0.001704[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xAD mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xAD enc_value= 0xE5 0x2 0x0 0x0 val=741
+[telescope_run] message processed in dT=  0.003441[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xAB mem_address=2 message=0
+[telescope_run] Received the answer from PIC for 0xAB enc_value= 0x1A 0x3 0x0 0x0 val=794
+[telescope_run] message processed in dT=  0.027175[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xAB mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xAB enc_value= 0x1A 0x3 0x0 0x0 val=794
+[telescope_run] message processed in dT=  0.002741[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA5 mem_address=2 message=0
+[telescope_run] Received the answer from PIC for 0xA5 enc_value= 0x0 0x0 0x0 0x0 val=0
+[telescope_run] message processed in dT=  0.019294[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA5 mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xA5 enc_value= 0x0 0x0 0x0 0x0 val=0
+[telescope_run] message processed in dT=  0.076016[s]
+
+
+
+}}}
