@@ -1,22 +1,21 @@
 #include <myTAxis.h>
 
-extern int verbose;
-
 /**
  *  myTAxis
  */
-myTAxis::myTAxis( char id, struct my_TAxis_data_t * axis )
+myTAxis::myTAxis( char id, struct my_TAxis_data_t * axis, LoggerHelper *logLCUImpl )
 {
+    logger = logLCUImpl;
     m_id = id;
-    if( verbose ) printf( "[myTAxis::myTAxis] %c Hello World!\n", m_id );
-    if( verbose ) printf( "[myTAxis::myTAxis] %c axis_data at %p\n", m_id, (void *) axis );
-    if( verbose ) printf( "[myTAxis::myTAxis] %c motorE at    %p\n", m_id, (void *) & axis->motorE );
-    if( verbose ) printf( "[myTAxis::myTAxis] %c wormE at     %p\n", m_id, (void *) & axis->wormE );
-    if( verbose ) printf( "[myTAxis::myTAxis] %c axisE at     %p\n", m_id, (void *) & axis->axisE );
+    logger->logINFO( "[myTAxis::myTAxis] %c Hello World!", m_id );
+    logger->logINFO( "[myTAxis::myTAxis] %c axis_data at %p", m_id, (void *) axis );
+    logger->logINFO( "[myTAxis::myTAxis] %c motorE at    %p", m_id, (void *) & axis->motorE );
+    logger->logINFO( "[myTAxis::myTAxis] %c wormE at     %p", m_id, (void *) & axis->wormE );
+    logger->logINFO( "[myTAxis::myTAxis] %c axisE at     %p", m_id, (void *) & axis->axisE );
 
-    Motor = new myTMotor( m_id, 'M',  & axis->motorE );
-    WormE = new myTEncoder( m_id, 'W', & axis->wormE );
-    AxisE = new myTEncoder( m_id, 'A', & axis->axisE );
+    Motor = new myTMotor( m_id, 'M',  & axis->motorE, logger );
+    WormE = new myTEncoder( m_id, 'W', & axis->wormE, logger );
+    AxisE = new myTEncoder( m_id, 'A', & axis->axisE, logger );
 }
 
 /**
@@ -26,7 +25,7 @@ myTAxis::~myTAxis() {
     delete Motor;
     delete WormE;
     delete AxisE;
-    if( verbose ) printf( "[myTAxis::~myTAxis] %c Good Bye!\n", m_id );
+    logger->logINFO( "[myTAxis::~myTAxis] %c Good Bye!", m_id );
 }
 
 
@@ -62,11 +61,12 @@ int myTAxis::offsetAxisInDeg( double degs )
     degs *= Motor->getTicsPerRev();
 
     mtr_counts = (int) round( degs );
-    if( mtr_counts > 0 ) {
-        if( verbose ) printf( "[myTAxis::offsetAxisInDeg] Running motor %d\n", mtr_counts );
+    if( mtr_counts > 0 ) 
+    {
+        logger->logINFO( "[myTAxis::offsetAxisInDeg] Running motor %d", mtr_counts );
         Motor->runEncSteps( mtr_counts );
     } else {
-        if( verbose ) printf( "[myTAxis::offsetAxisInDeg] Nothing to do!\n" );
+        logger->logINFO( "[myTAxis::offsetAxisInDeg] Nothing to do!" );
     }
 
     return mtr_counts;

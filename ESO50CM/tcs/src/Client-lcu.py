@@ -281,7 +281,7 @@ if __name__ == "__main__":
     #if isConfigured():
     #   getConfiguration()
         #sayHello()
-    #getEncoderPosition()
+    getEncoderPosition()
     #parkTelescope()
     #moveToTarget()
     #setTarget(ra, dec)
@@ -289,7 +289,7 @@ if __name__ == "__main__":
     #stopTelescope()
     #setTracking()
     #print "#######################################"    
-    #getRawEncoderPosition()
+    getRawEncoderPosition()
     #print "#######################################"
     #getPosition()
     disconnect()

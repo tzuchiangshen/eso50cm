@@ -5,9 +5,10 @@
 using namespace std;
 
 LCUImpl::LCUImpl(): 
-    telConfigFileName("ESO50cm.conf")    
+    telConfigFileName("ESO50cm.conf"),
+    logger("LCUControl")
 {
-    m_lcu = new myLCU();
+    m_lcu = new myLCU(&logger);
     rawEncoder_t = new OUC::RawEncoderData(); 
     encoder_t = new OUC::EncoderData();
     telescopeConfigData_t = new OUC::TelescopeConfigData();
@@ -21,9 +22,9 @@ LCUImpl::LCUImpl():
     try {
         setConfiguration(configPath);
     } catch (OUC::NotConfigurationFileEx& ex) {
-        printf("LCUImpl::LCUImpl Telescope could not be configured."); 
+        logger.logINFO("LCUImpl::LCUImpl Telescope could not be configured."); 
     } catch(const Ice::Exception& ex) {
-        printf("LCUImpl::LCUImpl Uncaught exception ."); 
+        logger.logINFO("LCUImpl::LCUImpl Uncaught exception ."); 
         throw ex;
     } 
 
@@ -39,13 +40,13 @@ LCUImpl::sayHello(int delay, const Ice::Current&)
     {
         IceUtil::ThreadControl::sleep(IceUtil::Time::milliSeconds(delay));
     }
-    printf("Hello World!\n");
+    logger.logINFO("LCUImpl::sayHello Hello World!");
 }
 
 void
 LCUImpl::shutdown(const Ice::Current& c)
 {
-    printf("Shutting down...\n");
+    logger.logINFO("LCUImpl::shutdown  Shutting down...");
     c.adapter->getCommunicator()->shutdown();
 }
 
