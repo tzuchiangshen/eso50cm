@@ -16,6 +16,7 @@
 #include <time.h>               //gmtime
 
 #include <myBSemaphore.h>
+#include "LoggerHelper.h"
 //-------------------------------------------------------------
 //  Instrument Shared memory and semaphore
 //#define SHMKEY   0xFAFAFA00
@@ -52,7 +53,7 @@ struct my_tEncoder_data_t
 class myTEncoder
 {
     public:
-        myTEncoder( char ax, char id, struct my_tEncoder_data_t * encoder );
+        myTEncoder( char ax, char id, struct my_tEncoder_data_t * encoder, LoggerHelper *logLCUImpl );
         ~myTEncoder( void );
 
         void initializeEncoder( double encoder_to_axis_reduction,
@@ -77,6 +78,7 @@ class myTEncoder
         int    setDeviceMemory( char mem_address, int * value );
         int    setDeviceMemory( char mem_address, int * value, int m_verbose );
 
+	LoggerHelper *logger;
     private:
         char m_ax;
         char m_id;
@@ -85,7 +87,6 @@ class myTEncoder
 
         myBSemaphore * bin_write_semaphore;
         myBSemaphore * bin_read_semaphore;
-
 };
 
 #endif //_MYTENCODER_H_

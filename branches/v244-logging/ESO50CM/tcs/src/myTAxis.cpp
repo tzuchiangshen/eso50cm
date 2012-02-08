@@ -1,22 +1,22 @@
 #include <myTAxis.h>
 
-extern int verbose;
 
 /**
  *  myTAxis
  */
-myTAxis::myTAxis( char id, struct my_TAxis_data_t * axis )
+myTAxis::myTAxis( char id, struct my_TAxis_data_t * axis, LoggerHelper *logLCUImpl )
 {
+    logger = logLCUImpl;
     m_id = id;
-    if( verbose ) printf( "[myTAxis::myTAxis] %c Hello World!\n", m_id );
-    if( verbose ) printf( "[myTAxis::myTAxis] %c axis_data at %p\n", m_id, (void *) axis );
-    if( verbose ) printf( "[myTAxis::myTAxis] %c motorE at    %p\n", m_id, (void *) & axis->motorE );
-    if( verbose ) printf( "[myTAxis::myTAxis] %c wormE at     %p\n", m_id, (void *) & axis->wormE );
-    if( verbose ) printf( "[myTAxis::myTAxis] %c axisE at     %p\n", m_id, (void *) & axis->axisE );
+    logger->logINFO( "[myTAxis::myTAxis] %c Hello World!\n", m_id );
+    logger->logINFO( "[myTAxis::myTAxis] %c axis_data at %p\n", m_id, (void *) axis );
+    logger->logINFO( "[myTAxis::myTAxis] %c motorE at    %p\n", m_id, (void *) & axis->motorE );
+    logger->logINFO( "[myTAxis::myTAxis] %c wormE at     %p\n", m_id, (void *) & axis->wormE );
+    logger->logINFO( "[myTAxis::myTAxis] %c axisE at     %p\n", m_id, (void *) & axis->axisE );
 
-    Motor = new myTMotor( m_id, 'M',  & axis->motorE );
-    WormE = new myTEncoder( m_id, 'W', & axis->wormE );
-    AxisE = new myTEncoder( m_id, 'A', & axis->axisE );
+    Motor = new myTMotor( m_id, 'M',  & axis->motorE, logger );
+    WormE = new myTEncoder( m_id, 'W', & axis->wormE, logger );
+    AxisE = new myTEncoder( m_id, 'A', & axis->axisE, logger );
 	// Tzu: temporary hack, this should be done by reading the configuration files
 	//Motor->setSimulationMode(true);
 }
@@ -28,7 +28,7 @@ myTAxis::~myTAxis() {
     delete Motor;
     delete WormE;
     delete AxisE;
-    if( verbose ) printf( "[myTAxis::~myTAxis] %c Good Bye!\n", m_id );
+    logger->logINFO( "[myTAxis::~myTAxis] %c Good Bye!\n", m_id );
 }
 
 
@@ -70,15 +70,14 @@ int myTAxis::offsetAxisInDeg( double degs )
 	tmp *= tics;
 
     mtr_counts = (int) round( tmp );
-	if(verbose)
-	    printf("[myTAxis::offsetAxisInDeg] degs= %lf, reduction=%.lf, tics=%.lf, mtr_count=%d\n", degs, reduction, tics, mtr_counts);
+    logger->logINFO("[myTAxis::offsetAxisInDeg] degs= %lf, reduction=%.lf, tics=%.lf, mtr_count=%d\n", degs, reduction, tics, mtr_counts);
 
     //TSH: should be abs(mtr_counts), deg can comes in negative
     if( mtr_counts > 0 ) {
-        if( verbose ) printf( "[myTAxis::offsetAxisInDeg] Axis: %c  Running motor %d\n", m_id, mtr_counts );
+        logger->logINFO( "[myTAxis::offsetAxisInDeg] Axis: %c  Running motor %d\n", m_id, mtr_counts );
         Motor->runEncSteps( mtr_counts );
     } else {
-        if( verbose ) printf( "[myTAxis::offsetAxisInDeg] Axis: %c Nothing to do!\n", m_id );
+        logger->logINFO( "[myTAxis::offsetAxisInDeg] Axis: %c Nothing to do!\n", m_id );
     }
 
     return mtr_counts;
@@ -105,10 +104,9 @@ int myTAxis::degToCountMotorEnc( double degs )
 	tmp *= tics;
 
     mtr_counts = (int) round( tmp );
-	if(verbose)
-	    printf("[myTAxis::degToCountMotorEnc] axis=%c,  degs= %lf, reduction=%.lf, tics=%.lf, home=%.lf, mtr_count=%d\n", m_id, degs, reduction, tics, home, mtr_counts);
+    logger->logINFO("[myTAxis::degToCountMotorEnc] axis=%c,  degs= %lf, reduction=%.lf, tics=%.lf, home=%.lf, mtr_count=%d\n", m_id, degs, reduction, tics, home, mtr_counts);
 
-	return mtr_counts;
+    return mtr_counts;
 }
 
 
@@ -132,10 +130,9 @@ int myTAxis::degToCountAxisEnc( double degs )
 	tmp += home;
 
     mtr_counts = (int) round( tmp );
-	if(verbose)
-	    printf("[myTAxis::degToCountAxisEnc] axis=%c,  degs= %lf, reduction=%.lf, tics=%.lf, home=%.lf, mtr_count=%d\n", m_id, degs, reduction, tics, home, mtr_counts);
-
-	return mtr_counts;
+    logger->logINFO("[myTAxis::degToCountAxisEnc] axis=%c,  degs= %lf, reduction=%.lf, tics=%.lf, home=%.lf, mtr_count=%d\n", m_id, degs, reduction, tics, home, mtr_counts);
+    
+    return mtr_counts;
 }
 
 
@@ -159,10 +156,9 @@ int myTAxis::degToCountWormEnc( double degs )
 	tmp += home;
 
     mtr_counts = (int) round( tmp );
-	if(verbose)
-	    printf("[myTAxis::degToCountWormEnc] axis=%c,  degs= %lf, reduction=%.lf, tics=%.lf, home=%.lf, mtr_count=%d\n", m_id, degs, reduction, tics, home, mtr_counts);
+    logger->logINFO("[myTAxis::degToCountWormEnc] axis=%c,  degs= %lf, reduction=%.lf, tics=%.lf, home=%.lf, mtr_count=%d\n", m_id, degs, reduction, tics, home, mtr_counts);
 
-	return mtr_counts;
+    return mtr_counts;
 }
 
 

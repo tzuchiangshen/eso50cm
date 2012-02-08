@@ -16,8 +16,8 @@ myTelescope::myTelescope( struct my_lcu_data_t * lcu_data, LoggerHelper *logLCUI
     logger->logINFO( "[myTelescope::myTelescope] m_delta_data at     %p", (void *) & lcu_data->delta_data );
 
     //clock = new myTClock( & lcu_data->clock_data );
-    alpha = new myTAxis( 'A', & lcu_data->alpha_data );
-    delta = new myTAxis( 'D', & lcu_data->delta_data );
+    alpha = new myTAxis( 'A', & lcu_data->alpha_data, logger );
+    delta = new myTAxis( 'D', & lcu_data->delta_data, logger );
 }
 
 
