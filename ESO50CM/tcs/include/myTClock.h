@@ -6,7 +6,6 @@
 #include <time.h>               //gmtime
 #include <math.h>
 #include <errno.h>              //error number
-#include "LoggerHelper.h"
 
 
 //-------------------------------------------------------------
@@ -66,7 +65,6 @@ class myTClock
 
         double julianDate( void );
         double localSiderealTime( void );
-	LoggerHelper logger;
 };
 
 #endif //* _MYTCLOCK_H_ *

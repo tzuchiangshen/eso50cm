@@ -34,20 +34,6 @@ def HHMMSS2degs(hh=0, mm=0, ss=0.0):
         degs = degs * -1.0
     return degs
 
-def sexagesimal2degs(hhmmss, isRA=True):
-    tmp = hhmmss.split(":")
-    if(len(tmp) != 3): 
-        return -1
-    if (hhmmss[0] == '-'):
-        degs = -1.0 * (float(tmp[0]) + float(tmp[1])/60.0 + float(tmp[2])/3600.0)
-    else: 
-        degs = float(tmp[0]) + float(tmp[1])/60.0 + float(tmp[2])/3600.0
-
-    if(isRA):
-        degs  = degs * 15.0
-    #print "%s:%s:%s = %f degs" % (tmp[0], tmp[1], tmp[2], degs) 
-    return degs
-
 def DDMMSS2degs(dd=0, mm=0, ss=0):
     degs  = math.fabs(dd) + (mm/60.0) + (ss/3600.0)
     if( dd < 0 ):

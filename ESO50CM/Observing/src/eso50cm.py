@@ -181,18 +181,23 @@ def getRawEncoderPosition():
         telescope = obsImpl.getTelescope()
         encData =  telescope.getRawEncodersPosition();
         #print encData
-        #print "LT = [%lf]" % encData.lcuTime
-        #print datetime.utcfromtimestamp(encData.lcuTime)
+        print "LT = [%lf]" % encData.lcuTime
+        print datetime.utcfromtimestamp(encData.lcuTime)
         print chr(27)+"[0;33m"+"                   Lecture     Position " + chr(27) + "[0m"
-        print chr(27)+"[0;33m"+"Alpha AxisE   = [%+8.0lf     %+8.0lf ]" % (encData.lectAlphaAxisE, encData.posAlphaAxisE)
-        print                  "Alpha WormE   = [%+8.0lf     %+8.0lf ]" % (encData.lectAlphaWormE, encData.posAlphaWormE) 
-        print                  "Alpha MotorE  = [%+8.0lf     %+8.0lf ]" % (encData.lectAlphaMotor, encData.posAlphaMotor)
-        print chr(27)+"[0;32m"+"Delta AxisE   = [%+8.0lf     %+8.0lf ]" % (encData.lectDeltaAxisE, encData.posDeltaAxisE)
-        print                  "Delta WormE   = [%+8.0lf     %+8.0lf ]" % (encData.lectDeltaWormE, encData.posDeltaWormE) 
-        print                  "Delta MotorE  = [%+8.0lf     %+8.0lf ]" % (encData.lectDeltaMotor, encData.posDeltaMotor)
-        print chr(27)+"[0m" 
-        #print "Generated at = [%lf]" % encData.lcuTime
-        #print datetime.utcfromtimestamp(encData.lcuTime)
+        print chr(27)+"[0;33m"+"AWE Position  = [%+10.0lf]" % encData.lectAlphaWormE
+        print "AAE Position  = [%+10.0lf]" % encData.lectAlphaAxisE 
+        print "AM  Position  = [%+10.0lf]" % encData.lectAlphaMotor + chr(27) + "[0m"
+        print chr(27)+"[0;32m"+"DWE Position  = [%+10.0lf]" % encData.lectDeltaWormE + chr(27) + "[0m"
+        print chr(27)+"[0;32m"+"AAE Position  = [%+10.0lf]" % encData.lectDeltaAxisE + chr(27) + "[0m"
+        print chr(27)+"[0;32m"+"DM Position   = [%+10.0lf]" % encData.lectDeltaMotor + chr(27) + "[0m"
+        print chr(27)+"[0;33m"+"AWE Position  = [%+10.0lf]" % encData.posAlphaWormE
+        print chr(27)+"[0;33m"+"AAE Position  = [%+10.0lf]" % encData.posAlphaAxisE
+        print "AM position   = [%+10.0lf]" % encData.posAlphaMotor  + chr(27) + "[0m"
+        print chr(27)+"[0;32m"+"DWE Position  = [%+10.0lf]" % encData.posDeltaWormE
+        print "DAE position  = [%+10.0lf]" % encData.posDeltaAxisE
+        print "DM Position   = [%+10.0lf]" % encData.posDeltaMotor  + chr(27) + "[0m"
+        print "Generated at = [%lf]" % encData.lcuTime
+        print datetime.utcfromtimestamp(encData.lcuTime)
     except OUC.TelescopeNotConfiguredEx():
         print "Telescope Not Configured !!!"
         traceback.print_exc()
@@ -246,7 +251,7 @@ def getPosition():
 if __name__ == "__main__":
     parser = optparse.OptionParser(usage= "%prog -c command")
     parser.add_option("-c", "--command", dest="command", default = None, 
-                        type = "string", help=chr(27)+"[0;31m"+"send command to the telescope ,avaible commands: isConfigured get_position \n get_config \n read_encoders \n read_rawencoders \n istracking \n offset_telescope"+ chr(27) + "[0m")
+                        type = "string", help=chr(27)+"[0;31m"+"send command to the telescope ,avaible commands: isConfigured get_position \n get_config \n read_encoders \n read_rawencoders \n istracking"+ chr(27) + "[0m")
 
     (options, args) = parser.parse_args()
 
@@ -262,123 +267,6 @@ if __name__ == "__main__":
             setConfiguration2(args[0])
         else:
             setConfiguration()
-    elif (command == "set_tracking"):
-        trkInfo = OUC.TrackingInfo()
-        try:
-            if len(args) != 0:
-                trkInfo.trackState = True
-                trkInfo.ticVel = int(eval(args[0]))
-            else:
-                trkInfo.trackState = True
-                trkInfo.ticVel = 602
-            telescope = obsImpl.getTelescope()
-            telescope.setTracking(trkInfo)
-        except OUC.TelescopeNotConfiguredEx():
-            print "Telescope Not Configured !!!"
-            traceback.print_exc()
-            status = 1
-        except ValueError: 
-            print "The argument must be a number, invalid argument %s " % args[0]
-        except SyntaxError:
-            print "The argument must be a number, invalid argument %s " % args[0]
-    elif (command == "stop_tracking"):
-        trkInfo = OUC.TrackingInfo()
-        try:
-            trkInfo.trackState = False
-            trkInfo.ticVel = 0 
-            telescope = obsImpl.getTelescope()
-            telescope.setTracking(trkInfo)
-        except OUC.TelescopeNotConfiguredEx():
-            print "Telescope Not Configured !!!"
-            traceback.print_exc()
-            status = 1
-        except ValueError: 
-            print "The argument must be a number, invalid argument %s " % args[0]
-        except SyntaxError:
-            print "The argument must be a number, invalid argument %s " % args[0]
-    elif (command == "offset_telescope"):
-        ra = "00:00:00"
-        dec = "00:00:00"
-        if len(args) == 0:
-            print "wrong format" 
-        elif len(args) > 2: 
-            print "wrong format"
-        else: 
-            for a in args: 
-                tmp = a.split("=")
-                if(tmp[0].upper() == "RA"):
-                    ra = tmp[1]
-                elif(tmp[0].upper() == "DEC"):
-                    dec = tmp[1]
-        offsetPos = OUC.TelescopePosition()
-        offsetPos.RA = sexagesimal2degs(ra, True)
-        offsetPos.Dec = sexagesimal2degs(dec, False)
-        #print "setOffset ra=%f, dec=%f" % (offsetPos.RA, offsetPos.Dec)
-        try:
-            telescope = obsImpl.getTelescope()
-            telescope.setOffset(offsetPos)
-        except OUC.TargetOutOfLimitsEx():
-            print "Target Out of Limits. Try a new one\n";
-            traceback.print_exc()
-            status =1
-        except OUC.TelescopeNotConfiguredEx():
-            print "Telescope Not Configured !!!"
-            traceback.print_exc()
-            status =1
-        except ValueError:
-            print "wrong format"
-    elif (command == "set_target"):
-        ra = "00:00:00"
-        dec = "00:00:00"
-        if len(args) != 2:
-            print "wrong format" 
-        else: 
-            for a in args: 
-                tmp = a.split("=")
-                if(tmp[0].upper() == "RA"):
-                    ra = tmp[1]
-                elif(tmp[0].upper() == "DEC"):
-                    dec = tmp[1]
-        targetPos = OUC.TelescopePosition()
-        targetPos.RA = sexagesimal2degs(ra, True)
-        targetPos.Dec = sexagesimal2degs(dec, False)
-        #print "setOffset ra=%f, dec=%f" % (offsetPos.RA, offsetPos.Dec)
-        try:
-            telescope = obsImpl.getTelescope()
-            telescope.setTarget(targetPos)
-        except OUC.TargetOutOfLimitsEx():
-            print "Target Out of Limits. Try a new one\n";
-            traceback.print_exc()
-            status =1
-        except OUC.TelescopeNotConfiguredEx():
-            print "Telescope Not Configured !!!"
-            traceback.print_exc()
-            status =1
-        except ValueError:
-            print "wrong format"
-    elif (command == "goto_target"):
-        try:
-            telescope = obsImpl.getTelescope()
-            telescope.moveToTarget()
-        except OUC.TelescopeNotConfiguredEx():
-            print "Telescope Not Configured !!!"
-            traceback.print_exc()
-            status = 1
-    elif (command == "park_telescope"):
-        try:
-            telescope = obsImpl.getTelescope()
-            telescope.parkTelescope()
-        except OUC.TelescopeNotConfiguredEx():
-            print "Telescope Not Configured !!!"
-            traceback.print_exc()
-            status = 1
-    elif (command == "stop_telescope"):
-        try:
-            telescope = obsImpl.getTelescope()
-            telescope.stopTelescope(OUC.TelescopeDirection.North)
-        except:
-            traceback.print_exc()
-            status = 1
     elif (command == "get_config"):
         getConfiguration()
     elif (command == "get_position"):
@@ -391,8 +279,6 @@ if __name__ == "__main__":
         isConfigured()
     elif (command == "istracking"):
         isTracking()
-    else:
-        print "unknown command" 
 
     disconnect()
 

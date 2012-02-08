@@ -82,7 +82,7 @@ void FileStorage::configureDAO()
     renewLogFile(); 
 }
 
-double FileStorage::getMessages(vector<LogMessageData> &messagesList,double fromTimestamp,double toTimeStamp,int maxNumOfEntries) {return 0;};
+double FileStorage::getMessage(vector<LogMessageData> &messagesList,double fromTimestamp,double toTimeStamp,int maxNumOfEntries) {return 0;};
 // TODO: implement this method
 
 void FileStorage::saveMessage(LogMessageData &message)

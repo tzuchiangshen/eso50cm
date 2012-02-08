@@ -22,8 +22,6 @@ using namespace std;
 
 #include "myTelescope.h"
 #include "myBSemaphore.h"
-#include "LoggerHelper.h"
-
 //#include "myTCP.h"
 //#include <arpa/inet.h>              //inet_ntoa
 
@@ -67,7 +65,7 @@ class myLCU
         struct shmid_ds         m_shmbuffer;
         struct tm               m_LCU_Time;
         struct tm               m_LCU_UniversalTime;
-	LoggerHelper            logger;
+
 };
 
 #endif //MYTCS_H

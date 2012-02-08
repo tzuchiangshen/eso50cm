@@ -29,6 +29,6 @@ class MessageStorageDAO {
         virtual void saveMessage(LogMessageData &message)=0;   // throws SavingMessageDAOEx
         // get a vector of messages from the time specified by fromTimestamp to toTimestamp (timestamps of SAVING not from the message)  and store it in the the vector provided. The max number of entries can be specified
         // by default is unlimited (ok ,actually is just a big value). Return the timestamp of the last message (useful for continue reading from the last message) 
-        virtual double getMessages(vector<LogMessageData> &messagesList,double fromTimestamp,double toTimeStamp,int maxNumOfEntries=UNLIMITED_ENTRIES) = 0;   // throws RetrievingMessageDAOEx
+        virtual double getMessage(vector<LogMessageData> &messagesList,double fromTimestamp,double toTimeStamp,int maxNumOfEntries=UNLIMITED_ENTRIES) = 0;   // throws RetrievingMessageDAOEx
 };
 #endif

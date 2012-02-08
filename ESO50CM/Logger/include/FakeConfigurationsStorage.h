@@ -21,24 +21,22 @@ class ConfigurationsStorage {
   public:
     // getters
     //   throws SectionNotFound Exception or KeyNotFound Exception
-    virtual int getIntValue(string section,string key) = 0;
-    virtual string getStringValue(string section,string key) = 0;
-    virtual double getDoubleValue(string section,string key) = 0;
-    virtual vector<int> getIntVector(string section,string keys)  = 0;   
-    virtual vector<string> getStringVector(string section,string key) = 0;
-    virtual vector<double> getDoubleVector(string section,string key) = 0;
-    virtual vector<string> getKeys(string section) = 0;
-    virtual vector<string> getSections() = 0;
+    virtual int getIntValue(string section,string key) { return 0; };
+    virtual string getStringValue(string section,string key) { return "empty"; };
+    virtual double getDoubleValue(string section,string key) { return 0; };
+    virtual vector<int> getIntVector(string section,string keys) {  };    
+    virtual vector<string> getStringVector(string section,string key) {  };
+    virtual vector<double> getDoubleVector(string section,string key) {  };
+    virtual vector<string> getKeys(string section) {   };
     
     // setters
     //   throws SectionNotFound Exception or KeyNotFound Exception
-    virtual void setIntValue(string section,string key,int value) = 0;
-    virtual void setStringValue(string section,string key,string value)  = 0;
-    virtual void setDoubleValue(string section,string key,double value) = 0;
-    virtual void setIntVector(string section,string key, vector<int> values) = 0;
-    virtual void setStringVector(string section,string key,vector<string> values) = 0;
-    virtual void setDoubleVector(string section,string key,vector<double> values) = 0;
-    
+    virtual void setIntValue(string section,string key,int value) {};
+    virtual void setStringValue(string section,string key,string value) {};
+    virtual void setDoubleValue(string section,string key,double value) {};
+    virtual void setIntVector(string section,string key, vector<int> values) {};    
+    virtual void setStringVector(string section,string key,vector<string> values) {};
+    virtual void setDoubleVector(string section,string key,vector<double> values) {};
     
 };
 
@@ -51,25 +49,13 @@ class Configurations:public ConfigurationsStorage {
     string filename;
   public:
     Configurations(string configurationFile);
-    // getters
-    //   throws SectionNotFound Exception or KeyNotFound Exception
-    virtual int getIntValue(string section,string key); 
-    virtual string getStringValue(string section,string key);
-    virtual double getDoubleValue(string section,string key);
-    virtual vector<int> getIntVector(string section,string keys)   { vector<int> a; return a; }; // Dummy implementation                         
-    virtual vector<string> getStringVector(string section,string key)  { vector<string> a; return a; }; // Dummy implementation 
-    virtual vector<double> getDoubleVector(string section,string key)  { vector<double> a; return a; }; // Dummy implementation 
-    virtual vector<string> getKeys(string section);
-    virtual vector<string> getSections()  { vector<string> a; return a; }; // Dummy implementation ;
-
-    // setters
-    //   throws SectionNotFound Exception or KeyNotFound Exception
-    virtual void setIntValue(string section,string key,int value);
-    virtual void setStringValue(string section,string key,string value);
-    virtual void setDoubleValue(string section,string key,double value);
-    virtual void setIntVector(string section,string key, vector<int> values) {};  // Not implemented
-    virtual void setStringVector(string section,string key,vector<string> values)  {};  // Not implemented
-    virtual void setDoubleVector(string section,string key,vector<double> values)  {};  // Not implemented
-
+    int getIntValue(string section,string key);
+    string getStringValue(string section,string key);
+    double getDoubleValue(string section,string key);
+    void setIntValue(string section,string key,int value);
+    void setStringValue(string section,string key,string value);
+    void setDoubleValue(string section,string key,double value);
+    vector<string> getKeys(string section);
+     
 };
 #endif

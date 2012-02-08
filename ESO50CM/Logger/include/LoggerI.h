@@ -26,18 +26,13 @@ namespace Log {
       void setupMessageStorageDAOs();
       vector<MessageStorageDAO *> messageStorages;
       map<string, int> logLevelsTable;
-      vector<string> sourcesList;  // since the maps are sorted by value, when returning the source list to 
-                                  // the getSources method using a 'fromSource' we will not be sure if the last
-                                  // source are the newest, we had to keep track of them in a differente place, like this 
-                                  // vector. Since no sources are deleted from the table, we only have to add the new
-                                  // source to the vector when it arrives. No other sync. task is needed.
       // ICE defined method
+      //void logMessage(const LogMessageData log, const Ice::Current&);
       void logMessage(const LogMessageData&, const Ice::Current&);
       void setDiscardLevel(const string& source, LogLevel level,const Ice::Current&);
       void setDiscardLevelLocal(const string& source, LogLevel level);  // To be called from inside the class (used by the ICE version)
-      LogLevel getDiscardLevel(const string& source,const Ice::Current&);
-      StringsVector getSources(Ice::Int fromSource, const Ice::Current&);
-      LogLevel getDiscardLevelLocal(const string& source);  // To be called from inside the class (used by the ICE version)
+      int getDiscardLevel(const string& source,const Ice::Current&);
+      int getDiscardLevelLocal(const string& source);  // To be called from inside the class (used by the ICE version)
       // log level description
       string levelDesc[10];  
   };

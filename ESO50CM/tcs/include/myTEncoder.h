@@ -16,8 +16,6 @@
 #include <time.h>               //gmtime
 
 #include <myBSemaphore.h>
-#include "LoggerHelper.h"
-
 //-------------------------------------------------------------
 //  Instrument Shared memory and semaphore
 //#define SHMKEY   0xFAFAFA00
@@ -87,7 +85,7 @@ class myTEncoder
 
         myBSemaphore * bin_write_semaphore;
         myBSemaphore * bin_read_semaphore;
-	LoggerHelper logger;
+
 };
 
 #endif //_MYTENCODER_H_

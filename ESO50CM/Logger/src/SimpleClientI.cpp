@@ -5,11 +5,6 @@
 #include <IceStorm/IceStorm.h>
 #include <IceUtil/UUID.h>
 #include "LogPublisher.h"
-#include <time.h>
-#include <iostream>
-#include <iomanip>
-#include <sstream>
-
 
 
 using namespace std;
@@ -19,21 +14,6 @@ using namespace Log;
 
 
 class SimpleClientI : public LogPublisher {
-    
-    
-    string timestampToString(double timestamp)
-    {
-    
-    time_t rawtime=(time_t)timestamp;
-    struct tm * timeinfo;
-    char buffer [80];
-    timeinfo = localtime ( &rawtime );
-    strftime (buffer,80,"%Y-%m-%dT%H:%M:%S",timeinfo); 
-    stringstream ss (stringstream::in | stringstream::out);
-    ss << buffer << "." << setfill('0') << setw(3) <<  (int)((timestamp-rawtime)*1000);
-    return ss.str();
-    
-    }    
     void logEvent(const LogMessageData &message, const Ice::Current& c) {
         string levelDesc[10]; 
  /*       levelDesc[FINEST]="FINEST";
@@ -52,8 +32,7 @@ class SimpleClientI : public LogPublisher {
         levelDesc[5]="WARNING";
         levelDesc[6]="SEVERE";
         levelDesc[7]="Unknown log level";
-        cout << "| " <<  timestampToString(message.logtimestamp) << " | "  <<  timestampToString(message.timestamp) << " | " <<  levelDesc[message.level] << " | " << 
-         message.source << " | " << message.method  << " | " << message.lineNumber << " |  " << message.data << " |" << endl;
+        printf("| %s | %lf | %s | %s | %i | %s |\n",levelDesc[message.level].c_str(), message.timestamp, message.source.c_str(),message.method.c_str(), message.lineNumber, message.data.c_str());
 	}
 };
 

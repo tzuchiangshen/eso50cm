@@ -43,9 +43,9 @@ struct TrackingInfo
 
 struct SlewInfo
 {
-	string rateName;
-	double rate;
-	string direction;
+        string rateName;
+        double rate;
+        string direction;
 };
 
 struct TelescopeConfigData
@@ -141,7 +141,7 @@ interface LCU
     void stopTelescope(TelescopeDirection dir)
          throws TelescopeNotConfiguredEx;
     void moveToTarget()
-         throws TelescopeNotConfiguredEx; 	 
+         throws TelescopeNotConfiguredEx;
     void handsetSlew(SlewInfo slew)
          throws TelescopeNotConfiguredEx; 	 
 };

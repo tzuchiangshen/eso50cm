@@ -43,9 +43,6 @@ LoggerI::LoggerI(CommunicatorPtr ic):communicator(ic)
     configurations=NULL;
     try {
         configurations=new Configurations("LoggingService.ini");
-        sourcesList=configurations->getKeys("LogLevels");
-        for(int i=0;i<sourcesList.size();i++)
-		logLevelsTable[sourcesList[i]]=configurations->getIntValue("LogLevels",sourcesList[i]);
     } catch (...) {
         // do nothing, in the worst key, we will continue with the default values
     }
@@ -89,7 +86,7 @@ void LoggerI::logMessage(const LogMessageData &msg, const Ice::Current& c)
     message.logtimestamp=(double)tv.tv_sec+(double)tv.tv_usec/1.0E6;  // unix time (sec) + microsec
 
     int daoIndex;
-    if (message.level >= getDiscardLevelLocal(message.source)) {
+    if (message.level > getDiscardLevelLocal(message.source)) {
         logPublisherPrx->logEvent(message);  // publishing the event on IceStorm
         for (daoIndex=0; daoIndex < messageStorages.size() ; daoIndex++)
         {
@@ -101,23 +98,6 @@ void LoggerI::logMessage(const LogMessageData &msg, const Ice::Current& c)
         }
     }    
 }
-/**
-* get a list of sources. It will return the sources from 'fromSource' <=0, it will return all the sources
-  by default, fromSource=0
-**/
-
-StringsVector LoggerI::getSources(const int fromSource, const Ice::Current& c)
-{
-    StringsVector newSourcesList;
-    int from=fromSource;
-    if (from<0)
-        from=0;
-    if (from > sourcesList.size())
-        return newSourcesList;
-    for(int i=from;i<sourcesList.size();i++)
-        newSourcesList.push_back(sourcesList[i]);
-    return newSourcesList;
-}
 
 /**
 * Discard level setters
@@ -128,53 +108,48 @@ void LoggerI::setDiscardLevel(const string& source, LogLevel level,const Ice::Cu
 }
 void LoggerI::setDiscardLevelLocal(const string& source, LogLevel level)
 {
-    // if the source isn't in the list, we add it
-    if ( logLevelsTable.count(source) == 0 )
-        sourcesList.push_back(source);
     logLevelsTable[source]=level;
     if (configurations){
-        //cout << "Entering setDiscardLevelLocal for " << source << " level: " << level << endl;
+        cout << "Entering setDiscardLevelLocal for " << source << " level: " << level << endl;
 	pthread_mutex_lock(&configurations_access_mutex);
-        //cout << "mutex acquired setDiscardLevelLocal for " << source << " level: " << level << endl;
+        cout << "mutex acquired setDiscardLevelLocal for " << source << " level: " << level << endl;
 	try {
 		configurations->setIntValue("LogLevels",source,level);  
         } catch(KeyNotFoundEx ex) {
-		cout << "There was a problem trying to save " << source  << "=" << level << " -> KeyNotFound" << endl;
+		cout << "There were a problem trying to save " << source  << "=" << level << " -> KeyNotFound" << endl;
 	} catch(SectionNotFoundEx ex) {
-                cout << "There was a problem trying to save " << source  << "=" << level << " -> SectionNotFound" << endl;
+                cout << "There were a problem trying to save " << source  << "=" << level << " -> SectionNotFound" << endl;
 	} catch(InvalidValueEx ex) {
-		cout << "There was a problem trying to save " << source  << "=" << level << " -> Invalid value" << endl;
+		cout << "There were a problem trying to save " << source  << "=" << level << " -> Invalid value" << endl;
 	} catch (...) {
- 		cout << "There was a problem trying to save " << source  << "=" << level << " -> unknown error" << endl;
+ 		cout << "There were a problem trying to save " << source  << "=" << level << " -> unknown error" << endl;
 	} 			
-	//cout << "Int value saved setDiscardLevelLocal for " << source << " level: " << level << endl;
+	cout << "Int value saved setDiscardLevelLocal for " << source << " level: " << level << endl;
 	pthread_mutex_unlock(&configurations_access_mutex);
- 	//cout << "mutex released setDiscardLevelLocal for " << source << " level: " << level << endl;
+ 	cout << "mutex released setDiscardLevelLocal for " << source << " level: " << level << endl;
      }
 }
 /**
 * Discard level getters 
 **/
-LogLevel LoggerI::getDiscardLevel(const string& source,const Ice::Current&)
+int LoggerI::getDiscardLevel(const string& source,const Ice::Current&)
 {
     return getDiscardLevelLocal(source);
 }
-LogLevel LoggerI::getDiscardLevelLocal(const string& source)
+int LoggerI::getDiscardLevelLocal(const string& source)
 {
     int level=DEFAULT_DISCARD_LEVEL;
     if(logLevelsTable.find(source) == logLevelsTable.end())  // not found in the list! let's re-check file then
     {
         if (configurations){
         	try {
-			//cout << "getDiscardLevel for " << source;
-			//cout << "getDiscardLevel: about to acquire mutex" << endl;
+			cout << "getDiscardLevel for " << source;
+			cout << "getDiscardLevel: about to acquire mutex" << endl;
 			pthread_mutex_lock(&configurations_access_mutex);
-			//cout << "getDiscardLevel: mutex acquired" << endl;
+			cout << "getDiscardLevel: mutex acquired" << endl;
            		level=configurations->getIntValue("LogLevels",source);
 		} catch(KeyNotFoundEx ex) {
 			cout << "Cannot found " << source << " in the log levels table, we will add it"  << endl; 
-                        if ( logLevelsTable.count(source) == 0 )
-                            sourcesList.push_back(source);
                        	logLevelsTable[source]=level;
 			try {
                        		configurations->setIntValue("LogLevels",source,level);
@@ -182,21 +157,19 @@ LogLevel LoggerI::getDiscardLevelLocal(const string& source)
 				cout << "There was an error inserting the new level for " << source;
 			}
         	} catch(SectionNotFoundEx ex) {
-                		cout << "There was a problem trying to get level of " << source   << " -> SectionNotFound" << endl;
+                		cout << "There were a problem trying to get level of " << source   << " -> SectionNotFound" << endl;
         	} catch(InvalidValueEx ex) {
-                		cout << "There was a problem trying to get level of " << source   << " -> Invalid value" <<  endl;
+                		cout << "There were a problem trying to get level of " << source   << " -> Invalid value" <<  endl;
         	} catch (...) {
-                		cout << "There was a problem trying to get level of " << source   << " -> unknown error" << endl;
+                		cout << "There were a problem trying to get level of " << source   << " -> unknown error" << endl;
         	} 
 		pthread_mutex_unlock(&configurations_access_mutex);
 		cout << "getDicardLevel mutex unlock" << endl;
-               if ( logLevelsTable.count(source) == 0 )
-                   sourcesList.push_back(source);
            	logLevelsTable[source]=level;
         }
-	return (LogLevel)level;
+	return level;
     }	
-    return (LogLevel)logLevelsTable[source];
+    return logLevelsTable[source];
 }
 
 

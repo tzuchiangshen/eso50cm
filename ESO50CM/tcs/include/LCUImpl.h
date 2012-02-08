@@ -12,6 +12,8 @@
 
 class LCUImpl : public OUC::LCU {
 public:
+
+
     LCUImpl();
     virtual void sayHello(const int delay, const Ice::Current&);
     virtual void shutdown(const Ice::Current&);
@@ -46,9 +48,9 @@ private:
     OUC::EncoderData *encoder_t;
     OUC::TelescopeConfigData *telescopeConfigData_t;
     OUC::TelescopeData *telescopeData_t;
-    LoggerHelper logger;
     string telConfigFileName;
     myLCU *m_lcu; 
+    
 };
 
 #endif

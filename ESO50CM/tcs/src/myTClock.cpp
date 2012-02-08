@@ -1,23 +1,24 @@
 #include "myTClock.h"
 
-myTClock::myTClock( struct my_tClock_data_t * clock_data ):
-    logger("myTClock")
+extern int verbose;
+
+myTClock::myTClock( struct my_tClock_data_t * clock_data )
 {
-    logger.logFINE("myTClock::myTClock Hello World!");
+    if( verbose ) printf( "[myTClock::myTClock] Hello World!\n" );
 
     m_clock_data = clock_data;
 
-    //logger.logFINE("myTClock::myTClock aam_clock_data at %p", (void *) m_clock_data );
+    if( verbose ) printf( "[myTClock::myTClock] aam_clock_data at %p\n", (void *) m_clock_data );
 
     m_clock_data->old_t = 0.;
-    logger.logFINE("myTClock::myTClock ready");
+    if( verbose ) printf( "[myTClock::myTClock] ready\n");
     
 }
 
 
 myTClock::~myTClock( void )
 {
-    logger.logFINE("myTClock::~myTClock Good Bye!" );
+    if( verbose ) printf( "[myTClock::~myTClock] Good Bye!\n" );
 }
 
 /**

@@ -15,15 +15,9 @@ using namespace std;
 class LoggerHelper {
 // Local methods
   public:
-      // by default, oneWayCommunication is true
-      LoggerHelper(string src, bool oneWayCom);
       LoggerHelper(string src);
-      void initialize(string src, bool oneWayCom);
       ~LoggerHelper();
-      void setDiscardLevel(LogLevel level,string source);
       void setDiscardLevel(LogLevel level);
-      StringsVector getSources(int fromSource);
-      LogLevel getDiscardLevel(string source);
       void logFINEST(int linenumber, string method,const char* Format, ...);    
       void logFINEST(const char* Format, ... );    
       void logFINER(int lineNumber,string method, const char* Format, ...);    
@@ -54,6 +48,5 @@ class LoggerHelper {
        LoggerPrx m_prx;
        string m_source;
        string logginServiceProxyStr;
-       bool oneWayCommunication;
 };
 #endif

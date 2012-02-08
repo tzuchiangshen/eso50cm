@@ -3,7 +3,6 @@
 
 #include <myTEncoder.h>
 #include <myTMotor.h>
-#include "LoggerHelper.h"
 
 struct my_TAxis_data_t
 {
@@ -30,6 +29,10 @@ class myTAxis {
 
     private:
         char m_id;
-        LoggerHelper logger;
+
 };
+
+
+
+
 #endif // * _MYTAXIS_H_ *
