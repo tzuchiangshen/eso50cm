@@ -269,9 +269,6 @@ Bytes read 13
 Connection closed!
 Good bye!
 
-}}}
-
-{{{
 [telescope_run] --------------------GET----------------------
 [telescope_run] New message received from LCUControl, to be sent to PIC for 0xA7 mem_address=4 message=0
 [telescope_run] Received the answer from PIC for 0xA7 enc_value= 0x1E 0xC1 0xFE 0xFF val=-81634
@@ -477,3 +474,563 @@ current = 0, motor_enc=-3832608
 [telescope_run] message processed in dT=  0.000640[s]
 
 }}}
+
+= start_slewing South= 
+{{{ 
+tcs@dev:~$ ./eso50cm -v start_slewing dir=s rate=s
+Hello World!
+command: [start_slewing?dir=s&rate=s]
+traying to connect to 192.168.0.10:4000...
+connected to server...
+executing command: [start_slewing?dir=s&rate=s]...
+
+
+Start slewing to dir=s at rate=s
+N... tics_per_sec = 7680
+tics_per_sec = 7680
+--------------------------------------------------
+Page generated at: [2012-02-08, 10:49:48]
+
+[telescope_run] --------------------SET ---------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA4 mem_address=6 message=7680
+[telescope_run] Replying answer (received from PIC) to LCUControl for 0xA4 enc_value= 0x0 0x1E 0x0 0x0 val=7680
+[telescope_run] message processed in dT=  0.000905[s]
+
+}}}
+
+= start_slewing North = 
+{{{ 
+tcs@dev:~$ ./eso50cm -v start_slewing dir=n rate=S
+Hello World!
+command: [start_slewing?dir=n&rate=S]
+traying to connect to 192.168.0.10:4000...
+connected to server...
+executing command: [start_slewing?dir=n&rate=S]...
+
+
+Start slewing to dir=n at rate=S
+N... tics_per_sec = -61440
+tics_per_sec = -61440
+--------------------------------------------------
+Page generated at: [2012-02-08, 10:50:32]
+
+
+END of data!
+Connection closed!
+Good bye!
+
+[telescope_run] --------------------SET ---------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA4 mem_address=6 message=-61440
+[telescope_run] Replying answer (received from PIC) to LCUControl for 0xA4 enc_value= 0x0 0x10 0xFF 0xFF val=-61440
+[telescope_run] message processed in dT=  0.000655[s]
+
+}}}
+
+= start_slewing East = 
+{{{ 
+tcs@dev:~$ ./eso50cm -v start_slewing dir=e rate=S
+Hello World!
+command: [start_slewing?dir=e&rate=S]
+traying to connect to 192.168.0.10:4000...
+connected to server...
+executing command: [start_slewing?dir=e&rate=S]...
+
+
+Start slewing to dir=e at rate=S
+N... tics_per_sec = -76800
+tics_per_sec = -76800
+--------------------------------------------------
+Page generated at: [2012-02-08, 10:51:24]
+
+
+END of data!
+Connection closed!
+Good bye!
+
+[telescope_run] --------------------SET ---------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA2 mem_address=6 message=-76800
+[telescope_run] Replying answer (received from PIC) to LCUControl for 0xA2 enc_value= 0x0 0xD4 0xFE 0xFF val=-76800
+[telescope_run] message processed in dT=  0.000755[s]
+
+
+
+}}}
+= start_slewing West = 
+
+{{{
+tcs@dev:~$ ./eso50cm -v start_slewing dir=w rate=S
+Hello World!
+command: [start_slewing?dir=w&rate=S]
+traying to connect to 192.168.0.10:4000...
+connected to server...
+executing command: [start_slewing?dir=w&rate=S]...
+
+
+Start slewing to dir=w at rate=S
+N... tics_per_sec = 76800
+tics_per_sec = 76800
+--------------------------------------------------
+Page generated at: [2012-02-08, 10:52:35]
+
+
+END of data!
+Bytes read -1
+Connection closed!
+Good bye!
+
+[telescope_run] --------------------SET ---------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA2 mem_address=6 message=76800
+[telescope_run] Replying answer (received from PIC) to LCUControl for 0xA2 enc_value= 0x0 0x2C 0x1 0x0 val=76800
+[telescope_run] message processed in dT=  0.001136[s]
+
+}}}
+
+= set_tracking on = 
+{{{ 
+tcs@dev:~$ ./eso50cm -v set_tracking on
+Hello World!
+command: [set_tracking?on]
+traying to connect to 192.168.0.10:4000...
+connected to server...
+executing command: [set_tracking?on]...
+
+
+Tracking ON!
+  tps=1200
+--------------------------------------------------
+Page generated at: [2012-02-08, 10:53:07]
+
+
+END of data!
+Connection closed!
+Good bye!
+
+[telescope_run] --------------------SET ---------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA2 mem_address=3 message=1200
+[telescope_run] Replying answer (received from PIC) to LCUControl for 0xA2 enc_value= 0xB0 0x4 0x0 0x0 val=1200
+[telescope_run] message processed in dT=  0.000670[s]
+
+}}}
+
+= set_tracking off =
+
+{{{
+tcs@dev:~$ ./eso50cm -v set_tracking off
+Hello World!
+command: [set_tracking?off]
+traying to connect to 192.168.0.10:4000...
+connected to server...
+executing command: [set_tracking?off]...
+
+
+Tracking OFF!
+--------------------------------------------------
+Page generated at: [2012-02-08, 10:53:59]
+
+
+END of data!
+Connection closed!
+Good bye!
+
+
+[telescope_run] --------------------SET ---------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA2 mem_address=3 message=0
+[telescope_run] Replying answer (received from PIC) to LCUControl for 0xA2 enc_value= 0x0 0x0 0x0 0x0 val=0
+[telescope_run] message processed in dT=  0.001520[s]
+
+}}}
+
+= offset_telescope ra=00:00:01 = 
+{{{
+tcs@dev:~$ ./eso50cm -v offset_telescope ra=00:00:01
+Hello World!
+command: [offset_telescope?ra=00:00:01]
+traying to connect to 192.168.0.10:4000...
+connected to server...
+executing command: [offset_telescope?ra=00:00:01]...
+
+
+LST = | 20:25:25|  LT  = | 10:54:53|    LD  = |2012-02-08| JD  = |2455966.163113|
+RA  = | 20:25:25|  Dec = |-33:16:09|    HA  = |+00:00:00|  D-L = |+00:00:00|
+tRA = | 20:17:32|  tDec= |-33:16:09|    tHA = |+00:07:52|  tD-L= |+00:00:00|
+dRA = |+00:07:52|  dDec= |+00:00:00|
+--------------------------------------------------
+alpha = [  -0.004] degs -> [    -600] tics
+delta = [  -0.000] degs -> [       0] tics
+--------------------------------------------------
+Page generated at: [2012-02-08, 10:54:53]
+alpha = -1
+delta = 0
+--------------------------------------------------
+Page generated at: [2012-02-08, 10:54:54]
+LST = | 20:25:26|  LT  = | 10:54:54|    LD  = |2012-02-08| JD  = |2455966.163125|
+RA  = | 20:25:27|  Dec = |-33:16:09|    HA  = |+00:00:00|  D-L = |+00:00:00|
+tRA = | 20:17:32|  tDec= |-33:16:09|    tHA = |+00:07:53|  tD-L= |+00:00:00|
+dRA = |+00:07:54|  dDec= |+00:00:00|
+--------------------------------------------------
+Page generated at: [2012-02-08, 10:54:54]
+
+
+END of data!
+Bytes read 13
+Connection closed!
+Good bye!
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA7 mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xA7 enc_value= 0x19 0x1 0x0 0x0 val=281
+[telescope_run] message processed in dT=  0.000654[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xAB mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xAB enc_value= 0x1A 0x3 0x0 0x0 val=794
+[telescope_run] message processed in dT=  0.000678[s]
+
+[telescope_run] --------------------SET ---------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA2 mem_address=7 message=-600
+[telescope_run] Replying answer (received from PIC) to LCUControl for 0xA2 enc_value= 0xA8 0xFD 0xFF 0xFF val=-600
+[telescope_run] message processed in dT=  0.000586[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA3 mem_address=7 message=0
+[telescope_run] Received the answer from PIC for 0xA3 enc_value= 0xFF 0xFF 0xFF 0xFF val=-600
+[telescope_run] message processed in dT=  0.000506[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA7 mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xA7 enc_value= 0x15 0x1 0x0 0x0 val=277
+[telescope_run] message processed in dT=  0.000520[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xAB mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xAB enc_value= 0x1A 0x3 0x0 0x0 val=794
+[telescope_run] message processed in dT=  0.000533[s]
+
+
+}}}
+
+= offset_telescope ra=-00:00:01 = 
+{{{
+
+tcs@dev:~$ ./eso50cm -v offset_telescope ra=-00:00:01
+Hello World!
+command: [offset_telescope?ra=-00:00:01]
+traying to connect to 192.168.0.10:4000...
+connected to server...
+executing command: [offset_telescope?ra=-00:00:01]...
+
+
+LST = | 20:26:35|  LT  = | 10:56:03|    LD  = |2012-02-08| JD  = |2455966.163924|
+RA  = | 20:26:36|  Dec = |-33:16:09|    HA  = |+00:00:00|  D-L = |+00:00:00|
+tRA = | 20:17:32|  tDec= |-33:16:09|    tHA = |+00:09:02|  tD-L= |+00:00:00|
+dRA = |+00:09:03|  dDec= |+00:00:00|
+--------------------------------------------------
+alpha = [  +0.004] degs -> [     600] tics
+delta = [  -0.000] degs -> [       0] tics
+--------------------------------------------------
+Page generated at: [2012-02-08, 10:56:03]
+alpha = -1
+delta = 0
+--------------------------------------------------
+Page generated at: [2012-02-08, 10:56:04]
+LST = | 20:26:36|  LT  = | 10:56:04|    LD  = |2012-02-08| JD  = |2455966.163935|
+RA  = | 20:26:35|  Dec = |-33:16:09|    HA  = |+00:00:00|  D-L = |+00:00:00|
+tRA = | 20:17:32|  tDec= |-33:16:09|    tHA = |+00:09:03|  tD-L= |+00:00:00|
+dRA = |+00:09:02|  dDec= |+00:00:00|
+--------------------------------------------------
+Page generated at: [2012-02-08, 10:56:04]
+
+
+END of data!
+Bytes read 13
+Connection closed!
+Good bye!
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA7 mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xA7 enc_value= 0x15 0x1 0x0 0x0 val=277
+[telescope_run] message processed in dT=  0.000722[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xAB mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xAB enc_value= 0x1A 0x3 0x0 0x0 val=794
+[telescope_run] message processed in dT=  0.000364[s]
+
+[telescope_run] --------------------SET ---------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA2 mem_address=7 message=600
+[telescope_run] Replying answer (received from PIC) to LCUControl for 0xA2 enc_value= 0x58 0x2 0x0 0x0 val=600
+[telescope_run] message processed in dT=  0.000507[s]
+
+[telescope_run] --------------------SET ---------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA2 mem_address=7 message=600
+[telescope_run] Replying answer (received from PIC) to LCUControl for 0xA2 enc_value= 0x58 0x2 0x0 0x0 val=600
+[telescope_run] message processed in dT=  0.000967[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA3 mem_address=7 message=0
+[telescope_run] Received the answer from PIC for 0xA3 enc_value= 0xFF 0xFF 0xFF 0xFF val=600
+[telescope_run] message processed in dT=  0.000541[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA7 mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xA7 enc_value= 0x1D 0x1 0x0 0x0 val=285
+[telescope_run] message processed in dT=  0.000764[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xAB mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xAB enc_value= 0x1A 0x3 0x0 0x0 val=794
+[telescope_run] message processed in dT=  0.000573[s]
+
+
+}}} 
+
+== offset_telescope dec=00:00:01 = 
+{{{
+tcs@dev:~$ ./eso50cm -v offset_telescope dec=00:00:01
+Hello World!
+command: [offset_telescope?dec=00:00:01]
+traying to connect to 192.168.0.10:4000...
+connected to server...
+executing command: [offset_telescope?dec=00:00:01]...
+
+
+LST = | 20:27:40|  LT  = | 10:57:08|    LD  = |2012-02-08| JD  = |2455966.164676|
+RA  = | 20:27:39|  Dec = |-33:16:09|    HA  = |+00:00:00|  D-L = |+00:00:00|
+tRA = | 20:17:32|  tDec= |-33:16:09|    tHA = |+00:10:07|  tD-L= |+00:00:00|
+dRA = |+00:10:06|  dDec= |+00:00:00|
+--------------------------------------------------
+alpha = [  +0.000] degs -> [       0] tics
+delta = [  -0.000] degs -> [     -32] tics
+--------------------------------------------------
+Page generated at: [2012-02-08, 10:57:08]
+alpha = -1
+delta = -1
+--------------------------------------------------
+Page generated at: [2012-02-08, 10:57:09]
+LST = | 20:27:41|  LT  = | 10:57:09|    LD  = |2012-02-08| JD  = |2455966.164687|
+RA  = | 20:27:40|  Dec = |-33:16:09|    HA  = |+00:00:00|  D-L = |+00:00:00|
+tRA = | 20:17:32|  tDec= |-33:16:09|    tHA = |+00:10:08|  tD-L= |+00:00:00|
+dRA = |+00:10:07|  dDec= |+00:00:00|
+--------------------------------------------------
+Page generated at: [2012-02-08, 10:57:09]
+
+
+END of data!
+Bytes read 13
+Connection closed!
+Good bye!
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA7 mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xA7 enc_value= 0x1D 0x1 0x0 0x0 val=285
+[telescope_run] message processed in dT=  0.000632[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xAB mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xAB enc_value= 0x1A 0x3 0x0 0x0 val=794
+[telescope_run] message processed in dT=  0.000461[s]
+
+[telescope_run] --------------------SET ---------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA2 mem_address=7 message=0
+[telescope_run] Replying answer (received from PIC) to LCUControl for 0xA2 enc_value= 0x0 0x0 0x0 0x0 val=0
+[telescope_run] message processed in dT=  0.000554[s]
+
+[telescope_run] --------------------SET ---------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA4 mem_address=7 message=-32
+current = -14, motor_enc=-32
+[telescope_run] Replying answer (received from PIC) to LCUControl for 0xA4 enc_value= 0xE0 0xFF 0xFF 0xFF val=-32
+[telescope_run] message processed in dT=  0.000727[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA3 mem_address=7 message=0
+[telescope_run] Received the answer from PIC for 0xA3 enc_value= 0xFF 0xFF 0xFF 0xFF val=0
+[telescope_run] message processed in dT=  0.000506[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA5 mem_address=7 message=0
+[telescope_run] Received the answer from PIC for 0xA5 enc_value= 0xFF 0xFF 0xFF 0xFF val=-32
+[telescope_run] message processed in dT=  0.000548[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA7 mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xA7 enc_value= 0x1D 0x1 0x0 0x0 val=285
+[telescope_run] message processed in dT=  0.001335[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xAB mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xAB enc_value= 0x1A 0x3 0x0 0x0 val=794
+[telescope_run] message processed in dT=  0.000411[s]
+
+}}}
+
+= offset_telescope dec=-00:00:01 =
+{{{
+tcs@dev:~$ ./eso50cm -v offset_telescope dec=-00:00:01
+Hello World!
+command: [offset_telescope?dec=-00:00:01]
+traying to connect to 192.168.0.10:4000...
+connected to server...
+executing command: [offset_telescope?dec=-00:00:01]...
+
+
+LST = | 20:28:25|  LT  = | 10:57:53|    LD  = |2012-02-08| JD  = |2455966.165197|
+RA  = | 20:28:24|  Dec = |-33:16:09|    HA  = |+00:00:00|  D-L = |+00:00:00|
+tRA = | 20:17:32|  tDec= |-33:16:09|    tHA = |+00:10:52|  tD-L= |+00:00:00|
+dRA = |+00:10:51|  dDec= |+00:00:00|
+--------------------------------------------------
+alpha = [  +0.000] degs -> [       0] tics
+delta = [  +0.000] degs -> [      32] tics
+--------------------------------------------------
+Page generated at: [2012-02-08, 10:57:53]
+alpha = -1
+delta = -1
+--------------------------------------------------
+Page generated at: [2012-02-08, 10:57:54]
+LST = | 20:28:26|  LT  = | 10:57:54|    LD  = |2012-02-08| JD  = |2455966.165208|
+RA  = | 20:28:25|  Dec = |-33:16:09|    HA  = |+00:00:00|  D-L = |+00:00:00|
+tRA = | 20:17:32|  tDec= |-33:16:09|    tHA = |+00:10:53|  tD-L= |+00:00:00|
+dRA = |+00:10:52|  dDec= |+00:00:00|
+--------------------------------------------------
+Page generated at: [2012-02-08, 10:57:54]
+
+
+END of data!
+Bytes read 13
+Bytes read -1
+Connection closed!
+Good bye!
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA7 mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xA7 enc_value= 0x1D 0x1 0x0 0x0 val=285
+[telescope_run] message processed in dT=  0.000637[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xAB mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xAB enc_value= 0x1A 0x3 0x0 0x0 val=794
+[telescope_run] message processed in dT=  0.000439[s]
+
+[telescope_run] --------------------SET ---------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA4 mem_address=7 message=32
+current = -46, motor_enc=32
+[telescope_run] Replying answer (received from PIC) to LCUControl for 0xA4 enc_value= 0x20 0x0 0x0 0x0 val=32
+[telescope_run] message processed in dT=  0.000592[s]
+
+[telescope_run] --------------------SET ---------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA2 mem_address=7 message=0
+[telescope_run] Replying answer (received from PIC) to LCUControl for 0xA2 enc_value= 0x0 0x0 0x0 0x0 val=0
+[telescope_run] message processed in dT=  0.000537[s]
+
+[telescope_run] --------------------SET ---------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA4 mem_address=7 message=32
+current = -14, motor_enc=32
+[telescope_run] Replying answer (received from PIC) to LCUControl for 0xA4 enc_value= 0x20 0x0 0x0 0x0 val=32
+[telescope_run] message processed in dT=  0.000618[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA3 mem_address=7 message=0
+[telescope_run] Received the answer from PIC for 0xA3 enc_value= 0xFF 0xFF 0xFF 0xFF val=0
+[telescope_run] message processed in dT=  0.000510[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA5 mem_address=7 message=0
+[telescope_run] Received the answer from PIC for 0xA5 enc_value= 0xFF 0xFF 0xFF 0xFF val=32
+[telescope_run] message processed in dT=  0.000489[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA7 mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xA7 enc_value= 0x1D 0x1 0x0 0x0 val=285
+[telescope_run] message processed in dT=  0.000659[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xAB mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xAB enc_value= 0x1A 0x3 0x0 0x0 val=794
+[telescope_run] message processed in dT=  0.000236[s]
+
+}}}
+
+= goto_target = 
+{{{
+
+tcs@dev:~$ ./eso50cm -v goto_target 
+Hello World!
+command: [goto_target]
+traying to connect to 192.168.0.10:4000...
+connected to server...
+executing command: [goto_target]...
+
+
+Time elapsed: 724.405752 > 0.8 sec: Getting new position
+LST = | 20:29:39|  LT  = | 10:59:07|    LD  = |2012-02-08| JD  = |2455966.166053|
+RA  = | 20:29:38|  Dec = |-33:16:09|    HA  = |+00:00:00|  D-L = |+00:00:00|
+tRA = | 20:17:32|  tDec= |-33:16:09|    tHA = |+00:12:06|  tD-L= |+00:00:00|
+dRA = |+00:12:06|  dDec= |+00:00:00|
+
+Alt = |+89.996734 (+89.996734)|
+Az  = |+269.998929 (+269.998929)|
+--------------------------------------------------
+alpha = [  +3.025] degs -> [  435628] tics
+delta = [  -0.000] degs -> [       0] tics
+--------------------------------------------------
+Page generated at: [2012-02-08, 10:59:07]
+Time elapsed: 1.070142 > 0.8 sec: Getting new position
+alpha = -1
+delta = 0
+--------------------------------------------------
+Page generated at: [2012-02-08, 10:59:08]
+
+
+END of data!
+Bytes read 4
+Bytes read -1
+Connection closed!
+Good bye!
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA7 mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xA7 enc_value= 0x1D 0x1 0x0 0x0 val=285
+[telescope_run] message processed in dT=  0.000724[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xAB mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xAB enc_value= 0x1A 0x3 0x0 0x0 val=794
+[telescope_run] message processed in dT=  0.000658[s]
+
+[telescope_run] --------------------SET ---------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA2 mem_address=7 message=435628
+[telescope_run] Replying answer (received from PIC) to LCUControl for 0xA2 enc_value= 0xAC 0xA5 0x6 0x0 val=435628
+[telescope_run] message processed in dT=  0.000545[s]
+
+[telescope_run] --------------------SET ---------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA2 mem_address=7 message=435628
+[telescope_run] Replying answer (received from PIC) to LCUControl for 0xA2 enc_value= 0xAC 0xA5 0x6 0x0 val=435628
+[telescope_run] message processed in dT=  0.000784[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA7 mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xA7 enc_value= 0x4F 0x19 0x0 0x0 val=6479
+[telescope_run] message processed in dT=  0.000601[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xAB mem_address=4 message=0
+[telescope_run] Received the answer from PIC for 0xAB enc_value= 0x1A 0x3 0x0 0x0 val=794
+[telescope_run] message processed in dT=  0.000421[s]
+
+[telescope_run] --------------------GET----------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA3 mem_address=7 message=0
+[telescope_run] Received the answer from PIC for 0xA3 enc_value= 0xFF 0xFF 0xFF 0xFF val=435628
+[telescope_run] message processed in dT=  0.000516[s]
+
+[telescope_run] --------------------SET ---------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA2 mem_address=7 message=-434801
+[telescope_run] Replying answer (received from PIC) to LCUControl for 0xA2 enc_value= 0x8F 0x5D 0xF9 0xFF val=-434801
+[telescope_run] message processed in dT=  0.000592[s]
+
+}}}
+
+
+
+
+
+
+
+
