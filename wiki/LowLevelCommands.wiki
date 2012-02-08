@@ -187,7 +187,37 @@ Good bye!
 [telescope_run] message processed in dT=  0.000534[s]
 }}}
 
-= stop_slewing =
+
+= stop_slewing south =
+{{{
+tcs@dev:~$ ./eso50cm -v stop_slewing dir=s
+Hello World!
+command: [stop_slewing?dir=s]
+traying to connect to 192.168.0.10:4000...
+connected to server...
+executing command: [stop_slewing?dir=s]...
+
+
+Stop slewing to s
+S... tics_per_sec = 0
+tics_per_sec = 0
+--------------------------------------------------
+Page generated at: [2012-02-08, 11:04:55]
+
+
+END of data!
+Connection closed!
+Good bye!
+
+[telescope_run] --------------------SET ---------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA4 mem_address=6 message=0
+[telescope_run] Replying answer (received from PIC) to LCUControl for 0xA4 enc_value= 0x0 0x0 0x0 0x0 val=0
+[telescope_run] message processed in dT=  0.000836[s]
+
+
+}}}
+
+= stop_slewing north =
 {{{
 
 tcs@dev:~$ ./eso50cm -v stop_slewing dir=n rate=s
@@ -215,6 +245,62 @@ Good bye!
 [telescope_run] message processed in dT=  0.001062[s]
 
 
+}}}
+
+= stop_slewing east = 
+{{{
+tcs@dev:~$ ./eso50cm -v stop_slewing dir=e
+Hello World!
+command: [stop_slewing?dir=e]
+traying to connect to 192.168.0.10:4000...
+connected to server...
+executing command: [stop_slewing?dir=e]...
+
+
+Stop slewing to e
+E... tics_per_sec = 0
+tics_per_sec = 0
+--------------------------------------------------
+Page generated at: [2012-02-08, 11:05:52]
+
+
+END of data!
+Connection closed!
+Good bye!
+
+[telescope_run] --------------------SET ---------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA2 mem_address=6 message=0
+[telescope_run] Replying answer (received from PIC) to LCUControl for 0xA2 enc_value= 0x0 0x0 0x0 0x0 val=0
+[telescope_run] message processed in dT=  0.000851[s]
+
+
+}}}
+
+= stop_slewing west =
+{{{
+tcs@dev:~$ ./eso50cm -v stop_slewing dir=w
+Hello World!
+command: [stop_slewing?dir=w]
+traying to connect to 192.168.0.10:4000...
+connected to server...
+executing command: [stop_slewing?dir=w]...
+
+
+Stop slewing to w
+W... tics_per_sec = 0
+tics_per_sec = 0
+--------------------------------------------------
+Page generated at: [2012-02-08, 11:06:25]
+
+
+END of data!
+Connection closed!
+Good bye!
+
+[telescope_run] --------------------SET ---------------------
+[telescope_run] New message received from LCUControl, to be sent to PIC for 0xA2 mem_address=6 message=0
+[telescope_run] Replying answer (received from PIC) to LCUControl for 0xA2 enc_value= 0x0 0x0 0x0 0x0 val=0
+[telescope_run] message processed in dT=  0.000847[s]
 }}}
 
 = park_telescope =
@@ -1026,8 +1112,6 @@ Good bye!
 [telescope_run] message processed in dT=  0.000592[s]
 
 }}}
-
-
 
 
 
