@@ -23,11 +23,12 @@ static const struct option long_options[] = {
     { "help",           0, NULL, 'h' },
     { "module-dir",     1, NULL, 'm' },
     { "sck_path",       1, NULL, 's' },
-    { "verbose",        0, NULL, 'v' }
+    { "verbose",        0, NULL, 'v' },
+    { "ultra_verbose",  0, NULL, 'u' }
 };
 
 /** Description of short options for getopt_long.  */
-static const char* const short_options = "b:d:hm:s:v";
+static const char* const short_options = "b:d:hm:s:vu";
 
 /* Usage summary text.  */
 static const char * const usage_template =
@@ -39,7 +40,8 @@ static const char * const usage_template =
     "  -m, --module-dir DIR      Load modules from specified directory\n"
     "                               (by default, use executable directory).\n"
     "  -s, --sck_path PATH       Ux Socket  path to e used.\n"
-    "  -v, --verbose             Print verbose messages.\n";
+    "  -v, --verbose             Print verbose messages.\n"
+    "  -u, --ultra_verbose       Print detailed verbose messages.\n";
 
 /** Print usage information and exit.  If IS_ERROR is nonzero, write to
     stderr and use an error exit code.  Otherwise, write to stdout and
@@ -97,6 +99,7 @@ int main( int argc, char* const argv[] ) {
     do {
         next_option =
         getopt_long (argc, argv, short_options, long_options, NULL);
+		printf("next option ==%d %c\n", next_option, next_option);
         switch (next_option) {
             case 'b':
                {
@@ -165,6 +168,10 @@ int main( int argc, char* const argv[] ) {
             case 'v':
                 /** User specified -v or --verbose.  */ 
                 verbose = 1;
+                break; 
+            case 'u':
+                /** User specified -u or --ultra_verbose.  */ 
+                ultra_verbose = 1;
                 break; 
             case '?':
                 /** User specified an unrecognized option.  */ 

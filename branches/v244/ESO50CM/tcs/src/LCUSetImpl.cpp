@@ -673,14 +673,14 @@ LCUImpl::moveToTarget(const Ice::Current& c)
     alpha_mtr_counts = m_lcu->telescope->alpha->degToCountMotorEnc(offset_ra);
     offset_dec *= -1.;
     delta_mtr_counts = m_lcu->telescope->delta->degToCountMotorEnc(offset_dec);
-    printf("LCUImpl::setOffset: Will add an offset in the telescope position in RA: %lf, Dec: %lf\n", offset_ra, offset_dec);
-    printf("LCUImpl::setOffset: Will move the motors to alpha_mtr_counts: %d, delta_mtr_counts: %d\n", alpha_mtr_counts, delta_mtr_counts);
+    printf("[LCUImpl::moveToTarget]: Will add an offset in the telescope position in RA: %lf, Dec: %lf\n", offset_ra, offset_dec);
+    printf("[LCUImpl::moveToTarget]: Will move the motors to alpha_mtr_counts: %d, delta_mtr_counts: %d\n", alpha_mtr_counts, delta_mtr_counts);
     alpha_axisE_counts = m_lcu->telescope->alpha->degToCountAxisEnc(offset_ra);
     delta_axisE_counts = m_lcu->telescope->delta->degToCountAxisEnc(offset_dec);
-    printf("LCUImpl::setOffset: Will move the axisE to alpha_axisE_counts: %d, delta_axisE_counts: %d\n", alpha_axisE_counts, delta_axisE_counts);
+    printf("[LCUImpl::moveToTarget]: Will move the axisE to alpha_axisE_counts: %d, delta_axisE_counts: %d\n", alpha_axisE_counts, delta_axisE_counts);
     alpha_wormE_counts = m_lcu->telescope->alpha->degToCountWormEnc(offset_ra);
     delta_wormE_counts = m_lcu->telescope->delta->degToCountWormEnc(offset_dec);
-    printf("LCUImpl::setOffset: Will move the WormE to alpha_wormE_counts: %d, delta_wormE_counts: %d\n", alpha_wormE_counts, delta_wormE_counts);
+    printf("[LCUImpl::moveToTarget]: Will move the WormE to alpha_wormE_counts: %d, delta_wormE_counts: %d\n", alpha_wormE_counts, delta_wormE_counts);
 
 
 	/** 3. Move the telescope  **/
@@ -706,17 +706,17 @@ LCUImpl::moveToTarget(const Ice::Current& c)
             m_lcu->waitSemaphore();
            	if( goto_alpha_flag ) {
 		    	m_lcu->telescope->alpha->Motor->readDeviceMemory( 7, & alpha_mtr_counts, 0  );
-		    	printf("LCUImpl::setOffset: MotorE returns alpha_counts: %d\n", alpha_mtr_counts);
+		    	printf("[LCUImpl::moveToTarget]: MotorE returns alpha_counts: %d\n", alpha_mtr_counts);
 		    	if( -50 < alpha_mtr_counts && alpha_mtr_counts < 50 ) {
-		    		printf("LCUImpl::setOffset: reached to the target, stopping the motor in RA\n");
+		    		printf("[LCUImpl::moveToTarget]: reached to the target, stopping the motor in RA\n");
 		    		goto_alpha_flag = false;
 		    	}
 		    }
 		    if( goto_delta_flag ) {
 		        m_lcu->telescope->delta->Motor->readDeviceMemory( 7, & delta_mtr_counts, 0  );
-		    	printf("LCUImpl::setOffset: MotorE returns delta_counts: %d\n", delta_mtr_counts);
+		    	printf("[LCUImpl::moveToTarget]: MotorE returns delta_counts: %d\n", delta_mtr_counts);
 		        if( -50 < delta_mtr_counts && delta_mtr_counts < 50 ) {
-		    	   printf("LCUImpl::setOffset: reached to the target, stopping the motor in Dec\n");
+		    	   printf("LCUImpl::moveToTarget]: reached to the target, stopping the motor in Dec\n");
 		    	   goto_delta_flag = false;
 		    	}
 		    }
@@ -725,6 +725,11 @@ LCUImpl::moveToTarget(const Ice::Current& c)
                 no_quit = false;
             else 
                 no_quit --; 
+
+			if(no_quit == 0) {
+				printf("[LCUImpl::moveToTarget]: Time out to reach the target. 180 seconds.\n");
+			}
+			sleep(1);
         } while( no_quit );
 	} while(setup_ready);
 
@@ -736,7 +741,7 @@ LCUImpl::moveToTarget(const Ice::Current& c)
     m_tracking = true;
     m_lcu->telescope->setIsRunningGoto(false);
     if (verbose)
-        printf("LCUImpl::moveToTarget: Tracking ON!\n");
+        printf("[LCUImpl::moveToTarget]: Tracking ON!\n");
     m_lcu->postSemaphore();
 }
 
