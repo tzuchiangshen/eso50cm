@@ -3,6 +3,8 @@
 
 #include "LCU.h"
 #include "myLCU.h"
+#include "LoggerHelper.h"
+
 
 #ifdef ARM
    #include <IceE/IceE.h>
@@ -51,6 +53,7 @@ private:
     string telConfigFileName;
     myLCU *m_lcu; 
     
+    LoggerHelper logger;
 };
 
 #endif

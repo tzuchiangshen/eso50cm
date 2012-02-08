@@ -3,6 +3,7 @@
 
 #include <myTEncoder.h>
 #include <myTMotor.h>
+#include "LoggerHelper.h"
 
 struct my_TAxis_data_t
 {
@@ -13,7 +14,7 @@ struct my_TAxis_data_t
 
 class myTAxis {
     public:
-        myTAxis( char id, struct my_TAxis_data_t * axis_data );
+        myTAxis( char id, struct my_TAxis_data_t * axis_data, LoggerHelper *logLCUImpl );
         ~myTAxis();
 
         void setInstrumentMemorySpace( struct encoder_data_t * bin_motor_e,
@@ -27,6 +28,7 @@ class myTAxis {
         myTEncoder * WormE;
         myTMotor   * Motor;
 
+	LoggerHelper *logger;	
     private:
         char m_id;
 

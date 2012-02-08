@@ -1,12 +1,10 @@
 #include <myTMotor.h>
 
-extern int verbose;
-
 /**
  * myTMotor
  */
-myTMotor::myTMotor( char ax, char id, struct my_tEncoder_data_t * encoder )
-    : myTEncoder( ax, id, encoder )
+myTMotor::myTMotor( char ax, char id, struct my_tEncoder_data_t * encoder, LoggerHelper *logLCUImpl )
+  : myTEncoder( ax, id, encoder, logLCUImpl)
 {
 }
 
@@ -24,7 +22,8 @@ myTMotor::~myTMotor( void )
 int myTMotor::setSpeed( double degs_per_sec )
 {
     int tics_per_sec;
-    if( getTicsPerRev() > 0 ) {
+    if( getTicsPerRev() > 0 ) 
+    {
         degs_per_sec /= 360.0 * getEncoderToAxis_Reduction() / getTicsPerRev();
         tics_per_sec = (int) degs_per_sec;
     } else {
