@@ -825,7 +825,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                                int val = telescope->encoder[i].data[mem_address];
                                //simulate the movement is finished, 
                                //TSH: move to thread and add some delay before reaching stop condition (< 50 enc)
-                               val = 100; 
+                               val = 103; 
                                dst = (char*)&telescope->encoder[i].answer[3];
                                src = (char*)&val;
                                myMemcpy(dst, src, 4);
