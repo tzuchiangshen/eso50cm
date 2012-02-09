@@ -272,6 +272,20 @@ def parkTelescope():
         traceback.print_exc()
         status = 1
 
+def readDeviceMemory(deviceId, address, value):
+    try:
+       return lcuImpl.readDeviceMemory(deviceId, address, value)
+    except:
+       traceback.print_exc()
+       status = 1
+
+def setDeviceMemory(deviceId, address, value):
+    try:
+	   return lcuImpl.setDeviceMemory(deviceId, address, value)
+    except:
+       traceback.print_exc()
+	   statur = 1
+
 if __name__ == "__main__":
     ra = [12,0,0]
     dec = [40,0,0]
@@ -292,5 +306,6 @@ if __name__ == "__main__":
     getRawEncoderPosition()
     #print "#######################################"
     #getPosition()
+	readDeviceStatus(0xA2, 3, 0)
     disconnect()
     
