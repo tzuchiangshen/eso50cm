@@ -8,6 +8,7 @@
 
 const char * program_name;
 int verbose;
+int ultra_verbose;
 
 void * xmalloc (size_t size) {
     void * ptr = malloc (size);
