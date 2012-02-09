@@ -22,6 +22,26 @@ double LCUImpl::MiddleEndianToLittleEndian(double MEData)
     return test;
 }
 
+int LCUImpl::MiddleEndianToLittleEndian(int MEData) 
+{
+    int test;
+    unsigned char *p;
+    unsigned char *q;
+
+    //RA
+    test = 0;
+    p = (unsigned char*)&MEData;
+    q = (unsigned char*)&test;
+
+    q += 4;
+    memcpy(q, p, 4);
+    q -= 4;
+    p += 4;
+    memcpy(q, p, 4);
+
+    return test;
+}
+
 void LCUImpl::getConfigState()
 {
   extern int verbose;

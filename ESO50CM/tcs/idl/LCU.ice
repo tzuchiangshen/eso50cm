@@ -144,8 +144,8 @@ interface LCU
          throws TelescopeNotConfiguredEx;
     void handsetSlew(SlewInfo slew)
          throws TelescopeNotConfiguredEx; 	 
-    void readDeviceMemory(int axis, int address, int value);
-    //void readDeviceMemory(int address, int value);
+    int readDeviceMemory(int deviceId, int address, int value);
+    int setDeviceMemory(int deviceId, int address, int value);
 };
 };
 	
