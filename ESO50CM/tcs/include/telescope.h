@@ -14,6 +14,9 @@ extern const char * program_name;
 /** If nonzero, print verbose messages.  */
 extern int verbose;
 
+/** If nonzero, print verbose messages.  */
+extern int ultra_verbose;
+
 /** Like malloc, except aborts the program if allocation fails.  */
 extern void* xmalloc (size_t size);
 
