@@ -13,7 +13,7 @@ LogLevelPanel::LogLevelPanel(QWidget *parent)
     sourcesList=QHash<QString, SourceLevel*>();
     ui->setupUi(this);
     verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-    ui->verticalLayout_2->addItem(verticalSpacer);
+    ui->sourceWidgetLayou->addItem(verticalSpacer);
 
     connect(ui->selectAll,SIGNAL(clicked()),this,SLOT(markAll()));
     connect(ui->unselectAll,SIGNAL(clicked()),this,SLOT(unmarkAll()));
@@ -46,17 +46,21 @@ void LogLevelPanel::unmarkAll()
 
 void LogLevelPanel::refreshSources()
 {
-    ui->verticalLayout_2->removeItem(verticalSpacer);
-    StringsVector newSources=logger.getSources(sourcesList.size());
-    // Add the new sources
-    for (unsigned int i=0; i<newSources.size(); i++){
-        SourceLevel *p=new SourceLevel(QString(((std::string)newSources[i]).c_str()),logger.getDiscardLevel((std::string)newSources[i]),ui->scrollArea);
-        ui->verticalLayout_2->addWidget(p);
-        sourcesList.insert(QString(((std::string)newSources[i]).c_str()),p);
-        connect(sourcesList[QString(((std::string)newSources[i]).c_str())],SIGNAL(levelChanged(QString,int)),this,SLOT(setDiscardLevel(QString,int)));
 
+    StringsVector newSources=logger.getSources(sourcesList.size());
+
+    if (newSources.size()>0){
+        ui->sourceWidgetLayou->removeItem(verticalSpacer);
+        // Add the new sources
+        for (unsigned int i=0; i<newSources.size(); i++){
+            SourceLevel *p=new SourceLevel(QString(((std::string)newSources[i]).c_str()),logger.getDiscardLevel((std::string)newSources[i]),ui->scrollArea);
+            ui->sourceWidgetLayou->addWidget(p,0,Qt::AlignTop);
+            sourcesList.insert(QString(((std::string)newSources[i]).c_str()),p);
+            connect(sourcesList[QString(((std::string)newSources[i]).c_str())],SIGNAL(levelChanged(QString,int)),this,SLOT(setDiscardLevel(QString,int)));
+        }
+        ui->sourceWidgetLayou->addItem(verticalSpacer);
+        ui->scrollArea->repaint();
     }
-    ui->verticalLayout_2->addItem(verticalSpacer);
 
 }
 void LogLevelPanel::setDiscardLevel(QString source,int level)
@@ -86,14 +90,19 @@ SourceLevel::SourceLevel(QString srcName,int currentLvl,QWidget *parent)
 
 void SourceLevel::setupUI(const int initialLevel) {
         this->setObjectName(source+QString("SourceLevel"));
-        QSizePolicy sizePolicy1(QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        /* We get the high and size of the word 'Warning' */
+        QFontMetrics metrics(font());
+        QRect messageRect1 = metrics.boundingRect(tr("Warning"));
+
+
+        QSizePolicy sizePolicy1(QSizePolicy::Expanding, QSizePolicy::Fixed);
         sizePolicy1.setHorizontalStretch(0);
-        sizePolicy1.setVerticalStretch(0);
-        sizePolicy1.setHeightForWidth(this->sizePolicy().hasHeightForWidth());
+        //sizePolicy1.setHeightForWidth(this->sizePolicy().hasHeightForWidth());
         this->setSizePolicy(sizePolicy1);
         horizontalLayout = new QHBoxLayout(this);
         horizontalLayout->setSpacing(6);
-        horizontalLayout->setMargin(11);
+        horizontalLayout->setMargin(5);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
         cb = new QCheckBox(this);
         cb->setObjectName(QString::fromUtf8("cb"));
@@ -103,9 +112,9 @@ void SourceLevel::setupUI(const int initialLevel) {
         sourceName = new QLabel(this);
         sourceName->setObjectName(QString::fromUtf8("sourceName"));        
         QSizePolicy sizePolicy2(QSizePolicy::Expanding, QSizePolicy::Preferred);
-        sizePolicy2.setHorizontalStretch(0);
-        sizePolicy2.setVerticalStretch(0);
-        sizePolicy2.setHeightForWidth(sourceName->sizePolicy().hasHeightForWidth());
+        //sizePolicy2.setHorizontalStretch(0);
+        //sizePolicy2.setVerticalStretch(0);
+        //sizePolicy2.setHeightForWidth(sourceName->sizePolicy().hasHeightForWidth());
 
         sourceName->setSizePolicy(sizePolicy2);
         sourceName->setFrameShape(QFrame::StyledPanel);
@@ -115,9 +124,10 @@ void SourceLevel::setupUI(const int initialLevel) {
         currentLevel = new QLabel(this);
         currentLevel->setObjectName(QString::fromUtf8("currentLevel"));
         QSizePolicy sizePolicy3(QSizePolicy::Preferred, QSizePolicy::Preferred);
-        sizePolicy3.setHorizontalStretch(0);
-        sizePolicy3.setVerticalStretch(0);
-        sizePolicy3.setHeightForWidth(currentLevel->sizePolicy().hasHeightForWidth());
+
+        //sizePolicy3.setHorizontalStretch(0);
+        //sizePolicy3.setVerticalStretch(0);
+        //sizePolicy3.setHeightForWidth(currentLevel->sizePolicy().hasHeightForWidth());
         currentLevel->setSizePolicy(sizePolicy3);
         currentLevel->setFrameShape(QFrame::StyledPanel);
 
