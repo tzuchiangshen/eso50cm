@@ -31,12 +31,14 @@ public:
     void setConfiguration(const string& fileName);
     virtual void setTarget(const ::OUC::TelescopePosition& targetPos, const Ice::Current&);
     virtual void setOffset(const ::OUC::TelescopePosition& offsetPos, const Ice::Current&);
+    void setOffset(const ::OUC::TelescopePosition& offsetPos);
     virtual void setTracking(const OUC::TrackingInfo& trkInfo, const Ice::Current&);
     virtual void parkTelescope(const Ice::Current&);
     virtual void stopTelescope(OUC::TelescopeDirection dir, const Ice::Current&);
     virtual void moveToTarget(const Ice::Current&);
     virtual void handsetSlew(const ::OUC::SlewInfo& slewInfo, const Ice::Current&);
-
+    virtual int readDeviceMemory(int deviceId, int address, int value, const Ice::Current&);
+    virtual int setDeviceMemory(int deviceId, int address, int value, const Ice::Current&);
     virtual void getConfigState();
     virtual void getTrackingState();
 protected:
@@ -46,6 +48,7 @@ private:
     void getCurrentPosition(OUC::TelescopeData *telescopeData_t);
     void getTargetPosition(OUC::TelescopeData *telescopeData_t);
     double MiddleEndianToLittleEndian(double MEData);
+    int MiddleEndianToLittleEndian(int MEData);
     OUC::RawEncoderData *rawEncoder_t;
     OUC::EncoderData *encoder_t;
     OUC::TelescopeConfigData *telescopeConfigData_t;

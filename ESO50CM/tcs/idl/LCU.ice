@@ -53,7 +53,7 @@ struct TelescopeConfigData
 	double localTime;
 	double lcuTime;
 	double latitude;
- 	double longitude;
+	double longitude;
 	double altitude;
 	double AMT;
 	double AMH;
@@ -81,9 +81,9 @@ struct TelescopePosition
 	double localSideralTime;	
 	double RA;	
 	double HA;
-    	double Dec;
-    	double Alt;
-    	double Az;
+	double Dec;
+	double Alt;
+	double Az;
 };
 
 struct TelescopeData
@@ -144,6 +144,8 @@ interface LCU
          throws TelescopeNotConfiguredEx;
     void handsetSlew(SlewInfo slew)
          throws TelescopeNotConfiguredEx; 	 
+    int readDeviceMemory(int deviceId, int address, int value);
+    int setDeviceMemory(int deviceId, int address, int value);
 };
 };
 	
