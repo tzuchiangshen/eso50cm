@@ -308,7 +308,7 @@ OUC::RawEncoderData LCUImpl::getRawEncodersPosition(const Ice::Current& c)
     
 OUC::EncoderData LCUImpl::getEncodersPosition(const Ice::Current& c)
 {
-    logger.logINFO( "[LCUImpl::getEncoderPosition" );     
+    logger.logINFO( "LCUImpl::getEncoderPosition" );     
     
     /** Is telescope configured **/
     if(!m_configured)
@@ -353,7 +353,7 @@ OUC::EncoderData LCUImpl::getEncodersPosition(const Ice::Current& c)
 
 void LCUImpl::getCurrentPosition(OUC::TelescopeData *telescopeData_t)
 {
-    logger.logINFO( "[LCUImpl::getCurrentPosition" );
+    logger.logINFO( "LCUImpl::getCurrentPosition" );
   
     /** Is telescope configured **/
     if(!m_configured)
@@ -375,7 +375,7 @@ void LCUImpl::getCurrentPosition(OUC::TelescopeData *telescopeData_t)
 
 void LCUImpl::getTargetPosition(OUC::TelescopeData *telescopeData_t)
 {
-    logger.logINFO( "[LCUImpl::getTargetPosition" );
+    logger.logINFO( "LCUImpl::getTargetPosition" );
     
     /** Is telescope configured **/
     if(!m_configured)

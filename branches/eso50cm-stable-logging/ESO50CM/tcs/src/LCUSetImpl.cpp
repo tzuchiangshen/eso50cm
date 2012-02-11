@@ -249,7 +249,7 @@ LCUImpl::setTarget(const OUC::TelescopePosition& targetPos, const Ice::Current& 
 	char limits[255];
 	OUC::TargetOutOfLimitsEx ex;
 	sprintf(limits, "Target out of limits: Low Elevation: %lf, High Elevation: %lf", m_lcu->telescope->getLowElevation(), m_lcu->telescope->getHighElevation());
-	logger.logINFO("[myTelescope::setTarget] %s ", limits);
+	logger.logINFO("LCUImpl::setTarget limits: %s ", limits);
 	ex.reason = "Target out of limits. Try a new one";
 	ex.reason.append(limits); 
     m_lcu->postSemaphore();
@@ -533,18 +533,25 @@ LCUImpl::stopTelescope(OUC::TelescopeDirection dir, const Ice::Current& c)
     ticsPerSeconds = 0;
     if(dir == OUC::North) 
     {
-        logger.logINFO("Stopping North... Tics per second: %d", ticsPerSeconds);
+        logger.logINFO("LCUImpl::stopTelescope: Stopping North... Tics per second: %d", ticsPerSeconds);
 	m_lcu->telescope->delta->Motor->setDeviceMemory(6, & ticsPerSeconds, 0);
     } else if(dir == OUC::South) {
-        logger.logINFO("Stopping South... Tics per seconds: %d", ticsPerSeconds);
+        logger.logINFO("LCUImpl::stopTelescope: Stopping South... Tics per seconds: %d", ticsPerSeconds);
 	m_lcu->telescope->delta->Motor->setDeviceMemory(6, & ticsPerSeconds, 0  );
     } else if(dir == OUC::East) {
-        logger.logINFO("Stopping East... Tics per seconds: %d", ticsPerSeconds);
+        logger.logINFO("LCUImpl::stopTelescope: Stopping East... Tics per seconds: %d", ticsPerSeconds);
 	m_lcu->telescope->alpha->Motor->setDeviceMemory(6, &ticsPerSeconds, 0);
     } else if(dir == OUC::West) {
-        logger.logINFO("Stopping West... Tics per seconds: %d", ticsPerSeconds);
+        logger.logINFO("LCUImpl::stopTelescope: Stopping West... Tics per seconds: %d", ticsPerSeconds);
 	m_lcu->telescope->alpha->Motor->setDeviceMemory(6, &ticsPerSeconds, 0);
+    } else {
+        m_lcu->telescope->alpha->Motor->setDeviceMemory(7, &ticsPerSeconds, 0);
+	m_lcu->telescope->alpha->Motor->setDeviceMemory(6, &ticsPerSeconds, 0);
+	m_lcu->telescope->delta->Motor->setDeviceMemory(7, &ticsPerSeconds, 0);
+	m_lcu->telescope->delta->Motor->setDeviceMemory(6, &ticsPerSeconds, 0);
+	logger.logINFO("LCUImpl::stopTelescope: Stopping Telescope in all directions!!... Tics per seconds: %d", ticsPerSeconds);
     }
+
   
     /** Release semaphore for SHM **/
     m_lcu->postSemaphore();    
@@ -730,7 +737,7 @@ LCUImpl::handsetSlew(const OUC::SlewInfo& slewInfo, const Ice::Current& c)
     } else if( slew_rate == 'O' ) {
         degs_per_sec = 1./240.;         //128x  32['/s]
     }
-    logger.logINFO( "[handset_command] degs_per_sec = %lf", degs_per_sec );
+    logger.logINFO( "LCUImpl::handsetSlew: degs_per_sec = %lf", degs_per_sec );
     
     m_lcu->waitSemaphore();
     is_telescope_configured = m_lcu->telescope->getIsConfigured();
@@ -738,15 +745,15 @@ LCUImpl::handsetSlew(const OUC::SlewInfo& slewInfo, const Ice::Current& c)
     
     if( is_telescope_configured == 0 ) 
     {
-        logger.logINFO( "Information: Please, config telescope first!" );
+        logger.logINFO( "LCUImpl::handsetSlew: Information: Please, config telescope first!" );
         return;
     }  
 
     if ( degs_per_sec > 0.0) 
     {
-        logger.logINFO("[handset_command]: Slewing to the direction =%c at rate=%.2lf", slew_dir, degs_per_sec);
+        logger.logINFO("LCUImpl::handsetSlew: Slewing to the direction =%c at rate=%.2lf", slew_dir, degs_per_sec);
     } else {
-        logger.logINFO("[handset_command]: Stop slewing to dir=%c ", slew_dir );
+        logger.logINFO("LCUImpl::handsetSlew: Stop slewing to dir=%c ", slew_dir );
     } 
 
     m_lcu->waitSemaphore();
@@ -758,28 +765,28 @@ LCUImpl::handsetSlew(const OUC::SlewInfo& slewInfo, const Ice::Current& c)
                 m_lcu->telescope->delta->Motor->getEncoderToAxis_Reduction() *
                 degs_per_sec / 360.);
         tics_per_sec = (int) tmp;
-        logger.logINFO("[handset_command]:N... tics_per_sec = %d", tics_per_sec );
+        logger.logINFO("LCUImpl::handsetSlew: N... tics_per_sec = %d", tics_per_sec );
         m_lcu->telescope->delta->Motor->setDeviceMemory( 6, & tics_per_sec, 0  );
     } else if( slew_dir == 'S' ) {
         tmp =  (m_lcu->telescope->delta->Motor->getTicsPerRev() *
 		m_lcu->telescope->delta->Motor->getEncoderToAxis_Reduction() *
 		degs_per_sec / 360.);
         tics_per_sec = (int) tmp;
-        logger.logINFO("[handset_command]:S... tics_per_sec = %d", tics_per_sec );
+        logger.logINFO("LCUImpl::handsetSlew: S... tics_per_sec = %d", tics_per_sec );
         m_lcu->telescope->delta->Motor->setDeviceMemory( 6, & tics_per_sec, 0  );
     } else if( slew_dir == 'E' ) {
         tmp = -(m_lcu->telescope->alpha->Motor->getTicsPerRev() *
                 m_lcu->telescope->alpha->Motor->getEncoderToAxis_Reduction() *
                 degs_per_sec / 360.);
         tics_per_sec = (int) tmp;
-        logger.logINFO("[handset_command]:E... tics_per_sec = %d", tics_per_sec );
+        logger.logINFO("LCUImpl::handsetSlew: E... tics_per_sec = %d", tics_per_sec );
         m_lcu->telescope->alpha->Motor->setDeviceMemory( 6, & tics_per_sec, 0  );
     } else if( slew_dir == 'W' ) {
         tmp =  (m_lcu->telescope->alpha->Motor->getTicsPerRev() *
                 m_lcu->telescope->alpha->Motor->getEncoderToAxis_Reduction() *
                 degs_per_sec / 360.);
         tics_per_sec = (int) tmp;
-        logger.logINFO("[handset_command]:N... tics_per_sec = %d", tics_per_sec );
+        logger.logINFO("LCUImpl::handsetSlew: N... tics_per_sec = %d", tics_per_sec );
         m_lcu->telescope->alpha->Motor->setDeviceMemory( 6, & tics_per_sec, 0  );
     }
 

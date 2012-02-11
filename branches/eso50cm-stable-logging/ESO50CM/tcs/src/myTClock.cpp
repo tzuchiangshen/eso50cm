@@ -4,20 +4,20 @@
 myTClock::myTClock( struct my_tClock_data_t * clock_data, LoggerHelper *logLCUImpl )
 {
     logger = logLCUImpl;
-    logger->logINFO( "[myTClock::myTClock] Hello World!" );
+    logger->logINFO( "myTClock::myTClock: Hello World!" );
 
     m_clock_data = clock_data;
-    logger->logINFO( "[myTClock::myTClock] aam_clock_data at %p", (void *) m_clock_data );
+    logger->logINFO( "myTClock::myTClock: aam_clock_data at %p", (void *) m_clock_data );
 
     m_clock_data->old_t = 0.;
-    logger->logINFO( "[myTClock::myTClock] ready");
+    logger->logINFO( "myTClock::myTClock: ready");
     
 }
 
 
 myTClock::~myTClock( void )
 {
-    logger->logINFO( "[myTClock::~myTClock] Good Bye!" );
+    logger->logINFO( "myTClock::~myTClock: Good Bye!" );
 }
 
 /**

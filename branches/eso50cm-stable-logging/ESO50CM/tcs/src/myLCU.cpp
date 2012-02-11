@@ -8,7 +8,7 @@
 myLCU::myLCU( LoggerHelper *logLCUImpl )
 {
     logger = logLCUImpl;
-    logger->logINFO( "[myLCU::myLCU] Hello World!" );  
+    logger->logINFO( "myLCU::myLCU: Hello World!" );  
     m_segment_size = 0;
     m_shared_segment_size = 1024;           //sizeof( struct my_lcu_data_t );
 
@@ -21,28 +21,28 @@ myLCU::myLCU( LoggerHelper *logLCUImpl )
     m_shared_memory = (char *) shmat( m_segment_id, 0, 0 );
     if( (int) m_shared_memory < 0) 
     {
-        perror( "[myLCU::myLCU] shmat" );
-        logger->logINFO( "[myLCU::myLCU] Can't attach User Shared Memory!, id=%d", m_segment_id );
+        perror( "myLCU::myLCU: shmat" );
+        logger->logINFO( "myLCU::myLCU: Can't attach User Shared Memory!, id=%d", m_segment_id );
         m_shared_memory = NULL;
     } else {
-        logger->logINFO( "[myLCU::myLCU] User Shared Memory attached at address %p", (void *) m_shared_memory );
+        logger->logINFO( "myLCU::myLCU: User Shared Memory attached at address %p", (void *) m_shared_memory );
 
         /** Determine the User Shared Memory segment size */
         shmctl( m_segment_id, IPC_STAT, & m_shmbuffer );
         m_segment_size = m_shmbuffer.shm_segsz;
-        logger->logINFO( "[myLCU::myLCU] segment size:                   %d", m_segment_size );
-        logger->logINFO( "[myLCU::myLCU] sizeof( struct my_lcu_data_t ): %d", (int) sizeof( struct my_lcu_data_t ) );
+        logger->logINFO( "myLCU::myLCU: segment size:                   %d", m_segment_size );
+        logger->logINFO( "myLCU::myLCU: sizeof( struct my_lcu_data_t ): %d", (int) sizeof( struct my_lcu_data_t ) );
 
         m_lcu_data = (struct my_lcu_data_t *) m_shared_memory;
-        logger->logINFO( "[myLCU::myLCU] m_lcu_data at address                   %p", (void *) m_lcu_data );
-        logger->logINFO( "[myLCU::myLCU] m_lcu_data->m_telescope_data at address %p", (void *) & m_lcu_data->telescope_data );
+        logger->logINFO( "myLCU::myLCU: m_lcu_data at address                   %p", (void *) m_lcu_data );
+        logger->logINFO( "myLCU::myLCU: m_lcu_data->m_telescope_data at address %p", (void *) & m_lcu_data->telescope_data );
     }
     /** Create Semaphore to control the access to the User Shared Memory */
     m_lcu_semaphore = new myBSemaphore( USRSEMKEY,  S_IRUSR | S_IWUSR );
     if( m_lcu_semaphore->allocate() < 0 ) 
     {
-        perror( "[myLCU::myLCU] semget" );
-        logger->logINFO( "[myLCU::myLCU] Can't allocate User Shared Memory's Semaphore" );
+        perror( "myLCU::myLCU: semget" );
+        logger->logINFO( "myLCU::myLCU: Can't allocate User Shared Memory's Semaphore" );
         //return retval;
     }
     
@@ -60,22 +60,22 @@ myLCU::~myLCU( void )
 {
     if( telescope != NULL ) 
     {
-        logger->logINFO( "[myLCU::~myLCU] Deleting telescope" );
+        logger->logINFO( "myLCU::~myLCU: Deleting telescope" );
         delete telescope;
     } else {
-        logger->logINFO( "[myLCU::~myLCU] No telescope!" );
+        logger->logINFO( "myLCU::~myLCU: No telescope!" );
     }
 
     /** Detach the shared memory segment */
     if( m_shared_memory != NULL ) 
     {
-        logger->logINFO( "[myLCU::~myLCU] Detaching User Shared Memory" );
+        logger->logINFO( "myLCU::~myLCU: Detaching User Shared Memory" );
         shmdt( m_shared_memory );
     } else {
-        logger->logINFO( "[myLCU::~myLCU] No User Shared Memory attached!" );
+        logger->logINFO( "myLCU::~myLCU: No User Shared Memory attached!" );
     }
 
-    logger->logINFO( "[myLCU::~myLCU] Good Bye!" );
+    logger->logINFO( "myLCU::~myLCU: Good Bye!" );
 }
 
 /**
@@ -84,8 +84,8 @@ myLCU::~myLCU( void )
 int myLCU::run( void )
 {
     int retval = 0;
-    logger->logINFO( "[myLCU::run] Hello World!" );
-    logger->logINFO( "[myLCU::run] Good bye!" );
+    logger->logINFO( "myLCU::run: Hello World!" );
+    logger->logINFO( "myLCU::run: Good bye!" );
     return retval;
 }
 
@@ -112,7 +112,7 @@ int myLCU::postSemaphore( void )
 void myLCU::createTelescope( void )
 {
     telescope = new myTelescope( m_lcu_data, logger );
-    logger->logINFO("[myLCU::initializeTelescope] telescope %p", (void *) telescope );
+    logger->logINFO("myLCU::initializeTelescope: telescope %p", (void *) telescope );
 }
 
 
