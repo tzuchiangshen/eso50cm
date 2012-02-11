@@ -7,11 +7,11 @@ myTAxis::myTAxis( char id, struct my_TAxis_data_t * axis, LoggerHelper *logLCUIm
 {
     logger = logLCUImpl;
     m_id = id;
-    logger->logINFO( "[myTAxis::myTAxis] %c Hello World!", m_id );
-    logger->logINFO( "[myTAxis::myTAxis] %c axis_data at %p", m_id, (void *) axis );
-    logger->logINFO( "[myTAxis::myTAxis] %c motorE at    %p", m_id, (void *) & axis->motorE );
-    logger->logINFO( "[myTAxis::myTAxis] %c wormE at     %p", m_id, (void *) & axis->wormE );
-    logger->logINFO( "[myTAxis::myTAxis] %c axisE at     %p", m_id, (void *) & axis->axisE );
+    logger->logINFO( "myTAxis::myTAxis: %c Hello World!", m_id );
+    logger->logINFO( "myTAxis::myTAxis: %c axis_data at %p", m_id, (void *) axis );
+    logger->logINFO( "myTAxis::myTAxis: %c motorE at    %p", m_id, (void *) & axis->motorE );
+    logger->logINFO( "myTAxis::myTAxis: %c wormE at     %p", m_id, (void *) & axis->wormE );
+    logger->logINFO( "myTAxis::myTAxis: %c axisE at     %p", m_id, (void *) & axis->axisE );
 
     Motor = new myTMotor( m_id, 'M',  & axis->motorE, logger );
     WormE = new myTEncoder( m_id, 'W', & axis->wormE, logger );
@@ -25,7 +25,7 @@ myTAxis::~myTAxis() {
     delete Motor;
     delete WormE;
     delete AxisE;
-    logger->logINFO( "[myTAxis::~myTAxis] %c Good Bye!", m_id );
+    logger->logINFO( "myTAxis::~myTAxis: %c Good Bye!", m_id );
 }
 
 
@@ -63,10 +63,10 @@ int myTAxis::offsetAxisInDeg( double degs )
     mtr_counts = (int) round( degs );
     if( mtr_counts > 0 ) 
     {
-        logger->logINFO( "[myTAxis::offsetAxisInDeg] Running motor %d", mtr_counts );
+        logger->logINFO( "myTAxis::offsetAxisInDeg: Running motor %d", mtr_counts );
         Motor->runEncSteps( mtr_counts );
     } else {
-        logger->logINFO( "[myTAxis::offsetAxisInDeg] Nothing to do!" );
+        logger->logINFO( "myTAxis::offsetAxisInDeg: Nothing to do!" );
     }
 
     return mtr_counts;
