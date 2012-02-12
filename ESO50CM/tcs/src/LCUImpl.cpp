@@ -38,7 +38,11 @@ LCUImpl::sayHello(int delay, const Ice::Current& c)
 {
     if(delay != 0)
     {
-        IceUtil::ThreadControl::sleep(IceUtil::Time::milliSeconds(delay));
+        for (int i = 0; i < 100; i++)
+	{
+	    logger.logINFO("LCUImpl::sayHello I'm on the loop!!!!."); 
+	    IceUtil::ThreadControl::sleep(IceUtil::Time::milliSeconds(delay));
+	}
     }
     logger.logINFO("LCUImpl::sayHello Hello World!");
 }
