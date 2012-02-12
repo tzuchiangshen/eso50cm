@@ -73,10 +73,64 @@ def sayHelloTelescope():
         traceback.print_exc()
         status = 1
 
+def getRawEncoderPosition():
+    rawEncData = OUC.RawEncoderData()
+    try:
+         telescope = obsImpl.getTelescope()
+         rawEncData = telescope.getRawEncodersPosition() 
+         print "Time elapsed since last access: %lf\n" % rawEncData.deltaT
+         print "Lecture Alpha AxisE: %6d\n" % rawEncData.lectAlphaAxisE
+         print "Position Alpha AxisE: %11d\n" % rawEncData.posAlphaAxisE
+         print "Lecture Alpha WormE: %6d\n" % rawEncData.lectAlphaWormE
+         print "Position Alpha WormE: %11d\n" % rawEncData.posAlphaWormE
+         print "Lecture Alpha Motor: %6d\n" % rawEncData.lectAlphaMotor
+         print "Position Alpha Motor: %11d\n" % rawEncData.posAlphaMotor
+         print "Lecture Delta AxisE: %6d\n" % rawEncData.lectDeltaAxisE
+         print "Position Delta AxisE: %11d\n" % rawEncData.posDeltaAxisE
+         print "Lecture Delta WormE: %6d\n" % rawEncData.lectDeltaWormE
+         print "Position Delta WormE: %11d\n" % rawEncData.posDeltaWormE
+         print "Lecture Delta Motor: %6d\n" % rawEncData.lectDeltaMotor
+         print "Position Delta Motor: %11d\n" % rawEncData.posDeltaMotor 
+         print "Generated at = [%lf]\n" % rawEncData.lcuTime
+         print datetime.utcfromtimestamp(rawEncData.lcuTime)
+    except OUC.TelescopeNotConfiguredEx():
+         print "Telescope Not Configured !!!"
+         traceback.print_exc()
+         status = 1
+
+def getEncoderPosition():
+    encData = OUC.EncoderData()
+    try:
+        telescope = obsImpl.getTelescope()
+        encData =  telescope.getEncodersPosition();
+        print "LT = [%lf]\n" % encData.localTime
+        print datetime.utcfromtimestamp(encData.localTime)
+        print "AW Position  = [%+10.0lf]\n" % encData.alphaWormE
+        print "AA Position  = [%+10.0lf]\n" % encData.alphaAxisE 
+        print "DW Position  = [%+10.0lf]\n" % encData.deltaWormE
+        print "AA Position  = [%+10.0lf]\n" % encData.deltaAxisE
+        print "Generated at = [%lf]\n" % encData.lcuTime
+        print datetime.utcfromtimestamp(encData.lcuTime)
+    except OUC.TelescopeNotConfiguredEx():
+        print "Telescope Not Configured !!!"
+        traceback.print_exc()
+        status = 1
+
+def parkTelescope():
+    try:
+        telescope = obsImpl.getTelescope()
+        telescope.parkTelescope()
+    except OUC.TelescopeNotConfiguredEx():
+        print "Telescope Not Configured !!!"
+        traceback.print_exc()
+        status = 1
 
 if __name__ == "__main__":
     connect()
-    sayHello()
+    #sayHello()
     sayHelloTelescope()
+    getRawEncoderPosition()
+    getEncoderPosition()
+    parkTelescope()
     disconnect()
 

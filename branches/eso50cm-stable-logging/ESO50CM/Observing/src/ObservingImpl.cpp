@@ -8,22 +8,25 @@ ObservingImpl::ObservingImpl(const Ice::ObjectAdapterPtr& adapter) : logger("Obs
     _telescope(new TelescopeImpl),
     _telescopePrx(OUC::TelescopePrx::uncheckedCast(adapter->addWithUUID(_telescope)))
 {
+  logger.logINFO("ObservingImpl::ObservingImp");
 }
 
 void
 ObservingImpl::sayHello(int delay, const Ice::Current& c)
 {
+    logger.logINFO("ObservingImpl::sayHello");
+  
     if(delay != 0)
     {
         IceUtil::ThreadControl::sleep(IceUtil::Time::milliSeconds(delay));
     }
-    logger.logINFO("Hello World!");
+    logger.logINFO("ObservingImpl::sayHello: Hello World!");
 }
 
 void
 ObservingImpl::shutdown(const Ice::Current& c)
 {
-    logger.logINFO("Shutting down...");
+    logger.logINFO("ObservingImpl::shutdown: Shutting down...");
     c.adapter->getCommunicator()->shutdown();
 }
 
@@ -31,6 +34,6 @@ ObservingImpl::shutdown(const Ice::Current& c)
 OUC::TelescopePrx
 ObservingImpl::getTelescope(const Ice::Current& c)
 {
-    logger.logINFO("Returning Telescope Reference");
+    logger.logINFO("ObservingImpl::getTelescope: Getting telescope reference");
     return _telescopePrx;
 }
