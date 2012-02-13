@@ -263,8 +263,19 @@ LCUImpl::setTarget(const OUC::TelescopePosition& targetPos, const Ice::Current& 
 }
 
 void 
-LCUImpl::setOffset(const OUC::TelescopePosition& offsetPos, const Ice::Current& c)
+LCUImpl::setOffset(const OUC::TelescopePosition& offset, const Ice::Current& c)
 {
+    OUC::TelescopePosition tmp;
+    tmp.RA = MiddleEndianToLittleEndian(offset.RA);
+    tmp.Dec = MiddleEndianToLittleEndian(offset.Dec);
+    tmp = (const ::OUC::TelescopePosition&)tmp;
+    setOffset(tmp);
+}
+
+void 
+LCUImpl::setOffset(const OUC::TelescopePosition& offsetPos)
+{
+
     int  alpha_mtr_counts;
     int  delta_mtr_counts;
     char mem_address;
@@ -272,8 +283,11 @@ LCUImpl::setOffset(const OUC::TelescopePosition& offsetPos, const Ice::Current& 
     int no_quit;
     int goto_alpha_flag = false;
     int goto_delta_flag = false;
-    
-    logger.logINFO( "LCUImpl::setTarget" );
+
+    double offsetRA = 0.0; 
+    double offsetDec = 0.0;
+
+    logger.logFINE( "LCUImpl::setOffset" );
 	
     /** Is telescope configured **/
     if(!m_configured)
@@ -282,13 +296,16 @@ LCUImpl::setOffset(const OUC::TelescopePosition& offsetPos, const Ice::Current& 
 	ex.reason = "Telecope Not Configured";
 	throw ex;
     }
+
+
+    logger.logINFO( "LCUImpl::setOffset ra=%.lf dec=%.lf", offsetPos.RA, offsetPos.Dec );
     
     /** Set telescope in running state and define offset **/
     m_lcu->waitSemaphore();
     m_lcu->telescope->setIsRunningGoto(true);
     alpha_mtr_counts = m_lcu->telescope->alpha->offsetAxisInDeg(offsetPos.RA);
     //offsetPos.Dec *= -1.;
-    double offsetDec = offsetPos.Dec * -1.0;
+    offsetDec = offsetPos.Dec * -1.0;
     delta_mtr_counts = m_lcu->telescope->delta->offsetAxisInDeg(offsetDec);
     if( alpha_mtr_counts < -50 || 50 < alpha_mtr_counts ) 
     {
