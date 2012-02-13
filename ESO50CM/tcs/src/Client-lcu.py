@@ -258,7 +258,7 @@ def moveToTarget():
 
 def stopTelescope():
     try:
-        lcuImpl.stopTelescope(OUC.North)
+        lcuImpl.stopTelescope(OUC.TelescopeDirection.North)
     except OUC.TelescopeNotConfiguredEx():
         print "Telescope Not Configured !!!"
         traceback.print_exc()
@@ -294,18 +294,18 @@ if __name__ == "__main__":
     print "#######################################"
     #if isConfigured():
     #   getConfiguration()
-    sayHello()
+    #sayHello()
     #getEncoderPosition()
-    parkTelescope()
+    #parkTelescope()
     #moveToTarget()
     #setTarget(ra, dec)
     #moveToTarget()
-    #stopTelescope()
+    stopTelescope()
     #setTracking()
     #print "#######################################"    
     #getRawEncoderPosition()
     #print "#######################################"
     #getPosition()
-    #readDeviceMemory(0xA2, 3, 0)
+    #readDeviceMemory(0xA8, 4, 0)
     disconnect()
     
