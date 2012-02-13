@@ -313,7 +313,7 @@ if __name__ == "__main__":
         offsetPos = OUC.TelescopePosition()
         offsetPos.RA = sexagesimal2degs(ra, True)
         offsetPos.Dec = sexagesimal2degs(dec, False)
-        #print "setOffset ra=%f, dec=%f" % (offsetPos.RA, offsetPos.Dec)
+        print "setOffset ra=%f, dec=%f" % (offsetPos.RA, offsetPos.Dec)
         try:
             telescope = obsImpl.getTelescope()
             telescope.setOffset(offsetPos)
