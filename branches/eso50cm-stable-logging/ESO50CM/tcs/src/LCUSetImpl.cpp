@@ -531,26 +531,11 @@ LCUImpl::stopTelescope(OUC::TelescopeDirection dir, const Ice::Current& c)
     m_lcu->waitSemaphore();
   
     ticsPerSeconds = 0;
-    if(dir == OUC::North) 
-    {
-        logger.logINFO("LCUImpl::stopTelescope: Stopping North... Tics per second: %d", ticsPerSeconds);
-	m_lcu->telescope->delta->Motor->setDeviceMemory(6, & ticsPerSeconds, 0);
-    } else if(dir == OUC::South) {
-        logger.logINFO("LCUImpl::stopTelescope: Stopping South... Tics per seconds: %d", ticsPerSeconds);
-	m_lcu->telescope->delta->Motor->setDeviceMemory(6, & ticsPerSeconds, 0  );
-    } else if(dir == OUC::East) {
-        logger.logINFO("LCUImpl::stopTelescope: Stopping East... Tics per seconds: %d", ticsPerSeconds);
-	m_lcu->telescope->alpha->Motor->setDeviceMemory(6, &ticsPerSeconds, 0);
-    } else if(dir == OUC::West) {
-        logger.logINFO("LCUImpl::stopTelescope: Stopping West... Tics per seconds: %d", ticsPerSeconds);
-	m_lcu->telescope->alpha->Motor->setDeviceMemory(6, &ticsPerSeconds, 0);
-    } else {
-        m_lcu->telescope->alpha->Motor->setDeviceMemory(7, &ticsPerSeconds, 0);
-	m_lcu->telescope->alpha->Motor->setDeviceMemory(6, &ticsPerSeconds, 0);
-	m_lcu->telescope->delta->Motor->setDeviceMemory(7, &ticsPerSeconds, 0);
-	m_lcu->telescope->delta->Motor->setDeviceMemory(6, &ticsPerSeconds, 0);
-	logger.logINFO("LCUImpl::stopTelescope: Stopping Telescope in all directions!!... Tics per seconds: %d", ticsPerSeconds);
-    }
+    m_lcu->telescope->alpha->Motor->setDeviceMemory(7, &ticsPerSeconds, 0);
+    m_lcu->telescope->alpha->Motor->setDeviceMemory(6, &ticsPerSeconds, 0);
+    m_lcu->telescope->delta->Motor->setDeviceMemory(7, &ticsPerSeconds, 0);
+    m_lcu->telescope->delta->Motor->setDeviceMemory(6, &ticsPerSeconds, 0);
+    logger.logINFO("LCUImpl::stopTelescope: Stopping Telescope in all directions!!... Tics per seconds: %d", ticsPerSeconds);
 
   
     /** Release semaphore for SHM **/

@@ -184,6 +184,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
     int bytes_read;
     int length;
     unsigned int uint_tmp;
+    int type = -1;
 
     struct sigaction sigchld_action;
     struct sigaction sigExitHandler;
@@ -638,8 +639,23 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                         gettimeofday( & gtime, & tzone );
                         startT  = ((double) gtime.tv_usec)/1000000.;
                         startT += (double) gtime.tv_sec;
-                        if( verbose )
-                            printf( "[telescope_run] Sending new message for 0x%02X\n", telescope->encoder[i].i2c_address );
+                        type = ((int)telescope->encoder[i].message[1]) % 2;
+                        if(type == 0) {
+                            printf("----------------------------------------------\n");
+                            printf("---------------------- SET ---------------------\n");
+                        } else {
+                            printf("----------------------------------------------\n");
+                            printf("---------------------- GET ---------------------\n");
+                        }
+                        
+                        if( verbose ) {
+                            int numero = 0;
+                            ((char *) & numero)[0] =  telescope->encoder[i].message[3];
+                            ((char *) & numero)[1] =  telescope->encoder[i].message[4];
+                            ((char *) & numero)[2] =  telescope->encoder[i].message[5];
+                            ((char *) & numero)[3] =  telescope->encoder[i].message[6];
+                            printf( "[telescope_run] Sending new message for 0x%02X addr=%d val=%d ( 0x%02X 0x%02X 0x%02X 0x%02X)\n", telescope->encoder[i].i2c_address, telescope->encoder[i].message[2], numero, telescope->encoder[i].message[3], telescope->encoder[i].message[4], telescope->encoder[i].message[5], telescope->encoder[i].message[6] );
+                        }
                         retval = write_RS232( fd_rs232, telescope->encoder[i].message, 10  );
                         memset( telescope->encoder[i].message, 0, 16 );
                         length = 0;
@@ -666,8 +682,15 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                         if( timeout_error_flag ) {
                             printf( "[telescope_run] timeout ERROR\n" );
                         } else {
-                            if( verbose )
+                            if( verbose ) {
                                 printf( "[telescope_run] Received the answer from 0x%02X\n", telescope->encoder[i].i2c_address );
+                                int numero = 0;
+                                ((char *) & numero)[0] =  telescope->encoder[i].answer[3];
+                                ((char *) & numero)[1] =  telescope->encoder[i].answer[4];
+                                ((char *) & numero)[2] =  telescope->encoder[i].answer[5];
+                                ((char *) & numero)[3] =  telescope->encoder[i].answer[6];
+                                printf( "[telescope_run] Received the answer from 0x%02X addr=%d val=%d ( 0x%02X 0x%02X 0x%02X 0x%02X)\n", telescope->encoder[i].i2c_address, telescope->encoder[i].answer[2], numero, telescope->encoder[i].answer[3], telescope->encoder[i].answer[4], telescope->encoder[i].answer[5], telescope->encoder[i].answer[6] );
+                            }
                         }
                         binary_semaphore_post( read_semaphore_id );
                         gettimeofday( & gtime, & tzone );
@@ -685,7 +708,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
             /**
             * Get Message to TX from stdin
             */
-//            //printf( "[telescope_run] checking for a stdio message...\n" );
+//            printf( "[telescope_run] checking for a stdio message...\n" );
 //            if( ! new_message_flag ) {
 //                if( ( retval = stream_status( fd_stdin ) ) > 0 ) {
 //                    memset( buffer, 0 , 128 );
@@ -696,7 +719,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
 //                    message_length = strlen( buffer );
 //                }
 //            }//END if( ! new_message_flag )
-//
+
             /**
             * Process stdin message
             */
