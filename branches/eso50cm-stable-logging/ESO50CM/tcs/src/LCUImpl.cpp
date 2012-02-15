@@ -39,10 +39,10 @@ LCUImpl::sayHello(int delay, const Ice::Current& c)
     if(delay != 0)
     {
         for (int i = 0; i < 100; i++)
-	{
-	    logger.logINFO("LCUImpl::sayHello I'm on the loop!!!!."); 
-	    IceUtil::ThreadControl::sleep(IceUtil::Time::milliSeconds(delay));
-	}
+        {
+            logger.logINFO("LCUImpl::sayHello I'm on the loop!!!!."); 
+            IceUtil::ThreadControl::sleep(IceUtil::Time::milliSeconds(delay));
+        }
     }
     logger.logINFO("LCUImpl::sayHello Hello World!");
 }
@@ -79,7 +79,17 @@ LCUImpl::readDeviceMemory(int deviceId, int address, int value, const Ice::Curre
 int
 LCUImpl::setDeviceMemory(int deviceId, int address, int value, const Ice::Current& c)
 {
-    logger.logINFO("LCUImpl::readDeviceMemory: device id=0x%02X, address=%d, value=%d", (char)deviceId, address, value);
+    logger.logINFO("LCUImpl::setDeviceMemory: device id=0x%02X, address=%d, value=%d", (char)deviceId, address, value);
+
+    char *p = (char*)&value;
+    logger.logFINE("LCUImpl::setDeviceMemory: value[0]=0x%02X", *p);
+    p++;
+    logger.logFINE("LCUImpl::setDeviceMemory: value[1]=0x%02X", *p);
+    p++;
+    logger.logFINE("LCUImpl::setDeviceMemory: value[2]=0x%02X", *p);
+    p++;
+    logger.logFINE("LCUImpl::setDeviceMemory: value[3]=0x%02X", *p);
+    p++;
 
     if (deviceId == 0xA2) {
         //alpha-motor
