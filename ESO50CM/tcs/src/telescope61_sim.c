@@ -244,7 +244,12 @@ void set_encoders_home_positions(struct telescope_data_t * telescope) {
 void *move_motor_alpha(void *threadid) {
 	long tid; 
 	int exit; 
-	int motor_speed = 60000; // enc /s 
+	int motor_speed_very_high = 600000; // enc /s 
+	int motor_speed_high =       60000; // enc /s 
+	int motor_speed_medium =      6000; // enc /s 
+	int motor_speed_slow =          600; // enc /s 
+	int motor_speed_very_slow =      60; // enc /s 
+	int motor_speed_final =         30; // enc /s 
 	int motor_enc_inc = 0;
 	int delta_time = 1; // 1 second
 	int current_val = 0;
@@ -267,7 +272,19 @@ void *move_motor_alpha(void *threadid) {
 			sign = -1;
 		} 
         // inc = speed * delta_t;
-        motor_enc_inc = sign * motor_speed * delta_time; //plus a random value
+		if(offset > motor_speed_very_high) 
+            motor_enc_inc = sign * motor_speed_very_high * delta_time; //plus a random value
+	    else if(offset > motor_speed_high) 
+            motor_enc_inc = sign * motor_speed_high * delta_time; //plus a random value
+		else if(offset > motor_speed_medium)
+            motor_enc_inc = sign * motor_speed_medium * delta_time; //plus a random value
+		else if(offset > motor_speed_slow)
+            motor_enc_inc = sign * motor_speed_slow * delta_time; //plus a random value
+		else if(offset > motor_speed_very_slow)
+            motor_enc_inc = sign * motor_speed_very_slow * delta_time; //plus a random value
+		else
+            motor_enc_inc = sign * motor_speed_final * delta_time; //plus a random value
+	
 		pthread_mutex_unlock(&alpha_offset_mutex);
 
 		if(offset > 50) {
@@ -305,6 +322,8 @@ void *move_motor_alpha(void *threadid) {
             src = (char*)&telescope->encoder[0].data[2];
             myMemcpy(dst, src, 4);
             current_val += motor_enc_inc;
+			if(current_val > 6000)
+			    current_val = current_val % 6000;
             dst = (char*)&telescope->encoder[0].data[2];
             src = (char*)&current_val;
             myMemcpy(dst, src, 4);
@@ -321,6 +340,8 @@ void *move_motor_alpha(void *threadid) {
             src = (char*)&telescope->encoder[2].data[4];
             myMemcpy(dst, src, 4);
             current_val += worm_enc;
+			if(current_val > 1024)
+			    current_val = current_val % 1024;
             dst = (char*)&telescope->encoder[2].data[4];
             src = (char*)&current_val;
             myMemcpy(dst, src, 4);
@@ -347,6 +368,8 @@ void *move_motor_alpha(void *threadid) {
             src = (char*)&telescope->encoder[3].data[4];
             myMemcpy(dst, src, 4);
             current_val += axis_enc;
+			if(current_val > 1024)
+			    current_val = current_val % 1024;
             dst = (char*)&telescope->encoder[3].data[4];
             src = (char*)&current_val;
             myMemcpy(dst, src, 4);
@@ -392,6 +415,12 @@ void *move_motor_delta(void *threadid) {
     char *src, *dst;
 	int sign = 1;
 	int offset = 0;
+	int motor_speed_very_high = 360000; // enc /s 
+	int motor_speed_high =       36000; // enc /s 
+	int motor_speed_medium =      3600; // enc /s 
+	int motor_speed_slow =         360; // enc /s 
+	int motor_speed_very_slow =     36; // enc /s 
+	int motor_speed_final =         18; // enc /s 
 
 	//tid = (long) threadid;
 	do { 
@@ -405,8 +434,20 @@ void *move_motor_delta(void *threadid) {
 			sign = -1;
 		} 
         // inc = speed * delta_t;
-        motor_enc_inc = sign * motor_speed * delta_time; //plus a random value
-		pthread_mutex_unlock(&delta_offset_mutex);
+		if(offset > motor_speed_very_high) 
+            motor_enc_inc = sign * motor_speed_very_high * delta_time; //plus a random value
+	    else if(offset > motor_speed_high) 
+            motor_enc_inc = sign * motor_speed_high * delta_time; //plus a random value
+		else if(offset > motor_speed_medium)
+            motor_enc_inc = sign * motor_speed_medium * delta_time; //plus a random value
+		else if(offset > motor_speed_slow)
+            motor_enc_inc = sign * motor_speed_slow * delta_time; //plus a random value
+		else if(offset > motor_speed_very_slow)
+            motor_enc_inc = sign * motor_speed_very_slow * delta_time; //plus a random value
+		else
+            motor_enc_inc = sign * motor_speed_final * delta_time; //plus a random value
+
+        pthread_mutex_unlock(&delta_offset_mutex);
 
 		if(offset > 50) {
 			offset -= abs(motor_enc_inc);
@@ -429,6 +470,8 @@ void *move_motor_delta(void *threadid) {
             src = (char*)&telescope->encoder[1].data[4];
             myMemcpy(dst, src, 4);
             current_val += motor_enc_inc;
+			if(current_val > 6000)
+			    current_val = current_val % 6000;
             dst = (char*)&telescope->encoder[1].data[4];
             src = (char*)&current_val;
             myMemcpy(dst, src, 4);
@@ -455,6 +498,8 @@ void *move_motor_delta(void *threadid) {
             src = (char*)&telescope->encoder[4].data[4];
             myMemcpy(dst, src, 4);
             current_val += worm_enc;
+			if(current_val > 1024)
+			    current_val = current_val % 1024;
             dst = (char*)&telescope->encoder[4].data[4];
             src = (char*)&current_val;
             myMemcpy(dst, src, 4);
@@ -481,6 +526,8 @@ void *move_motor_delta(void *threadid) {
             src = (char*)&telescope->encoder[5].data[4];
             myMemcpy(dst, src, 4);
             current_val += axis_enc;
+			if(current_val > 1024)
+			    current_val = current_val % 1024;
             dst = (char*)&telescope->encoder[5].data[4];
             src = (char*)&current_val;
             myMemcpy(dst, src, 4);
