@@ -17,6 +17,8 @@
 #include <sys/un.h>
 #include <unistd.h>
 #include <errno.h>      //errno
+
+#include <pthread.h>
 //-------------------------------------------------------------
 //  Instrument Shared memory and semaphore
 #define SHMKEY   0xFAFAFA00
@@ -31,6 +33,15 @@
 
 /* Global variable to exit from main loop */
 char quit;
+//mutex for the threads
+pthread_mutex_t alpha_exit_mutex;
+int alpha_thread_exit = 0;
+pthread_mutex_t delta_exit_mutex;
+int delta_thread_exit = 0;
+pthread_mutex_t alpha_offset_mutex;
+int alpha_offset = 0;
+pthread_mutex_t delta_offset_mutex;
+int delta_offset = 0;
 
 struct encoder_data_t {
     char i2c_address;
@@ -93,6 +104,17 @@ static void exit_handler(int s)
   if(verbose)
     printf("telescope61::exit_handler Ctrl+C signal catched!!!");
   quit = 1; 
+
+  //signal thread to exit 
+  pthread_mutex_lock(&alpha_exit_mutex);
+  alpha_thread_exit = 1;
+  pthread_mutex_unlock(&alpha_exit_mutex);
+  printf("[telescope_run] exit alpha motor thread ...\n");
+
+  pthread_mutex_lock(&delta_exit_mutex);
+  alpha_thread_exit = 1;
+  pthread_mutex_unlock(&delta_exit_mutex);
+  printf("[telescope_run] exit delta motor thread ...\n");
 }
 
 void myMemcpy(char *dst, char *src, unsigned int size) {
@@ -215,6 +237,63 @@ void set_encoders_home_positions(struct telescope_data_t * telescope) {
     printf("[telescope_run] Set delta worm home position, value = %d\n", delta_worm_home);
 }
 
+
+void *move_motor_alpha(void *threadid) {
+	long tid; 
+	int exit; 
+
+	//tid = (long) threadid;
+	do { 
+
+		if(alpha_offset > 50) {
+		    pthread_mutex_lock(&alpha_offset_mutex);
+		    alpha_offset-=600; //plus a random value
+	        printf("moving the motor %d enc=%d\n", tid, alpha_offset);
+			pthread_mutex_unlock(&alpha_offset_mutex);
+            //update encoders values
+			//binary_semaphore_wait( semaphore_id );
+			//binary_semaphore_post( read_semaphore_id );
+
+		    sleep(1);
+		}
+	    pthread_mutex_lock(&alpha_exit_mutex);
+        exit = alpha_thread_exit;
+	    pthread_mutex_unlock(&alpha_exit_mutex);
+        if(!exit) 
+			sleep(3);
+	} while(!exit);
+
+	pthread_exit(NULL);
+}
+
+void *move_motor_delta(void *threadid) {
+	long tid; 
+	int exit; 
+
+	//tid = (long) threadid;
+	do { 
+
+		if(delta_offset > 50) {
+		    pthread_mutex_lock(&delta_offset_mutex);
+		    delta_offset-=600;
+	        printf("moving the delta motor 0xA4 enc=%d\n", alpha_offset);
+			pthread_mutex_unlock(&delta_offset_mutex);
+            //update encoders values
+			//binary_semaphore_wait( semaphore_id );
+			//binary_semaphore_post( read_semaphore_id );
+
+		    sleep(1);
+		}
+	    pthread_mutex_lock(&delta_exit_mutex);
+        exit = delta_thread_exit;
+	    pthread_mutex_unlock(&delta_exit_mutex);
+        if(!exit) 
+			sleep(3);
+	} while(!exit);
+
+	pthread_exit(NULL);
+}
+
 /**
  *  telescope run
  */
@@ -303,6 +382,20 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
 
     int init_ok_flag;
 
+    pthread_t alpha_motor_t;
+    pthread_t delta_motor_t;
+	int rc;
+	rc = pthread_create(&alpha_motor_t, NULL, move_motor_alpha, (void *)0xA2);
+	if(rc) {
+		printf("ERROR creating alpha motor thread\n");
+	} else 
+	    printf("Starting alpha motor thread ...\n");
+
+	rc = pthread_create(&delta_motor_t, NULL, move_motor_delta, (void *)0xA4);
+	if(rc) {
+		printf("ERROR creating delta motor thread\n");
+	} else
+	    printf("Starting delta motor thread ...\n");
 
     do {
         /* Manage CTRL+C and kill signals */
@@ -310,7 +403,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
         sigemptyset(&sigExitHandler.sa_mask);
         sigExitHandler.sa_flags = 0;
         sigaction(SIGINT, &sigExitHandler, NULL);
-    sigaction(SIGTERM, &sigExitHandler, NULL);
+        sigaction(SIGTERM, &sigExitHandler, NULL);
 
         init_ok_flag = 1;
         //shared_memory = NULL;
@@ -678,6 +771,15 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                                     myMemcpy(dst, src, 4);
 							        if (ultra_verbose)
                                         printf("[telescope_run] Simulate abs movement of aplha-motor at motor encoder (0xA2 mem_address=2), value = %d\n", motor_enc);
+
+                                    //signal the alpha motor thread the amount of the impulse
+								    pthread_mutex_lock(&alpha_offset_mutex);
+									if(motor_enc < 0) 
+									    alpha_offset = -1*motor_enc;
+									else 
+									    alpha_offset = motor_enc;
+									pthread_mutex_unlock(&alpha_offset_mutex);
+
                                     // 1.3. convert the incremental motor enc into worm enc 
                                     worm_enc = rel_alpha_motor_enc_to_worm_enc(motor_enc);
 							        if (ultra_verbose)
@@ -769,6 +871,13 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                                     worm_enc = rel_delta_motor_enc_to_worm_enc(motor_enc);
 							        if (ultra_verbose)
                                         printf("[telescope_run] converted alpha motor enc to alpha worm enc (0xA6 mem_address=4), motor enc = %d, worm enc=%d\n", motor_enc,  worm_enc);
+									pthread_mutex_lock(&delta_offset_mutex);
+									if(motor_enc < 0) 
+									    delta_offset = -1*motor_enc;
+									else 
+									    delta_offset = motor_enc;
+
+									pthread_mutex_unlock(&delta_offset_mutex);
                                     // 1.4. save the incremental worm enc movement at 0xAA, mem_address=4
                                     current_val = 0; 
                                     dst = (char*)&current_val;
@@ -825,7 +934,10 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                                int val = telescope->encoder[i].data[mem_address];
                                //simulate the movement is finished, 
                                //TSH: move to thread and add some delay before reaching stop condition (< 50 enc)
-                               val = 103; 
+                               pthread_mutex_lock(&alpha_offset_mutex);
+							   val = alpha_offset;
+                               pthread_mutex_unlock(&alpha_offset_mutex);
+                               //val = 103; 
                                dst = (char*)&telescope->encoder[i].answer[3];
                                src = (char*)&val;
                                myMemcpy(dst, src, 4);
@@ -1145,5 +1257,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
     if( verbose ) {
         printf( "[telescope_run] Good bye!\n" );
     }
+
+	pthread_exit(NULL);
 
 }

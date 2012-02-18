@@ -89,7 +89,8 @@ IF(NOT LCU)
    TARGET_LINK_LIBRARIES(ClientCXX LCUImpl LoggerCore Ice IceUtil)
 ELSE(NOT LCU)
    ADD_EXECUTABLE(ClientCXX Client)
-   TARGET_LINK_LIBRARIES(ClientCXX LCUImpl LoggerCore IceE)
+   find_package (Threads)
+   TARGET_LINK_LIBRARIES(ClientCXX LCUImpl LoggerCore IceE ${CMAKE_THREAD_LIBS_INIT})
 ENDIF(NOT LCU)
 set_property(TARGET ClientCXX PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
 
@@ -100,6 +101,10 @@ set_property(TARGET telescope61 PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOUR
 
 #for telescope61_sim executable
 ADD_EXECUTABLE(telescope61_sim telescope61_sim common rs232 semaphore main_sim)
+find_package (Threads)
+MESSAGE("CMAKE_THREAD_LIBS_INIT= ${CMAKE_THREAD_LIBS_INIT}")
+target_link_libraries (telescope61_sim ${CMAKE_THREAD_LIBS_INIT})
+#set_target_properties(telescope61_sim PROPERTIES COMPILE_FLAGS "-lpthread")
 set_property(TARGET telescope61_sim PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
 
 
