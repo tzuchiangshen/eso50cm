@@ -33,6 +33,9 @@
 
 /* Global variable to exit from main loop */
 char quit;
+int semaphore_id;
+struct telescope_data_t * telescope;
+
 //mutex for the threads
 pthread_mutex_t alpha_exit_mutex;
 int alpha_thread_exit = 0;
@@ -102,7 +105,7 @@ void handle_connection (int connection_fd)
 static void exit_handler(int s)
 {
   if(verbose)
-    printf("telescope61::exit_handler Ctrl+C signal catched!!!");
+    printf("telescope61::exit_handler Ctrl+C signal catched!!!\n");
   quit = 1; 
 
   //signal thread to exit 
@@ -112,7 +115,7 @@ static void exit_handler(int s)
   printf("[telescope_run] exit alpha motor thread ...\n");
 
   pthread_mutex_lock(&delta_exit_mutex);
-  alpha_thread_exit = 1;
+  delta_thread_exit = 1;
   pthread_mutex_unlock(&delta_exit_mutex);
   printf("[telescope_run] exit delta motor thread ...\n");
 }
@@ -134,7 +137,7 @@ void myMemcpy(char *dst, char *src, unsigned int size) {
  */
 int abs_alpha_motor_enc_to_worm_enc(int motor_enc) {
     //see configuration file
-    return (int)(281.0 + (motor_enc * 1024.0 * 360.0 / 17280.0 / 3000.0));
+    return (int)(281.0 + (motor_enc * 1024.0 * 360.0 / 17280.0 / 6000.0));
 }
 
 /**
@@ -142,7 +145,7 @@ int abs_alpha_motor_enc_to_worm_enc(int motor_enc) {
  */
 int abs_delta_motor_enc_to_worm_enc(int motor_enc) {
     //see configuration files for delta 
-    return (int)(794.0 + (motor_enc * 1024.0 * -288.0 / 13824.0 / 3000.0));
+    return (int)(794.0 + (motor_enc * 1024.0 * -288.0 / 13882.0 / 6000.0));
 }   
 
 /**
@@ -150,7 +153,7 @@ int abs_delta_motor_enc_to_worm_enc(int motor_enc) {
  */
 int abs_alpha_motor_enc_to_axis_enc(int motor_enc) {
     //see configuration file
-    return (int)(510.0 + (motor_enc * 1024.0 * 1.5 / 17280.0 / 3000.0));
+    return (int)(510.0 + (motor_enc * 1024.0 * 1.5 / 17280.0 / 6000.0));
 }
 
 /**
@@ -158,7 +161,7 @@ int abs_alpha_motor_enc_to_axis_enc(int motor_enc) {
  */
 int abs_delta_motor_enc_to_axis_enc(int motor_enc) {
     //see configuration files for delta 
-    return (int)(741.0 + (motor_enc * 1024 * 1.0 / 13824.0 / 3000.0));
+    return (int)(741.0 + (motor_enc * 1024 * 1.0 / 13882.0 / 6000.0));
 }
 
 /**
@@ -166,7 +169,7 @@ int abs_delta_motor_enc_to_axis_enc(int motor_enc) {
  */
 int rel_alpha_motor_enc_to_worm_enc(int motor_enc) {
     //see configuration file
-    return (int)(motor_enc * 1024.0 * 360.0 / 17280.0 / 3000.0);
+    return (int)(motor_enc * 1024.0 * 360.0 / 17280.0 / 6000.0);
 }
 
 /**
@@ -174,7 +177,7 @@ int rel_alpha_motor_enc_to_worm_enc(int motor_enc) {
  */
 int rel_delta_motor_enc_to_worm_enc(int motor_enc) {
     //see configuration files for delta 
-    return (int)(motor_enc * 1024.0 * -288.0 / 13824.0 / 3000.0);
+    return (int)(motor_enc * 1024.0 * -288.0 / 13882.0 / 6000.0);
 }   
 
 /**
@@ -182,7 +185,7 @@ int rel_delta_motor_enc_to_worm_enc(int motor_enc) {
  */
 int rel_alpha_motor_enc_to_axis_enc(int motor_enc) {
     //see configuration file
-    return (int)(motor_enc * 1024.0 * 1.5 / 17280.0 / 3000.0);
+    return (int)(motor_enc * 1024.0 * 1.5 / 17280.0 / 6000.0);
 }
 
 /**
@@ -190,17 +193,17 @@ int rel_alpha_motor_enc_to_axis_enc(int motor_enc) {
  */
 int rel_delta_motor_enc_to_axis_enc(int motor_enc) {
     //see configuration files for delta 
-    return (int)(motor_enc * 1024 * 1.0 / 13824.0 / 3000.0);
+    return (int)(motor_enc * 1024 * 1.0 / 13882.0 / 6000.0);
 }/**
  *  set_encoders_home_position
  */
 void set_encoders_home_positions(struct telescope_data_t * telescope) {
 
     //TODO: read it from the conf file.
-    int alpha_axis_home = 510;
-    int alpha_worm_home = 281;
-    int delta_axis_home = 741;
-    int delta_worm_home = 794;
+    int alpha_axis_home = 511;
+    int alpha_worm_home = 469;
+    int delta_axis_home = 740;
+    int delta_worm_home = 873;
     char *src, *dst;
 
     //A-A
@@ -241,21 +244,132 @@ void set_encoders_home_positions(struct telescope_data_t * telescope) {
 void *move_motor_alpha(void *threadid) {
 	long tid; 
 	int exit; 
-
+	int motor_speed = 60000; // enc /s 
+	int motor_enc_inc = 0;
+	int delta_time = 1; // 1 second
+	int current_val = 0;
+	int worm_enc = 0;
+	int axis_enc = 0;
+    char *src, *dst;
+	int sign = 1;
+	int offset = 0;
 	//tid = (long) threadid;
+
+
 	do { 
 
-		if(alpha_offset > 50) {
-		    pthread_mutex_lock(&alpha_offset_mutex);
-		    alpha_offset-=600; //plus a random value
-	        printf("moving the motor %d enc=%d\n", tid, alpha_offset);
-			pthread_mutex_unlock(&alpha_offset_mutex);
-            //update encoders values
-			//binary_semaphore_wait( semaphore_id );
-			//binary_semaphore_post( read_semaphore_id );
+		pthread_mutex_lock(&alpha_offset_mutex);
+        if (alpha_offset > 50) {
+			offset = alpha_offset;
+			sign = 1;
+		} else if(alpha_offset < -50) {
+			offset = -1 * alpha_offset;
+			sign = -1;
+		} 
+        // inc = speed * delta_t;
+        motor_enc_inc = sign * motor_speed * delta_time; //plus a random value
+		pthread_mutex_unlock(&alpha_offset_mutex);
 
-		    sleep(1);
+		if(offset > 50) {
+			offset -= abs(motor_enc_inc);
+		    pthread_mutex_lock(&alpha_offset_mutex);
+		    alpha_offset = sign * offset; 
+			pthread_mutex_unlock(&alpha_offset_mutex);
+
+            //update encoders values
+			binary_semaphore_wait( semaphore_id );
+
+			//1.0 update 0xA2 mem_address=7 with the remaining offset value 
+			current_val = sign * offset;
+            src = (char*)&current_val;
+            dst = (char*)&telescope->encoder[0].data[7];
+            myMemcpy(dst, src, 4);
+            
+            //1.1 update 0xA2 mem_address=4 
+            current_val = 0; 
+            dst = (char*)&current_val;
+            src = (char*)&telescope->encoder[0].data[4];
+            myMemcpy(dst, src, 4);
+            current_val += motor_enc_inc;
+            dst = (char*)&telescope->encoder[0].data[4];
+            src = (char*)&current_val;
+            myMemcpy(dst, src, 4);
+	        if (ultra_verbose)
+                printf("[telescope_run] Simulate abs movement of aplha-motor at motor encoder (0xA2 mem_address=4), value = %d\n", motor_enc_inc);
+            // 1.2. save the incremental motor enc movement at 0xA2, mem_address=2
+//            dst = (char*)&motor_enc;
+//            src = (char*)&telescope->encoder[i].message[3];
+//            myMemcpy(dst, src, 4);
+            current_val = 0; 
+            dst = (char*)&current_val;
+            src = (char*)&telescope->encoder[0].data[2];
+            myMemcpy(dst, src, 4);
+            current_val += motor_enc_inc;
+            dst = (char*)&telescope->encoder[0].data[2];
+            src = (char*)&current_val;
+            myMemcpy(dst, src, 4);
+ 	        if (ultra_verbose)
+                printf("[telescope_run] Simulate abs movement of aplha-motor at motor encoder (0xA2 mem_address=2), value = %d\n", motor_enc_inc);
+
+            // 1.3. convert the incremental motor enc into worm enc 
+            worm_enc = rel_alpha_motor_enc_to_worm_enc(motor_enc_inc);
+            if (ultra_verbose)
+                printf("[telescope_run] converted alpha motor enc to alpha worm enc (0xA6 mem_address=4), motor enc = %d, worm enc=%d\n", motor_enc_inc,  worm_enc);
+            // 1.4. save the incremental worm enc movement at 0xA6, mem_address=4
+            current_val = 0; 
+            dst = (char*)&current_val;
+            src = (char*)&telescope->encoder[2].data[4];
+            myMemcpy(dst, src, 4);
+            current_val += worm_enc;
+            dst = (char*)&telescope->encoder[2].data[4];
+            src = (char*)&current_val;
+            myMemcpy(dst, src, 4);
+			if (ultra_verbose)
+                printf("[telescope_run] Simulate movement at worm encoder (0xA6 mem_address=4), value = %d\n", worm_enc);
+            // 1.5. save the incremental worm enc movement at 0xA6, mem_address=2
+            current_val = 0; 
+            dst = (char*)&current_val;
+            src = (char*)&telescope->encoder[2].data[2];
+            myMemcpy(dst, src, 4);
+            current_val += worm_enc;
+            dst = (char*)&telescope->encoder[2].data[2];
+            src = (char*)&current_val;
+            myMemcpy(dst, src, 4);
+			if (ultra_verbose)
+                printf("[telescope_run] Simulate abs movement of at alpha worm encoder (0xA6 mem_address=2), value = %d\n", worm_enc);
+            //1.6. convert the incremental motor enc into axis enc 
+            axis_enc = rel_alpha_motor_enc_to_axis_enc(motor_enc_inc);
+			if (ultra_verbose)
+                printf("[telescope_run] converted alpha motor enc to alpha axis enc (0xA6 mem_address=4), motor enc = %d, axis enc=%d\n", motor_enc_inc,  axis_enc);
+            // 1.7. save the incremental axis enc movement at 0xA8, mem_address=4
+            current_val = 0; 
+            dst = (char*)&current_val;
+            src = (char*)&telescope->encoder[3].data[4];
+            myMemcpy(dst, src, 4);
+            current_val += axis_enc;
+            dst = (char*)&telescope->encoder[3].data[4];
+            src = (char*)&current_val;
+            myMemcpy(dst, src, 4);
+			if (ultra_verbose)
+                printf("[telescope_run] Simulate movement at alpha axis encoder (0xA8 mem_address=4), value = %d current=%d \n", axis_enc, current_val);
+            // 1.8. save the incremental axis enc movement at 0xA8, mem_address=2
+            current_val = 0;
+            dst = (char*)&current_val;
+            src = (char*)&telescope->encoder[3].data[2];
+            myMemcpy(dst, src, 4);
+            current_val += axis_enc;
+            dst = (char*)&telescope->encoder[3].data[2];
+            src = (char*)&current_val;
+            myMemcpy(dst, src, 4);
+			if (ultra_verbose)
+                printf("[telescope_run] Simulate movement at alpha axis encoder (0xA8 mem_address=2), value = %d\n", axis_enc);
+
+			binary_semaphore_post( semaphore_id );
+			//to be accurate, I should sleep delta_time - proceesing time
+		    sleep(delta_time);
 		}
+
+		//check if exit signal is set
 	    pthread_mutex_lock(&alpha_exit_mutex);
         exit = alpha_thread_exit;
 	    pthread_mutex_unlock(&alpha_exit_mutex);
@@ -269,21 +383,125 @@ void *move_motor_alpha(void *threadid) {
 void *move_motor_delta(void *threadid) {
 	long tid; 
 	int exit; 
+	int motor_speed = 64; // enc /s 
+	int motor_enc_inc = 0;
+	int delta_time = 1; // 1 second
+	int current_val = 0;
+	int worm_enc = 0;
+	int axis_enc = 0;
+    char *src, *dst;
+	int sign = 1;
+	int offset = 0;
 
 	//tid = (long) threadid;
 	do { 
 
-		if(delta_offset > 50) {
-		    pthread_mutex_lock(&delta_offset_mutex);
-		    delta_offset-=600;
-	        printf("moving the delta motor 0xA4 enc=%d\n", alpha_offset);
-			pthread_mutex_unlock(&delta_offset_mutex);
-            //update encoders values
-			//binary_semaphore_wait( semaphore_id );
-			//binary_semaphore_post( read_semaphore_id );
+		pthread_mutex_lock(&delta_offset_mutex);
+        if (delta_offset > 50) {
+			offset = delta_offset;
+			sign = 1;
+		} else if(delta_offset < -50) {
+			offset = -1 * delta_offset; //make it positive
+			sign = -1;
+		} 
+        // inc = speed * delta_t;
+        motor_enc_inc = sign * motor_speed * delta_time; //plus a random value
+		pthread_mutex_unlock(&delta_offset_mutex);
 
-		    sleep(1);
+		if(offset > 50) {
+			offset -= abs(motor_enc_inc);
+		    pthread_mutex_lock(&delta_offset_mutex);
+		    delta_offset = sign * offset; 
+			pthread_mutex_unlock(&delta_offset_mutex);
+
+            //update encoders values
+			binary_semaphore_wait( semaphore_id );
+
+            //1.0 update 0xA4 mem_address=7 with the remaining offset value 
+			current_val = sign * offset;
+            src = (char*)&current_val;
+            dst = (char*)&telescope->encoder[1].data[7];
+            myMemcpy(dst, src, 4);
+            
+            //1.1 update 0xA2 mem_address=4 
+            current_val = 0; 
+            dst = (char*)&current_val;
+            src = (char*)&telescope->encoder[1].data[4];
+            myMemcpy(dst, src, 4);
+            current_val += motor_enc_inc;
+            dst = (char*)&telescope->encoder[1].data[4];
+            src = (char*)&current_val;
+            myMemcpy(dst, src, 4);
+			if (ultra_verbose)
+                printf("[telescope_run] Simulate abs movement at delta motor encoder (0xA4 mem_address=4), value = %d\n", motor_enc_inc);
+            // 1.2. save the incremental motor enc movement at 0xA4, mem_address=2
+            current_val = 0; 
+            dst = (char*)&current_val;
+            src = (char*)&telescope->encoder[1].data[2];
+            myMemcpy(dst, src, 4);
+            current_val += motor_enc_inc;
+            dst = (char*)&telescope->encoder[1].data[2];
+            src = (char*)&current_val;
+            myMemcpy(dst, src, 4);
+			if (ultra_verbose)
+                printf("[telescope_run] Simulate abs movement at delta motor encoder (0xA4 mem_address=2), value = %d\n", motor_enc_inc);
+            // 1.3. convert the incremental motor enc into worm enc 
+            worm_enc = rel_delta_motor_enc_to_worm_enc(motor_enc_inc);
+			if (ultra_verbose)
+                printf("[telescope_run] converted alpha motor enc to alpha worm enc (0xA6 mem_address=4), motor enc = %d, worm enc=%d\n", motor_enc_inc,  worm_enc);
+            // 1.4. save the incremental worm enc movement at 0xAA, mem_address=4
+            current_val = 0; 
+            dst = (char*)&current_val;
+            src = (char*)&telescope->encoder[4].data[4];
+            myMemcpy(dst, src, 4);
+            current_val += worm_enc;
+            dst = (char*)&telescope->encoder[4].data[4];
+            src = (char*)&current_val;
+            myMemcpy(dst, src, 4);
+			if (ultra_verbose)
+                printf("[telescope_run] Simulate movement at worm encoder (0xA6 mem_address=4), value = %d\n", worm_enc);
+            // 1.5. save the incremental worm enc movement at 0xAA, mem_address=2
+            current_val = 0; 
+            dst = (char*)&current_val;
+            src = (char*)&telescope->encoder[4].data[2];
+            myMemcpy(dst, src, 4);
+            current_val += worm_enc;
+            dst = (char*)&telescope->encoder[4].data[2];
+            src = (char*)&current_val;
+            myMemcpy(dst, src, 4);
+			if (ultra_verbose)
+                printf("[telescope_run] Simulate abs movement of at delta worm encoder (0xAA mem_address=2), value = %d\n", worm_enc);
+            // 1.6. convert the incremental motor enc into axis enc 
+            axis_enc = rel_delta_motor_enc_to_axis_enc(motor_enc_inc);
+			if (ultra_verbose)
+                printf("[telescope_run] converted delta motor enc to delta axis enc (0xAC mem_address=4), motor enc = %d, axis enc=%d\n", motor_enc_inc,  axis_enc);
+            // 1.7. save the incremental axis enc movement at 0xAC, mem_address=4
+            current_val = 0; 
+            dst = (char*)&current_val;
+            src = (char*)&telescope->encoder[5].data[4];
+            myMemcpy(dst, src, 4);
+            current_val += axis_enc;
+            dst = (char*)&telescope->encoder[5].data[4];
+            src = (char*)&current_val;
+            myMemcpy(dst, src, 4);
+			if (ultra_verbose)
+                printf("[telescope_run] Simulate movement at delta axis encoder (0xAC mem_address=4), value = %d\n", axis_enc);
+            // 1.8. save the incremental axis enc movement at 0xA8, mem_address=2
+            current_val = 0;
+            dst = (char*)&current_val;
+            src = (char*)&telescope->encoder[5].data[2];
+            myMemcpy(dst, src, 4);
+            current_val += axis_enc;
+            dst = (char*)&telescope->encoder[5].data[2];
+            src = (char*)&current_val;
+            myMemcpy(dst, src, 4);
+			if (ultra_verbose)
+                printf("[telescope_run] Simulate movement at delta axis encoder (0xAC mem_address=2), value = %d\n", axis_enc);
+
+			binary_semaphore_post( semaphore_id );
+		    sleep(delta_time);
 		}
+		//check if exit signal is set
 	    pthread_mutex_lock(&delta_exit_mutex);
         exit = delta_thread_exit;
 	    pthread_mutex_unlock(&delta_exit_mutex);
@@ -301,7 +519,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
     //int verbose;
     const size_t shared_segment_size = 1024;
 
-    int semaphore_id;
+//    int semaphore_id;
     int read_semaphore_id;
     int segment_id;
     char * shared_memory;
@@ -330,8 +548,8 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
 
     struct timespec req, rem;
 
-    struct telescope_data_t * telescope;
-    struct telescope_data_t * telescope_sim;
+//    struct telescope_data_t * telescope;
+//    struct telescope_data_t * telescope_sim;
 
     int i;
     int j;
@@ -530,8 +748,8 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
             printf( "[telescope_run] sizeof( struct telescope_data_t )= %d\n", sizeof( struct telescope_data_t ) );
         }
         telescope = (struct telescope_data_t *) shared_memory;
-        telescope_sim = (struct telescope_data_t*)malloc(sizeof(struct telescope_data_t));
-        memset(telescope_sim, 0, sizeof(struct telescope_data_t));
+        //telescope_sim = (struct telescope_data_t*)malloc(sizeof(struct telescope_data_t));
+        //memset(telescope_sim, 0, sizeof(struct telescope_data_t));
 
         /**
          * USER SHARED MEMORY
@@ -738,199 +956,35 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                                 //it's a command to move the ALPHA motor, we need to adjust the equivalent values in the enc of the WORM in order to 
                                 //simluate the telescope movement, but the encoder count needs to be transform from motor->worm
                                 if ( telescope->encoder[i].message[1] == 0xA2) {
-                                    int worm_enc = 0;
                                     int motor_enc = 0;
-                                    int axis_enc = 0;
-                                    int current_val = 0; 
                                     //alpha-motor, then set the alpha-worm encoder 
                                     // 1.1. save the incremental motor enc movement at 0xA2, mem_address=4
                                     dst = (char*)&motor_enc;
                                     src = (char*)&telescope->encoder[i].message[3];
                                     myMemcpy(dst, src, 4);
-                                    current_val = 0; 
-                                    dst = (char*)&current_val;
-                                    src = (char*)&telescope->encoder[0].data[4];
-                                    myMemcpy(dst, src, 4);
-                                    current_val += motor_enc;
-                                    dst = (char*)&telescope->encoder[0].data[4];
-                                    src = (char*)&current_val;
-                                    myMemcpy(dst, src, 4);
-							        if (ultra_verbose)
-                                        printf("[telescope_run] Simulate abs movement of aplha-motor at motor encoder (0xA2 mem_address=4), value = %d\n", motor_enc);
-                                    // 1.2. save the incremental motor enc movement at 0xA2, mem_address=2
-                                    dst = (char*)&motor_enc;
-                                    src = (char*)&telescope->encoder[i].message[3];
-                                    myMemcpy(dst, src, 4);
-                                    current_val = 0; 
-                                    dst = (char*)&current_val;
-                                    src = (char*)&telescope->encoder[0].data[2];
-                                    myMemcpy(dst, src, 4);
-                                    current_val += motor_enc;
-                                    dst = (char*)&telescope->encoder[0].data[2];
-                                    src = (char*)&current_val;
-                                    myMemcpy(dst, src, 4);
-							        if (ultra_verbose)
-                                        printf("[telescope_run] Simulate abs movement of aplha-motor at motor encoder (0xA2 mem_address=2), value = %d\n", motor_enc);
 
                                     //signal the alpha motor thread the amount of the impulse
 								    pthread_mutex_lock(&alpha_offset_mutex);
-									if(motor_enc < 0) 
-									    alpha_offset = -1*motor_enc;
-									else 
-									    alpha_offset = motor_enc;
+									alpha_offset = motor_enc;
 									pthread_mutex_unlock(&alpha_offset_mutex);
 
-                                    // 1.3. convert the incremental motor enc into worm enc 
-                                    worm_enc = rel_alpha_motor_enc_to_worm_enc(motor_enc);
-							        if (ultra_verbose)
-                                        printf("[telescope_run] converted alpha motor enc to alpha worm enc (0xA6 mem_address=4), motor enc = %d, worm enc=%d\n", motor_enc,  worm_enc);
-                                    // 1.4. save the incremental worm enc movement at 0xA6, mem_address=4
-                                    current_val = 0; 
-                                    dst = (char*)&current_val;
-                                    src = (char*)&telescope->encoder[2].data[4];
-                                    myMemcpy(dst, src, 4);
-                                    current_val += worm_enc;
-                                    dst = (char*)&telescope->encoder[2].data[4];
-                                    src = (char*)&current_val;
-                                    myMemcpy(dst, src, 4);
-							        if (ultra_verbose)
-                                        printf("[telescope_run] Simulate movement at worm encoder (0xA6 mem_address=4), value = %d\n", worm_enc);
-                                    // 1.5. save the incremental worm enc movement at 0xA6, mem_address=2
-                                    current_val = 0; 
-                                    dst = (char*)&current_val;
-                                    src = (char*)&telescope->encoder[2].data[2];
-                                    myMemcpy(dst, src, 4);
-                                    current_val += worm_enc;
-                                    dst = (char*)&telescope->encoder[2].data[2];
-                                    src = (char*)&current_val;
-                                    myMemcpy(dst, src, 4);
-							        if (ultra_verbose)
-                                        printf("[telescope_run] Simulate abs movement of at alpha worm encoder (0xA6 mem_address=2), value = %d\n", worm_enc);
-                                    // 1.6. convert the incremental motor enc into axis enc 
-                                    axis_enc = rel_alpha_motor_enc_to_axis_enc(motor_enc);
-							        if (ultra_verbose)
-                                        printf("[telescope_run] converted alpha motor enc to alpha axis enc (0xA6 mem_address=4), motor enc = %d, axis enc=%d\n", motor_enc,  axis_enc);
-                                    // 1.7. save the incremental axis enc movement at 0xA8, mem_address=4
-                                    current_val = 0; 
-                                    dst = (char*)&current_val;
-                                    src = (char*)&telescope->encoder[3].data[4];
-                                    myMemcpy(dst, src, 4);
-                                    current_val += axis_enc;
-                                    dst = (char*)&telescope->encoder[3].data[4];
-                                    src = (char*)&current_val;
-                                    myMemcpy(dst, src, 4);
-							        if (ultra_verbose)
-                                        printf("[telescope_run] Simulate movement at alpha axis encoder (0xA8 mem_address=4), value = %d current=%d \n", axis_enc, current_val);
-                                    // 1.8. save the incremental axis enc movement at 0xA8, mem_address=2
-                                    current_val = 0;
-                                    dst = (char*)&current_val;
-                                    src = (char*)&telescope->encoder[3].data[2];
-                                    myMemcpy(dst, src, 4);
-                                    current_val += axis_enc;
-                                    dst = (char*)&telescope->encoder[3].data[2];
-                                    src = (char*)&current_val;
-                                    myMemcpy(dst, src, 4);
-							        if (ultra_verbose)
-                                        printf("[telescope_run] Simulate movement at alpha axis encoder (0xA8 mem_address=2), value = %d\n", axis_enc);
                                 } else if( telescope->encoder[i].message[1] == 0xA4 ) {
-                                    int worm_enc = 0;
                                     int motor_enc = 0;
-                                    int axis_enc = 0;
-                                    int current_val = 0; 
                                     //delta-motor, then set the alpha-worm encoder 
                                     // 1.1. save the incremental motor enc movement at 0xA4, mem_address=4
                                     dst = (char*)&motor_enc;
                                     src = (char*)&telescope->encoder[i].message[3];
                                     myMemcpy(dst, src, 4);
-                                    current_val = 0; 
-                                    dst = (char*)&current_val;
-                                    src = (char*)&telescope->encoder[1].data[4];
-                                    myMemcpy(dst, src, 4);
-                                    printf ("current = %d, motor_enc=%d\n", current_val, motor_enc);
-                                    current_val += motor_enc;
-                                    dst = (char*)&telescope->encoder[1].data[4];
-                                    src = (char*)&current_val;
-                                    myMemcpy(dst, src, 4);
-							        if (ultra_verbose)
-                                        printf("[telescope_run] Simulate abs movement at delta motor encoder (0xA4 mem_address=4), value = %d\n", motor_enc);
-                                    // 1.2. save the incremental motor enc movement at 0xA4, mem_address=2
-                                    dst = (char*)&motor_enc;
-                                    src = (char*)&telescope->encoder[i].message[3];
-                                    myMemcpy(dst, src, 4);
-                                    current_val = 0; 
-                                    dst = (char*)&current_val;
-                                    src = (char*)&telescope->encoder[1].data[2];
-                                    myMemcpy(dst, src, 4);
-                                    current_val += motor_enc;
-                                    dst = (char*)&telescope->encoder[1].data[2];
-                                    src = (char*)&current_val;
-                                    myMemcpy(dst, src, 4);
-							        if (ultra_verbose)
-                                        printf("[telescope_run] Simulate abs movement at delta motor encoder (0xA4 mem_address=2), value = %d\n", motor_enc);
-                                    // 1.3. convert the incremental motor enc into worm enc 
-                                    worm_enc = rel_delta_motor_enc_to_worm_enc(motor_enc);
-							        if (ultra_verbose)
-                                        printf("[telescope_run] converted alpha motor enc to alpha worm enc (0xA6 mem_address=4), motor enc = %d, worm enc=%d\n", motor_enc,  worm_enc);
-									pthread_mutex_lock(&delta_offset_mutex);
-									if(motor_enc < 0) 
-									    delta_offset = -1*motor_enc;
-									else 
-									    delta_offset = motor_enc;
 
+                                    //signal the delta motor thread the amount of the impulse
+                                    pthread_mutex_lock(&delta_offset_mutex);
+									delta_offset = motor_enc;
 									pthread_mutex_unlock(&delta_offset_mutex);
-                                    // 1.4. save the incremental worm enc movement at 0xAA, mem_address=4
-                                    current_val = 0; 
-                                    dst = (char*)&current_val;
-                                    src = (char*)&telescope->encoder[4].data[4];
-                                    myMemcpy(dst, src, 4);
-                                    current_val += worm_enc;
-                                    dst = (char*)&telescope->encoder[4].data[4];
-                                    src = (char*)&current_val;
-                                    myMemcpy(dst, src, 4);
-							        if (ultra_verbose)
-                                        printf("[telescope_run] Simulate movement at worm encoder (0xA6 mem_address=4), value = %d\n", worm_enc);
-                                    // 1.5. save the incremental worm enc movement at 0xAA, mem_address=2
-                                    current_val = 0; 
-                                    dst = (char*)&current_val;
-                                    src = (char*)&telescope->encoder[4].data[2];
-                                    myMemcpy(dst, src, 4);
-                                    current_val += worm_enc;
-                                    dst = (char*)&telescope->encoder[4].data[2];
-                                    src = (char*)&current_val;
-                                    myMemcpy(dst, src, 4);
-							        if (ultra_verbose)
-                                        printf("[telescope_run] Simulate abs movement of at delta worm encoder (0xAA mem_address=2), value = %d\n", worm_enc);
-                                    // 1.6. convert the incremental motor enc into axis enc 
-                                    axis_enc = rel_delta_motor_enc_to_axis_enc(motor_enc);
-							        if (ultra_verbose)
-                                        printf("[telescope_run] converted delta motor enc to delta axis enc (0xAC mem_address=4), motor enc = %d, axis enc=%d\n", motor_enc,  axis_enc);
-                                    // 1.7. save the incremental axis enc movement at 0xAC, mem_address=4
-                                    current_val = 0; 
-                                    dst = (char*)&current_val;
-                                    src = (char*)&telescope->encoder[5].data[4];
-                                    myMemcpy(dst, src, 4);
-                                    current_val += axis_enc;
-                                    dst = (char*)&telescope->encoder[5].data[4];
-                                    src = (char*)&current_val;
-                                    myMemcpy(dst, src, 4);
-							        if (ultra_verbose)
-                                        printf("[telescope_run] Simulate movement at delta axis encoder (0xAC mem_address=4), value = %d\n", axis_enc);
-                                    // 1.8. save the incremental axis enc movement at 0xA8, mem_address=2
-                                    current_val = 0;
-                                    dst = (char*)&current_val;
-                                    src = (char*)&telescope->encoder[5].data[2];
-                                    myMemcpy(dst, src, 4);
-                                    current_val += axis_enc;
-                                    dst = (char*)&telescope->encoder[5].data[2];
-                                    src = (char*)&current_val;
-                                    myMemcpy(dst, src, 4);
-							        if (ultra_verbose)
-                                        printf("[telescope_run] Simulate movement at delta axis encoder (0xAC mem_address=2), value = %d\n", axis_enc);
-                                }                               
+                               }                               
                             }
                         }  else {
                             //odd => read 
-                            if (mem_address == 7) {
+                            if (mem_address == 700) {
                                int val = telescope->encoder[i].data[mem_address];
                                //simulate the movement is finished, 
                                //TSH: move to thread and add some delay before reaching stop condition (< 50 enc)
@@ -1005,7 +1059,6 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                             printf( "[telescope_run] message processed in dT=%10.6lf[s]\n", endT - startT );
                     }
                     binary_semaphore_post( semaphore_id );
-
                 }
             }
 
