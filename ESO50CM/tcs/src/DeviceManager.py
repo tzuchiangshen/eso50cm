@@ -67,6 +67,18 @@ class DeviceManager:
             traceback.print_exc()
             self.status = 1
 
+
+    def getPosition(self):
+        telData = OUC.TelescopeData()
+        try:
+            telData = self.lcuImpl.getPosition()
+            return telData
+        except OUC.TelescopeNotConfiguredEx():
+            print "Telescope Not Configured !!!"
+            traceback.print_exc()
+            status = 1
+
+
 if __name__ == "__main__":
 
     parser = optparse.OptionParser(usage= "%prog")
