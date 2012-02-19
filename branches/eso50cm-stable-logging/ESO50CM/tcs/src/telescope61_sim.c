@@ -344,8 +344,8 @@ void *move_motor_alpha(void *threadid) {
                 src = (char*)&telescope->encoder[0].data[2];
                 myMemcpy(dst, src, 4);
                 current_val += motor_enc_inc;
-    			if(current_val > 6000)
-    			    current_val = current_val % 6000;
+    			if(abs(current_val) > 6000)
+    			    current_val = abs(current_val) % 6000;
                 dst = (char*)&telescope->encoder[0].data[2];
                 src = (char*)&current_val;
                 myMemcpy(dst, src, 4);
@@ -362,8 +362,6 @@ void *move_motor_alpha(void *threadid) {
                 src = (char*)&telescope->encoder[2].data[4];
                 myMemcpy(dst, src, 4);
                 current_val += worm_enc;
-    			if(current_val > 1024)
-    			    current_val = current_val % 1024;
                 dst = (char*)&telescope->encoder[2].data[4];
                 src = (char*)&current_val;
                 myMemcpy(dst, src, 4);
@@ -375,6 +373,8 @@ void *move_motor_alpha(void *threadid) {
                 src = (char*)&telescope->encoder[2].data[2];
                 myMemcpy(dst, src, 4);
                 current_val += worm_enc;
+    			if(abs(current_val) > 1024)
+    			    current_val = abs(current_val) % 1024;
                 dst = (char*)&telescope->encoder[2].data[2];
                 src = (char*)&current_val;
                 myMemcpy(dst, src, 4);
@@ -390,8 +390,6 @@ void *move_motor_alpha(void *threadid) {
                 src = (char*)&telescope->encoder[3].data[4];
                 myMemcpy(dst, src, 4);
                 current_val += axis_enc;
-    			if(current_val > 1024)
-    			    current_val = current_val % 1024;
                 dst = (char*)&telescope->encoder[3].data[4];
                 src = (char*)&current_val;
                 myMemcpy(dst, src, 4);
@@ -403,6 +401,8 @@ void *move_motor_alpha(void *threadid) {
                 src = (char*)&telescope->encoder[3].data[2];
                 myMemcpy(dst, src, 4);
                 current_val += axis_enc;
+    			if(abs(current_val) > 1024)
+    			    current_val = abs(current_val) % 1024;
                 dst = (char*)&telescope->encoder[3].data[2];
                 src = (char*)&current_val;
                 myMemcpy(dst, src, 4);
@@ -503,8 +503,6 @@ void *move_motor_delta(void *threadid) {
                 src = (char*)&telescope->encoder[1].data[4];
                 myMemcpy(dst, src, 4);
                 current_val += motor_enc_inc;
-    			if(current_val > 6000)
-    			    current_val = current_val % 6000;
                 dst = (char*)&telescope->encoder[1].data[4];
                 src = (char*)&current_val;
                 myMemcpy(dst, src, 4);
@@ -516,6 +514,8 @@ void *move_motor_delta(void *threadid) {
                 src = (char*)&telescope->encoder[1].data[2];
                 myMemcpy(dst, src, 4);
                 current_val += motor_enc_inc;
+    			if(abs(current_val) > 6000)
+    			    current_val = abs(current_val) % 6000;
                 dst = (char*)&telescope->encoder[1].data[2];
                 src = (char*)&current_val;
                 myMemcpy(dst, src, 4);
@@ -531,8 +531,6 @@ void *move_motor_delta(void *threadid) {
                 src = (char*)&telescope->encoder[4].data[4];
                 myMemcpy(dst, src, 4);
                 current_val += worm_enc;
-    			if(current_val > 1024)
-    			    current_val = current_val % 1024;
                 dst = (char*)&telescope->encoder[4].data[4];
                 src = (char*)&current_val;
                 myMemcpy(dst, src, 4);
@@ -544,6 +542,8 @@ void *move_motor_delta(void *threadid) {
                 src = (char*)&telescope->encoder[4].data[2];
                 myMemcpy(dst, src, 4);
                 current_val += worm_enc;
+    			if(abs(current_val) > 1024)
+    			    current_val = abs(current_val) % 1024;
                 dst = (char*)&telescope->encoder[4].data[2];
                 src = (char*)&current_val;
                 myMemcpy(dst, src, 4);
@@ -559,8 +559,6 @@ void *move_motor_delta(void *threadid) {
                 src = (char*)&telescope->encoder[5].data[4];
                 myMemcpy(dst, src, 4);
                 current_val += axis_enc;
-    			if(current_val > 1024)
-    			    current_val = current_val % 1024;
                 dst = (char*)&telescope->encoder[5].data[4];
                 src = (char*)&current_val;
                 myMemcpy(dst, src, 4);
@@ -572,6 +570,8 @@ void *move_motor_delta(void *threadid) {
                 src = (char*)&telescope->encoder[5].data[2];
                 myMemcpy(dst, src, 4);
                 current_val += axis_enc;
+    			if(abs(current_val) > 1024)
+    			    current_val = abs(current_val) % 1024;
                 dst = (char*)&telescope->encoder[5].data[2];
                 src = (char*)&current_val;
                 myMemcpy(dst, src, 4);
