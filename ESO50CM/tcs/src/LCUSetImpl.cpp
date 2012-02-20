@@ -223,13 +223,14 @@ LCUImpl::setTarget(const OUC::TelescopePosition& targetPos, const Ice::Current& 
 {
     double RA, Dec =0.0;
     
-    logger.logINFO( "LCUImpl::setTarget" );
+    logger.logFINEST( "LCUImpl::setTarget" );
 
     /** Is telescope configured **/
     if(!m_configured)
     {
-		OUC::TelescopeNotConfiguredEx ex;
+        OUC::TelescopeNotConfiguredEx ex;
         ex.reason = "Telecope Not Configured";
+        logger.logSEVERE( "LCUImpl::setTarget: Telecope Not Configured");
         throw ex;
     }
     
@@ -244,17 +245,16 @@ LCUImpl::setTarget(const OUC::TelescopePosition& targetPos, const Ice::Current& 
     m_lcu->waitSemaphore();
     
     /** Send new target **/
-    if(m_lcu->telescope->setTarget(RA, Dec, (double*)&targetPos.Alt, (double*)&targetPos.Az) == 0) 
-      {
-	char limits[255];
-	OUC::TargetOutOfLimitsEx ex;
-	sprintf(limits, "Target out of limits: Low Elevation: %lf, High Elevation: %lf", m_lcu->telescope->getLowElevation(), m_lcu->telescope->getHighElevation());
-	logger.logINFO("LCUImpl::setTarget limits: %s ", limits);
-	ex.reason = "Target out of limits. Try a new one";
-	ex.reason.append(limits); 
-    m_lcu->postSemaphore();
-	throw ex;
-      }
+    if(m_lcu->telescope->setTarget(RA, Dec, (double*)&targetPos.Alt, (double*)&targetPos.Az) == 0) {
+        char limits[255];
+        OUC::TargetOutOfLimitsEx ex;
+        sprintf(limits, "Target out of limits: Low Elevation: %lf, High Elevation: %lf", m_lcu->telescope->getLowElevation(), m_lcu->telescope->getHighElevation());
+        logger.logINFO("LCUImpl::setTarget limits: %s ", limits);
+        ex.reason = "Target out of limits. Try a new one";
+        ex.reason.append(limits); 
+        m_lcu->postSemaphore();
+        throw ex;
+    }
     
     /** Release semaphore for SHM **/
     m_lcu->postSemaphore();
@@ -288,13 +288,13 @@ LCUImpl::setOffset(const OUC::TelescopePosition& offsetPos)
     double offsetDec = 0.0;
 
     logger.logFINE( "LCUImpl::setOffset" );
-	
+    
     /** Is telescope configured **/
     if(!m_configured)
     {
         OUC::TelescopeNotConfiguredEx ex;
-	ex.reason = "Telecope Not Configured";
-	throw ex;
+    ex.reason = "Telecope Not Configured";
+    throw ex;
     }
 
 
@@ -310,12 +310,12 @@ LCUImpl::setOffset(const OUC::TelescopePosition& offsetPos)
     if( alpha_mtr_counts < -50 || 50 < alpha_mtr_counts ) 
     {
         m_lcu->telescope->alpha->Motor->setDeviceMemory( 7, & alpha_mtr_counts, 0  );
-	goto_alpha_flag = true;
+    goto_alpha_flag = true;
     }
     if( delta_mtr_counts < -50 || 50 < delta_mtr_counts ) 
     {
         m_lcu->telescope->delta->Motor->setDeviceMemory( 7, & delta_mtr_counts, 0  );
-	goto_delta_flag = true;
+    goto_delta_flag = true;
     }
     m_lcu->postSemaphore();
 
@@ -324,28 +324,28 @@ LCUImpl::setOffset(const OUC::TelescopePosition& offsetPos)
     do 
     {
         sleep( 1 );
-	mem_address = 7;
-	m_lcu->waitSemaphore();
-	if( goto_alpha_flag ) 
-	{
-	    m_lcu->telescope->alpha->Motor->readDeviceMemory( 7, & alpha_mtr_counts, 0  );
-	    if( -50 < alpha_mtr_counts && alpha_mtr_counts < 50 )
-	        goto_alpha_flag = false;
-	}
-	if( goto_delta_flag ) 
-	{
-	    m_lcu->telescope->delta->Motor->readDeviceMemory( 7, & delta_mtr_counts, 0  );
-	    if( -50 < delta_mtr_counts && delta_mtr_counts < 50 )
-	      goto_delta_flag = false;
-	}
-	m_lcu->postSemaphore();
-  	    
-	if( ! goto_delta_flag && ! goto_alpha_flag ) 
-	{
-	    no_quit = false;
-	} else {
-	    no_quit --;
-	}
+    mem_address = 7;
+    m_lcu->waitSemaphore();
+    if( goto_alpha_flag ) 
+    {
+        m_lcu->telescope->alpha->Motor->readDeviceMemory( 7, & alpha_mtr_counts, 0  );
+        if( -50 < alpha_mtr_counts && alpha_mtr_counts < 50 )
+            goto_alpha_flag = false;
+    }
+    if( goto_delta_flag ) 
+    {
+        m_lcu->telescope->delta->Motor->readDeviceMemory( 7, & delta_mtr_counts, 0  );
+        if( -50 < delta_mtr_counts && delta_mtr_counts < 50 )
+          goto_delta_flag = false;
+    }
+    m_lcu->postSemaphore();
+        
+    if( ! goto_delta_flag && ! goto_alpha_flag ) 
+    {
+        no_quit = false;
+    } else {
+        no_quit --;
+    }
     } while( no_quit );
 
     /** Stop telescope status */
@@ -364,8 +364,8 @@ LCUImpl::setTracking(const OUC::TrackingInfo& trkInfo, const Ice::Current& c)
     if(!m_configured)
     {
         OUC::TelescopeNotConfiguredEx ex;
-	ex.reason = "Telecope Not Configured";
-	throw ex;
+    ex.reason = "Telecope Not Configured";
+    throw ex;
     }
   
     /** Read Tracking Flag **/
@@ -398,14 +398,14 @@ LCUImpl::parkTelescope(const Ice::Current& c)
     int setup_ready;
     int no_quit;
 
-    logger.logINFO( "LCUImpl::parkTelescope" );
+    logger.logFINEST( "LCUImpl::parkTelescope" );
   
     /** Is telescope configured **/
-    if(!m_configured)
-    {
+    if(!m_configured) {
         OUC::TelescopeNotConfiguredEx ex;
-	ex.reason = "Telecope Not Configured";
-	throw ex;
+        ex.reason = "Telecope Not Configured";
+        logger.logSEVERE( "LCUImpl::parkTelescope: Telecope Not Configured" );
+        throw ex;
     }  
   
     /**Calculate Parking Position **/
@@ -426,29 +426,28 @@ LCUImpl::parkTelescope(const Ice::Current& c)
     targetPos.Dec *= -1.;
     delta_mtr_counts = m_lcu->telescope->delta->offsetAxisInDeg(targetPos.Dec);
     logger.logINFO("LCUImpl::parkTelescope: Moving Telescope to RA: %lf, Dec: %lf", targetPos.RA, targetPos.Dec);
-    logger.logINFO("LCUImpl::parkTelescope: Moving Telescope to alpha_counts: %d, delta_mtr_counts: %d", alpha_mtr_counts, delta_mtr_counts);
+    logger.logINFO("LCUImpl::parkTelescope: Moving Telescope in alpha_counts: %d, delta_mtr_counts: %d", alpha_mtr_counts, delta_mtr_counts);
 
     /** Stop Tracking **/
-    if(m_lcu->telescope->getIsTracking()) 
-    {
+    if(m_lcu->telescope->getIsTracking()) {
         int ticVel = 0;
-	m_lcu->telescope->alpha->Motor->setDeviceMemory(3, &ticVel);
-	m_lcu->telescope->setIsTracking(false);
-	/* Refresh tracking state */
-	m_tracking = false;
-	logger.logINFO("LCUImpl::parkTelescope: Tracking OFF!!");
+        m_lcu->telescope->alpha->Motor->setDeviceMemory(3, &ticVel);
+        m_lcu->telescope->setIsTracking(false);
+        /* Refresh tracking state */
+        m_tracking = false;
+        logger.logINFO("LCUImpl::parkTelescope: Tracking OFF!!");
     }
 
     /** Move telescope to zenith **/
     if( alpha_mtr_counts < -50 || 50 < alpha_mtr_counts ) 
     {
         m_lcu->telescope->alpha->Motor->setDeviceMemory( 7, & alpha_mtr_counts, 0  );
-	goto_alpha_flag = true;
+        goto_alpha_flag = true;
     }
     if( delta_mtr_counts < -50 || 50 < delta_mtr_counts ) 
     {
         m_lcu->telescope->delta->Motor->setDeviceMemory( 7, & delta_mtr_counts, 0  );
-	goto_delta_flag = true;
+        goto_delta_flag = true;
     }
     m_lcu->postSemaphore();
     
@@ -457,72 +456,72 @@ LCUImpl::parkTelescope(const Ice::Current& c)
     do 
     {
         no_quit = 180;
-	do 
-	{
-	    /** Reading current position */
-	    sleep( 1 );
-	    m_lcu->waitSemaphore();
-	    {
-	        if( goto_alpha_flag ) 
-	        {
-		    m_lcu->telescope->alpha->Motor->readDeviceMemory( 7, & alpha_mtr_counts, 0  );
-		    logger.logINFO("LCUImpl::parkTelescope: HW returns alpha_counts: %d", alpha_mtr_counts);
-		    if( -50 < alpha_mtr_counts && alpha_mtr_counts < 50 )
-  		        goto_alpha_flag = false;
-		}
-		if( goto_delta_flag ) 
-		{
-		    m_lcu->telescope->delta->Motor->readDeviceMemory( 7, & delta_mtr_counts, 0  );
-		    logger.logINFO("LCUImpl::parkTelescope: HW returns delta_mtr_counts: %d",delta_mtr_counts);
-		    if( -50 < delta_mtr_counts && delta_mtr_counts < 50 )
-		        goto_delta_flag = false;
-		}
-	    }
-	    m_lcu->postSemaphore();
-	
-	    if( ! goto_delta_flag && ! goto_alpha_flag )
-  	        no_quit = false;
-	    else 
-	        no_quit --;
-	}while(no_quit);
+        do {
+            /** Reading current position */
+            sleep( 1 );
+            m_lcu->waitSemaphore();
+            {
+                if( goto_alpha_flag ) {
+                    m_lcu->telescope->alpha->Motor->readDeviceMemory( 7, & alpha_mtr_counts, 0  );
+                    logger.logFINE("LCUImpl::parkTelescope: HW returns alpha_counts: %d", alpha_mtr_counts);
+                    if( -50 < alpha_mtr_counts && alpha_mtr_counts < 50 ) {
+                        logger.logINFO("LCUImpl::parkTelescope: reached the target in alpha. Remaining alpha_counts.: %d", alpha_mtr_counts);
+                        goto_alpha_flag = false;
+                    }
+                }
+            
+                if( goto_delta_flag ) {
+                    m_lcu->telescope->delta->Motor->readDeviceMemory( 7, & delta_mtr_counts, 0  );
+                    logger.logFINE("LCUImpl::parkTelescope: HW returns delta_mtr_counts: %d",delta_mtr_counts);
+                    if( -50 < delta_mtr_counts && delta_mtr_counts < 50 ) {
+                        logger.logINFO("LCUImpl::parkTelescope: reached the target in delta. Remaining delta_counts.: %d", delta_mtr_counts);
+                        goto_delta_flag = false;
+                    }
+                }
+            }
+            m_lcu->postSemaphore();
+        
+            if( ! goto_delta_flag && ! goto_alpha_flag )
+                no_quit = false;
+            else 
+                no_quit --;
+        } while(no_quit);
    
-	goto_alpha_flag = false;
-	goto_delta_flag = false;
-	m_lcu->waitSemaphore();
-	{ 
-	    /** Current Position */
-	    m_lcu->telescope->currentPosition(&targetPos.localSideralTime, &targetPos.RA, &targetPos.Dec, &targetPos.Alt, &targetPos.Az, &targetPos.HA);
-	    targetPos.RA =  targetPos.localSideralTime;
-	    targetPos.Dec = m_lcu->telescope->getLatitude();
-	    logger.logINFO("LCUImpl::parkTelescope: RA for setTarget: %lf, Dec for setTarget: %lf ", targetPos.RA, targetPos.Dec);
-	    /** Set Position **/
-	    m_lcu->telescope->setTarget(targetPos.RA, targetPos.Dec, &targetPos.Alt, &targetPos.Az);
-	    /** Set Offsets **/
-	    targetPos.RA = m_lcu->telescope->getDifferenceRA();
-	    targetPos.Dec = m_lcu->telescope->getDifferenceDec();
-	    targetPos.RA *= -1.;
-	    alpha_mtr_counts = m_lcu->telescope->alpha->offsetAxisInDeg(targetPos.RA);
-	    targetPos.Dec *= -1.;
-	    delta_mtr_counts = m_lcu->telescope->delta->offsetAxisInDeg(targetPos.Dec);
-	    logger.logINFO("LCUImpl::parkTelescope: Moving Telescope to RA: %lf, Dec: %lf", targetPos.RA, targetPos.Dec);
-	    logger.logINFO("LCUImpl::parkTelescope: Moving Telescope to alpha_counts: %d, delta_mtr_counts: %d", alpha_mtr_counts, delta_mtr_counts);
-	}
-	if( alpha_mtr_counts < -50 || 50 < alpha_mtr_counts ) 
-	{
-	    m_lcu->telescope->alpha->Motor->setDeviceMemory( 7, & alpha_mtr_counts, 0  );
-	    goto_alpha_flag = true;
-	}
-	if( delta_mtr_counts < -50 || 50 < delta_mtr_counts ) 
-	{
-	    m_lcu->telescope->delta->Motor->setDeviceMemory( 7, & delta_mtr_counts, 0  );
-	    goto_delta_flag = true;
-	}
-	m_lcu->postSemaphore();
-	if( ! goto_alpha_flag && ! goto_delta_flag )
-	    setup_ready = false;
-	else 
-	    setup_ready --;    
-    }while(setup_ready);
+        goto_alpha_flag = false;
+        goto_delta_flag = false;
+        m_lcu->waitSemaphore();
+        { 
+            /** Current Position */
+            m_lcu->telescope->currentPosition(&targetPos.localSideralTime, &targetPos.RA, &targetPos.Dec, &targetPos.Alt, &targetPos.Az, &targetPos.HA);
+            targetPos.RA =  targetPos.localSideralTime;
+            targetPos.Dec = m_lcu->telescope->getLatitude();
+            logger.logINFO("LCUImpl::parkTelescope: RA for setTarget: %lf, Dec for setTarget: %lf ", targetPos.RA, targetPos.Dec);
+            /** Set Position **/
+            m_lcu->telescope->setTarget(targetPos.RA, targetPos.Dec, &targetPos.Alt, &targetPos.Az);
+            /** Set Offsets **/
+            targetPos.RA = m_lcu->telescope->getDifferenceRA();
+            targetPos.Dec = m_lcu->telescope->getDifferenceDec();
+            targetPos.RA *= -1.;
+            alpha_mtr_counts = m_lcu->telescope->alpha->offsetAxisInDeg(targetPos.RA);
+            targetPos.Dec *= -1.;
+            delta_mtr_counts = m_lcu->telescope->delta->offsetAxisInDeg(targetPos.Dec);
+            logger.logINFO("LCUImpl::parkTelescope: Moving Telescope to RA: %lf, Dec: %lf", targetPos.RA, targetPos.Dec);
+            logger.logINFO("LCUImpl::parkTelescope: Moving Telescope to alpha_counts: %d, delta_mtr_counts: %d", alpha_mtr_counts, delta_mtr_counts);
+        }
+        if( alpha_mtr_counts < -50 || 50 < alpha_mtr_counts ) {
+            m_lcu->telescope->alpha->Motor->setDeviceMemory( 7, & alpha_mtr_counts, 0  );
+            goto_alpha_flag = true;
+        }
+        if( delta_mtr_counts < -50 || 50 < delta_mtr_counts ) {
+            m_lcu->telescope->delta->Motor->setDeviceMemory( 7, & delta_mtr_counts, 0  );
+            goto_delta_flag = true;
+        }
+        m_lcu->postSemaphore();
+        if( ! goto_alpha_flag && ! goto_delta_flag )
+            setup_ready = false;
+        else 
+            setup_ready --;    
+    } while(setup_ready);
     
     /** Stop telescope status */
     m_lcu->waitSemaphore();
@@ -572,14 +571,14 @@ LCUImpl::moveToTarget(const Ice::Current& c)
     int value;
     int ticVel;
 
-    logger.logINFO( "LCUImpl::setTarget" );
+    logger.logFINEST( "LCUImpl::setTarget" );
   
     /** Is telescope configured **/
-    if(!m_configured)
-    {
+    if(!m_configured) {
         OUC::TelescopeNotConfiguredEx ex;
-	ex.reason = "Telecope Not Configured";
-	throw ex;
+        ex.reason = "Telecope Not Configured";
+        logger.logSEVERE( "LCUImpl::setTarget: Telecope Not Configured" );
+        throw ex;
     }
   
     /** Acquire Semaphore for SHM **/
@@ -592,18 +591,18 @@ LCUImpl::moveToTarget(const Ice::Current& c)
     alpha_mtr_counts = m_lcu->telescope->alpha->offsetAxisInDeg( offset_ra );
     offset_dec *= -1.;
     delta_mtr_counts = m_lcu->telescope->delta->offsetAxisInDeg( offset_dec );
-    logger.logINFO("LCUImpl::moveToTarget: Moving Telescope to RA: %lf, Dec: %lf", offset_ra, offset_dec);
-    logger.logINFO("LCUImpl::moveToTarget: Moving Telescope to alpha_counts: %d, delta_mtr_counts: %d", alpha_mtr_counts, delta_mtr_counts);
+    logger.logINFO("LCUImpl::moveToTarget: Offset Telescope in RA: %lf [deg], Dec: %lf [deg]", offset_ra, offset_dec);
+    logger.logINFO("LCUImpl::moveToTarget: Offset Telescope in alpha_counts: %d [enc], delta_mtr_counts: %d [enc]", alpha_mtr_counts, delta_mtr_counts);
 
     /** Stop Tracking **/
     if(m_lcu->telescope->getIsTracking()) 
     {
         ticVel = 0;
-	m_lcu->telescope->alpha->Motor->setDeviceMemory(3, &ticVel, 0);
-	m_lcu->telescope->setIsTracking(false);
-	/* Refresh tracking state */
-	m_tracking = false;
-	logger.logINFO("LCUImpl::moveToTarget: Tracking OFF!!");
+        m_lcu->telescope->alpha->Motor->setDeviceMemory(3, &ticVel, 0);
+        m_lcu->telescope->setIsTracking(false);
+        /* Refresh tracking state */
+        m_tracking = false;
+        logger.logINFO("LCUImpl::moveToTarget: Tracking OFF!!");
     }
 
     /** Move Telescope to the requested position **/
@@ -616,7 +615,7 @@ LCUImpl::moveToTarget(const Ice::Current& c)
     if( delta_mtr_counts < -50 || 50 < delta_mtr_counts ) 
     {
         m_lcu->telescope->delta->Motor->setDeviceMemory( 7, & delta_mtr_counts, 0  );
-	goto_delta_flag = true;
+        goto_delta_flag = true;
     }  
   
     /** Release semaphore for SHM **/
@@ -626,83 +625,82 @@ LCUImpl::moveToTarget(const Ice::Current& c)
     setup_ready = NUM_OF_TRY;
     do 
     {
-        no_quit = 180;
-	do 
-	{
-	    sleep( 1 );
-	    m_lcu->waitSemaphore();
-	    {
-	        if( goto_alpha_flag ) 
-		{
-		    m_lcu->telescope->alpha->Motor->readDeviceMemory( 7, & alpha_mtr_counts, 0  );
-		    logger.logINFO("LCUImpl::moveToTarget: HW returns alpha_counts: %d", alpha_mtr_counts);
-		    if( -50 < alpha_mtr_counts && alpha_mtr_counts < 50 )
-		        goto_alpha_flag = false;
-		}
-		if( goto_delta_flag ) 
-		{
-		    m_lcu->telescope->delta->Motor->readDeviceMemory( 7, & delta_mtr_counts, 0  );
-		    logger.logINFO("LCUImpl::moveToTarget: HW returns delta_mtr_counts: %d",delta_mtr_counts);
-		    if( -50 < delta_mtr_counts && delta_mtr_counts < 50 )
-		        goto_delta_flag = false;
-		}
-	    }
-	    m_lcu->postSemaphore();
-      
-	    if( ! goto_delta_flag && ! goto_alpha_flag ) 
- 	        no_quit = false;
-	    else 
-	        no_quit --;  
-	    logger.logINFO( "LCUImpl::moveToTarget: To quit (if something was wrong)... %d sec.", no_quit );
-	} while( no_quit );
+       no_quit = 180;
+       do {
+           sleep( 1 );
+           m_lcu->waitSemaphore();
+           {
+               if( goto_alpha_flag ) {
+                   m_lcu->telescope->alpha->Motor->readDeviceMemory( 7, & alpha_mtr_counts, 0  );
+                   logger.logFINE("LCUImpl::moveToTarget: HW returns alpha_counts: %d", alpha_mtr_counts);
+                   if( -50 < alpha_mtr_counts && alpha_mtr_counts < 50 ) {
+                       logger.logINFO("LCUImpl::moveToTarget: reached to the target in alpha. Remaining alpha_counts.: %d", alpha_mtr_counts);
+                       goto_alpha_flag = false;
+                   }
+               }
+               if( goto_delta_flag ) {
+                   m_lcu->telescope->delta->Motor->readDeviceMemory( 7, & delta_mtr_counts, 0  );
+                   logger.logFINE("LCUImpl::moveToTarget: HW returns delta_mtr_counts: %d",delta_mtr_counts);
+                   if( -50 < delta_mtr_counts && delta_mtr_counts < 50 ) {
+                       logger.logINFO("LCUImpl::moveToTarget: reached to the target in delta. Remaining delta_counts.: %d", delta_mtr_counts);
+                       goto_delta_flag = false;
+                   }
+               }
+           }
+           m_lcu->postSemaphore();
+         
+           if( ! goto_delta_flag && ! goto_alpha_flag ) 
+               no_quit = false;
+           else 
+               no_quit --;  
+           logger.logFINE( "LCUImpl::moveToTarget: To quit (if something was wrong)... %d sec.", no_quit );
+       } while( no_quit );
 
-	goto_alpha_flag = false;
-	goto_delta_flag = false;
-    
-	m_lcu->waitSemaphore();
-	{
-	    /** Differesnce RA Dec  */
-	    offset_ra  = m_lcu->telescope->getDifferenceRA();
-	    offset_dec = m_lcu->telescope->getDifferenceDec(); 
-	    offset_ra *= -1.;
-	    alpha_mtr_counts = m_lcu->telescope->alpha->offsetAxisInDeg( offset_ra );
-	    offset_dec *= -1.;
-	    delta_mtr_counts = m_lcu->telescope->delta->offsetAxisInDeg( offset_dec );
-	    logger.logINFO("LCUImpl::moveToTarget: Moving Telescope to RA: %lf, Dec: %lf", offset_ra, offset_dec);
-	    logger.logINFO("LCUImpl::moveToTarget: Moving Telescope to alpha_counts: %d, delta_mtr_counts: %d", alpha_mtr_counts, delta_mtr_counts);
-      
-	    /** Move Telescope to the requested position **/
-	    if( alpha_mtr_counts < -50 || 50 < alpha_mtr_counts ) 
-	    {
-	        m_lcu->telescope->alpha->Motor->setDeviceMemory( 7, & alpha_mtr_counts, 0  );
-		goto_alpha_flag = true;
-	    }
-      
-	    if( delta_mtr_counts < -50 || 50 < delta_mtr_counts ) 
-	    {
-	        m_lcu->telescope->delta->Motor->setDeviceMemory( 7, & delta_mtr_counts, 0  );
-		goto_delta_flag = true;
-	    }
-	}
-	m_lcu->postSemaphore();
-    
-	if( ! goto_alpha_flag && ! goto_delta_flag ) 
-	    setup_ready = false;
-	else 
-  	    setup_ready --;
+       goto_alpha_flag = false;
+       goto_delta_flag = false;
+       
+       m_lcu->waitSemaphore();
+       {
+           /** Differesnce RA Dec  */
+           offset_ra  = m_lcu->telescope->getDifferenceRA();
+           offset_dec = m_lcu->telescope->getDifferenceDec(); 
+           offset_ra *= -1.;
+           alpha_mtr_counts = m_lcu->telescope->alpha->offsetAxisInDeg( offset_ra );
+           offset_dec *= -1.;
+           delta_mtr_counts = m_lcu->telescope->delta->offsetAxisInDeg( offset_dec );
+           logger.logINFO("LCUImpl::moveToTarget: Offset Telescope in RA: %lf [deg], Dec: %lf [deg]", offset_ra, offset_dec);
+           logger.logINFO("LCUImpl::moveToTarget: Offset Telescope in alpha_counts: %d [enc], delta_mtr_counts: %d [enc]", alpha_mtr_counts, delta_mtr_counts);
+         
+           /** Move Telescope to the requested position **/
+           if( alpha_mtr_counts < -50 || 50 < alpha_mtr_counts ) {
+               m_lcu->telescope->alpha->Motor->setDeviceMemory( 7, & alpha_mtr_counts, 0  );
+               goto_alpha_flag = true;
+           }
+         
+           if( delta_mtr_counts < -50 || 50 < delta_mtr_counts ) {
+               m_lcu->telescope->delta->Motor->setDeviceMemory( 7, & delta_mtr_counts, 0  );
+               goto_delta_flag = true;
+           }
+       }
+       m_lcu->postSemaphore();
+       
+       if( ! goto_alpha_flag && ! goto_delta_flag ) 
+           setup_ready = false;
+       else 
+           setup_ready --;
    
-	logger.logINFO( "LCUImpl::moveToTarget: Try No %d", NUM_OF_TRY - setup_ready );
+           logger.logINFO( "LCUImpl::moveToTarget: Attempt No %d", NUM_OF_TRY - setup_ready );
     } while( setup_ready );
   
     /* Start Tracking */
     m_lcu->waitSemaphore();
     {
         ticVel = 602;
-	m_lcu->telescope->alpha->Motor->setDeviceMemory(3, &ticVel, 0);
-	m_lcu->telescope->setIsTracking(true);
-	m_tracking = true;
-	m_lcu->telescope->setIsRunningGoto(false);
-	logger.logINFO("LCUImpl::moveToTarget: Tracking ON!");
+        m_lcu->telescope->alpha->Motor->setDeviceMemory(3, &ticVel, 0);
+        m_lcu->telescope->setIsTracking(true);
+        m_tracking = true;
+        m_lcu->telescope->setIsRunningGoto(false);
+        logger.logINFO("LCUImpl::moveToTarget: Tracking ON!");
     }
     m_lcu->postSemaphore();
 }
@@ -727,13 +725,13 @@ LCUImpl::handsetSlew(const OUC::SlewInfo& slewInfo, const Ice::Current& c)
         degs_per_sec = 8./15.;         //128x  32['/s]
     } else if( slew_rate == 's' ) {
         if(special_case == 't') 
-	{
-	    //rateName = 'stop'	
-	    degs_per_sec = 0.0;
-	} else {
-	    //rateName = 'set'
-	    degs_per_sec = 1./15.;         //128x  32['/s]
-	}
+    {
+        //rateName = 'stop' 
+        degs_per_sec = 0.0;
+    } else {
+        //rateName = 'set'
+        degs_per_sec = 1./15.;         //128x  32['/s]
+    }
     } else if( slew_rate == 'G' ) {
         degs_per_sec = 1./120.;         //128x  32['/s]
     } else if( slew_rate == 'O' ) {
@@ -771,8 +769,8 @@ LCUImpl::handsetSlew(const OUC::SlewInfo& slewInfo, const Ice::Current& c)
         m_lcu->telescope->delta->Motor->setDeviceMemory( 6, & tics_per_sec, 0  );
     } else if( slew_dir == 'S' ) {
         tmp =  (m_lcu->telescope->delta->Motor->getTicsPerRev() *
-		m_lcu->telescope->delta->Motor->getEncoderToAxis_Reduction() *
-		degs_per_sec / 360.);
+        m_lcu->telescope->delta->Motor->getEncoderToAxis_Reduction() *
+        degs_per_sec / 360.);
         tics_per_sec = (int) tmp;
         logger.logINFO("LCUImpl::handsetSlew: S... tics_per_sec = %d", tics_per_sec );
         m_lcu->telescope->delta->Motor->setDeviceMemory( 6, & tics_per_sec, 0  );

@@ -298,7 +298,8 @@ void *move_motor_alpha(void *threadid) {
     		} else if(alpha_offset < -50) {
     			offset = -1 * alpha_offset;
     			sign = -1;
-    		} 
+    		} else 
+			    offset = 0;
             // inc = speed * delta_t;
     		if(offset > motor_speed_very_high) 
                 motor_enc_inc = sign * motor_speed_very_high * delta_time; //plus a random value
@@ -472,7 +473,9 @@ void *move_motor_delta(void *threadid) {
     		} else if(delta_offset < -50) {
     			offset = -1 * delta_offset; //make it positive
     			sign = -1;
-    		} 
+    		} else 
+			    offset = 0;
+
             // inc = speed * delta_t;
     		if(offset > motor_speed_very_high) 
                 motor_enc_inc = sign * motor_speed_very_high * delta_time; //plus a random value
