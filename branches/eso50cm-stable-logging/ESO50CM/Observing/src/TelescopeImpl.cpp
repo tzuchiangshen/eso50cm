@@ -22,12 +22,13 @@ TelescopeImpl::TelescopeImpl(): logger("TelescopeImpl") {
         string proxy = properties->getProperty(proxyProperty);
         Ice::ObjectPrx base = communicator->stringToProxy(proxy);
         lcuPrx = OUC::LCUPrx::checkedCast(base->ice_twoway()->ice_timeout(-1));
-        logger.logINFO("TelescopeImpl::TelescopeImp: Got reference to LCUControl at " + proxy);
+        logger.logFINE("TelescopeImpl::TelescopeImp: Got reference to LCUControl at " + proxy);
 
         if(!lcuPrx)
         {
             OUC::NotLCUReferenceAvailableEx ex;
             ex.reason = "Not reference to LCU Proxy available!";
+            logger.logSEVERE("TelescopeImpl::TelescopeImp: Not reference to LCU Proxy available!");
             throw ex;
         }
     } catch(const Ice::Exception& ex) {
@@ -215,10 +216,10 @@ void TelescopeImpl::setTarget(const ::OUC::TelescopePosition& targetPos, const I
 
         return  lcuPrx->setTarget(targetPos);
     } catch (OUC::TelescopeNotConfiguredEx& ex) {
-        logger.logSEVERE("TelescopeImpl::setTarget: LCU returned: %s. Execute setConfiguration method first", &ex.reason);
+        logger.logSEVERE("TelescopeImpl::setTarget: LCU returned: %s. Execute setConfiguration method first", ex.reason.c_str());
         throw ex;
     } catch (OUC::TargetOutOfLimitsEx& ex) {
-        logger.logSEVERE("TelescopeImpl::setTarget: LCU returned: %s. Try another target!!", &ex.reason);
+        logger.logSEVERE("TelescopeImpl::setTarget: LCU returned: %s. Try another target!!", ex.reason.c_str());
         throw ex;
     } catch (Ice::Exception& ex) {
         logger.logSEVERE("TelescopeImpl::setTarget: Unexpected run-time error");
