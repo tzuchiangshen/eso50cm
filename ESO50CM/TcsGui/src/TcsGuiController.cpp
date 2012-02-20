@@ -7,8 +7,8 @@ using namespace OUC;
 TcsGuiController::TcsGuiController() :
    logger("TcsGUI")
 {
-    ::Log::LogLevel level = ::Log::FINE;
-    logger.setDiscardLevel(level);
+    //::Log::LogLevel level = ::Log::FINE;
+    //logger.setDiscardLevel(level);
 	lcu = NULL;
 	communicator = NULL;
 	data = new OUC::TelescopeData();
