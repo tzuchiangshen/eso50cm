@@ -49,7 +49,7 @@ TelescopeImpl::sayHelloTelescope(int delay, const Ice::Current&)
 
 bool TelescopeImpl::isConfigured(const Ice::Current&)
 {
-    logger.logFINE( "TelescopeImpl::isConfigured" ); 
+    logger.logFINEST( "TelescopeImpl::isConfigured" ); 
 
     try
     {
@@ -69,7 +69,7 @@ bool TelescopeImpl::isConfigured(const Ice::Current&)
  
 bool TelescopeImpl::isTracking(const Ice::Current&)
 {
-    logger.logFINE( "TelescopeImpl::isTracking" ); 
+    logger.logFINEST( "TelescopeImpl::isTracking" ); 
 
     try
     {
@@ -89,7 +89,7 @@ bool TelescopeImpl::isTracking(const Ice::Current&)
 
 OUC::RawEncoderData TelescopeImpl::getRawEncodersPosition(const Ice::Current&)
 {
-    logger.logFINE( "TelescopeImpl::getRawEncodersPosition" ); 
+    logger.logFINEST( "TelescopeImpl::getRawEncodersPosition" ); 
 
     try
     {
@@ -112,7 +112,7 @@ OUC::RawEncoderData TelescopeImpl::getRawEncodersPosition(const Ice::Current&)
  
 OUC::EncoderData TelescopeImpl::getEncodersPosition(const Ice::Current&)
 {
-    logger.logFINE( "TelescopeImpl::getEncodersPosition" ); 
+    logger.logFINEST( "TelescopeImpl::getEncodersPosition" ); 
 
     try
     {
@@ -136,7 +136,7 @@ OUC::EncoderData TelescopeImpl::getEncodersPosition(const Ice::Current&)
 OUC::TelescopeData TelescopeImpl::getPosition(const Ice::Current&)
 {
 
-    logger.logFINE( "TelescopeImpl::getPosition" ); 
+    logger.logFINEST( "TelescopeImpl::getPosition" ); 
 
     try
     {
@@ -159,7 +159,7 @@ OUC::TelescopeData TelescopeImpl::getPosition(const Ice::Current&)
 
 OUC::TelescopeConfigData TelescopeImpl::getConfiguration(const Ice::Current&)
 {
-    logger.logFINE( "TelescopeImpl::getConfiguration" ); 
+    logger.logFINEST( "TelescopeImpl::getConfiguration" ); 
 
     try
     {
@@ -182,7 +182,7 @@ OUC::TelescopeConfigData TelescopeImpl::getConfiguration(const Ice::Current&)
 
 void TelescopeImpl::setConfiguration(const string& fileName, const Ice::Current&)
 {
-    logger.logFINE( "TelescopeImpl::setConfiguration" ); 
+    logger.logFINEST( "TelescopeImpl::setConfiguration" ); 
 
     try
     {
@@ -202,7 +202,7 @@ void TelescopeImpl::setConfiguration(const string& fileName, const Ice::Current&
 
 void TelescopeImpl::setTarget(const ::OUC::TelescopePosition& targetPos, const Ice::Current&)
 {
-    logger.logFINE( "TelescopeImpl::setTarget" ); 
+    logger.logFINEST( "TelescopeImpl::setTarget" ); 
 
     try
     {
@@ -228,7 +228,7 @@ void TelescopeImpl::setTarget(const ::OUC::TelescopePosition& targetPos, const I
 
 void TelescopeImpl::handsetSlew(const ::OUC::SlewInfo& slewInfo, const Ice::Current&)
 {
-    logger.logFINE( "TelescopeImpl::handsetSlew" ); 
+    logger.logFINEST( "TelescopeImpl::handsetSlew" ); 
 
     try
     {
@@ -254,7 +254,7 @@ void TelescopeImpl::handsetSlew(const ::OUC::SlewInfo& slewInfo, const Ice::Curr
 
 void TelescopeImpl::setOffset(const ::OUC::TelescopePosition& offsetPos, const Ice::Current&)
 {
-    logger.logFINE( "TelescopeImpl::setOffset" ); 
+    logger.logFINEST( "TelescopeImpl::setOffset" ); 
 
     try
     {
@@ -280,7 +280,7 @@ void TelescopeImpl::setOffset(const ::OUC::TelescopePosition& offsetPos, const I
 
 void TelescopeImpl::setTracking(const OUC::TrackingInfo& trkInfo, const Ice::Current&)
 {
-    logger.logFINE( "TelescopeImpl::setTracking" ); 
+    logger.logFINEST( "TelescopeImpl::setTracking" ); 
 
     try
     {
@@ -303,7 +303,7 @@ void TelescopeImpl::setTracking(const OUC::TrackingInfo& trkInfo, const Ice::Cur
 
 void TelescopeImpl::parkTelescope(const Ice::Current&)
 {
-    logger.logFINE( "TelescopeImpl::parkTelescope" ); 
+    logger.logFINEST( "TelescopeImpl::parkTelescope" ); 
 
     try
     {
@@ -326,7 +326,7 @@ void TelescopeImpl::parkTelescope(const Ice::Current&)
 
 void TelescopeImpl::stopTelescope(const ::OUC::TelescopeDirection dir, const Ice::Current&)
 {
-    logger.logFINE( "TelescopeImpl::stopTelescope" ); 
+    logger.logFINEST( "TelescopeImpl::stopTelescope" ); 
 
     try
     {
@@ -349,7 +349,7 @@ void TelescopeImpl::stopTelescope(const ::OUC::TelescopeDirection dir, const Ice
 
 void TelescopeImpl::moveToTarget(const Ice::Current&)
 {
-    logger.logFINE( "TelescopeImpl::moveToTarget" ); 
+    logger.logFINEST( "TelescopeImpl::moveToTarget" ); 
 
     try
     {
