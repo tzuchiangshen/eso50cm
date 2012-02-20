@@ -163,6 +163,8 @@ int myRS232::write_RS232( const  char * s, int length) {
     //} else {
         perror( "[myRS232::write_RS232] write" );
         printf( "[myRS232::write_RS232] write ERROR\n" );
+    } else {
+        printf("[myRS232::write_RS232] sending '%s' to the serial port \n", s);
     }
     return retval;
 }
