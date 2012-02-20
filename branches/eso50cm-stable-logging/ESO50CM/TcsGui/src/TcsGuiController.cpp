@@ -165,7 +165,16 @@ int TcsGuiController::setTargetPositionRA(const char *ra)
 		//new_pos->Az = 150.0;
 		//new_pos->HA = 100.0;
 		logger.logFINE("TcsGuiController::setTargetPositionRA: Target.RA = %.10lf  trg_ra=%.10lf\n", new_pos->RA, trg_ra);
-		lcu->setTarget(*new_pos);
+        try {
+		    lcu->setTarget(*new_pos);
+        } catch (OUC::TelescopeNotConfiguredEx& ex) {
+            logger.logSEVERE("TcsGuiController::setTargetPositionRA: LCU returned: %s. Execute setConfiguration method first", ex.reason.c_str());
+        } catch (OUC::TargetOutOfLimitsEx& ex) {
+            logger.logSEVERE("TcsGuiController::setTargetPositionRA: LCU returned: %s. Try another target!!", ex.reason.c_str());
+        } catch (Ice::Exception& ex) {
+            logger.logSEVERE("TcsGuiController::setTargetPositionRA: Unexpected run-time error");
+            throw ex;
+        }   
 		mutex.unlock();
 	}
 	catch(const Ice::Exception& ex)
@@ -226,8 +235,17 @@ int TcsGuiController::setTargetPositionDec(const char *arguments)
 		//new_pos->Az = 150.0;
 		//new_pos->HA = 100.0;
 		logger.logINFO("TcsGuiController::setTargetPositionDec: Target.Dec = %.10lf \n", new_pos->Dec);
-		lcu->setTarget(*new_pos);
-		mutex.unlock();
+	    try {
+		    lcu->setTarget(*new_pos);
+        } catch (OUC::TelescopeNotConfiguredEx& ex) {
+            logger.logSEVERE("TcsGuiController::setTargetPositionDec: LCU returned: %s. Execute setConfiguration method first", ex.reason.c_str());
+        } catch (OUC::TargetOutOfLimitsEx& ex) {
+            logger.logSEVERE("TcsGuiController::setTargetPositionDec: LCU returned: %s. Try another target!!", ex.reason.c_str());
+        } catch (Ice::Exception& ex) {
+            logger.logSEVERE("TcsGuiController::setTargetPositionDec: Unexpected run-time error");
+            throw ex;
+        }	
+        mutex.unlock();
 	}
 	catch(const Ice::Exception& ex)
 	{
