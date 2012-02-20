@@ -658,7 +658,7 @@ void *track_motor_alpha(void *threadid) {
                 src = (char*)&current_val;
                 myMemcpy(dst, src, 4);
     	        if (ultra_verbose)
-                    printf("[telescope_run] Simulate abs movement of aplha-motor at motor encoder (0xA2 mem_address=4), value = %d\n", motor_enc_inc);
+                    printf("[tracking thread] Simulate abs movement of aplha-motor at motor encoder (0xA2 mem_address=4), value = %d\n", motor_enc_inc);
                 // 1.2. save the incremental motor enc movement at 0xA2, mem_address=2
                 current_val = 0; 
                 dst = (char*)&current_val;
@@ -671,12 +671,12 @@ void *track_motor_alpha(void *threadid) {
                 src = (char*)&current_val;
                 myMemcpy(dst, src, 4);
      	        if (ultra_verbose)
-                    printf("[telescope_run] Simulate abs movement of aplha-motor at motor encoder (0xA2 mem_address=2), value = %d\n", motor_enc_inc);
+                    printf("[tracking thread] Simulate abs movement of aplha-motor at motor encoder (0xA2 mem_address=2), value = %d\n", motor_enc_inc);
     
                 // 1.3. convert the incremental motor enc into worm enc 
                 worm_enc = rel_alpha_motor_enc_to_worm_enc(motor_enc_inc);
                 if (ultra_verbose)
-                    printf("[telescope_run] converted alpha motor enc to alpha worm enc (0xA6 mem_address=4), motor enc = %d, worm enc=%d\n", motor_enc_inc,  worm_enc);
+                    printf("[tracking thread] converted alpha motor enc to alpha worm enc (0xA6 mem_address=4), motor enc = %d, worm enc=%d\n", motor_enc_inc,  worm_enc);
                 // 1.4. save the incremental worm enc movement at 0xA6, mem_address=4
                 current_val = 0; 
                 dst = (char*)&current_val;
@@ -687,7 +687,7 @@ void *track_motor_alpha(void *threadid) {
                 src = (char*)&current_val;
                 myMemcpy(dst, src, 4);
     			if (ultra_verbose)
-                    printf("[telescope_run] Simulate movement at worm encoder (0xA6 mem_address=4), value = %d\n", worm_enc);
+                    printf("[tracking thread] Simulate movement at worm encoder (0xA6 mem_address=4), value = %d\n", worm_enc);
                 // 1.5. save the incremental worm enc movement at 0xA6, mem_address=2
                 current_val = 0; 
                 dst = (char*)&current_val;
@@ -700,11 +700,11 @@ void *track_motor_alpha(void *threadid) {
                 src = (char*)&current_val;
                 myMemcpy(dst, src, 4);
     			if (ultra_verbose)
-                    printf("[telescope_run] Simulate abs movement of at alpha worm encoder (0xA6 mem_address=2), value = %d\n", worm_enc);
+                    printf("[tracking thread] Simulate abs movement of at alpha worm encoder (0xA6 mem_address=2), value = %d\n", worm_enc);
                 //1.6. convert the incremental motor enc into axis enc 
                 axis_enc = rel_alpha_motor_enc_to_axis_enc(motor_enc_inc);
     			if (ultra_verbose)
-                    printf("[telescope_run] converted alpha motor enc to alpha axis enc (0xA6 mem_address=4), motor enc = %d, axis enc=%d\n", motor_enc_inc,  axis_enc);
+                    printf("[tracking thread] converted alpha motor enc to alpha axis enc (0xA6 mem_address=4), motor enc = %d, axis enc=%d\n", motor_enc_inc,  axis_enc);
                 // 1.7. save the incremental axis enc movement at 0xA8, mem_address=4
                 current_val = 0; 
                 dst = (char*)&current_val;
@@ -728,7 +728,7 @@ void *track_motor_alpha(void *threadid) {
                 src = (char*)&current_val;
                 myMemcpy(dst, src, 4);
     			if (ultra_verbose)
-                    printf("[telescope_run] Simulate movement at alpha axis encoder (0xA8 mem_address=2), value = %d\n", axis_enc);
+                    printf("[tracking thread] Simulate movement at alpha axis encoder (0xA8 mem_address=2), value = %d\n", axis_enc);
     
     			binary_semaphore_post( semaphore_id );
 		}
@@ -745,7 +745,8 @@ void *track_motor_alpha(void *threadid) {
         endT  = ((double) gtime.tv_usec)/1000000.;
         endT += (double) gtime.tv_sec;
 	    motor_enc_inc = (int)(tracking_speed * (endT-startT));
-	    printf( "------------------------------> dT=%10.6lf[s] enc=%d\n", endT - startT, motor_enc_inc );
+		if(ultra_verbose)
+	        printf( "[tracking_thread] dT=%10.6lf[s] enc=%d\n", endT - startT, motor_enc_inc );
 	} while(!exit);
 
 	pthread_exit(NULL);

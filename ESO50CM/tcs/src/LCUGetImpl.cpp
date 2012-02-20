@@ -24,7 +24,7 @@ double LCUImpl::MiddleEndianToLittleEndian(double MEData)
 
 void LCUImpl::getConfigState()
 {
-  logger.logINFO( "LCUImpl::getConfigState" );
+  logger.logFINEST( "LCUImpl::getConfigState" );
 
   /** Acquire Semaphore for SHM */
   m_lcu->waitSemaphore();
@@ -37,7 +37,7 @@ void LCUImpl::getConfigState()
 
 void LCUImpl::getTrackingState()
 {
-  logger.logINFO( "LCUImpl::getTrackingState" );
+  logger.logFINEST( "LCUImpl::getTrackingState" );
 
   /** Acquire Semaphore for SHM */
   m_lcu->waitSemaphore();
@@ -50,13 +50,13 @@ void LCUImpl::getTrackingState()
 
 bool LCUImpl::isConfigured(const Ice::Current& c)
 { 
-  logger.logINFO( "LCUImpl::isConfigured" );
+  logger.logFINEST( "LCUImpl::isConfigured" );
   return m_configured;
 }
 
 bool LCUImpl::isTracking(const Ice::Current& c)
 {
-  logger.logINFO( "LCUImpl::isTracking" );
+  logger.logFINEST( "LCUImpl::isTracking" );
   return m_tracking;
 }
 
@@ -64,15 +64,15 @@ bool LCUImpl::isTracking(const Ice::Current& c)
 
 OUC::TelescopeConfigData LCUImpl::getConfiguration(const Ice::Current& c)
 {
-    logger.logINFO( "[LCUImpl::getTelescopeConfig" );
+    logger.logFINEST( "LCUImpl::getTelescopeConfig" );
     
     /** Is telescope configured **/
-    if(!m_configured)
-      {
-	OUC::TelescopeNotConfiguredEx ex;
+    if(!m_configured) {
+	    OUC::TelescopeNotConfiguredEx ex;
+        logger.logWARNING( "LCUImpl::getTelescopeConfig: telescope is not configured." );
         ex.reason = "Telecope Not Configured";
         throw ex;
-      }
+    }
 	
     /** Acquire Semaphore for SHM **/
     m_lcu->waitSemaphore();
@@ -113,29 +113,29 @@ OUC::TelescopeConfigData LCUImpl::getConfiguration(const Ice::Current& c)
     /** Release semaphore for SHM **/
     m_lcu->postSemaphore();
 
-    logger.logINFO("LCUImpl::getTelescopeConfig LT  = [%lf]", telescopeConfigData_t->localTime);	
-    logger.logINFO("LCUImpl::getTelescopeConfig Latitude = %+11.4lf ", telescopeConfigData_t->latitude);
-    logger.logINFO("LCUImpl::getTelescopeConfig Longitude = %+11.4lf ", telescopeConfigData_t->longitude);
-    logger.logINFO("LCUImpl::getTelescopeConfig Altitude = %+11.4lf ", telescopeConfigData_t->altitude);
-    logger.logINFO("LCUImpl::getTelescopeConfig AMT = %+11.4lf ", telescopeConfigData_t->AMT);
-    logger.logINFO("LCUImpl::getTelescopeConfig AMH = %+11.4lf ", telescopeConfigData_t->AMH);
-    logger.logINFO("LCUImpl::getTelescopeConfig AMR = %+11.4lf ", telescopeConfigData_t->AMR);
-    logger.logINFO("LCUImpl::getTelescopeConfig AWT = %+11.4lf ", telescopeConfigData_t->AWT);	
-    logger.logINFO("LCUImpl::getTelescopeConfig AWH = %+11.4lf ", telescopeConfigData_t->AWH);
-    logger.logINFO("LCUImpl::getTelescopeConfig AWR = %+11.4lf ", telescopeConfigData_t->AWR);
-    logger.logINFO("LCUImpl::getTelescopeConfig AAT = %+11.4lf ", telescopeConfigData_t->AAT);
-    logger.logINFO("LCUImpl::getTelescopeConfig AAH = %+11.4lf ", telescopeConfigData_t->AAH);
-    logger.logINFO("LCUImpl::getTelescopeConfig AAR = %+11.4lf ", telescopeConfigData_t->AAR);
-    logger.logINFO("LCUImpl::getTelescopeConfig DMT = %+11.4lf ", telescopeConfigData_t->DMT);
-    logger.logINFO("LCUImpl::getTelescopeConfig DMH = %+11.4lf ", telescopeConfigData_t->DMH);
-    logger.logINFO("LCUImpl::getTelescopeConfig DMR = %+11.4lf ", telescopeConfigData_t->DMR);
-    logger.logINFO("LCUImpl::getTelescopeConfig DWT = %+11.4lf ", telescopeConfigData_t->DWT);	
-    logger.logINFO("LCUImpl::getTelescopeConfig DWH = %+11.4lf ", telescopeConfigData_t->DWH);
-    logger.logINFO("LCUImpl::getTelescopeConfig DWR = %+11.4lf ", telescopeConfigData_t->DWR);
-    logger.logINFO("LCUImpl::getTelescopeConfig DAT = %+11.4lf ", telescopeConfigData_t->DAT);
-    logger.logINFO("LCUImpl::getTelescopeConfig DAH = %+11.4lf ", telescopeConfigData_t->DAH);
-    logger.logINFO("LCUImpl::getTelescopeConfig DAR = %+11.4lf ", telescopeConfigData_t->DAR);
-    logger.logINFO("LCUImpl::getTelescopeConfig Page generated at: [%lf]", telescopeConfigData_t->lcuTime);
+    logger.logCONFIG("LCUImpl::getTelescopeConfig LT  = [%lf]", telescopeConfigData_t->localTime);	
+    logger.logCONFIG("LCUImpl::getTelescopeConfig Latitude = %+11.4lf ", telescopeConfigData_t->latitude);
+    logger.logCONFIG("LCUImpl::getTelescopeConfig Longitude = %+11.4lf ", telescopeConfigData_t->longitude);
+    logger.logCONFIG("LCUImpl::getTelescopeConfig Altitude = %+11.4lf ", telescopeConfigData_t->altitude);
+    logger.logCONFIG("LCUImpl::getTelescopeConfig AMT = %+11.4lf ", telescopeConfigData_t->AMT);
+    logger.logCONFIG("LCUImpl::getTelescopeConfig AMH = %+11.4lf ", telescopeConfigData_t->AMH);
+    logger.logCONFIG("LCUImpl::getTelescopeConfig AMR = %+11.4lf ", telescopeConfigData_t->AMR);
+    logger.logCONFIG("LCUImpl::getTelescopeConfig AWT = %+11.4lf ", telescopeConfigData_t->AWT);	
+    logger.logCONFIG("LCUImpl::getTelescopeConfig AWH = %+11.4lf ", telescopeConfigData_t->AWH);
+    logger.logCONFIG("LCUImpl::getTelescopeConfig AWR = %+11.4lf ", telescopeConfigData_t->AWR);
+    logger.logCONFIG("LCUImpl::getTelescopeConfig AAT = %+11.4lf ", telescopeConfigData_t->AAT);
+    logger.logCONFIG("LCUImpl::getTelescopeConfig AAH = %+11.4lf ", telescopeConfigData_t->AAH);
+    logger.logCONFIG("LCUImpl::getTelescopeConfig AAR = %+11.4lf ", telescopeConfigData_t->AAR);
+    logger.logCONFIG("LCUImpl::getTelescopeConfig DMT = %+11.4lf ", telescopeConfigData_t->DMT);
+    logger.logCONFIG("LCUImpl::getTelescopeConfig DMH = %+11.4lf ", telescopeConfigData_t->DMH);
+    logger.logCONFIG("LCUImpl::getTelescopeConfig DMR = %+11.4lf ", telescopeConfigData_t->DMR);
+    logger.logCONFIG("LCUImpl::getTelescopeConfig DWT = %+11.4lf ", telescopeConfigData_t->DWT);	
+    logger.logCONFIG("LCUImpl::getTelescopeConfig DWH = %+11.4lf ", telescopeConfigData_t->DWH);
+    logger.logCONFIG("LCUImpl::getTelescopeConfig DWR = %+11.4lf ", telescopeConfigData_t->DWR);
+    logger.logCONFIG("LCUImpl::getTelescopeConfig DAT = %+11.4lf ", telescopeConfigData_t->DAT);
+    logger.logCONFIG("LCUImpl::getTelescopeConfig DAH = %+11.4lf ", telescopeConfigData_t->DAH);
+    logger.logCONFIG("LCUImpl::getTelescopeConfig DAR = %+11.4lf ", telescopeConfigData_t->DAR);
+    logger.logCONFIG("LCUImpl::getTelescopeConfig Page generated at: [%lf]", telescopeConfigData_t->lcuTime);
     
     return *telescopeConfigData_t;
 }
@@ -143,7 +143,7 @@ OUC::TelescopeConfigData LCUImpl::getConfiguration(const Ice::Current& c)
 
 OUC::TelescopeData LCUImpl::getPosition(const Ice::Current& c)
 {
-    logger.logINFO( "[LCUImpl::getPosition" );
+    logger.logFINEST( "LCUImpl::getPosition" );
     
       /** Is telescope configured **/
     if(!m_configured)
@@ -213,28 +213,28 @@ OUC::TelescopeData LCUImpl::getPosition(const Ice::Current& c)
     telescopeData_t->targetPos.Az = MiddleEndianToLittleEndian(telescopeData_t->targetPos.Az);
     telescopeData_t->targetPos.HA = MiddleEndianToLittleEndian(telescopeData_t->targetPos.HA);
 
-    logger.logINFO("LCUImpl::getPosition LT  = [%lf]", telescopeData_t->localTime);
-    logger.logINFO("LCUImpl::getPosition Time elapsed since last access: %lf",telescopeData_t->deltaT);
-    logger.logINFO("LCUImpl::getPosition JD  = %lf", telescopeData_t->julianDate);
-    logger.logINFO("LCUImpl::getTelescopeConfig Latitude = %+11.4lf ", telescopeData_t->latitude);
-    logger.logINFO("LCUImpl::getTelescopeConfig Longitude = %+11.4lf ", telescopeData_t->longitude);
-    logger.logINFO("LCUImpl::getTelescopeConfig Altitude = %+11.4lf ", telescopeData_t->altitude);
-    logger.logINFO("LCUImpl::getTelescopeConfig High Elevation = %+11.4lf ", telescopeData_t->highElevation);
-    logger.logINFO("LCUImpl::getTelescopeConfig Low Elevation = %+11.4lf ", telescopeData_t->lowElevation);
-    logger.logINFO("LCUImpl::getPosition LST = %lf ", telescopeData_t->currentPos.localSideralTime);
-    logger.logINFO("LCUImpl::getPosition Current RA = %lf ", telescopeData_t->currentPos.RA);
-    logger.logINFO("LCUImpl::getPosition Current Dec = %lf ", telescopeData_t->currentPos.Dec);
-    logger.logINFO("LCUImpl::getPosition Current HA = %lf ", telescopeData_t->currentPos.HA);
-    logger.logINFO("LCUImpl::getPosition Current Alt = %lf ", telescopeData_t->currentPos.Alt);
-    logger.logINFO("LCUImpl::getPosition Current Az = %lf ", telescopeData_t->currentPos.Az);
-    logger.logINFO("LCUImpl::getPosition Target RA = %lf ", telescopeData_t->targetPos.RA);
-    logger.logINFO("LCUImpl::getPosition Target Dec = %lf ", telescopeData_t->targetPos.Dec);
-    logger.logINFO("LCUImpl::getPosition Target HA = %lf ", telescopeData_t->targetPos.HA);
-    logger.logINFO("LCUImpl::getPosition Target Alt = %lf ", telescopeData_t->targetPos.Alt);
-    logger.logINFO("LCUImpl::getPosition Target Az = %lf ", telescopeData_t->targetPos.Az);
-    logger.logINFO("LCUImpl::getPosition Difference RA = %lf ", telescopeData_t->differencePos.RA);
-    logger.logINFO("LCUImpl::getPosition Difference Dec = %lf ", telescopeData_t->differencePos.Dec);	
-    logger.logINFO("LCUImpl::getPosition Page generated at: [%lf]", telescopeData_t->lcuTime);
+    logger.logFINE("LCUImpl::getPosition LT  = [%lf]", telescopeData_t->localTime);
+    logger.logFINE("LCUImpl::getPosition Time elapsed since last access: %lf",telescopeData_t->deltaT);
+    logger.logFINE("LCUImpl::getPosition JD  = %lf", telescopeData_t->julianDate);
+    logger.logFINE("LCUImpl::getTelescopeConfig Latitude = %+11.4lf ", telescopeData_t->latitude);
+    logger.logFINE("LCUImpl::getTelescopeConfig Longitude = %+11.4lf ", telescopeData_t->longitude);
+    logger.logFINE("LCUImpl::getTelescopeConfig Altitude = %+11.4lf ", telescopeData_t->altitude);
+    logger.logFINE("LCUImpl::getTelescopeConfig High Elevation = %+11.4lf ", telescopeData_t->highElevation);
+    logger.logFINE("LCUImpl::getTelescopeConfig Low Elevation = %+11.4lf ", telescopeData_t->lowElevation);
+    logger.logFINE("LCUImpl::getPosition LST = %lf ", telescopeData_t->currentPos.localSideralTime);
+    logger.logFINE("LCUImpl::getPosition Current RA = %lf ", telescopeData_t->currentPos.RA);
+    logger.logFINE("LCUImpl::getPosition Current Dec = %lf ", telescopeData_t->currentPos.Dec);
+    logger.logFINE("LCUImpl::getPosition Current HA = %lf ", telescopeData_t->currentPos.HA);
+    logger.logFINE("LCUImpl::getPosition Current Alt = %lf ", telescopeData_t->currentPos.Alt);
+    logger.logFINE("LCUImpl::getPosition Current Az = %lf ", telescopeData_t->currentPos.Az);
+    logger.logFINE("LCUImpl::getPosition Target RA = %lf ", telescopeData_t->targetPos.RA);
+    logger.logFINE("LCUImpl::getPosition Target Dec = %lf ", telescopeData_t->targetPos.Dec);
+    logger.logFINE("LCUImpl::getPosition Target HA = %lf ", telescopeData_t->targetPos.HA);
+    logger.logFINE("LCUImpl::getPosition Target Alt = %lf ", telescopeData_t->targetPos.Alt);
+    logger.logFINE("LCUImpl::getPosition Target Az = %lf ", telescopeData_t->targetPos.Az);
+    logger.logFINE("LCUImpl::getPosition Difference RA = %lf ", telescopeData_t->differencePos.RA);
+    logger.logFINE("LCUImpl::getPosition Difference Dec = %lf ", telescopeData_t->differencePos.Dec);	
+    logger.logFINE("LCUImpl::getPosition Page generated at: [%lf]", telescopeData_t->lcuTime);
 
     return *telescopeData_t;
 }
@@ -243,15 +243,14 @@ OUC::TelescopeData LCUImpl::getPosition(const Ice::Current& c)
 OUC::RawEncoderData LCUImpl::getRawEncodersPosition(const Ice::Current& c)
 {
          
-    logger.logINFO( "LCUImpl::getRawEncoderPosition" );     
+    logger.logFINEST( "LCUImpl::getRawEncoderPosition" );     
   
     /** Is telescope configured **/
-    if(!m_configured)
-      {
-	OUC::TelescopeNotConfiguredEx ex;
+    if(!m_configured) {
+	    OUC::TelescopeNotConfiguredEx ex;
         ex.reason = "Telecope Not Configured";
         throw ex;
-      }
+    }
     
     /** Acquire Semaphore for SHM */
     m_lcu->waitSemaphore();
@@ -287,20 +286,20 @@ OUC::RawEncoderData LCUImpl::getRawEncodersPosition(const Ice::Current& c)
     /** Release semaphore for SHM **/
     m_lcu->postSemaphore(); 
 
-    logger.logINFO("LCUImpl::getRawEncoderPosition Time elapsed since last access: %lf",rawEncoder_t->deltaT);
-    logger.logINFO("LCUImpl::getRawEncoderPosition Lecture Alpha AxisE: %6d", rawEncoder_t->lectAlphaAxisE);
-    logger.logINFO("LCUImpl::getRawEncoderPosition Position Alpha AxisE: %11d", rawEncoder_t->posAlphaAxisE);
-    logger.logINFO("LCUImpl::getRawEncoderPosition Lecture Alpha WormE: %6d", rawEncoder_t->lectAlphaWormE);
-    logger.logINFO("LCUImpl::getRawEncoderPosition Position Alpha WormE: %11d", rawEncoder_t->posAlphaWormE);
-    logger.logINFO("LCUImpl::getRawEncoderPosition Lecture Alpha Motor: %6d", rawEncoder_t->lectAlphaMotor);
-    logger.logINFO("LCUImpl::getRawEncoderPosition Position Alpha Motor: %11d", rawEncoder_t->posAlphaMotor);
-    logger.logINFO("LCUImpl::getRawEncoderPosition Lecture Delta AxisE: %6d", rawEncoder_t->lectDeltaAxisE);
-    logger.logINFO("LCUImpl::getRawEncoderPosition Position Delta AxisE: %11d", rawEncoder_t->posDeltaAxisE);
-    logger.logINFO("LCUImpl::getRawEncoderPosition Lecture Delta WormE: %6d", rawEncoder_t->lectDeltaWormE);
-    logger.logINFO("LCUImpl::getRawEncoderPosition Position Delta WormE: %11d", rawEncoder_t->posDeltaWormE);
-    logger.logINFO("LCUImpl::getRawEncoderPosition Lecture Delta Motor: %6d", rawEncoder_t->lectDeltaMotor);
-    logger.logINFO("LCUImpl::getRawEncoderPosition Position Delta Motor: %11d", rawEncoder_t->posDeltaMotor);
-    logger.logINFO("LCUImpl::getRawEncoderPosition Page generated at: [%lf]", rawEncoder_t->lcuTime);
+    logger.logFINE("LCUImpl::getRawEncoderPosition Time elapsed since last access: %lf",rawEncoder_t->deltaT);
+    logger.logFINE("LCUImpl::getRawEncoderPosition Lecture Alpha AxisE: %6d", rawEncoder_t->lectAlphaAxisE);
+    logger.logFINE("LCUImpl::getRawEncoderPosition Position Alpha AxisE: %11d", rawEncoder_t->posAlphaAxisE);
+    logger.logFINE("LCUImpl::getRawEncoderPosition Lecture Alpha WormE: %6d", rawEncoder_t->lectAlphaWormE);
+    logger.logFINE("LCUImpl::getRawEncoderPosition Position Alpha WormE: %11d", rawEncoder_t->posAlphaWormE);
+    logger.logFINE("LCUImpl::getRawEncoderPosition Lecture Alpha Motor: %6d", rawEncoder_t->lectAlphaMotor);
+    logger.logFINE("LCUImpl::getRawEncoderPosition Position Alpha Motor: %11d", rawEncoder_t->posAlphaMotor);
+    logger.logFINE("LCUImpl::getRawEncoderPosition Lecture Delta AxisE: %6d", rawEncoder_t->lectDeltaAxisE);
+    logger.logFINE("LCUImpl::getRawEncoderPosition Position Delta AxisE: %11d", rawEncoder_t->posDeltaAxisE);
+    logger.logFINE("LCUImpl::getRawEncoderPosition Lecture Delta WormE: %6d", rawEncoder_t->lectDeltaWormE);
+    logger.logFINE("LCUImpl::getRawEncoderPosition Position Delta WormE: %11d", rawEncoder_t->posDeltaWormE);
+    logger.logFINE("LCUImpl::getRawEncoderPosition Lecture Delta Motor: %6d", rawEncoder_t->lectDeltaMotor);
+    logger.logFINE("LCUImpl::getRawEncoderPosition Position Delta Motor: %11d", rawEncoder_t->posDeltaMotor);
+    logger.logFINE("LCUImpl::getRawEncoderPosition Page generated at: [%lf]", rawEncoder_t->lcuTime);
     
     return *rawEncoder_t;
 }
@@ -308,7 +307,7 @@ OUC::RawEncoderData LCUImpl::getRawEncodersPosition(const Ice::Current& c)
     
 OUC::EncoderData LCUImpl::getEncodersPosition(const Ice::Current& c)
 {
-    logger.logINFO( "LCUImpl::getEncoderPosition" );     
+    logger.logFINEST( "LCUImpl::getEncoderPosition" );     
     
     /** Is telescope configured **/
     if(!m_configured)
@@ -339,26 +338,25 @@ OUC::EncoderData LCUImpl::getEncodersPosition(const Ice::Current& c)
     /** Release semaphore for SHM **/
     m_lcu->postSemaphore();
 
-    logger.logINFO("LCUImpl::getEncoderPosition LT  = [%lf]", encoder_t->localTime);
-    logger.logINFO("LCUImpl::getEncoderPosition AW Position  = [%+10.0lf]", encoder_t->alphaWormE);    
-    logger.logINFO("LCUImpl::getEncoderPosition AA Position  = [%+10.0lf]", encoder_t->alphaAxisE);
-    logger.logINFO("LCUImpl::getEncoderPosition DW Position  = [%+10.0lf]", encoder_t->deltaWormE);
-    logger.logINFO("LCUImpl::getEncoderPosition DA Position  = [%+10.0lf]",  encoder_t->deltaAxisE);
-    logger.logINFO("LCUImpl::getEncoderPosition --------------------------------" );
-    logger.logINFO("LCUImpl::getEncoderPosition Page generated at: [%lf]", encoder_t->lcuTime);
-    logger.logINFO("LCUImpl::getEncoderPosition Good bye!" );
+    logger.logFINE("LCUImpl::getEncoderPosition LT  = [%lf]", encoder_t->localTime);
+    logger.logFINE("LCUImpl::getEncoderPosition AW Position  = [%+10.0lf]", encoder_t->alphaWormE);    
+    logger.logFINE("LCUImpl::getEncoderPosition AA Position  = [%+10.0lf]", encoder_t->alphaAxisE);
+    logger.logFINE("LCUImpl::getEncoderPosition DW Position  = [%+10.0lf]", encoder_t->deltaWormE);
+    logger.logFINE("LCUImpl::getEncoderPosition DA Position  = [%+10.0lf]",  encoder_t->deltaAxisE);
+    logger.logFINE("LCUImpl::getEncoderPosition --------------------------------" );
+    logger.logFINE("LCUImpl::getEncoderPosition Page generated at: [%lf]", encoder_t->lcuTime);
+    logger.logFINE("LCUImpl::getEncoderPosition Good bye!" );
     
     return *encoder_t;
 }
 
 void LCUImpl::getCurrentPosition(OUC::TelescopeData *telescopeData_t)
 {
-    logger.logINFO( "LCUImpl::getCurrentPosition" );
+    logger.logFINEST( "LCUImpl::getCurrentPosition" );
   
     /** Is telescope configured **/
-    if(!m_configured)
-    {
-	OUC::TelescopeNotConfiguredEx ex;
+    if(!m_configured) {
+	    OUC::TelescopeNotConfiguredEx ex;
         ex.reason = "Telecope Not Configured";
         throw ex;
     }
@@ -375,12 +373,11 @@ void LCUImpl::getCurrentPosition(OUC::TelescopeData *telescopeData_t)
 
 void LCUImpl::getTargetPosition(OUC::TelescopeData *telescopeData_t)
 {
-    logger.logINFO( "LCUImpl::getTargetPosition" );
+    logger.logFINEST( "LCUImpl::getTargetPosition" );
     
     /** Is telescope configured **/
-    if(!m_configured)
-    {
-	OUC::TelescopeNotConfiguredEx ex;
+    if(!m_configured) {
+	    OUC::TelescopeNotConfiguredEx ex;
         ex.reason = "Telecope Not Configured";
         throw ex;
     }
