@@ -5,7 +5,7 @@ using namespace std;
 using namespace OUC;
 
 TcsGuiController::TcsGuiController() :
-   logger("TcsGUI")
+   logger("TcsGui")
 {
     //::Log::LogLevel level = ::Log::FINE;
     //logger.setDiscardLevel(level);
@@ -41,7 +41,7 @@ char * TcsGuiController::strfdegs( char * string, size_t max_len, const char * f
     tmp += ((double) ss) / 3600.;
     cc   = (int) round( ( m_degs - tmp ) * 360000. );
 
-    //printf( "[myUtil] strfdegs: degs=%lf -> gg=%d mm=%d ss=%d cc=%d\n", degs, gg, mm, ss, cc );
+    //logger.logINFO( "[myUtil] strfdegs: degs=%lf -> gg=%d mm=%d ss=%d cc=%d\n", degs, gg, mm, ss, cc );
     if( cc > 99 ) {
         cc = 0;
         ss ++;
@@ -59,7 +59,7 @@ char * TcsGuiController::strfdegs( char * string, size_t max_len, const char * f
     }
 
     m_secs = (double) ss + ((double) cc)/100.;
-    //snprintf( string, max_len, format, gg, mm, m_secs );
+    //snlogger.logINFO( string, max_len, format, gg, mm, m_secs );
     snprintf( string, max_len, format, gg, mm, (double) ss );
     return string;
 }
@@ -72,7 +72,7 @@ void TcsGuiController::getCurrentPositionRA(char *buffer, int maxlen)
 	mutex.unlock();
 	//convert to sexagesimal 
 	strfdegs( buffer, maxlen, "%02d:%02d:%02.0lf\0", ra / 15.0 );
-	//printf("-----------------------%s\n", buffer);
+	//logger.logINFO("-----------------------%s\n", buffer);
 	//return buffer;
 }
 
@@ -84,7 +84,7 @@ void TcsGuiController::getCurrentPositionDec(char *buffer, int maxlen)
 	mutex.unlock();
 	//convert to sexagesimal 
 	strfdegs( buffer, maxlen, "%+03d:%02d:%02.0lf\0", dec);
-	//printf("-----------------------%s\n", buffer);
+	//logger.logINFO("-----------------------%s\n", buffer);
 	//return buffer;
 }
 
@@ -108,10 +108,8 @@ int TcsGuiController::getPosition()
         char buffer[1000];
 		mutex.lock();
 		*data = lcu->getPosition();
-        sprintf(buffer, "currentPos.RA =%.10lf\n", data->currentPos.RA);
-		logger.logFINE(buffer);
-		sprintf(buffer, "crrentPos.Dec = %.10lf \n", data->currentPos.Dec);
-		logger.logFINE(buffer);
+        logger.logFINE("TcsGuiController::getPosition: currentPos.RA =%.10lf", data->currentPos.RA);
+		logger.logFINE("TcsGuiController::getPosition: crrentPos.Dec = %.10lf", data->currentPos.Dec);
 		mutex.unlock();
 		emit newData(1, data);
 	}
@@ -127,7 +125,7 @@ int TcsGuiController::getPosition()
 
 int TcsGuiController::setTargetPositionRA(const char *ra)
 {
-	printf("<<<<<<<<<<<<<<<<<<<<<<<<< setTargetPosition ra=%s\n", ra);
+	logger.logFINEST("TcsGuiController::setTargetPositionRA");
     int trg_ra_hrs;
     int trg_ra_min;
     int trg_ra_sec;
@@ -139,10 +137,10 @@ int TcsGuiController::setTargetPositionRA(const char *ra)
 	try 
 	{
 		if( (ptr = strstr( (char *)ra, "ra=" )) != NULL ) {
-			cout << "llegue : " << ra << endl;
 
 			if( sscanf(ra, "ra=%d:%d:%d", & trg_ra_hrs, & trg_ra_min, & trg_ra_sec ) == 3 ) {
-			    printf( "[set_target] trg ra =%+03d:%02d:%02d\n", trg_ra_hrs, trg_ra_min, trg_ra_sec );
+	            logger.logFINE("TcsGuiController::setTargetPositionRA %s", ra);
+			    logger.logFINE("TcsGuiController::setTargetPositionRA: target ra =%+03d:%02d:%02d\n", trg_ra_hrs, trg_ra_min, trg_ra_sec );
 			    trg_ra  = fabs( (double) trg_ra_hrs ) + ((double) trg_ra_min / 60.) + ((double) trg_ra_sec / 3600.);
 			    trg_ra *= 15.0;
 			    if( trg_ra_hrs < 0 ) {
@@ -150,9 +148,9 @@ int TcsGuiController::setTargetPositionRA(const char *ra)
 			    } else if( trg_ra_hrs == 0 && ( strstr( ra, "ra=-" ) != NULL) ) {
 			        trg_ra *= -1.;
 			    }
-			    printf( "[set_target] trg ra =%lf\n", trg_ra );
+			    logger.logFINE( "TcsGuiController::setTargetPositionRA: Target RA =%lf %s", trg_ra,ra );
 			} else {
-			    printf( "[set_target] No target ra data\n" );
+			    logger.logWARNING( "TcsGuiController::setTargetPositionRA: No Target RA data\n" );
 			}
 		}
 
@@ -166,8 +164,7 @@ int TcsGuiController::setTargetPositionRA(const char *ra)
 		//new_pos->Alt = 60.0;
 		//new_pos->Az = 150.0;
 		//new_pos->HA = 100.0;
-		printf(">>>>>>>>>>>>> Target.RA = %.10lf  trg_ra=%.10lf\n", new_pos->RA, trg_ra);
-		printf(">>>>>>>>>>>>> Target.Dec = %.10lf \n", new_pos->Dec);
+		logger.logFINE("TcsGuiController::setTargetPositionRA: Target.RA = %.10lf  trg_ra=%.10lf\n", new_pos->RA, trg_ra);
 		lcu->setTarget(*new_pos);
 		mutex.unlock();
 	}
@@ -181,7 +178,7 @@ int TcsGuiController::setTargetPositionRA(const char *ra)
 
 int TcsGuiController::setTargetPositionDec(const char *arguments)
 {
-	printf("<<<<<<<<<<<<<<<<<<<<<<<<< setTargetPosition dec=%s\n", arguments);
+	logger.logFINEST("TcsGuiController::setTargetPositionDec");
     int trg_dec_deg;
     int trg_dec_min;
     int trg_dec_sec;
@@ -189,31 +186,32 @@ int TcsGuiController::setTargetPositionDec(const char *arguments)
 	double trg_dec = 0;
 	OUC::TelescopePosition *new_pos;
 
+	logger.logFINE("TcsGuiController::setTargetPositionDec arguments=%s", arguments);
 
 	try 
 	{
 
 	   if( (ptr = strstr( (char *)arguments, "dec=" )) != NULL ) {
 	        if( sscanf( ptr, "dec=%d:%d:%d", & trg_dec_deg, & trg_dec_min, & trg_dec_sec ) == 3 ) {
-	            printf( "[set_target] trg dec=%+03d:%02d:%02d\n", trg_dec_deg, trg_dec_min, trg_dec_sec );
+	            logger.logFINE( "TcsGuiController::setTargetPositionDec: trg dec=%+03d:%02d:%02d\n", trg_dec_deg, trg_dec_min, trg_dec_sec );
 	            trg_dec  = fabs( (double) trg_dec_deg ) + ((double) trg_dec_min / 60.) + ((double) trg_dec_sec / 3600.);
 	            if( trg_dec_deg < 0 ) {
 	                trg_dec *= -1.;
 	            } else if( trg_dec_deg == 0 && ( strstr( arguments, "dec=-" ) != NULL) ) {
 	                trg_dec *= -1.;
 	            }
-	            printf( "[set_target] trg dec=%lf\n", trg_dec );
+	            logger.logFINE( "TcsGuiController::setTargetPositionDec trg dec=%lf", trg_dec );
 	        } else if( sscanf( ptr, "dec=%d*%d:%d", & trg_dec_deg, & trg_dec_min, & trg_dec_sec ) == 3 ) {
-	            printf( "[set_target] trg dec=%+03d*%02d:%02d\n", trg_dec_deg, trg_dec_min, trg_dec_sec );
+	            logger.logFINE( "TcsGuiController::setTargetPositionDec trg dec=%+03d*%02d:%02d\n", trg_dec_deg, trg_dec_min, trg_dec_sec );
 	            trg_dec  = fabs( (double) trg_dec_deg ) + ((double) trg_dec_min / 60.) + ((double) trg_dec_sec / 3600.);
 	            if( trg_dec_deg < 0 ) {
 	                trg_dec *= -1.;
 	            } else if( trg_dec_deg == 0 && ( strstr( arguments, "dec=-" ) != NULL) ) {
 	                trg_dec *= -1.;
 	            }
-	            printf( "[set_target] trg dec=%lf\n", trg_dec );
+	            logger.logFINE( "TcsGuiController::setTargetPositionDec: trg dec=%lf", trg_dec );
 	        } else {
-	            printf( "[set_target] No target dec data\n" );
+	            logger.logWARNING( "TcsGuiController::setTargetPositionDec: No target dec data" );
 	        }
 	    }
 
@@ -227,8 +225,7 @@ int TcsGuiController::setTargetPositionDec(const char *arguments)
 		//new_pos->Alt = 60.0;
 		//new_pos->Az = 150.0;
 		//new_pos->HA = 100.0;
-		printf(">>>>>>>>>>>>> Target.RA = %.10lf %.10lf \n", new_pos->RA, trg_dec);
-		printf(">>>>>>>>>>>>> Target.Dec = %.10lf \n", new_pos->Dec);
+		logger.logINFO("TcsGuiController::setTargetPositionDec: Target.Dec = %.10lf \n", new_pos->Dec);
 		lcu->setTarget(*new_pos);
 		mutex.unlock();
 	}
@@ -288,7 +285,7 @@ int TcsGuiController::connect()
         string proxy = properties->getProperty(proxyProperty);
         if(proxy.empty())
         {
-   	     fprintf(stderr, "%s: property `%s' not set\n", argv[0], proxyProperty);
+   	     logger.logSEVERE("TcsGuiController::connect: %s: property `%s' not set", argv[0], proxyProperty);
    	     return EXIT_FAILURE;
         }
    
@@ -296,14 +293,14 @@ int TcsGuiController::connect()
         obs = ObservingPrx::checkedCast(base->ice_twoway()->ice_timeout(-1));
         if(!obs)
         {
-   	     fprintf(stderr, "%s: invalid proxy\n", argv[0]);
+   	     logger.logSEVERE("TcsGuiController::connect: %s: invalid proxy", argv[0]);
    	     return EXIT_FAILURE;
         }
    
    	    lcu = obs->getTelescope();
         if(!lcu)
         {
-   		    fprintf(stderr, "%s: invalid proxy\n", argv[0]);
+   		    logger.logSEVERE("TcsGuiController::connect: %s: invalid proxy", argv[0]);
    		    return EXIT_FAILURE;
         }
     }
@@ -344,7 +341,7 @@ void TcsGuiController::run()
 		   getPosition();
 		   sleep(1.0);
         } catch (...) {
-           cout << "Unexpected exception, continue ... " << endl;
+           logger.logSEVERE("TcsGuiController::run: Unexpected exception, continue ... ");
         }
 
 	}
@@ -354,7 +351,7 @@ void TcsGuiController::test()
 {
 	OUC::TelescopeData data;
 	data = lcu->getPosition();
-	printf(">>>>>>>>>>>>> RA = %.10lf \n", data.currentPos.RA);
-	printf(">>>>>>>>>>>>> Dec = %.10lf \n", data.currentPos.Dec);
+	logger.logINFO(">>>>>>>>>>>>> RA = %.10lf \n", data.currentPos.RA);
+	logger.logINFO(">>>>>>>>>>>>> Dec = %.10lf \n", data.currentPos.Dec);
 }
 
