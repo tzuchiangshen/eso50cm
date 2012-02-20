@@ -7,13 +7,13 @@ myTelescope::myTelescope( struct my_lcu_data_t * lcu_data, LoggerHelper *logLCUI
 {
     //int retval;
     logger = logLCUImpl;
-    logger->logINFO( "myTelescope::myTelescope: Hello World!" );
+    logger->logFINE( "myTelescope::myTelescope: Hello World!" );
 
     m_telescope_data = & lcu_data->telescope_data;
-    logger->logINFO( "myTelescope::myTelescope: m_telescope_data at %p", (void *) m_telescope_data );
-    logger->logINFO( "myTelescope::myTelescope: m_clock_data at     %p", (void *) & lcu_data->clock_data );
-    logger->logINFO( "myTelescope::myTelescope: m_alpha_data at     %p", (void *) & lcu_data->alpha_data );
-    logger->logINFO( "myTelescope::myTelescope: m_delta_data at     %p", (void *) & lcu_data->delta_data );
+    logger->logFINE( "myTelescope::myTelescope: m_telescope_data at %p", (void *) m_telescope_data );
+    logger->logFINE( "myTelescope::myTelescope: m_clock_data at     %p", (void *) & lcu_data->clock_data );
+    logger->logFINE( "myTelescope::myTelescope: m_alpha_data at     %p", (void *) & lcu_data->alpha_data );
+    logger->logFINE( "myTelescope::myTelescope: m_delta_data at     %p", (void *) & lcu_data->delta_data );
 
     //clock = new myTClock( & lcu_data->clock_data );
     alpha = new myTAxis( 'A', & lcu_data->alpha_data, logger );
@@ -31,7 +31,7 @@ myTelescope::~myTelescope( void )
     //delete clock;
 
     detachInstrumentMemory();
-    logger->logINFO( "myTelescope::~myTelescope: Good bye!" );
+    logger->logFINE( "myTelescope::~myTelescope: Good bye!" );
 }
 
 /**
@@ -63,10 +63,10 @@ int myTelescope::attachInstrumentMemory( void )
     m_segment_size = m_shmbuffer.shm_segsz;
 
     bin_telescope = (struct telescope_data_t *) m_shared_memory;
-    logger->logINFO( "myTelescope::attachTelescope: bin_telescope at %p", (void *) bin_telescope );
+    logger->logFINE( "myTelescope::attachTelescope: bin_telescope at %p", (void *) bin_telescope );
     for( int i = 0; i < 6; i ++ ) 
     {
-        logger->logINFO( "myTelescope::attachTelescope: encoder[%d] at %p",
+        logger->logFINE( "myTelescope::attachTelescope: encoder[%d] at %p",
 			 i,
 			 (void *) & bin_telescope->encoder[i] );
     }
@@ -75,14 +75,14 @@ int myTelescope::attachInstrumentMemory( void )
     bin_telescope_semaphore = new myBSemaphore( TELSEMKEY, S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH );
     if( (retval = bin_telescope_semaphore->allocate()) < 0 ) 
     {
-        logger->logINFO( "myTelescope::attachTelescope: Error allocating semaphore" );
+        logger->logFINE( "myTelescope::attachTelescope: Error allocating semaphore" );
         return retval;
     }
 
     bin_telescope_semaphore->wait();
     for( int i = 0; i < 6; i ++ ) 
     {
-        logger->logINFO( "myTelescope::initializeTelescope: encoder[0x%02X] at %p",
+        logger->logFINE( "myTelescope::initializeTelescope: encoder[0x%02X] at %p",
 			 bin_telescope->encoder[i].i2c_address,
 			 (void *) & bin_telescope->encoder[i] );
     }
@@ -110,9 +110,9 @@ int myTelescope::detachInstrumentMemory( void )
             return errno;
         }
         bin_telescope = NULL;
-        logger->logINFO( "myTelescope::detachTelescope: Done!" );
+        logger->logFINE( "myTelescope::detachTelescope: Done!" );
     } else {
-        logger->logINFO( "myTelescope::detachTelescope: Nothing to do" );
+        logger->logFINE( "myTelescope::detachTelescope: Nothing to do" );
     }
     return 0;
 }
@@ -127,9 +127,9 @@ int myTelescope::connectTelescope( void )
     if( m_socket_fd < 0 ) 
     {
         perror( "myTelescope::myTelescope: socket" );
-        logger->logINFO( "myTelescope::myTelescope: socket ERROR" );
+        logger->logFINE( "myTelescope::myTelescope: socket ERROR" );
     } else {
-        logger->logINFO( "myTelescope::myTelescope: socket OK" );
+        logger->logFINE( "myTelescope::myTelescope: socket OK" );
     }
     m_server_name.sun_family= AF_LOCAL;
     strcpy( m_server_name.sun_path, "/tmp/mbux" );
@@ -138,9 +138,9 @@ int myTelescope::connectTelescope( void )
     if( retval < 0 ) 
     {
         perror( "myTelescope::myTelescope: connect" );
-        logger->logINFO( "myTelescope::myTelescope: connect ERROR" );
+        logger->logFINE( "myTelescope::myTelescope: connect ERROR" );
     } else {
-        logger->logINFO( "myTelescope::myTelescope: connect OK" );
+        logger->logFINE( "myTelescope::myTelescope: connect OK" );
     }
     return retval;
 }
@@ -155,9 +155,9 @@ int myTelescope::disconnectTelescope( void )
     if( retval < 0 ) 
     {
         perror( "myTelescope::myTelescope: close" );
-        logger->logINFO( "myTelescope::myTelescope: close ERROR" );
+        logger->logFINE( "myTelescope::myTelescope: close ERROR" );
     } else {
-      logger->logINFO( "myTelescope::myTelescope: close OK" );
+      logger->logFINE( "myTelescope::myTelescope: close OK" );
     }
     return retval;
 }
@@ -591,7 +591,7 @@ int myTelescope::setTarget( double trg_ra, double trg_dec, double * trgAlt, doub
     m_telescope_data->currentRA = degs;
 
 
-    logger->logINFO( "myTelescope::setTarget: Target [lst = %lf] [ra = %lf] [dec = %lf]", lst, trg_ra, trg_dec );
+    logger->logFINE( "myTelescope::setTarget: Target [lst = %lf] [ra = %lf] [dec = %lf]", lst, trg_ra, trg_dec );
     equatorialToHorizontal( lst - trg_ra, trg_dec, trgAlt, trgAz  );
     if( m_telescope_data->HighElevation >= * trgAlt  && * trgAlt >= m_telescope_data->LowElevation ) 
     {
@@ -599,8 +599,8 @@ int myTelescope::setTarget( double trg_ra, double trg_dec, double * trgAlt, doub
         m_telescope_data->targetDec = trg_dec;
         logger->logINFO( "myTelescope::setTarget: Target [alt = %lf] [az = %lf]", * trgAlt, * trgAz );
     } else {
-        logger->logINFO( "myTelescope::setTarget: Target [lst = %lf] [ra = %lf] [dec = %lf]", lst, trg_ra, trg_dec );
-        logger->logINFO( "myTelescope::setTarget: Target [alt = %lf] [az = %lf] bellow horizon (%lf).", * trgAlt, * trgAz, m_telescope_data->LowElevation );
+        logger->logSEVERE( "myTelescope::setTarget: Target [lst = %lf] [ra = %lf] [dec = %lf]", lst, trg_ra, trg_dec );
+        logger->logSEVERE( "myTelescope::setTarget: Target [alt = %lf] [az = %lf] bellow horizon (%lf).", * trgAlt, * trgAz, m_telescope_data->LowElevation );
         return 0;
     }
 
@@ -627,7 +627,6 @@ int myTelescope::setTarget( double trg_ra, double trg_dec, double * trgAlt, doub
     m_telescope_data->differenceHA = - m_telescope_data->differenceRA;
     /** current degs to Target Dec */
     m_telescope_data->differenceDec = m_telescope_data->targetDec - m_telescope_data->currentDec;
-
     return 1;
 }
 
