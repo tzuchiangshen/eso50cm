@@ -50,7 +50,7 @@ LCUImpl::sayHello(int delay, const Ice::Current& c)
 int
 LCUImpl::readDeviceMemory(int deviceId, int address, int value, const Ice::Current& c)
 {
-    logger.logINFO("LCUImpl::readDeviceMemory: device id=0x%02X, address=%d, value=%d", (char)deviceId, address, value);
+    logger.logFINE("LCUImpl::readDeviceMemory: device id=0x%02X, address=%d, value=%d", (char)deviceId, address, value);
 
     if (deviceId == 0xA2) {
         //alpha-motor
@@ -71,7 +71,8 @@ LCUImpl::readDeviceMemory(int deviceId, int address, int value, const Ice::Curre
 		//delta-axis
         m_lcu->telescope->delta->AxisE->readDeviceMemory(address, &value, 0);
     } else {
-        logger.logINFO("LCUImpl::readDeviceMemory: Invalid device Id. Received=%d", deviceId);
+        logger.logWARNING("LCUImpl::readDeviceMemory: Invalid device Id. Received=%d", deviceId);
+
     }
 	return value;
 }
@@ -79,16 +80,16 @@ LCUImpl::readDeviceMemory(int deviceId, int address, int value, const Ice::Curre
 int
 LCUImpl::setDeviceMemory(int deviceId, int address, int value, const Ice::Current& c)
 {
-    logger.logINFO("LCUImpl::setDeviceMemory: device id=0x%02X, address=%d, value=%d", (char)deviceId, address, value);
+    logger.logFINE("LCUImpl::setDeviceMemory: device id=0x%02X, address=%d, value=%d", (char)deviceId, address, value);
 
     char *p = (char*)&value;
-    logger.logFINE("LCUImpl::setDeviceMemory: value[0]=0x%02X", *p);
+    logger.logFINER("LCUImpl::setDeviceMemory: value[0]=0x%02X", *p);
     p++;
-    logger.logFINE("LCUImpl::setDeviceMemory: value[1]=0x%02X", *p);
+    logger.logFINER("LCUImpl::setDeviceMemory: value[1]=0x%02X", *p);
     p++;
-    logger.logFINE("LCUImpl::setDeviceMemory: value[2]=0x%02X", *p);
+    logger.logFINER("LCUImpl::setDeviceMemory: value[2]=0x%02X", *p);
     p++;
-    logger.logFINE("LCUImpl::setDeviceMemory: value[3]=0x%02X", *p);
+    logger.logFINER("LCUImpl::setDeviceMemory: value[3]=0x%02X", *p);
     p++;
 
     if (deviceId == 0xA2) {
@@ -110,7 +111,7 @@ LCUImpl::setDeviceMemory(int deviceId, int address, int value, const Ice::Curren
 		//delta-axis
         m_lcu->telescope->delta->AxisE->setDeviceMemory(address, &value, 0);
     } else {
-        logger.logINFO("LCUImpl::readDeviceMemory: Invalid device Id. Received=%d", deviceId);
+        logger.logWARNING("LCUImpl::readDeviceMemory: Invalid device Id. Received=%d", deviceId);
     }
 	return value;
 }
