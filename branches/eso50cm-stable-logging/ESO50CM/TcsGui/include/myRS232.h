@@ -14,13 +14,14 @@
 #include <sys/ioctl.h>
 
 #include <errno.h>
+#include "LoggerHelper.h"
 
 using namespace std;
 
 class myRS232  {
     public:
        
-        myRS232( const char * device, int baudrate );
+        myRS232( const char * device, int baudrate);
         ~myRS232( void );
 
         int setDevName( const char * dev );
@@ -48,6 +49,7 @@ class myRS232  {
         int             m_timeout;
         long            m_microsecs;
         int             m_tty_is_connected;
+        LoggerHelper logger;
 
 };
 
