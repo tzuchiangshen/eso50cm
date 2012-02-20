@@ -5,6 +5,7 @@
 using namespace std;
 
 ObservingImpl::ObservingImpl(const Ice::ObjectAdapterPtr& adapter) : logger("ObservingControl"),
+    _adapter(adapter),
     _telescope(new TelescopeImpl),
     _telescopePrx(OUC::TelescopePrx::uncheckedCast(adapter->addWithUUID(_telescope)))
 {
@@ -34,6 +35,11 @@ ObservingImpl::shutdown(const Ice::Current& c)
 OUC::TelescopePrx
 ObservingImpl::getTelescope(const Ice::Current& c)
 {
-    logger.logINFO("ObservingImpl::getTelescope: Getting telescope reference");
+    logger.logINFO("ObservingImpl::getTelescope: Getting telescope new reference");
+    //return always a new instance of proxy to avoid blocking subsequent calls to LCUControl at TelescopePrx proxy level 
+    OUC::TelescopePrx _telescopePrx;
+    OUC::TelescopePtr _telescope;
+    _telescope = new TelescopeImpl;
+    _telescopePrx = OUC::TelescopePrx::uncheckedCast(_adapter->addWithUUID(_telescope));
     return _telescopePrx;
 }

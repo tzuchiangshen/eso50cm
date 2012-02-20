@@ -20,6 +20,7 @@ class ObservingImpl : public OUC::Observing
     private:
         const OUC::TelescopePtr _telescope;
         const OUC::TelescopePrx _telescopePrx;
+        const Ice::ObjectAdapterPtr _adapter;
         LoggerHelper logger;
 };
 #endif
