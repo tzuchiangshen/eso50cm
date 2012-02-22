@@ -213,28 +213,28 @@ OUC::TelescopeData LCUImpl::getPosition(const Ice::Current& c)
     telescopeData_t->targetPos.Az = MiddleEndianToLittleEndian(telescopeData_t->targetPos.Az);
     telescopeData_t->targetPos.HA = MiddleEndianToLittleEndian(telescopeData_t->targetPos.HA);
 
-    logger.logFINE("LCUImpl::getPosition LT  = [%lf]", telescopeData_t->localTime);
-    logger.logFINE("LCUImpl::getPosition Time elapsed since last access: %lf",telescopeData_t->deltaT);
-    logger.logFINE("LCUImpl::getPosition JD  = %lf", telescopeData_t->julianDate);
-    logger.logFINE("LCUImpl::getTelescopeConfig Latitude = %+11.4lf ", telescopeData_t->latitude);
-    logger.logFINE("LCUImpl::getTelescopeConfig Longitude = %+11.4lf ", telescopeData_t->longitude);
-    logger.logFINE("LCUImpl::getTelescopeConfig Altitude = %+11.4lf ", telescopeData_t->altitude);
-    logger.logFINE("LCUImpl::getTelescopeConfig High Elevation = %+11.4lf ", telescopeData_t->highElevation);
-    logger.logFINE("LCUImpl::getTelescopeConfig Low Elevation = %+11.4lf ", telescopeData_t->lowElevation);
-    logger.logFINE("LCUImpl::getPosition LST = %lf ", telescopeData_t->currentPos.localSideralTime);
-    logger.logFINE("LCUImpl::getPosition Current RA = %lf ", telescopeData_t->currentPos.RA);
-    logger.logFINE("LCUImpl::getPosition Current Dec = %lf ", telescopeData_t->currentPos.Dec);
-    logger.logFINE("LCUImpl::getPosition Current HA = %lf ", telescopeData_t->currentPos.HA);
-    logger.logFINE("LCUImpl::getPosition Current Alt = %lf ", telescopeData_t->currentPos.Alt);
-    logger.logFINE("LCUImpl::getPosition Current Az = %lf ", telescopeData_t->currentPos.Az);
-    logger.logFINE("LCUImpl::getPosition Target RA = %lf ", telescopeData_t->targetPos.RA);
-    logger.logFINE("LCUImpl::getPosition Target Dec = %lf ", telescopeData_t->targetPos.Dec);
-    logger.logFINE("LCUImpl::getPosition Target HA = %lf ", telescopeData_t->targetPos.HA);
-    logger.logFINE("LCUImpl::getPosition Target Alt = %lf ", telescopeData_t->targetPos.Alt);
-    logger.logFINE("LCUImpl::getPosition Target Az = %lf ", telescopeData_t->targetPos.Az);
-    logger.logFINE("LCUImpl::getPosition Difference RA = %lf ", telescopeData_t->differencePos.RA);
-    logger.logFINE("LCUImpl::getPosition Difference Dec = %lf ", telescopeData_t->differencePos.Dec);	
-    logger.logFINE("LCUImpl::getPosition Page generated at: [%lf]", telescopeData_t->lcuTime);
+    logger.logFINER("LCUImpl::getPosition LT  = [%lf]", telescopeData_t->localTime);
+    logger.logFINER("LCUImpl::getPosition Time elapsed since last access: %lf",telescopeData_t->deltaT);
+    logger.logFINER("LCUImpl::getPosition JD  = %lf", telescopeData_t->julianDate);
+    logger.logFINER("LCUImpl::getTelescopeConfig Latitude = %+11.4lf ", telescopeData_t->latitude);
+    logger.logFINER("LCUImpl::getTelescopeConfig Longitude = %+11.4lf ", telescopeData_t->longitude);
+    logger.logFINER("LCUImpl::getTelescopeConfig Altitude = %+11.4lf ", telescopeData_t->altitude);
+    logger.logFINER("LCUImpl::getTelescopeConfig High Elevation = %+11.4lf ", telescopeData_t->highElevation);
+    logger.logFINER("LCUImpl::getTelescopeConfig Low Elevation = %+11.4lf ", telescopeData_t->lowElevation);
+    logger.logFINER("LCUImpl::getPosition LST = %lf ", telescopeData_t->currentPos.localSideralTime);
+    logger.logFINER("LCUImpl::getPosition Current RA = %lf ", telescopeData_t->currentPos.RA);
+    logger.logFINER("LCUImpl::getPosition Current Dec = %lf ", telescopeData_t->currentPos.Dec);
+    logger.logFINER("LCUImpl::getPosition Current HA = %lf ", telescopeData_t->currentPos.HA);
+    logger.logFINER("LCUImpl::getPosition Current Alt = %lf ", telescopeData_t->currentPos.Alt);
+    logger.logFINER("LCUImpl::getPosition Current Az = %lf ", telescopeData_t->currentPos.Az);
+    logger.logFINER("LCUImpl::getPosition Target RA = %lf ", telescopeData_t->targetPos.RA);
+    logger.logFINER("LCUImpl::getPosition Target Dec = %lf ", telescopeData_t->targetPos.Dec);
+    logger.logFINER("LCUImpl::getPosition Target HA = %lf ", telescopeData_t->targetPos.HA);
+    logger.logFINER("LCUImpl::getPosition Target Alt = %lf ", telescopeData_t->targetPos.Alt);
+    logger.logFINER("LCUImpl::getPosition Target Az = %lf ", telescopeData_t->targetPos.Az);
+    logger.logFINER("LCUImpl::getPosition Difference RA = %lf ", telescopeData_t->differencePos.RA);
+    logger.logFINER("LCUImpl::getPosition Difference Dec = %lf ", telescopeData_t->differencePos.Dec);	
+    logger.logFINER("LCUImpl::getPosition Page generated at: [%lf]", telescopeData_t->lcuTime);
 
     return *telescopeData_t;
 }
@@ -286,20 +286,20 @@ OUC::RawEncoderData LCUImpl::getRawEncodersPosition(const Ice::Current& c)
     /** Release semaphore for SHM **/
     m_lcu->postSemaphore(); 
 
-    logger.logFINE("LCUImpl::getRawEncoderPosition Time elapsed since last access: %lf",rawEncoder_t->deltaT);
-    logger.logFINE("LCUImpl::getRawEncoderPosition Lecture Alpha AxisE: %6d", rawEncoder_t->lectAlphaAxisE);
-    logger.logFINE("LCUImpl::getRawEncoderPosition Position Alpha AxisE: %11d", rawEncoder_t->posAlphaAxisE);
-    logger.logFINE("LCUImpl::getRawEncoderPosition Lecture Alpha WormE: %6d", rawEncoder_t->lectAlphaWormE);
-    logger.logFINE("LCUImpl::getRawEncoderPosition Position Alpha WormE: %11d", rawEncoder_t->posAlphaWormE);
-    logger.logFINE("LCUImpl::getRawEncoderPosition Lecture Alpha Motor: %6d", rawEncoder_t->lectAlphaMotor);
-    logger.logFINE("LCUImpl::getRawEncoderPosition Position Alpha Motor: %11d", rawEncoder_t->posAlphaMotor);
-    logger.logFINE("LCUImpl::getRawEncoderPosition Lecture Delta AxisE: %6d", rawEncoder_t->lectDeltaAxisE);
-    logger.logFINE("LCUImpl::getRawEncoderPosition Position Delta AxisE: %11d", rawEncoder_t->posDeltaAxisE);
-    logger.logFINE("LCUImpl::getRawEncoderPosition Lecture Delta WormE: %6d", rawEncoder_t->lectDeltaWormE);
-    logger.logFINE("LCUImpl::getRawEncoderPosition Position Delta WormE: %11d", rawEncoder_t->posDeltaWormE);
-    logger.logFINE("LCUImpl::getRawEncoderPosition Lecture Delta Motor: %6d", rawEncoder_t->lectDeltaMotor);
-    logger.logFINE("LCUImpl::getRawEncoderPosition Position Delta Motor: %11d", rawEncoder_t->posDeltaMotor);
-    logger.logFINE("LCUImpl::getRawEncoderPosition Page generated at: [%lf]", rawEncoder_t->lcuTime);
+    logger.logFINER("LCUImpl::getRawEncoderPosition Time elapsed since last access: %lf",rawEncoder_t->deltaT);
+    logger.logFINER("LCUImpl::getRawEncoderPosition Lecture Alpha AxisE: %6d", rawEncoder_t->lectAlphaAxisE);
+    logger.logFINER("LCUImpl::getRawEncoderPosition Position Alpha AxisE: %11d", rawEncoder_t->posAlphaAxisE);
+    logger.logFINER("LCUImpl::getRawEncoderPosition Lecture Alpha WormE: %6d", rawEncoder_t->lectAlphaWormE);
+    logger.logFINER("LCUImpl::getRawEncoderPosition Position Alpha WormE: %11d", rawEncoder_t->posAlphaWormE);
+    logger.logFINER("LCUImpl::getRawEncoderPosition Lecture Alpha Motor: %6d", rawEncoder_t->lectAlphaMotor);
+    logger.logFINER("LCUImpl::getRawEncoderPosition Position Alpha Motor: %11d", rawEncoder_t->posAlphaMotor);
+    logger.logFINER("LCUImpl::getRawEncoderPosition Lecture Delta AxisE: %6d", rawEncoder_t->lectDeltaAxisE);
+    logger.logFINER("LCUImpl::getRawEncoderPosition Position Delta AxisE: %11d", rawEncoder_t->posDeltaAxisE);
+    logger.logFINER("LCUImpl::getRawEncoderPosition Lecture Delta WormE: %6d", rawEncoder_t->lectDeltaWormE);
+    logger.logFINER("LCUImpl::getRawEncoderPosition Position Delta WormE: %11d", rawEncoder_t->posDeltaWormE);
+    logger.logFINER("LCUImpl::getRawEncoderPosition Lecture Delta Motor: %6d", rawEncoder_t->lectDeltaMotor);
+    logger.logFINER("LCUImpl::getRawEncoderPosition Position Delta Motor: %11d", rawEncoder_t->posDeltaMotor);
+    logger.logFINER("LCUImpl::getRawEncoderPosition Page generated at: [%lf]", rawEncoder_t->lcuTime);
     
     return *rawEncoder_t;
 }
@@ -338,14 +338,14 @@ OUC::EncoderData LCUImpl::getEncodersPosition(const Ice::Current& c)
     /** Release semaphore for SHM **/
     m_lcu->postSemaphore();
 
-    logger.logFINE("LCUImpl::getEncoderPosition LT  = [%lf]", encoder_t->localTime);
-    logger.logFINE("LCUImpl::getEncoderPosition AW Position  = [%+10.0lf]", encoder_t->alphaWormE);    
-    logger.logFINE("LCUImpl::getEncoderPosition AA Position  = [%+10.0lf]", encoder_t->alphaAxisE);
-    logger.logFINE("LCUImpl::getEncoderPosition DW Position  = [%+10.0lf]", encoder_t->deltaWormE);
-    logger.logFINE("LCUImpl::getEncoderPosition DA Position  = [%+10.0lf]",  encoder_t->deltaAxisE);
-    logger.logFINE("LCUImpl::getEncoderPosition --------------------------------" );
-    logger.logFINE("LCUImpl::getEncoderPosition Page generated at: [%lf]", encoder_t->lcuTime);
-    logger.logFINE("LCUImpl::getEncoderPosition Good bye!" );
+    logger.logFINER("LCUImpl::getEncoderPosition LT  = [%lf]", encoder_t->localTime);
+    logger.logFINER("LCUImpl::getEncoderPosition AW Position  = [%+10.0lf]", encoder_t->alphaWormE);    
+    logger.logFINER("LCUImpl::getEncoderPosition AA Position  = [%+10.0lf]", encoder_t->alphaAxisE);
+    logger.logFINER("LCUImpl::getEncoderPosition DW Position  = [%+10.0lf]", encoder_t->deltaWormE);
+    logger.logFINER("LCUImpl::getEncoderPosition DA Position  = [%+10.0lf]",  encoder_t->deltaAxisE);
+    logger.logFINER("LCUImpl::getEncoderPosition --------------------------------" );
+    logger.logFINER("LCUImpl::getEncoderPosition Page generated at: [%lf]", encoder_t->lcuTime);
+    logger.logFINER("LCUImpl::getEncoderPosition Good bye!" );
     
     return *encoder_t;
 }

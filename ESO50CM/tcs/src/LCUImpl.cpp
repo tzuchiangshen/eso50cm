@@ -50,7 +50,7 @@ LCUImpl::sayHello(int delay, const Ice::Current& c)
 int
 LCUImpl::readDeviceMemory(int deviceId, int address, int value, const Ice::Current& c)
 {
-    logger.logFINE("LCUImpl::readDeviceMemory: device id=0x%02X, address=%d, value=%d", (char)deviceId, address, value);
+    logger.logFINER("LCUImpl::readDeviceMemory: device id=0x%02X, address=%d, value=%d", (char)deviceId, address, value);
 
     if (deviceId == 0xA2) {
         //alpha-motor
@@ -80,7 +80,7 @@ LCUImpl::readDeviceMemory(int deviceId, int address, int value, const Ice::Curre
 int
 LCUImpl::setDeviceMemory(int deviceId, int address, int value, const Ice::Current& c)
 {
-    logger.logFINE("LCUImpl::setDeviceMemory: device id=0x%02X, address=%d, value=%d", (char)deviceId, address, value);
+    logger.logFINER("LCUImpl::setDeviceMemory: device id=0x%02X, address=%d, value=%d", (char)deviceId, address, value);
 
     char *p = (char*)&value;
     logger.logFINER("LCUImpl::setDeviceMemory: value[0]=0x%02X", *p);

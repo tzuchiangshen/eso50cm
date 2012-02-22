@@ -180,12 +180,12 @@ int myTEncoder::readDeviceMemory( char mem_address, int * value )
     startT += (double) gtime.tv_sec;
 
     bin_read_semaphore->wait();
-    logger->logFINE( "myTEncoder::readDeviceMemory: %c-%c read wait", m_ax, m_id );
+    logger->logFINER( "myTEncoder::readDeviceMemory: %c-%c read wait", m_ax, m_id );
     bin_write_semaphore->wait();
-    logger->logFINE( "myTEncoder::readDeviceMemory: %c-%c write wait", m_ax, m_id );
+    logger->logFINER( "myTEncoder::readDeviceMemory: %c-%c write wait", m_ax, m_id );
     memset( m_bin_encoder->message, 0, 16 );
     memset( m_bin_encoder->answer, 0, 16 );
-    logger->logFINE( "myTEncoder::readDeviceMemory: Writing message for 0x%02X...", m_bin_encoder->i2c_address );
+    logger->logFINER( "myTEncoder::readDeviceMemory: Writing message for 0x%02X...", m_bin_encoder->i2c_address );
     m_bin_encoder->message[0] = ':';
     m_bin_encoder->message[1] = m_bin_encoder->i2c_address + 1;
     m_bin_encoder->message[2] = mem_address;
@@ -198,7 +198,7 @@ int myTEncoder::readDeviceMemory( char mem_address, int * value )
     m_bin_encoder->message[9] = '#';
     bin_write_semaphore->post();
     bin_read_semaphore->wait();
-    logger->logFINE( "myTEncoder::readDeviceMemory: %c-%c read wait", m_ax, m_id );
+    logger->logFINER( "myTEncoder::readDeviceMemory: %c-%c read wait", m_ax, m_id );
     chk_sum  = m_bin_encoder->answer[1];
     chk_sum += m_bin_encoder->answer[2];
     ptr = (char *) value;
@@ -210,7 +210,7 @@ int myTEncoder::readDeviceMemory( char mem_address, int * value )
     chk_sum += m_bin_encoder->answer[5];
     ptr[3] = m_bin_encoder->answer[6];
     chk_sum += m_bin_encoder->answer[6];
-    logger->logFINE( "myTEncoder::readDeviceMemory: %c 0x%02X %d %d (%d,%d) %c"
+    logger->logFINER( "myTEncoder::readDeviceMemory: %c 0x%02X %d %d (%d,%d) %c"
 		     , m_bin_encoder->answer[0]
 		     , (unsigned char) m_bin_encoder->answer[1]
 		     , (int) m_bin_encoder->answer[2]
@@ -223,14 +223,14 @@ int myTEncoder::readDeviceMemory( char mem_address, int * value )
         mem = (int) mem_address;
         m_bin_encoder->data[mem] = * value;
     } else {
-        logger->logFINE( "myTEncoder::readDeviceMemory: Checksum ERROR!" );
+        logger->logSEVERE( "myTEncoder::readDeviceMemory: Checksum ERROR!" );
     }
     bin_read_semaphore->post();
 
     gettimeofday( & gtime, & tzone );
     endT  = ((double) gtime.tv_usec)/1000000.;
     endT += (double) gtime.tv_sec;
-    logger->logFINE( "myTEncoder::readDeviceMemory: %c-%c dT=%10.6lf[s]", m_ax, m_id, endT - startT );
+    logger->logFINER( "myTEncoder::readDeviceMemory: %c-%c dT=%10.6lf[s]", m_ax, m_id, endT - startT );
 
     return retval;
 }
@@ -251,12 +251,12 @@ int myTEncoder::readDeviceMemory( char mem_address, int * value, int m_verbose )
     startT += (double) gtime.tv_sec;
 
     bin_read_semaphore->wait();
-    logger->logFINE( "myTEncoder::readDeviceMemory: %c-%c read wait", m_ax, m_id );
+    logger->logFINER( "myTEncoder::readDeviceMemory: %c-%c read wait", m_ax, m_id );
     bin_write_semaphore->wait();
-    logger->logFINE( "myTEncoder::readDeviceMemory: %c-%c write wait", m_ax, m_id );
+    logger->logFINER( "myTEncoder::readDeviceMemory: %c-%c write wait", m_ax, m_id );
     memset( m_bin_encoder->message, 0, 16 );
     memset( m_bin_encoder->answer, 0, 16 );
-    logger->logFINE( "myTEncoder::readDeviceMemory: Writing message for 0x%02X...", m_bin_encoder->i2c_address );
+    logger->logFINER( "myTEncoder::readDeviceMemory: Writing message for 0x%02X...", m_bin_encoder->i2c_address );
     m_bin_encoder->message[0] = ':';
     m_bin_encoder->message[1] = m_bin_encoder->i2c_address + 1;
     m_bin_encoder->message[2] = mem_address;
@@ -269,7 +269,7 @@ int myTEncoder::readDeviceMemory( char mem_address, int * value, int m_verbose )
     m_bin_encoder->message[9] = '#';
     bin_write_semaphore->post();
     bin_read_semaphore->wait();
-    logger->logFINE( "myTEncoder::readDeviceMemory: %c-%c read wait", m_ax, m_id );
+    logger->logFINER( "myTEncoder::readDeviceMemory: %c-%c read wait", m_ax, m_id );
     chk_sum  = m_bin_encoder->answer[1];
     chk_sum += m_bin_encoder->answer[2];
     ptr = (char *) value;
@@ -281,7 +281,7 @@ int myTEncoder::readDeviceMemory( char mem_address, int * value, int m_verbose )
     chk_sum += m_bin_encoder->answer[5];
     ptr[3] = m_bin_encoder->answer[6];
     chk_sum += m_bin_encoder->answer[6];
-    logger->logFINE( "myTEncoder::readDeviceMemory: %c 0x%02X %d %d (%d,%d) %c"
+    logger->logFINER( "myTEncoder::readDeviceMemory: %c 0x%02X %d %d (%d,%d) %c"
                 , m_bin_encoder->answer[0]
                 , (unsigned char) m_bin_encoder->answer[1]
                 , (int) m_bin_encoder->answer[2]
@@ -293,14 +293,14 @@ int myTEncoder::readDeviceMemory( char mem_address, int * value, int m_verbose )
         mem = (int) mem_address;
         m_bin_encoder->data[mem] = * value;
     } else {
-        logger->logFINE( "myTEncoder::readDeviceMemory: Checksum ERROR!" );
+        logger->logSEVERE( "myTEncoder::readDeviceMemory: Checksum ERROR!" );
     }
     bin_read_semaphore->post();
 
     gettimeofday( & gtime, & tzone );
     endT  = ((double) gtime.tv_usec)/1000000.;
     endT += (double) gtime.tv_sec;
-    logger->logFINE( "myTEncoder::readDeviceMemory: %c-%c dT=%10.6lf[s]", m_ax, m_id, endT - startT );
+    logger->logFINER( "myTEncoder::readDeviceMemory: %c-%c dT=%10.6lf[s]", m_ax, m_id, endT - startT );
 
     return retval;
 }
@@ -322,13 +322,13 @@ int myTEncoder::setDeviceMemory( char mem_address, int * value )
     startT += (double) gtime.tv_sec;
 
     bin_read_semaphore->wait();
-    logger->logFINE( "myTEncoder::setDeviceMemory: %c-%c read wait", m_ax, m_id );
+    logger->logFINER( "myTEncoder::setDeviceMemory: %c-%c read wait", m_ax, m_id );
     bin_write_semaphore->wait();
-    logger->logFINE( "myTEncoder::setDeviceMemory: %c-%c write wait", m_ax, m_id );
+    logger->logFINER( "myTEncoder::setDeviceMemory: %c-%c write wait", m_ax, m_id );
     memset( m_bin_encoder->message, 0, 16 );
     memset( m_bin_encoder->answer, 0, 16 );
 
-    logger->logFINE( "myTEncoder::setDeviceMemory: Writing message for 0x%02X...", m_bin_encoder->i2c_address );
+    logger->logFINER( "myTEncoder::setDeviceMemory: Writing message for 0x%02X...", m_bin_encoder->i2c_address );
     m_bin_encoder->message[0] = ':';
     m_bin_encoder->message[1] = m_bin_encoder->i2c_address;
     m_bin_encoder->message[2] = mem_address;
@@ -342,8 +342,8 @@ int myTEncoder::setDeviceMemory( char mem_address, int * value )
     m_bin_encoder->message[9] = '#';
     bin_write_semaphore->post();
     bin_read_semaphore->wait();
-    logger->logFINE( "myTEncoder::setDeviceMemory: %c-%c read wait", m_ax, m_id );
-    logger->logFINE( "myTEncoder::setDeviceMemory: %c 0x%02X %d %d %c"
+    logger->logFINER( "myTEncoder::setDeviceMemory: %c-%c read wait", m_ax, m_id );
+    logger->logFINER( "myTEncoder::setDeviceMemory: %c 0x%02X %d %d %c"
 		     , m_bin_encoder->answer[0]
 		     , (unsigned char) m_bin_encoder->answer[1]
 		     , (int) m_bin_encoder->answer[2]
@@ -355,7 +355,7 @@ int myTEncoder::setDeviceMemory( char mem_address, int * value )
     gettimeofday( & gtime, & tzone );
     endT  = ((double) gtime.tv_usec)/1000000.;
     endT += (double) gtime.tv_sec;
-    logger->logFINE( "myTEncoder::setDeviceMemory: %c-%c dT=%10.6lf[s]", m_ax, m_id, endT - startT );
+    logger->logFINER( "myTEncoder::setDeviceMemory: %c-%c dT=%10.6lf[s]", m_ax, m_id, endT - startT );
 
     return retval;
 }
@@ -374,13 +374,13 @@ int myTEncoder::setDeviceMemory( char mem_address, int * value, int m_verbose )
     startT += (double) gtime.tv_sec;
 
     bin_read_semaphore->wait();
-    logger->logFINE( "myTEncoder::setDeviceMemory: %c-%c read wait", m_ax, m_id );
+    logger->logFINER( "myTEncoder::setDeviceMemory: %c-%c read wait", m_ax, m_id );
     bin_write_semaphore->wait();
-    logger->logFINE( "myTEncoder::setDeviceMemory: %c-%c write wait", m_ax, m_id );
+    logger->logFINER( "myTEncoder::setDeviceMemory: %c-%c write wait", m_ax, m_id );
     memset( m_bin_encoder->message, 0, 16 );
     memset( m_bin_encoder->answer, 0, 16 );
 
-    logger->logFINE( "myTEncoder::setDeviceMemory: Writing message for 0x%02X...", m_bin_encoder->i2c_address );
+    logger->logFINER( "myTEncoder::setDeviceMemory: Writing message for 0x%02X...", m_bin_encoder->i2c_address );
     m_bin_encoder->message[0] = ':';
     m_bin_encoder->message[1] = m_bin_encoder->i2c_address;
     m_bin_encoder->message[2] = mem_address;
@@ -394,8 +394,8 @@ int myTEncoder::setDeviceMemory( char mem_address, int * value, int m_verbose )
     m_bin_encoder->message[9] = '#';
     bin_write_semaphore->post();
     bin_read_semaphore->wait();
-    logger->logFINE( "myTEncoder::setDeviceMemory: %c-%c read wait", m_ax, m_id );
-    logger->logFINE( "myTEncoder::setDeviceMemory: %c 0x%02X %d %d %c"
+    logger->logFINER( "myTEncoder::setDeviceMemory: %c-%c read wait", m_ax, m_id );
+    logger->logFINER( "myTEncoder::setDeviceMemory: %c 0x%02X %d %d %c"
                     , m_bin_encoder->answer[0]
                     , (unsigned char) m_bin_encoder->answer[1]
                     , (int) m_bin_encoder->answer[2]
@@ -407,7 +407,7 @@ int myTEncoder::setDeviceMemory( char mem_address, int * value, int m_verbose )
     gettimeofday( & gtime, & tzone );
     endT  = ((double) gtime.tv_usec)/1000000.;
     endT += (double) gtime.tv_sec;
-    logger->logFINE( "myTEncoder::setDeviceMemory: %c-%c dT=%10.6lf[s]", m_ax, m_id, endT - startT );
+    logger->logFINER( "myTEncoder::setDeviceMemory: %c-%c dT=%10.6lf[s]", m_ax, m_id, endT - startT );
 
     return retval;
 }
