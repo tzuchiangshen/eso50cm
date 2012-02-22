@@ -748,7 +748,7 @@ void *track_motor_alpha(void *threadid) {
         endT  = ((double) gtime.tv_usec)/1000000.;
         endT += (double) gtime.tv_sec;
 	    motor_enc_inc = (int)(tracking_speed * (endT-startT));
-		if(ultra_verbose)
+		if(ultra_verbose & move_motor)
 	        printf( "[tracking_thread] dT=%10.6lf[s] enc=%d\n", endT - startT, motor_enc_inc );
 	} while(!exit);
 
