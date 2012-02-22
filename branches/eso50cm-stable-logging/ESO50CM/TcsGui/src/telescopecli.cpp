@@ -208,6 +208,8 @@ void TelescopeCli::showData(const int type,  OUC::TelescopeData *data ) {
         //error happended in the controller.
         info = QString("<font color='red'>Not Connected</font>");
         ui->statusLabel->setText( info );
+
+        //should emit the reconnect signal to the auto-reconnect thread
     }
 
 }
