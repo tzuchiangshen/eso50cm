@@ -14,6 +14,8 @@ class DeviceManager:
         self.status = 0
         self.ic = None
         self.lcuImpl = None
+        self.telConfigData = None
+         
 
     def connect(self):
         print "Connecting.."
@@ -77,6 +79,57 @@ class DeviceManager:
             print "Telescope Not Configured !!!"
             traceback.print_exc()
             status = 1
+
+
+    def getConfiguration(self):
+        self.telConfigData = OUC.TelescopeConfigData()
+        try:
+            self.telConfigData = self.lcuImpl.getConfiguration()   
+        except OUC.TelescopeNotConfiguredEx():
+            print "Telescope Not Configured !!!"
+            traceback.print_exc()
+            status = 1  
+    
+
+    def convert_axis_to_motor_enc(self, axis, axis_enc): 
+        if (self.telConfigData == None):
+            self.getConfiguration()
+
+        if (axis.upper() == "ALPHA"):
+            AMR = float(self.telConfigData.AMR)
+            AMT = float(self.telConfigData.AMT)
+            AAR = float(self.telConfigData.AAR)
+            AAT = float(self.telConfigData.AAT)
+            return (axis_enc * AMR * AMT / AAT / AAR)
+        elif (axis.upper == "DELTA"): 
+            DMR = float(self.telConfigData.DMR)
+            DMT = float(self.telConfigData.DMT)
+            DAR = float(self.telConfigData.DAR)
+            DAT = float(self.telConfigData.DAT)
+            return (axis_enc * DMR * DMT / DAT / DAR)
+        else: 
+            raise "axis=%s doen't exist" % axis
+    
+    def convert_worm_to_motor_enc(self, axis, worm_enc): 
+        if (self.telConfigData == None):
+            self.getConfiguration()
+
+        if (axis.upper() == "ALPHA"):
+            AMR = float(self.telConfigData.AMR)
+            AMT = float(self.telConfigData.AMT)
+            AWR = float(self.telConfigData.AWR)
+            AWT = float(self.telConfigData.AWT)
+            return (worm_enc * AMR * AMT / AWT / AWR)
+        elif (axis.upper == "DELTA"): 
+            DMR = float(self.telConfigData.DMR)
+            DMT = float(self.telConfigData.DMT)
+            DWR = float(self.telConfigData.DWR)
+            DWT = float(self.telConfigData.DWT)
+            return (axis_enc * DMR * DMT / DWT / DWR)
+        else: 
+            raise "axis=%s doen't exist" % axis
+ 
+
 
 
 if __name__ == "__main__":
