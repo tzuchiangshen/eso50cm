@@ -1,7 +1,0 @@
-killall icebox
-icebox --Ice.Config=/eso50cm/config/icebox.config&
-echo "Waiting 3 sec"
-sleep 3
-icestormadmin  --Ice.Config=$SWROOT/config/loggingService.config  -e "create logTopic"&
-loggingService --Ice.Config=$SWROOT/config/loggingService.config
-killall icebox
