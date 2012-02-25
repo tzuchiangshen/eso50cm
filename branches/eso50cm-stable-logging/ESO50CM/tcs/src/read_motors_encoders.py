@@ -23,10 +23,9 @@ if __name__ == "__main__":
     DeltaMotorRemaining = mgr.readDeviceMemory(0xA4,7,0) 
     DeltaMotorCurrent  = mgr.readDeviceMemory(0xA4,2,0)
 
-    print chr(27)+"[0;33m"+"                   Remaining     Current " + chr(27) + "[0m"
-    print                  "Alpha MotorE  = [%+8.0lf     %+8.0lf ]" % (AlphaMotorRemaining, AlphaMotorCurrent)
-    print                  "Delta MotorE  = [%+8.0lf     %+8.0lf ]" % (DeltaMotorRemaining, DeltaMotorCurrent)
-    print chr(27)+"[0m" 
+    print "                   Remaining     Current " 
+    print "Alpha MotorE  = [%+8.0lf     %+8.0lf ]" % (AlphaMotorRemaining, AlphaMotorCurrent)
+    print "Delta MotorE  = [%+8.0lf     %+8.0lf ]" % (DeltaMotorRemaining, DeltaMotorCurrent)
 
     mgr.disconnect()
     
