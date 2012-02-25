@@ -32,14 +32,13 @@ if __name__ == "__main__":
     encData.lectDeltaMotor = mgr.readDeviceMemory(0xA4,2,0) 
     encData.posDeltaMotor  = mgr.readDeviceMemory(0xA4,4,0)
 
-    print chr(27)+"[0;33m"+"                   Lecture     Position " + chr(27) + "[0m"
-    print chr(27)+"[0;33m"+"Alpha AxisE   = [%+8.0lf     %+8.0lf ]" % (encData.lectAlphaAxisE, encData.posAlphaAxisE)
+    print "                   Lecture     Position "
+    print "Alpha AxisE   = [%+8.0lf     %+8.0lf ]" % (encData.lectAlphaAxisE, encData.posAlphaAxisE)
     print                  "Alpha WormE   = [%+8.0lf     %+8.0lf ]" % (encData.lectAlphaWormE, encData.posAlphaWormE) 
     print                  "Alpha MotorE  = [%+8.0lf     %+8.0lf ]" % (encData.lectAlphaMotor, encData.posAlphaMotor)
-    print chr(27)+"[0;32m"+"Delta AxisE   = [%+8.0lf     %+8.0lf ]" % (encData.lectDeltaAxisE, encData.posDeltaAxisE)
+    print "Delta AxisE   = [%+8.0lf     %+8.0lf ]" % (encData.lectDeltaAxisE, encData.posDeltaAxisE)
     print                  "Delta WormE   = [%+8.0lf     %+8.0lf ]" % (encData.lectDeltaWormE, encData.posDeltaWormE) 
     print                  "Delta MotorE  = [%+8.0lf     %+8.0lf ]" % (encData.lectDeltaMotor, encData.posDeltaMotor)
-    print chr(27)+"[0m" 
 
     mgr.disconnect()
     

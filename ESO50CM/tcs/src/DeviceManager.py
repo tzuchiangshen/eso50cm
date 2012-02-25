@@ -42,10 +42,9 @@ class DeviceManager:
         except:
            traceback.print_exc()
            self.status = 1
-           sys.exit(status)
+           sys.exit(self.status)
     
     def disconnect(self):
-        global status
         print "Desconnecting.."
         if self.ic:
             try: 
@@ -53,7 +52,7 @@ class DeviceManager:
             except:
                 traceback.print_exc()
                 self.status = 1
-                sys.exit(status)
+                sys.exit(self.status)
     
     def readDeviceMemory(self, deviceId, address, value):
         try:
@@ -78,7 +77,7 @@ class DeviceManager:
         except OUC.TelescopeNotConfiguredEx():
             print "Telescope Not Configured !!!"
             traceback.print_exc()
-            status = 1
+            self.status = 1
 
 
     def getConfiguration(self):
@@ -88,7 +87,7 @@ class DeviceManager:
         except OUC.TelescopeNotConfiguredEx():
             print "Telescope Not Configured !!!"
             traceback.print_exc()
-            status = 1  
+            self.status = 1  
     
 
     def convert_axis_to_motor_enc(self, axis, axis_enc): 
@@ -101,7 +100,7 @@ class DeviceManager:
             AAR = float(self.telConfigData.AAR)
             AAT = float(self.telConfigData.AAT)
             return (axis_enc * AMR * AMT / AAT / AAR)
-        elif (axis.upper == "DELTA"): 
+        elif (axis.upper() == "DELTA"): 
             DMR = float(self.telConfigData.DMR)
             DMT = float(self.telConfigData.DMT)
             DAR = float(self.telConfigData.DAR)
@@ -120,7 +119,7 @@ class DeviceManager:
             AWR = float(self.telConfigData.AWR)
             AWT = float(self.telConfigData.AWT)
             return (worm_enc * AMR * AMT / AWT / AWR)
-        elif (axis.upper == "DELTA"): 
+        elif (axis.upper() == "DELTA"): 
             DMR = float(self.telConfigData.DMR)
             DMT = float(self.telConfigData.DMT)
             DWR = float(self.telConfigData.DWR)
