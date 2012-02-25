@@ -35,11 +35,13 @@ LCU:tcp -h 192.168.0.10 -p 10000
 * Confirmed. Adding logs in LCUControl found that m_lcu->waitSemaphore() never returns.
 
 {{{
-
+void LCUImpl::setConfiguration(const string& fileName)
+...
     /** Acquire Semaphore for SHM **/
     logger.logFINEST( "LCUImpl::setTelescopeConfig: wating for SHM semaphore" );
     m_lcu->waitSemaphore();
     logger.logFINEST( "LCUImpl::setTelescopeConfig: got SHM semaphore" );
+...
 }}}
 
 {{{
