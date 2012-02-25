@@ -20,7 +20,9 @@ LCUImpl::setConfiguration(const string& fileName)
     
     
     /** Acquire Semaphore for SHM **/
+    logger.logFINEST( "LCUImpl::setTelescopeConfig: wating for SHM semaphore" );
     m_lcu->waitSemaphore();
+    logger.logFINEST( "LCUImpl::setTelescopeConfig: got SHM semaphore" );
 
     /*Reading configuration file and set parameters */
     string line;
@@ -205,11 +207,13 @@ LCUImpl::setConfiguration(const string& fileName)
         m_lcu->telescope->setIsTracking( 0 );
         config_file.close();
     } else {
-      logger.logINFO( "LCUImpl::setTelescopeConfig: Unable to open Configuration File!" );
+      logger.logSEVERE( "LCUImpl::setTelescopeConfig: Unable to open Configuration File!" );
     }
     
     /** Release semaphore for SHM **/
+    logger.logFINEST( "LCUImpl::setTelescopeConfig: preparing to release SHM semaphore" );
     m_lcu->postSemaphore(); 
+    logger.logFINEST( "LCUImpl::setTelescopeConfig: released SHM semaphore" );
 
     /** Refresh Configuration and Tracking states **/
     getConfigState();
