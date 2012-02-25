@@ -7,6 +7,7 @@
 = LCUControl got stuck =
 
   * Client stuck during invoking command (i.e getPosition, sayHello, etc) to LCUControl does not response 
+  * But telescope61 keeps answering local commands, such as : gp. vn. And even exits cleanly with exit command
 {{{
 tcsmgr@ouc1:~/CURRENTLY_MOD/branches/eso50cm-stable-logging/ESO50CM/tcs$ get_position.py 
 Connecting..
