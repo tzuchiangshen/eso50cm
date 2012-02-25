@@ -52,3 +52,5 @@ void LCUImpl::setConfiguration(const string& fileName)
 | 2012-02-25T18:29:33.974 | 2012-02-25T18:29:33.894 | FINEST | LCUControl | not specified | 0 |  LCUImpl::setTelescopeConfig: wating for SHM semaphore |
 
 }}}
+
+  * *Workaround: restart telescope61* 
