@@ -1,0 +1,33 @@
+#Share memory access problem in LCUControl
+
+= Introduction =
+
+
+
+= LCUControl got stuck =
+
+  * Client stuck during invoking command (i.e getPosition, sayHello, etc) to LCUControl does not response 
+{{{
+tcsmgr@ouc1:~/CURRENTLY_MOD/branches/eso50cm-stable-logging/ESO50CM/tcs$ get_position.py 
+Connecting..
+LCU:tcp -h 192.168.0.10 -p 10000
+[ 02/25/12 18:22:59.622 Network: trying to establish tcp connection to 192.168.0.10:10000 ]
+[ 02/25/12 18:22:59.623 Network: tcp connection established
+  local address = 192.168.0.20:38395
+  remote address = 192.168.0.10:10000 ]
+}}}
+
+  * Back trace in LCUControl shows:
+
+{{{
+(gdb) bt
+#0  0x4042f01c in semop () from /lib/libc.so.6
+#1  0x4008b43c in myBSemaphore::wait () from /eso50cm/SWROOT/lib/libmyLCU.so
+#2  0x400839d4 in myLCU::waitSemaphore () from /eso50cm/SWROOT/lib/libmyLCU.so
+#3  0x4006fde4 in LCUImpl::setConfiguration ()
+   from /eso50cm/SWROOT/lib/libLCUImpl.so
+#4  0x4006900c in LCUImpl::LCUImpl () from /eso50cm/SWROOT/lib/libLCUImpl.so
+#5  0x0000a9e8 in run ()
+#6  0x0000b038 in main ()
+
+}}}
