@@ -22,11 +22,13 @@ LCUImpl::LCUImpl():
     try {
         setConfiguration(configPath);
     } catch (OUC::NotConfigurationFileEx& ex) {
-        logger.logINFO("LCUImpl::LCUImpl Telescope could not be configured."); 
+        logger.logSEVERE("LCUImpl::LCUImpl Telescope could not be configured."); 
     } catch(const Ice::Exception& ex) {
-        logger.logINFO("LCUImpl::LCUImpl Uncaught exception ."); 
+        logger.logSEVERE("LCUImpl::LCUImpl Uncaught exception ."); 
         throw ex;
     } 
+
+    logger.logINFO("LCUImpl::LCUImpl Telescope ready."); 
 
     //Get telescope configuration & tracking state
     getConfigState();
