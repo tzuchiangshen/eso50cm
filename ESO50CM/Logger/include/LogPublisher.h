@@ -1,17 +1,17 @@
 // **********************************************************************
 //
-// Copyright (c) 2003-2009 ZeroC, Inc. All rights reserved.
+// Copyright (c) 2003-2008 ZeroC, Inc. All rights reserved.
 //
 // This copy of Ice is licensed to you under the terms described in the
 // ICE_LICENSE file included in this distribution.
 //
 // **********************************************************************
 
-// Ice version 3.3.1
+// Ice version 3.3.0
 // Generated from file `LogPublisher.ice'
 
-#ifndef ___home_tcsmgr_eso50cm_ESO50CM_Logger_src_LogPublisher_h__
-#define ___home_tcsmgr_eso50cm_ESO50CM_Logger_src_LogPublisher_h__
+#ifndef ___home_tcsmgr_CURRENTLY_MOD_branches_eso50cm_stable_logging_ESO50CM_Logger_src_LogPublisher_h__
+#define ___home_tcsmgr_CURRENTLY_MOD_branches_eso50cm_stable_logging_ESO50CM_Logger_src_LogPublisher_h__
 
 #include <Ice/LocalObjectF.h>
 #include <Ice/ProxyF.h>
@@ -36,7 +36,7 @@
 #   if ICE_INT_VERSION % 100 > 50
 #       error Beta header file detected
 #   endif
-#   if ICE_INT_VERSION % 100 < 1
+#   if ICE_INT_VERSION % 100 < 0
 #       error Ice patch level mismatch!
 #   endif
 #endif

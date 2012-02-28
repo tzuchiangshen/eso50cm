@@ -5,6 +5,16 @@ PROJECT(ESO50CM)
 
 #introot definition
 SET(SWROOT $ENV{SWROOT})
+
+SET (DATE_CMD "/bin/date")
+SET (DATE_ARG "+%m-%d-%yT%H-%M-%S")
+EXECUTE_PROCESS (COMMAND ${DATE_CMD} ${DATE_ARG}
+                 OUTPUT_VARIABLE SWROOT-BACKUP)
+
+SET (SWROOT-BACKUP "${SWROOT}-${SWROOT-BACKUP}")
+
+MESSAGE (STATUS "SWROOT-BACKUP=${SWROOT-BACKUP}") 
+
 IF(NOT SWROOT)
     SET(CMAKE_INSTALL_PREFIX="/eso50cm/SWROOT")
     MESSAGE("SWROOT not defined, CMAKE_INSTALL_PREFIX set to: /eso50cm/SWROOT")
@@ -17,6 +27,9 @@ SET(LCU $ENV{TYPE})
 IF(NOT LCU)
 # console
 ADD_CUSTOM_TARGET(SWROOT ALL
+    COMMAND cmake -E echo "Backup current ${SWROOT} ${SWROOT-BACKUP}" 
+    COMMAND cmake -E copy_directory ${SWROOT} ${SWROOT-BACKUP}
+    COMMAND cmake -E remove_directory ${SWROOT} 
     COMMAND cmake -E echo "Creating SWROOT directory structure ..."
     COMMAND cmake -E make_directory ${SWROOT}
     COMMAND cmake -E echo "${SWROOT} created"

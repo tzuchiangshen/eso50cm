@@ -15,13 +15,13 @@ ELSE (NOT SWROOT)
 ENDIF (NOT SWROOT)
 
 #for generated files from slice
-ADD_CUSTOM_COMMAND(
-    OUTPUT ${PROJECT_SOURCE_DIR}/Observing.cpp ${PROJECT_SOURCE_DIR}/Observing.h ${PROJECT_SOURCE_DIR}/LCU.cpp ${PROJECT_SOURCE_DIR}/LCU.h
-    DEPENDS ${SWROOT}/idl/Observing.ice ${SWROOT}/idl/LCU.ice
-    #generate cpp proxies files
-    COMMAND ${CMAKE_COMMAND} -E echo " Observing.cpp Observing.h LCU.cpp LCU.h were generated."
-    COMMAND slice2cpp -I${SWROOT}/idl ${SWROOT}/idl/Observing.ice ${SWROOT}/idl/LCU.ice 
-)
+#ADD_CUSTOM_COMMAND(
+#    OUTPUT ${PROJECT_SOURCE_DIR}/Observing.cpp ${PROJECT_SOURCE_DIR}/Observing.h ${PROJECT_SOURCE_DIR}/LCU.cpp ${PROJECT_SOURCE_DIR}/LCU.h
+#    DEPENDS ${SWROOT}/idl/Observing.ice ${SWROOT}/idl/LCU.ice
+#    #generate cpp proxies files
+#    COMMAND ${CMAKE_COMMAND} -E echo " Observing.cpp Observing.h LCU.cpp LCU.h were generated."
+#    COMMAND slice2cpp -I${SWROOT}/idl -I${PROJECT_SOURCE_DIR}/../../tcs/idl  ${SWROOT}/idl/Observing.ice ${SWROOT}/idl/LCU.ice 
+#)
 
 # for more cmake QT information see http://qtnode.net/wiki/Qt4_with_cmake
 # qt4 definition 
@@ -31,6 +31,11 @@ INCLUDE_DIRECTORIES(
     ${PROJECT_SOURCE_DIR} 
     ${PROJECT_SOURCE_DIR}/../include 
     ${SWROOT}/include
+    ${PROJECT_SOURCE_DIR}/../../Logger/include
+    ${PROJECT_SOURCE_DIR}/../../tcs/include 
+    ${PROJECT_SOURCE_DIR}/../../tcs/src
+    ${PROJECT_SOURCE_DIR}/../../Observing/include 
+    ${PROJECT_SOURCE_DIR}/../../Observing/src
 	/usr/include/Ice
 	${QT_INCLUDE_DIR}
 	${QT_QTNETWORK_INCLUDE_DIR}
@@ -40,10 +45,8 @@ INCLUDE_DIRECTORIES(
 #define the sources files 
 SET(TCSGUI_SRC
 	TcsGuiController.cpp
-	Observing.cpp
 	telescopecli.cpp
 	main.cpp
-	LCU.cpp
 	myRS232.cpp
 )
 
@@ -60,25 +63,30 @@ QT4_WRAP_CPP(TCSGUI_SRC ${TCSGUI_MOC_SRC})
 
 # create qtcli executable 
 LINK_DIRECTORIES(${SWROOT}/lib)
+LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../tcs/lib)
+LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../Observing/lib)
+LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../Logger/lib)
 ADD_EXECUTABLE(qtcli ${TCSGUI_SRC})
 set_property(TARGET qtcli PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
 
 # link qt libraries
 TARGET_LINK_LIBRARIES(qtcli  
 	Ice IceUtil
+    LCUImpl 
+    ObservingImpl
     LoggerCore
 	${QT_LIBRARIES} 
 	${QT_QTNETWORK_LIBRARIES}
 )
 
 #delete generated files in make clean 
-SET_DIRECTORY_PROPERTIES (
-   PROPERTIES 
-   ADDITIONAL_MAKE_CLEAN_FILES "LCU.h"
-   ADDITIONAL_MAKE_CLEAN_FILES "LCU.cpp"
-   ADDITIONAL_MAKE_CLEAN_FILES "Observing.h"
-   ADDITIONAL_MAKE_CLEAN_FILES "Observing.cpp"
-)
+#SET_DIRECTORY_PROPERTIES (
+#   PROPERTIES 
+#   ADDITIONAL_MAKE_CLEAN_FILES "LCU.h"
+#   ADDITIONAL_MAKE_CLEAN_FILES "LCU.cpp"
+#   ADDITIONAL_MAKE_CLEAN_FILES "Observing.h"
+#   ADDITIONAL_MAKE_CLEAN_FILES "Observing.cpp"
+#)
 
 #install 
 

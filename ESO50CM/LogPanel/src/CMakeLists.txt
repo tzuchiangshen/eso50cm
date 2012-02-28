@@ -36,10 +36,15 @@ INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/")
 INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/../include")
 INCLUDE_DIRECTORIES("${INTROOT}/include")
 INCLUDE_DIRECTORIES("$ENV{SWROOT}/include")
+# added other modules directories when the build was started from the parent make file
+INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/../../Logger/include")
 LINK_DIRECTORIES(${INTROOT}/lib)
 LINK_DIRECTORIES($ENV{SWROOT}/lib)
+# added other modules directories when the build was started from the parent make file
+LINK_DIRECTORIES("${PROJECT_SOURCE_DIR}/../../Logger/lib")
 LINK_DIRECTORIES(/usr/lib)
 LINK_DIRECTORIES(/usr/local/lib)
+
 #for generated files from slice
 IF(NOT ARM)
     ADD_CUSTOM_COMMAND(
