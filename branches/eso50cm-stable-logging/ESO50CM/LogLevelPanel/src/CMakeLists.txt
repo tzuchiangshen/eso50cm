@@ -27,8 +27,10 @@ include_directories (
     ${PROJECT_SOURCE_DIR}/../include
     ${INTROOT}/include
     $ENV{SWROOT}/include
+    ${PROJECT_SOURCE_DIR}/../../Logger/include
 	)
 LINK_DIRECTORIES(${INTROOT}/lib $ENV{SWROOT}/lib)
+LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../Logger/lib)
 set ( LogLevelPanel_HDRS
 	
 	)

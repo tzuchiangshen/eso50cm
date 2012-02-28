@@ -20,13 +20,13 @@ ENDIF (NOT INTROOT)
 #for generated files from slice
 ADD_CUSTOM_COMMAND(
     OUTPUT ${PROJECT_SOURCE_DIR}/Observing.cpp ${PROJECT_SOURCE_DIR}/Observing.h ${PROJECT_SOURCE_DIR}/LCU.cpp ${PROJECT_SOURCE_DIR}/LCU.h
-    DEPENDS ${PROJECT_SOURCE_DIR}/../idl/Observing.ice ${INTROOT}/idl/LCU.ice
+    #DEPENDS ${PROJECT_SOURCE_DIR}/../idl/Observing.ice ${INTROOT}/idl/LCU.ice ${PROJECT_SOURCE_DIR}/../../tcs/idl/LCU.ice  
     #generate cpp proxies files
     COMMAND ${CMAKE_COMMAND} -E echo " Observing.cpp Observing.h generated."
-    COMMAND slice2cpp -I${INTROOT}/idl ${PROJECT_SOURCE_DIR}/../idl/Observing.ice ${INTROOT}/idl/LCU.ice 
+    COMMAND slice2cpp -I${INTROOT}/idl -I${PROJECT_SOURCE_DIR}/../../tcs/idl ${PROJECT_SOURCE_DIR}/../idl/Observing.ice 
     #generate python proxies files
     COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_SOURCE_DIR}/generated"
-    COMMAND slice2py -I${INTROOT}/idl  -I${PROJECT_SOURCE_DIR}/../idl --output-dir ${PROJECT_SOURCE_DIR}/generated ${PROJECT_SOURCE_DIR}/../idl/Observing.ice
+    COMMAND slice2py -I${INTROOT}/idl  -I${PROJECT_SOURCE_DIR}/../../tcs/idl --output-dir ${PROJECT_SOURCE_DIR}/generated ${PROJECT_SOURCE_DIR}/../idl/Observing.ice   
     COMMAND ${CMAKE_COMMAND} -E echo " ICE python proxy generated under src/generated/ dir."
     COMMENT "generating slice files..." 
 )
@@ -36,10 +36,15 @@ INCLUDE_DIRECTORIES(/usr/include/Ice)
 INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/")
 INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/../include")
 INCLUDE_DIRECTORIES("${INTROOT}/include")
+INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/../../tcs/include")
+INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/../../Logger/include")
+INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/../../tcs/src")   #for generated .h
 
 LINK_DIRECTORIES(${INTROOT}/lib)
-ADD_LIBRARY(ObservingImpl SHARED Observing LCU TelescopeImpl ObservingImpl)
-TARGET_LINK_LIBRARIES(ObservingImpl LoggerCore Ice IceUtil)
+LINK_DIRECTORIES("${PROJECT_SOURCE_DIR}/../../Logger/lib")
+LINK_DIRECTORIES("${PROJECT_SOURCE_DIR}/../../tcs/lib")
+ADD_LIBRARY(ObservingImpl SHARED Observing TelescopeImpl ObservingImpl)
+TARGET_LINK_LIBRARIES(ObservingImpl LoggerCore LCUImpl Ice IceUtil)
 set_property(TARGET ObservingImpl PROPERTY LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../lib)
 
 
