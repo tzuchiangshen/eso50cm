@@ -54,6 +54,13 @@ class DeviceManager:
                 self.status = 1
                 sys.exit(self.status)
     
+    def sayHello(self):
+        try:
+            return self.lcuImpl.sayHello(5000)
+        except:
+            traceback.print_exc()
+            self.status = 1
+
     def readDeviceMemory(self, deviceId, address, value):
         try:
             return self.lcuImpl.readDeviceMemory(deviceId, address, value)
@@ -128,7 +135,12 @@ class DeviceManager:
         else: 
             raise "axis=%s doen't exist" % axis
  
-
+    def stopTelescope():
+        try:
+            lcuImpl.stopTelescope(OUC.TelescopeDirection.North)
+        except :
+            traceback.print_exc()
+            status = 1
 
 
 if __name__ == "__main__":
