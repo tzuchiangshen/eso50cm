@@ -44,6 +44,7 @@ public:
 protected:
     bool m_configured;
     bool m_tracking; 
+    bool m_stop_telescope; 
 private:
     void getCurrentPosition(OUC::TelescopeData *telescopeData_t);
     void getTargetPosition(OUC::TelescopeData *telescopeData_t);
