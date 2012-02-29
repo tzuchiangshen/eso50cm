@@ -538,15 +538,9 @@ LCUImpl::stopTelescope(OUC::TelescopeDirection dir, const Ice::Current& c)
 {
     int ticsPerSeconds= 0;
     logger.logINFO( "LCUImpl::stopTelescope" );
-  
-    /** Is telescope configured **/
-    if(!m_configured)
-    {
-        OUC::TelescopeNotConfiguredEx ex;
-        ex.reason = "Telecope Not Configured";
-        throw ex;
-    }
 
+    m_stop_telescope = 1;
+  
     /** Acquire Semaphore for SHM **/
     m_lcu->waitSemaphore();
   
@@ -556,6 +550,7 @@ LCUImpl::stopTelescope(OUC::TelescopeDirection dir, const Ice::Current& c)
     m_lcu->telescope->delta->Motor->setDeviceMemory(7, &ticsPerSeconds, 0);
     m_lcu->telescope->delta->Motor->setDeviceMemory(6, &ticsPerSeconds, 0);
     logger.logINFO("LCUImpl::stopTelescope: Stopping Telescope in all directions!!... Tics per seconds: %d", ticsPerSeconds);
+    
 
   
     /** Release semaphore for SHM **/
@@ -584,6 +579,8 @@ LCUImpl::moveToTarget(const Ice::Current& c)
         logger.logSEVERE( "LCUImpl::setTarget: Telecope Not Configured" );
         throw ex;
     }
+
+    m_stop_telescope = 0;
   
     /** Acquire Semaphore for SHM **/
     m_lcu->waitSemaphore();
@@ -610,6 +607,10 @@ LCUImpl::moveToTarget(const Ice::Current& c)
     }
 
     /** Move Telescope to the requested position **/
+    if(m_stop_telescope == 1) {
+        logger.logSEVERE("LCUImpl::moveToTarget: Someone stopped the telescope, quit moving to the target!!!!");
+        return;
+    }
     if( alpha_mtr_counts < -50 || 50 < alpha_mtr_counts ) 
     {
         m_lcu->telescope->alpha->Motor->setDeviceMemory( 7, & alpha_mtr_counts, 0  );
@@ -632,6 +633,11 @@ LCUImpl::moveToTarget(const Ice::Current& c)
        no_quit = 180;
        do {
            sleep( 1 );
+           if(m_stop_telescope == 1) {
+               logger.logSEVERE("LCUImpl::moveToTarget: Someone stopped the telescope, quit moving to the target!!!!");
+               return;
+           }
+
            m_lcu->waitSemaphore();
            {
                if( goto_alpha_flag ) {
@@ -662,7 +668,12 @@ LCUImpl::moveToTarget(const Ice::Current& c)
 
        goto_alpha_flag = false;
        goto_delta_flag = false;
-       
+
+       if(m_stop_telescope == 1) {
+           logger.logSEVERE("LCUImpl::moveToTarget: Someone stopped the telescope, quit moving to the target!!!!");
+           return;
+       }
+ 
        m_lcu->waitSemaphore();
        {
            /** Differesnce RA Dec  */
@@ -696,7 +707,11 @@ LCUImpl::moveToTarget(const Ice::Current& c)
            logger.logINFO( "LCUImpl::moveToTarget: Attempt No %d", NUM_OF_TRY - setup_ready );
     } while( setup_ready );
   
-    /* Start Tracking */
+    if(m_stop_telescope == 1) {
+        logger.logSEVERE("LCUImpl::moveToTarget: Someone stopped the telescope, quit moving to the target!!!!");
+        return;
+    }
+     /* Start Tracking */
     m_lcu->waitSemaphore();
     {
         ticVel = 602;
