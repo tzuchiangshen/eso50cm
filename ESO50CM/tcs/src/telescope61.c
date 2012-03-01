@@ -811,6 +811,14 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                     msg_buffer[8] = 0;
                     msg_buffer[9] = '#';
                     retval = write_RS232( fd_rs232, msg_buffer, 10  );
+                } else if(strcmp(buffer, "st") == 0 ) {
+					printf("[self test]: waiting for semaphore ...\n");
+                    binary_semaphore_wait( semaphore_id );
+					printf("[self_test]: obtained the sempahore ...\n");
+					sleep(3);
+					printf("[self test]: posting semaphore ...\n");
+                    binary_semaphore_post( semaphore_id );
+					printf("[self test]: ready!\n");
                 } else {
                     message_length = 0;
                     if( verbose )
