@@ -739,22 +739,20 @@ LCUImpl::handsetSlew(const OUC::SlewInfo& slewInfo, const Ice::Current& c)
     special_case = slewInfo.rateName[1];
     slew_dir = slewInfo.direction[0];
 
-    if( slew_rate == 'S' ) 
-    {
+    if( slew_rate == 'S' ) {
         degs_per_sec = 8./15.;         //128x  32['/s]
     } else if( slew_rate == 's' ) {
-        if(special_case == 't') 
-    {
-        //rateName = 'stop' 
-        degs_per_sec = 0.0;
-    } else {
-        //rateName = 'set'
-        degs_per_sec = 1./15.;         //128x  32['/s]
-    }
+        if(special_case == 't') {
+             //rateName = 'stop' 
+             degs_per_sec = 0.0;
+        } else {
+             //rateName = 'set'
+             degs_per_sec = 0.008333; //i 1./120.;         //128x  32['/s]
+        }
     } else if( slew_rate == 'G' ) {
-        degs_per_sec = 1./120.;         //128x  32['/s]
+        degs_per_sec = 0.002083; // 1./480.;         //128x  32['/s]
     } else if( slew_rate == 'O' ) {
-        degs_per_sec = 1./240.;         //128x  32['/s]
+        degs_per_sec = 0.001389;         //128x  32['/s]
     }
     logger.logINFO( "LCUImpl::handsetSlew: degs_per_sec = %lf", degs_per_sec );
     
