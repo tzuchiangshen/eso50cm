@@ -45,6 +45,10 @@ if __name__ == "__main__":
     quitAlpha = False
     quitDelta = False 
 
+    #by convention N and E are positive
+    ra = -1 * ra
+    dec = -1 * dec
+
     #offset_telescope(ra, dec)
     mgr.setDeviceMemory(0xA2, 7, ra)
     mgr.setDeviceMemory(0xA4, 7, dec)
