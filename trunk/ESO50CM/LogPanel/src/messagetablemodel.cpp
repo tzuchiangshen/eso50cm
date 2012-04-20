@@ -65,7 +65,7 @@ QVariant MessageTableModel::data( const QModelIndex& index, int role ) const
       }
     }
    if ( !index.isValid() || role == Qt::ToolTipRole ){
-        QString tooltip= QString("Line number: ")+ QString::number(m_list->at(index.row()).lineNumber)+QString(", Method: ")+QString(m_list->at(index.row()).method);
+        QString tooltip=timestampToString(m_list->at(index.row()).timestamp)+QString(": Line number: ")+ QString::number(m_list->at(index.row()).lineNumber)+QString(", Method: ")+QString(m_list->at(index.row()).method)+QString(" Log: ")+QString(m_list->at(index.row()).data);
         return QVariant(tooltip);
     }
 

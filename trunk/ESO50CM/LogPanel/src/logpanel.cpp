@@ -21,6 +21,12 @@ LogPanel::LogPanel(QWidget *parent)
     setProxyFilter(2); // default value for this is info
     connect(ui->cbFilter,SIGNAL(currentIndexChanged(int)),this,SLOT(setProxyFilter(int)));
     ui->tableView->setModel(proxyModel);
+    ui->tableView->setColumnWidth(0,175);
+    ui->tableView->setColumnWidth(1,80);
+    ui->tableView->setColumnWidth(2,140);
+    ui->tableView->setColumnWidth(3,600);
+    ui->tableView->horizontalHeader()->setStretchLastSection(true);
+
     proxyModel->sort(0, Qt::DescendingOrder);
 }
 void LogPanel::setProxyFilter( int filter)
