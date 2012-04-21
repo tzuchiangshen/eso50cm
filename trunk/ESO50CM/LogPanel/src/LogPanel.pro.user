@@ -69,7 +69,7 @@
   <valuemap type="QVariantMap" >
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Debug</value>
    <valuelist key="abstractProcess.Environment" type="QVariantList" >
-    <value type="QString" >DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-FdtDNM3ilh,guid=f3201e0bb75c6bb5f578f0534f90bf61</value>
+    <value type="QString" >DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-SLLKZv6iql,guid=a5667b61a90dba6aeea578ba4f91fdd5</value>
     <value type="QString" >DESKTOP_SESSION=gnome</value>
     <value type="QString" >DESKTOP_STARTUP_ID=</value>
     <value type="QString" >DISPLAY=:0.0</value>
@@ -77,7 +77,7 @@
     <value type="QString" >GDM_KEYBOARD_LAYOUT=us	altgr-intl</value>
     <value type="QString" >GDM_LANG=en_US.UTF-8</value>
     <value type="QString" >GNOME_DESKTOP_SESSION_ID=this-is-deprecated</value>
-    <value type="QString" >GNOME_KEYRING_SOCKET=/tmp/keyring-LOjrwA/socket</value>
+    <value type="QString" >GNOME_KEYRING_SOCKET=/tmp/keyring-EKGl7s/socket</value>
     <value type="QString" >GTK_MODULES=canberra-gtk-module</value>
     <value type="QString" >GTK_RC_FILES=/etc/gtk/gtkrc:/home/tcsmgr/.gtkrc-1.2-gnome2</value>
     <value type="QString" >HOME=/home/tcsmgr</value>
@@ -89,17 +89,17 @@
     <value type="QString" >PATH=/usr/bin:/home/tcsmgr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games</value>
     <value type="QString" >PWD=/home/tcsmgr</value>
     <value type="QString" >QTDIR=/usr</value>
-    <value type="QString" >SESSION_MANAGER=local/tcsmgr-laptop:@/tmp/.ICE-unix/1663,unix/tcsmgr-laptop:/tmp/.ICE-unix/1663</value>
+    <value type="QString" >SESSION_MANAGER=local/tcsmgr-laptop:@/tmp/.ICE-unix/1438,unix/tcsmgr-laptop:/tmp/.ICE-unix/1438</value>
     <value type="QString" >SHELL=/bin/bash</value>
     <value type="QString" >SPEECHD_PORT=7560</value>
-    <value type="QString" >SSH_AGENT_PID=1734</value>
-    <value type="QString" >SSH_AUTH_SOCK=/tmp/keyring-LOjrwA/socket.ssh</value>
+    <value type="QString" >SSH_AGENT_PID=1613</value>
+    <value type="QString" >SSH_AUTH_SOCK=/tmp/keyring-EKGl7s/socket.ssh</value>
     <value type="QString" >SWROOT=/eso50cm/SWROOT</value>
     <value type="QString" >USER=tcsmgr</value>
     <value type="QString" >USERNAME=tcsmgr</value>
-    <value type="QString" >XAUTHORITY=/var/run/gdm/auth-for-tcsmgr-jH3vmd/database</value>
+    <value type="QString" >XAUTHORITY=/var/run/gdm/auth-for-tcsmgr-kZL6CW/database</value>
     <value type="QString" >XDG_DATA_DIRS=/usr/share/gnome:/usr/local/share/:/usr/share/</value>
-    <value type="QString" >XDG_SESSION_COOKIE=d0fd5e633ab559ee63f8c8934e1905f9-1334886241.355406-1138760422</value>
+    <value type="QString" >XDG_SESSION_COOKIE=d0fd5e633ab559ee63f8c8934e1905f9-1334967764.995712-1795912423</value>
    </valuelist>
    <valuelist key="abstractProcess.arguments" type="QVariantList" >
     <value type="QString" >/home/tcsmgr/eso50cm/ESO50CM/LogPanel/src/LogPanel.pro</value>
@@ -119,7 +119,7 @@
   <valuemap type="QVariantMap" >
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Debug</value>
    <valuelist key="abstractProcess.Environment" type="QVariantList" >
-    <value type="QString" >DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-FdtDNM3ilh,guid=f3201e0bb75c6bb5f578f0534f90bf61</value>
+    <value type="QString" >DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-SLLKZv6iql,guid=a5667b61a90dba6aeea578ba4f91fdd5</value>
     <value type="QString" >DESKTOP_SESSION=gnome</value>
     <value type="QString" >DESKTOP_STARTUP_ID=</value>
     <value type="QString" >DISPLAY=:0.0</value>
@@ -127,7 +127,7 @@
     <value type="QString" >GDM_KEYBOARD_LAYOUT=us	altgr-intl</value>
     <value type="QString" >GDM_LANG=en_US.UTF-8</value>
     <value type="QString" >GNOME_DESKTOP_SESSION_ID=this-is-deprecated</value>
-    <value type="QString" >GNOME_KEYRING_SOCKET=/tmp/keyring-LOjrwA/socket</value>
+    <value type="QString" >GNOME_KEYRING_SOCKET=/tmp/keyring-EKGl7s/socket</value>
     <value type="QString" >GTK_MODULES=canberra-gtk-module</value>
     <value type="QString" >GTK_RC_FILES=/etc/gtk/gtkrc:/home/tcsmgr/.gtkrc-1.2-gnome2</value>
     <value type="QString" >HOME=/home/tcsmgr</value>
@@ -139,17 +139,17 @@
     <value type="QString" >PATH=/usr/bin:/home/tcsmgr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games</value>
     <value type="QString" >PWD=/home/tcsmgr</value>
     <value type="QString" >QTDIR=/usr</value>
-    <value type="QString" >SESSION_MANAGER=local/tcsmgr-laptop:@/tmp/.ICE-unix/1663,unix/tcsmgr-laptop:/tmp/.ICE-unix/1663</value>
+    <value type="QString" >SESSION_MANAGER=local/tcsmgr-laptop:@/tmp/.ICE-unix/1438,unix/tcsmgr-laptop:/tmp/.ICE-unix/1438</value>
     <value type="QString" >SHELL=/bin/bash</value>
     <value type="QString" >SPEECHD_PORT=7560</value>
-    <value type="QString" >SSH_AGENT_PID=1734</value>
-    <value type="QString" >SSH_AUTH_SOCK=/tmp/keyring-LOjrwA/socket.ssh</value>
+    <value type="QString" >SSH_AGENT_PID=1613</value>
+    <value type="QString" >SSH_AUTH_SOCK=/tmp/keyring-EKGl7s/socket.ssh</value>
     <value type="QString" >SWROOT=/eso50cm/SWROOT</value>
     <value type="QString" >USER=tcsmgr</value>
     <value type="QString" >USERNAME=tcsmgr</value>
-    <value type="QString" >XAUTHORITY=/var/run/gdm/auth-for-tcsmgr-jH3vmd/database</value>
+    <value type="QString" >XAUTHORITY=/var/run/gdm/auth-for-tcsmgr-kZL6CW/database</value>
     <value type="QString" >XDG_DATA_DIRS=/usr/share/gnome:/usr/local/share/:/usr/share/</value>
-    <value type="QString" >XDG_SESSION_COOKIE=d0fd5e633ab559ee63f8c8934e1905f9-1334886241.355406-1138760422</value>
+    <value type="QString" >XDG_SESSION_COOKIE=d0fd5e633ab559ee63f8c8934e1905f9-1334967764.995712-1795912423</value>
    </valuelist>
    <valuelist key="abstractProcess.arguments" type="QVariantList" >
     <value type="QString" >.</value>
@@ -165,7 +165,7 @@
   <valuemap type="QVariantMap" >
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Debug</value>
    <valuelist key="abstractProcess.Environment" type="QVariantList" >
-    <value type="QString" >DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-FdtDNM3ilh,guid=f3201e0bb75c6bb5f578f0534f90bf61</value>
+    <value type="QString" >DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-SLLKZv6iql,guid=a5667b61a90dba6aeea578ba4f91fdd5</value>
     <value type="QString" >DESKTOP_SESSION=gnome</value>
     <value type="QString" >DESKTOP_STARTUP_ID=</value>
     <value type="QString" >DISPLAY=:0.0</value>
@@ -173,7 +173,7 @@
     <value type="QString" >GDM_KEYBOARD_LAYOUT=us	altgr-intl</value>
     <value type="QString" >GDM_LANG=en_US.UTF-8</value>
     <value type="QString" >GNOME_DESKTOP_SESSION_ID=this-is-deprecated</value>
-    <value type="QString" >GNOME_KEYRING_SOCKET=/tmp/keyring-LOjrwA/socket</value>
+    <value type="QString" >GNOME_KEYRING_SOCKET=/tmp/keyring-EKGl7s/socket</value>
     <value type="QString" >GTK_MODULES=canberra-gtk-module</value>
     <value type="QString" >GTK_RC_FILES=/etc/gtk/gtkrc:/home/tcsmgr/.gtkrc-1.2-gnome2</value>
     <value type="QString" >HOME=/home/tcsmgr</value>
@@ -185,17 +185,17 @@
     <value type="QString" >PATH=/usr/bin:/home/tcsmgr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games</value>
     <value type="QString" >PWD=/home/tcsmgr</value>
     <value type="QString" >QTDIR=/usr</value>
-    <value type="QString" >SESSION_MANAGER=local/tcsmgr-laptop:@/tmp/.ICE-unix/1663,unix/tcsmgr-laptop:/tmp/.ICE-unix/1663</value>
+    <value type="QString" >SESSION_MANAGER=local/tcsmgr-laptop:@/tmp/.ICE-unix/1438,unix/tcsmgr-laptop:/tmp/.ICE-unix/1438</value>
     <value type="QString" >SHELL=/bin/bash</value>
     <value type="QString" >SPEECHD_PORT=7560</value>
-    <value type="QString" >SSH_AGENT_PID=1734</value>
-    <value type="QString" >SSH_AUTH_SOCK=/tmp/keyring-LOjrwA/socket.ssh</value>
+    <value type="QString" >SSH_AGENT_PID=1613</value>
+    <value type="QString" >SSH_AUTH_SOCK=/tmp/keyring-EKGl7s/socket.ssh</value>
     <value type="QString" >SWROOT=/eso50cm/SWROOT</value>
     <value type="QString" >USER=tcsmgr</value>
     <value type="QString" >USERNAME=tcsmgr</value>
-    <value type="QString" >XAUTHORITY=/var/run/gdm/auth-for-tcsmgr-jH3vmd/database</value>
+    <value type="QString" >XAUTHORITY=/var/run/gdm/auth-for-tcsmgr-kZL6CW/database</value>
     <value type="QString" >XDG_DATA_DIRS=/usr/share/gnome:/usr/local/share/:/usr/share/</value>
-    <value type="QString" >XDG_SESSION_COOKIE=d0fd5e633ab559ee63f8c8934e1905f9-1334886241.355406-1138760422</value>
+    <value type="QString" >XDG_SESSION_COOKIE=d0fd5e633ab559ee63f8c8934e1905f9-1334967764.995712-1795912423</value>
    </valuelist>
    <valuelist key="abstractProcess.arguments" type="QVariantList" >
     <value type="QString" >clean</value>

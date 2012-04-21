@@ -26,8 +26,13 @@ LogPanel::LogPanel(QWidget *parent)
     ui->tableView->setColumnWidth(2,140);
     ui->tableView->setColumnWidth(3,600);
     ui->tableView->horizontalHeader()->setStretchLastSection(true);
-
     proxyModel->sort(0, Qt::DescendingOrder);
+    connect(ui->bNext,SIGNAL(clicked()),this,SLOT(searchNext()));
+    connect(ui->bPrevious,SIGNAL(clicked()),this,SLOT(searchPrevious()));
+}
+void LogPanel::clearStatus()
+{
+    ui->lStatus->setText("");
 }
 void LogPanel::setProxyFilter( int filter)
 {
@@ -47,6 +52,46 @@ void LogPanel::setProxyFilter( int filter)
       case 6:
             proxyModel->setFilterRegExp("(^Severe$|^Warning$|^Info$|^Config$|^Fine$|^Finer$|^Finest$)"); return;
     }
+}
+void LogPanel::searchNext() {
+    int count=ui->tableView->currentIndex().row();
+    Qt::CaseSensitivity caseSens;
+    if (ui->cbCase->isChecked())
+        caseSens=Qt::CaseSensitive;
+    else
+        caseSens=Qt::CaseInsensitive;
+    count++;
+    while( count < ui->tableView->model()->rowCount())
+    {
+        QModelIndex index=ui->tableView->model()->index(count,3);
+        if (ui->tableView->model()->data(index,Qt::DisplayRole).toString().contains(ui->leSearch->text(),caseSens)){
+            ui->tableView->setCurrentIndex(proxyModel->index(count,3));
+            return;
+        }
+        count++;
+    }
+    ui->lStatus->setText("Bottom of the list reached");
+    QTimer::singleShot(1700, this, SLOT(clearStatus()));
+}
+void LogPanel::searchPrevious() {
+   int count=ui->tableView->currentIndex().row();
+    Qt::CaseSensitivity caseSens;
+    if (ui->cbCase->isChecked())
+        caseSens=Qt::CaseSensitive;
+    else
+        caseSens=Qt::CaseInsensitive;
+    count--;
+    while( count >0)
+    {
+        QModelIndex index=ui->tableView->model()->index(count,3);
+        if (ui->tableView->model()->data(index,Qt::DisplayRole).toString().contains(ui->leSearch->text(),caseSens)){
+            ui->tableView->setCurrentIndex(proxyModel->index(count,3));
+            return;
+        }
+        count--;
+    }
+    ui->lStatus->setText("Top of the list reached");
+    QTimer::singleShot(1700, this, SLOT(clearStatus()));
 }
 LogPanel::~LogPanel()
 {

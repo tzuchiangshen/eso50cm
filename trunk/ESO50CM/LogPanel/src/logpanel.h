@@ -31,7 +31,9 @@ class LogPanel : public QWidget
     Q_OBJECT
 public slots:
     void setProxyFilter( int );
-
+    void searchNext();
+    void searchPrevious();
+    void clearStatus();
 public:
     LogPanel(QWidget *parent = 0);
     QList<LogMessageQT> *list;
@@ -41,7 +43,7 @@ public:
     QSortFilterProxyModel *proxyModel;
 private:
     Ui::LogPanel *ui;
-    QTimer *timer;
+
 
 };
 
