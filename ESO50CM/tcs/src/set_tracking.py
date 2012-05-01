@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     if(val == 'ON'):
         print "start tracking"
-        mgr.setDeviceMemory(0xA2, 3, 1)
+        mgr.setDeviceMemory(0xA2, 3, 1200)
     elif(val == 'OFF'):
         print "stop tracking"
         mgr.setDeviceMemory(0xA2, 3, 0)
