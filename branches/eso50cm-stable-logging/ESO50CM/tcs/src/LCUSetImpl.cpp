@@ -1,7 +1,7 @@
 #include <LCUImpl.h>
 
 using namespace std;
-#define NUM_OF_TRY 4
+#define NUM_OF_TRY 1
 
 void 
 LCUImpl::setConfiguration(const string& fileName, const Ice::Current& c)
@@ -374,7 +374,7 @@ LCUImpl::setTracking(const OUC::TrackingInfo& trkInfo, const Ice::Current& c)
   
     /** Read Tracking Flag **/
     if(trkInfo.trackState & !trkInfo.ticVel)
-        velocity = 600;
+        velocity = 1200;
     
     /** Set Velocity **/
     m_lcu->waitSemaphore();
@@ -596,15 +596,15 @@ LCUImpl::moveToTarget(const Ice::Current& c)
     logger.logINFO("LCUImpl::moveToTarget: Offset Telescope in alpha_counts: %d [enc], delta_mtr_counts: %d [enc]", alpha_mtr_counts, delta_mtr_counts);
 
     /** Stop Tracking **/
-    if(m_lcu->telescope->getIsTracking()) 
-    {
-        ticVel = 0;
-        m_lcu->telescope->alpha->Motor->setDeviceMemory(3, &ticVel, 0);
-        m_lcu->telescope->setIsTracking(false);
-        /* Refresh tracking state */
-        m_tracking = false;
-        logger.logINFO("LCUImpl::moveToTarget: Tracking OFF!!");
-    }
+//    if(m_lcu->telescope->getIsTracking()) 
+//    {
+//        ticVel = 0;
+//        m_lcu->telescope->alpha->Motor->setDeviceMemory(3, &ticVel, 0);
+//        m_lcu->telescope->setIsTracking(false);
+//        /* Refresh tracking state */
+//        m_tracking = false;
+//        logger.logINFO("LCUImpl::moveToTarget: Tracking OFF!!");
+//    }
 
     /** Move Telescope to the requested position **/
     if(m_stop_telescope == 1) {
@@ -712,16 +712,16 @@ LCUImpl::moveToTarget(const Ice::Current& c)
         return;
     }
      /* Start Tracking */
-    m_lcu->waitSemaphore();
-    {
-        ticVel = 602;
-        m_lcu->telescope->alpha->Motor->setDeviceMemory(3, &ticVel, 0);
-        m_lcu->telescope->setIsTracking(true);
-        m_tracking = true;
-        m_lcu->telescope->setIsRunningGoto(false);
-        logger.logINFO("LCUImpl::moveToTarget: Tracking ON!");
-    }
-    m_lcu->postSemaphore();
+//    m_lcu->waitSemaphore();
+//    {
+//        ticVel = 602;
+//        m_lcu->telescope->alpha->Motor->setDeviceMemory(3, &ticVel, 0);
+//        m_lcu->telescope->setIsTracking(true);
+//        m_tracking = true;
+//        m_lcu->telescope->setIsRunningGoto(false);
+//        logger.logINFO("LCUImpl::moveToTarget: Tracking ON!");
+//    }
+//    m_lcu->postSemaphore();
 }
 
 
