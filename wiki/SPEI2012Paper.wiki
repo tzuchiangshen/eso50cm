@@ -1,4 +1,4 @@
-#Development of telescope control system for the 50cm telescope of the UC Santa Martina Observatory  
+= Development of telescope control system for the 50cm telescope of the UC Santa Martina Observatory   = 
 
 = Abstract = 
 The main telescope of the UC Santa Martina Observatory is a 50cm optical telescope donated by ESO to Pontificia Univesidad Catolica de Chile. During the past years the telescope has been refurbished and used as the main facility for testing and validating new instruments under construction by the center of Astro-Engineering UC. As part of this work the need to develop a more efficient and flexible control system arises. The new distributed control system has been developed on top of Internet Communication Engine (ICE), a framework developed by Zeroc. The result of this work will be presented in this paper which shows ICE as a real alternative for CORBA and other de facto distribute programming framework.
