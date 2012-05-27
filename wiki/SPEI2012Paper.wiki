@@ -19,10 +19,12 @@ Summary about the telescope and its attached instruments.
   * explore integration with labview & NI hardware
 
 == Key frameworks == 
-  * ICE 
-  * Virtualization 
-  * CMAke
-  * googlecode   
+  * Distribute programming: ICE 
+  * Build process: Cmake
+  * ARM Simulation: virtualization, VirtualBox, QEMU  
+  * GUI: QT4
+  * Project hosting: code.google.com
+  
 == Subsystems == 
   * logging services (Johnny)
   * telescope61 (Ruben)
