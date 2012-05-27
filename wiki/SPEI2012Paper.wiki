@@ -5,16 +5,32 @@ The main telescope of the UC Santa Martina Observatory is a 50cm optical telesco
 
 = Introduction =
 
-= ESO50cm  telescope and instruments = 
-= CONTROL Software Architecture = 
+Brief summary about Santa Martina Observatory and the role ESO50cm plays within it. 
 
+= ESO50cm  telescope = 
 
-2. CONTROL software Santa Martina Observatory (ICE)
-     - need for modern languages binding
-     - light weight
-     - robus upon failure
-     - explore integration with labview & NI hardware
+Summary about the telescope and its attached instruments. 
 
-    - Johnny: logging services
-    - Ruben: telescope61
-    - Tzu: Architecture, ObsControl (MVC) , telescope61-sim
+= Software Architecture = 
+== Requirements == 
+  * need for modern languages binding
+  * light weight
+  * robus upon failure
+  * explore integration with labview & NI hardware
+
+== Key framworks == 
+  * ICE 
+  * Virtualization 
+  * CMAke
+  * googlecode   
+== Control Software Subsystem == 
+  * Johnny: logging services
+  * Ruben: telescope61
+  * Tzu: Architecture, ObsControl (MVC) , telescope61-sim
+
+= Future Challange = 
+
+= Conclusion = 
+
+= Reference = 
+
