@@ -18,13 +18,34 @@ The ESO50cm is a equatorial mount telescope, manufactured by the end of 80ths.  
 After the hardware refurbish, the telescope comprises of 3 encoders per motor in each axis. two of them are absolute encoders and one located in the worm is relative one. A low level PIC controller was created in order to read and interpret the encoders' gray code and to generate the PWM signal to drive the motors. The embedded PIC controller is controlled by another single board computer, together they form the Telescope Local Control Unit (LCU). One CCD camera is attached to the telescope with focus adjustment and the same light is split and redirected to the PUCHERO [2], an spectrograph designed by the Department of Astro-Engineering [3]
 
 In the following table relevant hardware are highlighted 
-  * Equatorial mount, 2 direct motors, 6 encoders (3 per axis)
+  * Equatorial mount telescope, 2 direct motors, 6 encoders (3 per axis)
   * TS-7800 ARM9 CPU, 512 Mb Ram. 
   * PIC18F422
   * CCD BIG6
 
 
 = Software Architecture = 
+
+In the design of the control software, several base requirements were defined: 1) loosely coupled at subsystem level 2)expose API to modern and mature programming languages. This lead us to choose a framework......
+
+Framework requrirement: 
+1) support for distributed programming environment 
+ 4) lightweight and suitable for a small development team.   
+
+Loosely coupled: The ASKAP software system must
+be flexible and scalable both in terms of
+development, deployment and maintenance.
+Requirements are expected to change as more is
+learned about the system, the science that will be
+done with it, and the manner in which the system
+will be operated. A key to fulfilling this goal is loose
+coupling, where dependencies are minimized and
+modifications have minimal effect on the system as a
+whole. At a minimum, components should be loosely
+coupled in terms of hardware platforms,
+programming languages (C++, Java and Python) and
+even its implementation
+
 == Requirements == 
   * need for modern languages binding
   * light weight
