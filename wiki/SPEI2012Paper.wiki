@@ -23,20 +23,16 @@ In the following table relevant hardware are highlighted
   * PIC18F422
   * CCD BIG6
 
-
 = Software Architecture = 
 
 In the design of the control software for the telescope, the following base requirements were defined: 1) loosely coupled at subsystem level 2)be able to expose API to modern and mature programming languages, hopefully scripting languages and 3) allow incremental way to introduce new features or subsystems. 
 
-After reviewing reports presented at [3],[4],[5] (papers de tanaka, etc). The Internet Communication Engine (ICE) [1] framework was selected, not only because it fulfill the aforementioned requirements but also provide 1) support for distributed programming environment 
- 4) lightweight and suitable for a small development team.   
+After reviewing reports presented at [3],[4],[5] (papers de tanaka, etc). The Internet Communication Engine (ICE) [1] framework was selected, not only because it fulfills the aforementioned requirements but also provides 1) support of distributed programming environment 2)binding to C++,.NET, Java, Python, Objective-C, Ruby, PHP programming languages, 3) mature and has reasonable size of community, 4) open source LGPL license and finally 4) lightweight and suitable for a small development team.
 
-
-These requirements led us to choose a framework 
-
-Framework requirement: 
+On top of the framework, a classical software architecture for telescope was chosen. It comprises a Telecope Control Subsystem, a Detector Control Subsystem, an Instrument Control Subsystem and finally an Observation Coordination Subsystem which coordinates the high level logic of an astronomical observation. 
 
 http://eso50cm.googlecode.com/files/eso50cm%20control%20system.jpg
+
 == Requirements == 
   * need for modern languages binding
   * light weight
