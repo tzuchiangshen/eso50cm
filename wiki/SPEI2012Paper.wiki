@@ -7,9 +7,13 @@ The main telescope of the UC Santa Martina Observatory is a 50cm optical telesco
 
 Brief summary about Santa Martina Observatory and the role ESO50cm plays within it. 
 
+  * Educational telescope
+  * Instrument testing and validation (PUCHEROS)
+
 = ESO50cm  telescope = 
 
 Summary about the telescope and its attached instruments. 
+
 
 = Software Architecture = 
 == Requirements == 
@@ -32,7 +36,11 @@ Summary about the telescope and its attached instruments.
     * communication with hardware 
   * Architecture, ObsControl, TcsGui (MVC) , telescope61-sim (Tzu)
 
-= Future Challange = 
+= Future Challanges = 
+  * Integration of CCD, Auto guiding 
+  * Interface to Labviw for hardware control 
+  * Integration of pointing model (get rid of theSky6)
+  * 
 
 = Conclusion = 
 
