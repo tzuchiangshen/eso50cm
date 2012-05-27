@@ -32,7 +32,7 @@ Framework requrirement:
 1) support for distributed programming environment 
  4) lightweight and suitable for a small development team.   
 
-
+http://eso50cm.googlecode.com/files/eso50cm%20control%20system.jpg
 == Requirements == 
   * need for modern languages binding
   * light weight
