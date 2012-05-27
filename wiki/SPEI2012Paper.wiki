@@ -27,20 +27,20 @@ Summary about the telescope and its attached instruments.
   * Build process: Cmake
   * ARM Simulation: virtualization, VirtualBox, QEMU  
   * GUI: QT4
-  * Project hosting: code.google.com
+  * Project hosting: code.google.com  
   
 == Subsystems == 
+  * logical diagram of the architecture (Tzu)
   * logging services (Johnny)
-  * telescope61 (Ruben)
+  * telescope61 (Ruben) telescope61-sim (Tzu)
     * share memory 
     * communication with hardware 
-  * Architecture, ObsControl, TcsGui (MVC) , telescope61-sim (Tzu)
+  * ObsControl, TcsGui, qths  (MVC)
 
 = Future Challanges = 
   * Integration of CCD, Auto guiding 
   * Interface to Labviw for hardware control 
   * Integration of pointing model (get rid of theSky6)
-  * 
 
 = Conclusion = 
 
