@@ -27,7 +27,7 @@ Summary about the telescope and its attached instruments.
   * Build process: Cmake
   * ARM Simulation: virtualization, VirtualBox, QEMU  
   * GUI: QT4
-  * Project hosting: code.google.com  
+  * Software repository : code.google.com  
   
 == Subsystems == 
   * logical diagram of the architecture (Tzu)
@@ -44,4 +44,5 @@ Summary about the telescope and its attached instruments.
 
 = Conclusion = 
 
-= Reference = 
+= References = 
+[1] ICE: http://www.zeroc.com/ice.html
