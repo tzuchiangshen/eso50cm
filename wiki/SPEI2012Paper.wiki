@@ -26,11 +26,15 @@ In the following table relevant hardware are highlighted
 
 = Software Architecture = 
 
-In the design of the control software, several base requirements were defined: 1) loosely coupled at subsystem level 2)expose API to modern and mature programming languages. This lead us to choose a framework......
+In the design of the control software for the telescope, the following base requirements were defined: 1) loosely coupled at subsystem level 2)be able to expose API to modern and mature programming languages, hopefully scripting languages and 3) allow incremental way to introduce new features or subsystems. 
 
-Framework requrirement: 
-1) support for distributed programming environment 
+After reviewing reports presented at [3],[4],[5] (papers de tanaka, etc). The Internet Communication Engine (ICE) [1] framework was selected, not only because it fulfill the aforementioned requirements but also provide 1) support for distributed programming environment 
  4) lightweight and suitable for a small development team.   
+
+
+These requirements led us to choose a framework 
+
+Framework requirement: 
 
 http://eso50cm.googlecode.com/files/eso50cm%20control%20system.jpg
 == Requirements == 
