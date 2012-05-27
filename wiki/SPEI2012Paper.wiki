@@ -48,14 +48,6 @@ enum TelescopeDirection {North, South, East, West};
 
 ...
 
-exception ErrorEx {
-	string reason;
-};
-
-exception TelescopeNotConfiguredEx extends ErrorEx{};
-exception TargetOutOfLimitsEx extends ErrorEx{};	   
-exception NotConfigurationFileEx extends ErrorEx{};
-
 interface LCU
 {
     idempotent void sayHello(int delay);
@@ -63,10 +55,7 @@ interface LCU
   
     EncoderData getEncodersPosition()
          throws TelescopeNotConfiguredEx;
-    RawEncoderData getRawEncodersPosition() 
-         throws TelescopeNotConfiguredEx;	    
-    TelescopeConfigData getConfiguration()
-    	 throws TelescopeNotConfiguredEx;	
+...	
     TelescopeData getPosition()
     	 throws TelescopeNotConfiguredEx;	
     bool isConfigured();
@@ -74,20 +63,12 @@ interface LCU
 
     void setConfiguration(string fileName)
          throws NotConfigurationFileEx;
-    void setTarget(TelescopePosition targetPos)
-    	 throws TelescopeNotConfiguredEx, TargetOutOfLimitsEx;
-    void setOffset(TelescopePosition offsetPos)
-    	 throws TelescopeNotConfiguredEx, TargetOutOfLimitsEx;
-    void setTracking(TrackingInfo trkInfo)
-         throws TelescopeNotConfiguredEx;
-    void parkTelescope()
-         throws TelescopeNotConfiguredEx;
-    void stopTelescope(TelescopeDirection dir)
-         throws TelescopeNotConfiguredEx;
-    void moveToTarget()
-         throws TelescopeNotConfiguredEx; 	 
-    void handsetSlew(SlewInfo slew)
-         throws TelescopeNotConfiguredEx; 	 
+...
+    void setTracking(TrackingInfo trkInfo);
+    void parkTelescope();
+    void stopTelescope(TelescopeDirection dir);
+    void moveToTarget(); 
+    void handsetSlew(SlewInfo slew);	 
 };
 };
 
