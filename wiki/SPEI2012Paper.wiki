@@ -18,19 +18,20 @@ Summary about the telescope and its attached instruments.
   * robus upon failure
   * explore integration with labview & NI hardware
 
-== Key framworks == 
+== Key frameworks == 
   * ICE 
   * Virtualization 
   * CMAke
   * googlecode   
-== Control Software Subsystem == 
-  * Johnny: logging services
-  * Ruben: telescope61
-  * Tzu: Architecture, ObsControl (MVC) , telescope61-sim
+== Subsystems == 
+  * logging services (Johnny)
+  * telescope61 (Ruben)
+    * share memory 
+    * communication with hardware 
+  * Architecture, ObsControl, TcsGui (MVC) , telescope61-sim (Tzu)
 
 = Future Challange = 
 
 = Conclusion = 
 
 = Reference = 
-
