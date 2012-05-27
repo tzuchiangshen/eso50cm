@@ -15,17 +15,13 @@ Brief summary about Santa Martina Observatory and the role ESO50cm plays within 
 
 The ESO50cm is a equatorial mount telescope, manufactured by the end of 80ths.  *blablabla*
 
-After the hardware refurbish, the telescope comprises of 3 encoders per motor in each axis. two of them are absolute encoders and one located in the worm is relative one. A low level PIC controller was created in order to read and interpret the encoders' gray code and to generate the PWM signal to drive the motors. The embedded PIC controller is controlled by another single board computer, together they form the Telescope Local Control Unit (LCU). One CCD camera is attached to the telescope with focus adjustment. The light is split and send to the PUCHERO instrument [2]
+After the hardware refurbish, the telescope comprises of 3 encoders per motor in each axis. two of them are absolute encoders and one located in the worm is relative one. A low level PIC controller was created in order to read and interpret the encoders' gray code and to generate the PWM signal to drive the motors. The embedded PIC controller is controlled by another single board computer, together they form the Telescope Local Control Unit (LCU). One CCD camera is attached to the telescope with focus adjustment and the same light is split and redirected to the PUCHERO [2], an spectrograph designed by the Department of Astro-Engineering [3]
 
 In the following table relevant hardware are highlighted 
-  * TS-7800 ARM, 512 Mb Ram. 
+  * Equatorial mount, 2 direct motors, 6 encoders (3 per axis)
+  * TS-7800 ARM9 CPU, 512 Mb Ram. 
   * PIC18F422
-  * CCD BIG
-  * 
- 
-
-
-Summary about the telescope and its attached instruments. 
+  * CCD BIG6
 
 
 = Software Architecture = 
@@ -61,4 +57,4 @@ Summary about the telescope and its attached instruments.
 [1] ICE: http://www.zeroc.com/ice.html
 [2] paper del PUCHEROS
 [3] VLT Software Design 
-[4]
+[4] Departament of Astro-Engineering at UC 
