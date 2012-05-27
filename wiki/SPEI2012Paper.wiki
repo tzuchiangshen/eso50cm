@@ -94,6 +94,9 @@ interface LCU
   * Integration of pointing model (get rid of theSky6)
 
 = Conclusion = 
+  * ICE framework is a mature distribute programming framework suitable for mission critical application.
+  * TS-7800 ARM has proved to be a very robust platform for local control unit development
+ 
 
 = References = 
 [1] ICE: http://www.zeroc.com/ice.html
