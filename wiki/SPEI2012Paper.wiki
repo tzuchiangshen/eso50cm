@@ -37,7 +37,61 @@ At hardware related subsystems (TCS, ICS, DCS), proper drivers were developed ac
 
 ICE provides the ICE Slice tool .... *talk about the slice, and show lcu.ice* 
 
+{{{ 
+#ifndef LCU_ICE
+#define LCU_ICE
 
+module OUC 
+{
+
+enum TelescopeDirection {North, South, East, West};
+
+...
+
+exception ErrorEx {
+	string reason;
+};
+
+exception TelescopeNotConfiguredEx extends ErrorEx{};
+exception TargetOutOfLimitsEx extends ErrorEx{};	   
+exception NotConfigurationFileEx extends ErrorEx{};
+
+interface LCU
+{
+    idempotent void sayHello(int delay);
+    idempotent void shutdown();
+  
+    EncoderData getEncodersPosition()
+         throws TelescopeNotConfiguredEx;
+    RawEncoderData getRawEncodersPosition() 
+         throws TelescopeNotConfiguredEx;	    
+    TelescopeConfigData getConfiguration()
+    	 throws TelescopeNotConfiguredEx;	
+    TelescopeData getPosition()
+    	 throws TelescopeNotConfiguredEx;	
+    bool isConfigured();
+    bool isTracking();
+
+    void setConfiguration(string fileName)
+         throws NotConfigurationFileEx;
+    void setTarget(TelescopePosition targetPos)
+    	 throws TelescopeNotConfiguredEx, TargetOutOfLimitsEx;
+    void setOffset(TelescopePosition offsetPos)
+    	 throws TelescopeNotConfiguredEx, TargetOutOfLimitsEx;
+    void setTracking(TrackingInfo trkInfo)
+         throws TelescopeNotConfiguredEx;
+    void parkTelescope()
+         throws TelescopeNotConfiguredEx;
+    void stopTelescope(TelescopeDirection dir)
+         throws TelescopeNotConfiguredEx;
+    void moveToTarget()
+         throws TelescopeNotConfiguredEx; 	 
+    void handsetSlew(SlewInfo slew)
+         throws TelescopeNotConfiguredEx; 	 
+};
+};
+
+}}}
 == Key frameworks == 
   * Distribute programming: ICE 
   * Build process: Cmake
