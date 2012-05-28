@@ -5,8 +5,7 @@ The main telescope of the UC Santa Martina Observatory is a 50cm optical telesco
 
 = Introduction =
 
-
-Brief summary about Santa Martina Observatory and the role ESO50cm plays within it. 
+Brief summary Santa Martina Observatory and the role that ESO50cm plays within it. 
 
   * Educational telescope
   * Instrument testing and validation (PUCHEROS)
@@ -23,8 +22,6 @@ In the following table relevant hardware are highlighted
   * PIC18F422
   * CCD BIG6
 
-
-
 = Software Architecture = 
 
 == Key frameworks == 
@@ -32,9 +29,10 @@ In the following table relevant hardware are highlighted
   * Build process: Cmake
   * ARM Simulation: virtualization, VirtualBox, QEMU  
   * GUI: QT4
-  * Software repository : code.google.com  
-
+  * Software repository : code.google.com
   * Distribute programming: ICE 
+
+
 In the design of the control software for the telescope, the following base requirements were defined: 1) loosely coupled at subsystem level 2)be able to expose API to modern and mature programming languages, hopefully scripting languages and 3) allow incremental way to introduce new features or subsystems. 
 
 After reviewing reports presented at [3],[4],[5] (papers de tanaka, etc). The Internet Communication Engine (ICE) [1] framework was selected, not only because it fulfills the aforementioned requirements but also provides 1) support of distributed programming environment 2)binding to C++,.NET, Java, Python, Objective-C, Ruby, PHP programming languages, 3) mature and has reasonable size of community, 4) open source LGPL license and finally 4) lightweight and suitable for a small development team.
@@ -48,7 +46,9 @@ On top of the framework, a classical software architecture for telescope was cho
 
 http://eso50cm.googlecode.com/files/eso50cm%20control%20system.jpg
 
-At hardware related subsystems (TCS, ICS, DCS), proper drivers were developed according to the specific hardware. At the same time, the required functionality is exposed through ICE interface.
+At hardware related subsystems (TCS, ICS, DCS), proper drivers were developed according to the specific hardware. At the same time, the required functionality is exposed through ICE interface. 
+
+*add a container/component diagram*
 
 ICE provides the ICE Slice tool .... *talk about the slice, and show lcu.ice* 
 
@@ -95,10 +95,11 @@ interface LCU
     * communication with hardware 
   * ObsControl, TcsGui, qths  (MVC)
 
-= Future Challanges = 
+= Future Challenges = 
   * Integration of CCD, Auto guiding 
   * Interface to Labviw for hardware control 
   * Integration of pointing model (get rid of theSky6)
+  * Package of the final observation data into a FITS format
 
 = Conclusion = 
   * ICE framework is a mature distribute programming framework suitable for mission critical application.
@@ -109,4 +110,4 @@ interface LCU
 [1] ICE: http://www.zeroc.com/ice.html
 [2] paper del PUCHEROS
 [3] VLT Software Design 
-[4] Departament of Astro-Engineering at UC 
+[4] Department of Astro-Engineering at UC 
