@@ -22,16 +22,17 @@ TelescopeImpl::TelescopeImpl(): logger("TelescopeImpl") {
         string proxy = properties->getProperty(proxyProperty);
         Ice::ObjectPrx base = communicator->stringToProxy(proxy);
         lcuPrx = OUC::LCUPrx::checkedCast(base->ice_twoway()->ice_timeout(-1));
-        logger.logINFO("Got reference to LCUControl at " + proxy);
+        logger.logFINE("TelescopeImpl::TelescopeImp: Got reference to LCUControl at " + proxy);
 
         if(!lcuPrx)
         {
             OUC::NotLCUReferenceAvailableEx ex;
             ex.reason = "Not reference to LCU Proxy available!";
+            logger.logSEVERE("TelescopeImpl::TelescopeImp: Not reference to LCU Proxy available!");
             throw ex;
         }
-    }catch(const Ice::Exception& ex) {
-        cerr << ex << endl;
+    } catch(const Ice::Exception& ex) {
+        logger.logSEVERE("TelescopeImpl::TelescopeImp: Unexpected run-time error");
         throw ex;
     }
 }
@@ -43,16 +44,13 @@ TelescopeImpl::sayHelloTelescope(int delay, const Ice::Current&)
     {
         IceUtil::ThreadControl::sleep(IceUtil::Time::milliSeconds(delay));
     }
-    logger.logFINE("Hello World Telescope!\n");
+    logger.logFINE("TelescopeImpl::sayHelloTelescope: Hello World Telescope!\n");
 }
 
 
 bool TelescopeImpl::isConfigured(const Ice::Current&)
 {
-    extern int verbose;
-
-    if( verbose ) 
-        logger.logFINE( "TelescopeImpl::isConfigured" ); 
+    logger.logFINEST( "TelescopeImpl::isConfigured" ); 
 
     try
     {
@@ -65,17 +63,14 @@ bool TelescopeImpl::isConfigured(const Ice::Current&)
 
         return lcuPrx->isConfigured();
     } catch (Ice::Exception& ex) {
-        cerr << "Unexpected run-time error: " << ex << endl;
+        logger.logSEVERE("TelescopeImpl::isConfigured: Unexpected run-time error");
         throw ex;
     }
 }
  
 bool TelescopeImpl::isTracking(const Ice::Current&)
 {
-    extern int verbose;
-
-    if( verbose ) 
-        logger.logFINE( "TelescopeImpl::isTracking" ); 
+    logger.logFINEST( "TelescopeImpl::isTracking" ); 
 
     try
     {
@@ -88,17 +83,14 @@ bool TelescopeImpl::isTracking(const Ice::Current&)
 
         return lcuPrx->isTracking();
     } catch (Ice::Exception& ex) {
-        cerr << "Unexpected run-time error: " << ex << endl;
+        logger.logSEVERE("TelescopeImpl::isTracking: Unexpected run-time error");
         throw ex;
     }
 }
 
 OUC::RawEncoderData TelescopeImpl::getRawEncodersPosition(const Ice::Current&)
 {
-    extern int verbose;
-
-    if( verbose ) 
-        logger.logFINE( "TelescopeImpl::getRawEncodersPosition" ); 
+    logger.logFINEST( "TelescopeImpl::getRawEncodersPosition" ); 
 
     try
     {
@@ -111,20 +103,17 @@ OUC::RawEncoderData TelescopeImpl::getRawEncodersPosition(const Ice::Current&)
 
         return  lcuPrx->getRawEncodersPosition();
     } catch (OUC::TelescopeNotConfiguredEx& ex) {
-        cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+      logger.logSEVERE("TelescopeImpl::getRawEncodersPosition: LCU returned: %s. Execute setConfiguration method first", &ex.reason);  
         throw ex;
     } catch (Ice::Exception& ex) {
-        cerr << "Unexpected run-time error: " << ex << endl;
+        logger.logSEVERE("TelescopeImpl::getRawEncodersPosition: Unexpected run-time error");
         throw ex;
     }
 }
  
 OUC::EncoderData TelescopeImpl::getEncodersPosition(const Ice::Current&)
 {
-    extern int verbose;
-
-    if( verbose ) 
-        logger.logFINE( "TelescopeImpl::getEncodersPosition" ); 
+    logger.logFINEST( "TelescopeImpl::getEncodersPosition" ); 
 
     try
     {
@@ -137,20 +126,18 @@ OUC::EncoderData TelescopeImpl::getEncodersPosition(const Ice::Current&)
 
         return  lcuPrx->getEncodersPosition();
     } catch (OUC::TelescopeNotConfiguredEx& ex) {
-        cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+      logger.logSEVERE("TelescopeImpl::getEncodersPosition: LCU returned: %s. Execute setConfiguration method first",&ex.reason);
         throw ex;
     } catch (Ice::Exception& ex) {
-        cerr << "Unexpected run-time error: " << ex << endl;
+        logger.logSEVERE("TelescopeImpl::getEncodersPosition: Unexpected run-time error: %s");
         throw ex;
     }  
 }
  
 OUC::TelescopeData TelescopeImpl::getPosition(const Ice::Current&)
 {
-    extern int verbose;
 
-    if( verbose ) 
-        logger.logFINE( "TelescopeImpl::getPosition" ); 
+    logger.logFINEST( "TelescopeImpl::getPosition" ); 
 
     try
     {
@@ -163,20 +150,17 @@ OUC::TelescopeData TelescopeImpl::getPosition(const Ice::Current&)
 
         return  lcuPrx->getPosition();
     } catch (OUC::TelescopeNotConfiguredEx& ex) {
-        cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+        logger.logSEVERE("TelescopeImpl::getPosition: LCU returned: %s. Execute setConfiguration method first", &ex.reason);
         throw ex;
     } catch (Ice::Exception& ex) {
-        cerr << "Unexpected run-time error: " << ex << endl;
+        logger.logSEVERE("TelescopeImpl::getPosition: Unexpected run-time error");
         throw ex;
     }
 }
 
 OUC::TelescopeConfigData TelescopeImpl::getConfiguration(const Ice::Current&)
 {
-    extern int verbose;
-
-    if( verbose ) 
-        logger.logFINE( "TelescopeImpl::getConfiguration" ); 
+    logger.logFINEST( "TelescopeImpl::getConfiguration" ); 
 
     try
     {
@@ -189,20 +173,17 @@ OUC::TelescopeConfigData TelescopeImpl::getConfiguration(const Ice::Current&)
 
         return  lcuPrx->getConfiguration();
     } catch (OUC::TelescopeNotConfiguredEx& ex) {
-        cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+        logger.logSEVERE("TelescopeImpl::getConfiguration: LCU returned: %s. Execute setConfiguration method first", &ex.reason);
         throw ex;
     } catch (Ice::Exception& ex) {
-        cerr << "Unexpected run-time error: " << ex << endl;
+        logger.logSEVERE("TelescopeImpl::getConfiguration: Unexpected run-time error");
         throw ex;
     }
 }
 
 void TelescopeImpl::setConfiguration(const string& fileName, const Ice::Current&)
 {
-    extern int verbose;
-
-    if( verbose ) 
-        logger.logFINE( "TelescopeImpl::setConfiguration" ); 
+    logger.logFINEST( "TelescopeImpl::setConfiguration" ); 
 
     try
     {
@@ -215,17 +196,14 @@ void TelescopeImpl::setConfiguration(const string& fileName, const Ice::Current&
 
         lcuPrx->setConfiguration(fileName); 
     } catch (Ice::Exception& ex) {
-        cerr << "Unexpected run-time error: " << ex << endl;
+        logger.logSEVERE("TelescopeImpl::setConfiguration: Unexpected run-time error.");
         throw ex;
     }
 }
 
 void TelescopeImpl::setTarget(const ::OUC::TelescopePosition& targetPos, const Ice::Current&)
 {
-    extern int verbose;
-
-    if( verbose ) 
-        logger.logFINE( "TelescopeImpl::setTarget" ); 
+    logger.logFINEST( "TelescopeImpl::setTarget" ); 
 
     try
     {
@@ -238,23 +216,20 @@ void TelescopeImpl::setTarget(const ::OUC::TelescopePosition& targetPos, const I
 
         return  lcuPrx->setTarget(targetPos);
     } catch (OUC::TelescopeNotConfiguredEx& ex) {
-        cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+        logger.logSEVERE("TelescopeImpl::setTarget: LCU returned: %s. Execute setConfiguration method first", ex.reason.c_str());
         throw ex;
     } catch (OUC::TargetOutOfLimitsEx& ex) {
-        cout << "LCU returned: " << ex.reason << "Try another target!!"<< endl;  
+        logger.logSEVERE("TelescopeImpl::setTarget: LCU returned: %s. Try another target!!", ex.reason.c_str());
         throw ex;
     } catch (Ice::Exception& ex) {
-        cerr << "Unexpected run-time error: " << ex << endl;
+        logger.logSEVERE("TelescopeImpl::setTarget: Unexpected run-time error");
         throw ex;
     }
 }
 
 void TelescopeImpl::handsetSlew(const ::OUC::SlewInfo& slewInfo, const Ice::Current&)
 {
-    extern int verbose;
-
-    if( verbose ) 
-        logger.logFINE( "TelescopeImpl::handsetSlew" ); 
+    logger.logFINEST( "TelescopeImpl::handsetSlew" ); 
 
     try
     {
@@ -267,23 +242,20 @@ void TelescopeImpl::handsetSlew(const ::OUC::SlewInfo& slewInfo, const Ice::Curr
 
         return  lcuPrx->handsetSlew(slewInfo);
     } catch (OUC::TelescopeNotConfiguredEx& ex) {
-        cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+        logger.logSEVERE("TelescopeImpl::handsetSlew: LCU returned: %s. Execute setConfiguration method first", &ex.reason);
         throw ex;
     } catch (OUC::TargetOutOfLimitsEx& ex) {
-        cout << "LCU returned: " << ex.reason << "Try another target!!"<< endl;  
+        logger.logSEVERE("TelescopeImpl::handsetSlew: LCU returned: %s. Try another target!!", &ex.reason);
         throw ex;
     } catch (Ice::Exception& ex) {
-        cerr << "Unexpected run-time error: " << ex << endl;
+        logger.logSEVERE("TelescopeImpl::handsetSlew: Unexpected run-time error");
         throw ex;
     }
 }
 
 void TelescopeImpl::setOffset(const ::OUC::TelescopePosition& offsetPos, const Ice::Current&)
 {
-    extern int verbose;
-
-    if( verbose ) 
-        logger.logFINE( "TelescopeImpl::setOffset" ); 
+    logger.logFINEST( "TelescopeImpl::setOffset" ); 
 
     try
     {
@@ -296,23 +268,20 @@ void TelescopeImpl::setOffset(const ::OUC::TelescopePosition& offsetPos, const I
 
         return  lcuPrx->setOffset(offsetPos);
     } catch (OUC::TelescopeNotConfiguredEx& ex) {
-        cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+        logger.logSEVERE("TelescopeImpl::setOffset: LCU returned: %s. Execute setConfiguration method first", &ex.reason);
         throw ex;
     } catch (OUC::TargetOutOfLimitsEx& ex) {
-        cout << "LCU returned: " << ex.reason << "Try another target!!"<< endl;  
+        logger.logSEVERE("TelescopeImpl::setOffset: LCU returned: %s. Try another target!!", &ex.reason);
         throw ex;
     } catch (Ice::Exception& ex) {
-        cerr << "Unexpected run-time error: " << ex << endl;
+        logger.logSEVERE("TelescopeImpl::setOffset: Unexpected run-time error");
         throw ex;
     }
 }
 
 void TelescopeImpl::setTracking(const OUC::TrackingInfo& trkInfo, const Ice::Current&)
 {
-    extern int verbose;
-
-    if( verbose ) 
-        logger.logFINE( "TelescopeImpl::setTracking" ); 
+    logger.logFINEST( "TelescopeImpl::setTracking" ); 
 
     try
     {
@@ -325,20 +294,17 @@ void TelescopeImpl::setTracking(const OUC::TrackingInfo& trkInfo, const Ice::Cur
 
         return  lcuPrx->setTracking(trkInfo);
     } catch (OUC::TelescopeNotConfiguredEx& ex) {
-        cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+        logger.logSEVERE("TelescopeImpl::setTracking: LCU returned: %s. Execute setConfiguration method first", &ex.reason);
         throw ex;
     } catch (Ice::Exception& ex) {
-        cerr << "Unexpected run-time error: " << ex << endl;
+        logger.logSEVERE("TelescopeImpl::setTracking: Unexpected run-time error");
         throw ex;
     }
 }
 
 void TelescopeImpl::parkTelescope(const Ice::Current&)
 {
-    extern int verbose;
-
-    if( verbose ) 
-        logger.logFINE( "TelescopeImpl::parkTelescope" ); 
+    logger.logFINEST( "TelescopeImpl::parkTelescope" ); 
 
     try
     {
@@ -351,20 +317,17 @@ void TelescopeImpl::parkTelescope(const Ice::Current&)
 
         return  lcuPrx->parkTelescope();
     } catch (OUC::TelescopeNotConfiguredEx& ex) {
-        cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+        logger.logSEVERE("TelescopeImpl::parkTelescope: LCU returned: %s. Execute setConfiguration method first", &ex.reason);
         throw ex;
     } catch (Ice::Exception& ex) {
-        cerr << "Unexpected run-time error: " << ex << endl;
+        logger.logSEVERE("TelescopeImpl::parkTelescope: Unexpected run-time error");
         throw ex;
     }
 }
 
 void TelescopeImpl::stopTelescope(const ::OUC::TelescopeDirection dir, const Ice::Current&)
 {
-    extern int verbose;
-
-    if( verbose ) 
-        logger.logFINE( "TelescopeImpl::stopTelescope" ); 
+    logger.logFINEST( "TelescopeImpl::stopTelescope" ); 
 
     try
     {
@@ -377,20 +340,17 @@ void TelescopeImpl::stopTelescope(const ::OUC::TelescopeDirection dir, const Ice
 
         return  lcuPrx->stopTelescope(dir);
     } catch (OUC::TelescopeNotConfiguredEx& ex) {
-        cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+        logger.logSEVERE("TelescopeImpl::stopTelescope: LCU returned: %s. Execute setConfiguration method first", &ex.reason);
         throw ex;
     } catch (Ice::Exception& ex) {
-        cerr << "Unexpected run-time error: " << ex << endl;
+        logger.logSEVERE("TelescopeImpl::stopTelescope: Unexpected run-time error");
         throw ex;
     }
 }
 
 void TelescopeImpl::moveToTarget(const Ice::Current&)
 {
-    extern int verbose;
-
-    if( verbose ) 
-        logger.logFINE( "TelescopeImpl::moveToTarget" ); 
+    logger.logFINEST( "TelescopeImpl::moveToTarget" ); 
 
     try
     {
@@ -403,10 +363,10 @@ void TelescopeImpl::moveToTarget(const Ice::Current&)
 
         return  lcuPrx->moveToTarget();
     } catch (OUC::TelescopeNotConfiguredEx& ex) {
-        cout << "LCU returned: " << ex.reason << "Execute setConfiguration method first !!"<< endl;  
+        logger.logSEVERE("TelescopeImpl::moveToTarget: LCU returned: %s. Execute setConfiguration method first", &ex.reason);
         throw ex;
     } catch (Ice::Exception& ex) {
-        cerr << "Unexpected run-time error: " << ex << endl;
+        logger.logSEVERE("TelescopeImpl::moveToTarget: Unexpected run-time error");
         throw ex;
     }
 }

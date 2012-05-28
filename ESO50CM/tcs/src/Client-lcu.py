@@ -77,7 +77,7 @@ def disconnect():
 
 def sayHello():
     try:
-        lcuImpl.sayHello(3)
+        lcuImpl.sayHello(200)
         print "I said Hello!!"
     except:
         traceback.print_exc()
@@ -258,7 +258,7 @@ def moveToTarget():
 
 def stopTelescope():
     try:
-        lcuImpl.stopTelescope(OUC.North)
+        lcuImpl.stopTelescope(OUC.TelescopeDirection.North)
     except OUC.TelescopeNotConfiguredEx():
         print "Telescope Not Configured !!!"
         traceback.print_exc()
@@ -272,25 +272,40 @@ def parkTelescope():
         traceback.print_exc()
         status = 1
 
+def readDeviceMemory(deviceId, address, value):
+    try:
+        return lcuImpl.readDeviceMemory(deviceId, address, value)
+    except:
+        traceback.print_exc()
+        status = 1
+
+def setDeviceMemory(deviceId, address, value):
+    try:
+        return lcuImpl.setDeviceMemory(deviceId, address, value)
+    except:
+        traceback.print_exc()
+        statur = 1
+        
 if __name__ == "__main__":
     ra = [12,0,0]
     dec = [40,0,0]
     connect()
-    setConfiguration()
+    #setConfiguration()
     print "#######################################"
-    if isConfigured():
-       getConfiguration()
-       sayHello()
-    getEncoderPosition()
-    parkTelescope()
+    #if isConfigured():
+    #   getConfiguration()
+    sayHello()
+    #getEncoderPosition()
+    #parkTelescope()
     #moveToTarget()
     #setTarget(ra, dec)
     #moveToTarget()
     #stopTelescope()
     #setTracking()
     #print "#######################################"    
-    getRawEncoderPosition()
+    #getRawEncoderPosition()
     #print "#######################################"
     #getPosition()
+    #readDeviceMemory(0xA8, 4, 0)
     disconnect()
     

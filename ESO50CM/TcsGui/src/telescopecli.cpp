@@ -49,6 +49,7 @@ TelescopeCli::TelescopeCli(QWidget *parent) :
 
     ui->statusLabel->setText( "Not connected" );
 
+    logger.logINFO("TelescopeCli::TelescopeCli: Connecting to theSky6 through /dev/ttyS0");
     thesky = new myRS232( "/dev/ttyS0", 9600);
     thesky_fd = thesky->open_RS232();
     if( thesky_fd > 0 ) {
@@ -57,6 +58,7 @@ TelescopeCli::TelescopeCli(QWidget *parent) :
        connect( thesky_notifier, SIGNAL( activated(int) ), this, SLOT( theSkyMessage() ) );
     }
 
+    logger.logINFO("TelescopeCli::TelescopeCli: Connecting to handset through /dev/ttyUSB");
     handset = new myRS232( "/dev/ttyUSB0", 57600 );
     handset_fd = handset->open_RS232();
     if( handset_fd > 0 ) {
@@ -121,7 +123,7 @@ void TelescopeCli::disconnectFromServer( void )
  * changeLocation
  */
 void TelescopeCli::showData(const int type,  OUC::TelescopeData *data ) {
-	//qDebug() << "TelescopeCli::showData type=" << type << " data=" << data->currentPos.RA;
+	//logger.logFINE() << "TelescopeCli::showData type=" << type << " data=" << data->currentPos.RA;
 
 	QString info;
 
@@ -206,6 +208,8 @@ void TelescopeCli::showData(const int type,  OUC::TelescopeData *data ) {
         //error happended in the controller.
         info = QString("<font color='red'>Not Connected</font>");
         ui->statusLabel->setText( info );
+
+        //should emit the reconnect signal to the auto-reconnect thread
     }
 
 }
@@ -220,7 +224,7 @@ void TelescopeCli::showData( const QString & data ) {
     QString info;
     int i = 0;
     str = data.section( '\n', i, i );
-	qDebug() << "showData: str=" << str;
+	logger.logFINE("showData: str=%s", str.toStdString().c_str()) ;
     do {
         if( str.contains("LT  =") ) {
             info = str.section( "|", 1, 1 );
@@ -339,37 +343,37 @@ void TelescopeCli::theSkyMessage( void )
         QString answer;
         request = tr( buffer );
         answer.clear();
-        qDebug(" commands arrived from theSkySix: (%s)", buffer);
+        logger.logFINE(" commands arrived from theSkySix: (%s)", buffer);
 
         if( request.contains("GR#") ) {
 			char buffer2[256];
-            qDebug( "[TelescopeCli::theSkyMessage] GR# Get Telescope RA (%s)", buffer );
+            logger.logFINE( "[TelescopeCli::theSkyMessage] GR# Get Telescope RA (%s)", buffer );
             /** Send answer to The Sky */
             /* answer.append( ui->telRALineEdit->text().toAscii() ); */
 	   		//answer.append("06:18:10");
 			controller->getCurrentPositionRA(buffer2, 256);
-			//qDebug() << "<<<<<<<<<<<<<<<<<" << buffer2;
+			//logger.logFINE() << "<<<<<<<<<<<<<<<<<" << buffer2;
 			answer.append(tr(buffer2));
             answer.append("#");
             answer.remove( QRegExp(" ") );
-            qDebug() <<  "[TelescopeCli::theSkyMessage] GR# Response RA " << answer;
+            logger.logFINE("[TelescopeCli::theSkyMessage] GR# Response RA %s", answer.toStdString().c_str());
             thesky->write_RS232( answer.toAscii(), answer.length() );
 
         } else if( request.contains("GD#") ) {
 			char buffer2[256];
-            qDebug( "[TelescopeCli::theSkyMessage] GD# Get Telescope Dec (%s)", buffer );
+            logger.logFINE( "[TelescopeCli::theSkyMessage] GD# Get Telescope Dec (%s)", buffer );
             /** Send answer to The Sky */
             //answer.append( ui->telDecLineEdit->text().toAscii() );
 			controller->getCurrentPositionDec(buffer2, 256);
-			//qDebug() << "<<<<<<<<<<<<<<<<<" << buffer2;
+			//logger.logFINE() << "<<<<<<<<<<<<<<<<<" << buffer2;
 	    	//answer.append("-44:09:00");
 			answer.append(tr(buffer2));
             answer.append("#");
             answer.remove( QRegExp(" ") );
-            qDebug() <<  "[TelescopeCli::theSkyMessage] GD# Response Dec " <<  answer;
+            logger.logFINE("[TelescopeCli::theSkyMessage] GD# Response Dec %s", answer.toStdString().c_str());
             thesky->write_RS232( answer.toAscii(), answer.length() );
         } else if( request.contains("Q#") ) {
-            qDebug( "[TelescopeCli::theSkyMessage] Q# Halt all current slewing (%s)", buffer );
+            logger.logFINE( "[TelescopeCli::theSkyMessage] Q# Halt all current slewing (%s)", buffer );
             /** Send answer to The Sky */
             //Returns nothing
             //answer.append("0#");
@@ -383,8 +387,8 @@ void TelescopeCli::theSkyMessage( void )
                 arguments.append( & buffer[3] );
                 arguments.remove( QRegExp(" ") );
                 arguments.remove( QRegExp("#") );
+                logger.logINFO("[TelescoeCli::theSkyMessage] Sr# Set target ra: %s", arguments.toStdString().c_str()); //.toLatin1();
 				controller->setTargetPositionRA(arguments.toStdString().c_str());
-                qDebug() << "[TelescoeCli::theSkyMessage] Sr# Set target ra: " << arguments; //.toLatin1();
             }
             /** Send answer to The Sky */
             answer.append("1#");    //RA Accepted
@@ -398,8 +402,8 @@ void TelescopeCli::theSkyMessage( void )
                 arguments.append( & buffer[3] );
                 arguments.remove( QRegExp(" ") );
                 arguments.remove( QRegExp("#") );
+                logger.logINFO("[TelescopeCli::theSkyMessage] Sd# Set target dec: %s", arguments.toStdString().c_str()); //.toLatin1();
 				controller->setTargetPositionDec(arguments.toStdString().c_str());
-                qDebug() << "[TelescopeCli::theSkyMessage] Sd# Set target dec: " << arguments; //.toLatin1();
             }
             /** Send answer to The Sky */
             answer.append("1#");    //Dec accepted
@@ -408,7 +412,7 @@ void TelescopeCli::theSkyMessage( void )
             if( arguments.length() > 0 ) {
                 arguments.insert( 0, "set_target?");
             }
-            qDebug() << "[TelescopeCli::theSkyMessage] MS# Slew to target: " << arguments;
+            logger.logFINE("[TelescopeCli::theSkyMessage] MS# Slew to target %s: ",arguments.toStdString().c_str());
             /** Send data to server */
             //command_tread.requestNewConnetion( ui->hostLineEdit->text(),
             //               ui->portLineEdit->text().toInt(), arguments );
@@ -419,7 +423,7 @@ void TelescopeCli::theSkyMessage( void )
             answer.append("0#");    //Slew is possible
             thesky->write_RS232( answer.toAscii(), answer.length() );
         } else {
-            qDebug( "[TelescopeCli::theSkyMessage] Message %s", buffer );
+            logger.logFINE( "[TelescopeCli::theSkyMessage] Message %s", buffer );
         }
     }
 
@@ -439,7 +443,7 @@ void TelescopeCli::handsetMessage( void )
     }
     if( buffer[rx_bytes-1] == '#' ) {
         rx_bytes = 0;
-        //qDebug( "[TelescopeCli::handsetMessage] %s", buffer );
+        //logger.logFINE( "[TelescopeCli::handsetMessage] %s", buffer );
 
         QString request;
         QString page;
@@ -448,7 +452,7 @@ void TelescopeCli::handsetMessage( void )
         page.clear();
         answer.clear();
         if( request.contains(":Sw") ) {
-            qDebug( "[TelescopeCli::handsetMessage] Select slewing rate...(%s)", buffer );
+            logger.logFINE( "[TelescopeCli::handsetMessage] Select slewing rate...(%s)", buffer );
             slewing_rate.clear();
             if( request.contains("S#") ) {
                 slewing_rate = tr( "rate=S" );
@@ -461,51 +465,51 @@ void TelescopeCli::handsetMessage( void )
             } else if( request.contains("0#") ) {
                 slewing_rate = tr( "rate=0" );
             }
-            qDebug() << "[TelescopeCli::handsetMessage] Slewing rate: " << slewing_rate;
+            logger.logFINE("[TelescopeCli::handsetMessage] Slewing rate: %s", slewing_rate.toStdString().c_str());
         } else if( request.contains(":M") ) {
             page.clear();
-            qDebug( "[TelescopeCli::handsetMessage] Start slewing to... (%s)", buffer );
+            logger.logFINE( "[TelescopeCli::handsetMessage] Start slewing to... (%s)", buffer );
             if( ! slewing_rate.contains( "rate=0" ) && slewing_rate.length() > 0 ) {
                 page = tr( "start_slewing?" );
                 page.append( slewing_rate );
                 if( request.contains("n#") ) {
-                    qDebug() << "[TelescopeCli::handsetMessage] N";
+                    logger.logFINE("[TelescopeCli::handsetMessage] N");
                     page.append( "&dir=n" );
                 } else if( request.contains("s#") ) {
-                    qDebug() << "[TelescopeCli::handsetMessage] S";
+                    logger.logFINE("[TelescopeCli::handsetMessage] S");
                     page.append( "&dir=s" );
                 } else if( request.contains("e#") ) {
-                    qDebug() << "[TelescopeCli::handsetMessage] E";
+                    logger.logFINE("[TelescopeCli::handsetMessage] E");
                     page.append( "&dir=e" );
                 } else if( request.contains("w#") ) {
-                    qDebug() << "[TelescopeCli::handsetMessage] W";
+                    logger.logFINE("[TelescopeCli::handsetMessage] W");
                     page.append( "&dir=w" );
                 }
                 /** Send data to server */
                 //command_tread.requestNewConnetion( ui->hostLineEdit->text(),
                 //           ui->portLineEdit->text().toInt(), page );
             }
-            qDebug() << "[TelescopeCli::handsetMessage] " << page;
+            logger.logFINE("[TelescopeCli::handsetMessage] %s", page.toStdString().c_str());
         } else if( request.contains(":Q") ) {
             page.clear();
-            qDebug( "[TelescopeCli::handsetMessage] Stop slewing to... (%s)", buffer );
+            logger.logFINE( "[TelescopeCli::handsetMessage] Stop slewing to... (%s)", buffer );
             page = tr( "stop_slewing" );
             if( request.contains("n#") ) {
                 page.append( "?dir=n" );
-                 qDebug() << "[TelescopeCli::handsetMessage] N";
+                 logger.logFINE("[TelescopeCli::handsetMessage] N");
             } else if( request.contains("s#") ) {
                 page.append( "?dir=s" );
-                 qDebug() << "[TelescopeCli::handsetMessage] S";
+                 logger.logFINE("[TelescopeCli::handsetMessage] S");
             } else if( request.contains("e#") ) {
                 page.append( "?dir=e" );
-                 qDebug() << "[TelescopeCli::handsetMessage] E";
+                 logger.logFINE("[TelescopeCli::handsetMessage] E");
             } else if( request.contains("w#") ) {
                 page.append( "?dir=w" );
-                 qDebug() << "[TelescopeCli::handsetMessage] W";
+                 logger.logFINE("[TelescopeCli::handsetMessage] W");
             } 
             //command_tread.requestNewConnetion( ui->hostLineEdit->text(),
             //               ui->portLineEdit->text().toInt(), page );
-            qDebug() << "[TelescopeCli::handsetMessage] " << page;
+            logger.logFINE("[TelescopeCli::handsetMessage] %s", page.toStdString().c_str());
         }
     }
 }
@@ -515,7 +519,7 @@ void TelescopeCli::handsetMessage( void )
  */
 //void TelescopeCli::informationMessage( QString message )
 //{
-//    qDebug( "[TelescopeCli::informationMessage] New data" );
+//    logger.logFINE( "[TelescopeCli::informationMessage] New data" );
 //
 //    if( m_thesky_waitanswer ) {
 //        m_thesky_waitanswer = false;
@@ -528,8 +532,8 @@ void TelescopeCli::handsetMessage( void )
 //        else
 //            ui->infoLabel->setText(tr("Escape"));
 //    } else {
-//        qDebug() << message.toLatin1();
+//        logger.logFINE() << message.toLatin1();
 //    }
 //    //command_tread.wakeUp();
-//    qDebug( "[TelescopeCli::informationMessage] Good bye!" );
+//    logger.logFINE( "[TelescopeCli::informationMessage] Good bye!" );
 //}

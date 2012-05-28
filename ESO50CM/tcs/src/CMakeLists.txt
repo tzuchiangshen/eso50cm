@@ -2,9 +2,9 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 #project name
 PROJECT(LCUCONTROL)
+SET(CMAKE_CXX_FLAGS "-lpthread -fpermissive")
 
 #introot definition
-SET(CMAKE_CXX_FLAGS "-lpthread -fpermissive")
 SET(INTROOT $ENV{INTROOT})
 IF(NOT INTROOT)
    SET(INTROOT $ENV{SWROOT})
@@ -70,49 +70,42 @@ ENDIF(NOT LCU)
 INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/")
 INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/../include")
 INCLUDE_DIRECTORIES("${INTROOT}/include")
+INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/../../Logger/include")
 
 #for ../bin/LCUControl executable 
 LINK_DIRECTORIES(${INTROOT}/lib)
 IF(NOT LCU)
    ADD_EXECUTABLE(LCUControl LCUControl)
-   TARGET_LINK_LIBRARIES(LCUControl myLCU LCUImpl Ice )
+   TARGET_LINK_LIBRARIES(LCUControl myLCU LCUImpl LoggerCore Ice IceUtil)
 ELSE(NOT LCU)
    ADD_EXECUTABLE(LCUControl LCUControl)
-   TARGET_LINK_LIBRARIES(LCUControl myLCU LCUImpl IceE)
+   TARGET_LINK_LIBRARIES(LCUControl myLCU LCUImpl LoggerCore IceE)
 ENDIF(NOT LCU)
 set_property(TARGET LCUControl PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
 
 #for CXX client of LCUControl
-#LINK_DIRECTORIES(${INTROOT}/lib)
+LINK_DIRECTORIES(${INTROOT}/lib)
 IF(NOT LCU)
    ADD_EXECUTABLE(ClientCXX Client)
-   TARGET_LINK_LIBRARIES(ClientCXX LCUImpl Ice IceUtil)
+   TARGET_LINK_LIBRARIES(ClientCXX LCUImpl LoggerCore Ice IceUtil)
 ELSE(NOT LCU)
    ADD_EXECUTABLE(ClientCXX Client)
-   TARGET_LINK_LIBRARIES(ClientCXX LCUImpl IceE)
+   find_package (Threads)
+   TARGET_LINK_LIBRARIES(ClientCXX LCUImpl LoggerCore IceE ${CMAKE_THREAD_LIBS_INIT})
 ENDIF(NOT LCU)
 set_property(TARGET ClientCXX PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
 
 #for telescope61 executable
 LINK_DIRECTORIES(${INTROOT}/lib)
-IF(NOT LCU)
-   ADD_EXECUTABLE(telescope61 telescope61 common rs232 semaphore main)
-   TARGET_LINK_LIBRARIES(telescope61 LoggerCore Ice IceUtil)
-ELSE(NOT LCU)
-   ADD_EXECUTABLE(telescope61 telescope61 common rs232 semaphore main)
-   TARGET_LINK_LIBRARIES(telescope61 LoggerCore IceE)
-ENDIF(NOT LCU)
+ADD_EXECUTABLE(telescope61 telescope61 common rs232 semaphore main)
 set_property(TARGET telescope61 PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
 
 #for telescope61_sim executable
-LINK_DIRECTORIES(${INTROOT}/lib)
-IF(NOT LCU)
-   ADD_EXECUTABLE(telescope61_sim telescope61_sim common rs232 semaphore main_sim)
-   TARGET_LINK_LIBRARIES(telescope61_sim LoggerCore Ice IceUtil)
-ELSE(NOT LCU)
-   ADD_EXECUTABLE(telescope61_sim telescope61_sim common rs232 semaphore main_sim)
-   TARGET_LINK_LIBRARIES(telescope61_sim LoggerCore IceE)
-ENDIF(NOT LCU)
+ADD_EXECUTABLE(telescope61_sim telescope61_sim common rs232 semaphore main_sim)
+find_package (Threads)
+MESSAGE("CMAKE_THREAD_LIBS_INIT= ${CMAKE_THREAD_LIBS_INIT}")
+target_link_libraries (telescope61_sim ${CMAKE_THREAD_LIBS_INIT})
+#set_target_properties(telescope61_sim PROPERTIES COMPILE_FLAGS "-lpthread")
 set_property(TARGET telescope61_sim PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
 
 
@@ -168,9 +161,36 @@ IF(NOT LCU)
       FILES ${PROJECT_SOURCE_DIR}/AstroUtil.py DESTINATION lib/python/site-packages
    )
    INSTALL(
+      FILES ${PROJECT_SOURCE_DIR}/DeviceManager.py DESTINATION lib/python/site-packages
+   )
+   INSTALL(
       FILES ${PROJECT_SOURCE_DIR}/Client-lcu.py DESTINATION bin
    )
- INSTALL(
+   INSTALL(
+      FILES ${PROJECT_SOURCE_DIR}/get_position.py DESTINATION bin
+      PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
+   )
+   INSTALL(
+      FILES ${PROJECT_SOURCE_DIR}/offset_telescope.py DESTINATION bin
+      PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
+   )
+   INSTALL(
+      FILES ${PROJECT_SOURCE_DIR}/read_encoders.py DESTINATION bin
+      PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
+   )
+   INSTALL(
+      FILES ${PROJECT_SOURCE_DIR}/read_motors_encoders.py DESTINATION bin
+      PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
+   )
+   INSTALL(
+      FILES ${PROJECT_SOURCE_DIR}/set_tracking.py DESTINATION bin
+      PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
+   )
+   INSTALL(
+      FILES ${PROJECT_SOURCE_DIR}/stop_telescope.py DESTINATION bin
+      PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
+   )
+   INSTALL(
       FILES ${PROJECT_SOURCE_DIR}/Client-position.py DESTINATION bin
    )
 ENDIF(NOT LCU)

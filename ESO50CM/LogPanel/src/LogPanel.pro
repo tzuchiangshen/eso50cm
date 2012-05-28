@@ -1,12 +1,18 @@
-# -------------------------------------------------
-# Project created by QtCreator 2012-01-27T00:19:14
-# -------------------------------------------------
+#-------------------------------------------------
+#
+# Project created by QtCreator 2011-07-11T22:33:28
+#
+#-------------------------------------------------
+
 TARGET = LogPanel
 TEMPLATE = app
-INCLUDEPATH += /eso50cm/SWROOT/include
-SOURCES += main.cpp \
-    logpanel.cpp \
-    messagetablemodel.cpp
-HEADERS += logpanel.h \
-    messagetablemodel.h
-FORMS += logpanel.ui
+
+
+SOURCES += main.cpp\
+        mainwindow.cpp
+
+HEADERS  += mainwindow.h\
+            /eso50cm/SWROOT/include/dbstuff.h\  
+            /eso50cm/SWROOT/include/Logger.h 
+
+FORMS    += mainwindow.ui

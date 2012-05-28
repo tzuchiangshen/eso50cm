@@ -19,7 +19,7 @@ LCUAdapter.Endpoints=tcp -h 192.168.0.10 -p 10000
 #
 # Warn about connection exceptions
 #
-Ice.Warn.Connections=1
+Ice.Warn.Connections=0
 
 #
 # Network Tracing
@@ -29,7 +29,7 @@ Ice.Warn.Connections=1
 # 2 = like 1, but more detailed
 # 3 = like 2, but also trace data transfer
 #
-Ice.Trace.Network=3
+Ice.Trace.Network=0
 
 #
 # Protocol Tracing
@@ -37,4 +37,12 @@ Ice.Trace.Network=3
 # 0 = no protocol tracing
 # 1 = trace protocol messages
 #
-Ice.Trace.Protocol=1
+Ice.Trace.Protocol=0
+
+Ice.ThreadPool.Server.Size = 5
+Ice.ThreadPool.Server.SizeMax = 10
+Ice.ThreadPool.Server.SizeWarn = 7
+
+#Ice.ThreadPool.Client.Size = 5
+#Ice.ThreadPool.Client.SizeMax = 10
+#Ice.ThreadPool.Client.SizeWarn = 7

@@ -109,7 +109,7 @@ int main( int argc, char* const argv[] ) {
     speed_t baudrate;
     char * module_dir;
     char * socket_path;
-    int daemonize = 0;
+    int daemonize = -1;
 
     // Setup signal handling before we start
     signal(SIGHUP, signal_handler);
@@ -272,44 +272,44 @@ int main( int argc, char* const argv[] ) {
     /* Our process ID and Session ID */
     pid_t pid, sid;
  
-    if (daemonize) {
-        syslog(LOG_INFO, "starting the daemonizing process");
- 
-        /* Fork off the parent process */
-        pid = fork();
-        if (pid < 0) {
-            exit(EXIT_FAILURE);
-        }
-        /* If we got a good PID, then
-           we can exit the parent process. */
-        if (pid > 0) {
-            /* parent process */ 
-            /* syslog(LOG_INFO, "fork() finished successfully, exit parent process!"); */
-            exit(EXIT_SUCCESS);
-        }
- 
-        /* Change the file mode mask */
-        umask(0);
- 
-        /* Create a new SID for the child process */
-        sid = setsid();
-        if (sid < 0) {
-            /* Log the failure */
-            exit(EXIT_FAILURE);
-        }
- 
-        /* Change the current working directory */
-        if ((chdir("/")) < 0) {
-            /* Log the failure */
-            exit(EXIT_FAILURE);
-        }
- 
-        /* Close out the standard file descriptors */
-        close(STDIN_FILENO);
-        close(STDOUT_FILENO);
-        close(STDERR_FILENO);
-    }
- 
+//    if (daemonize) {
+//        syslog(LOG_INFO, "starting the daemonizing process");
+// 
+//        /* Fork off the parent process */
+//        pid = fork();
+//        if (pid < 0) {
+//            exit(EXIT_FAILURE);
+//        }
+//        /* If we got a good PID, then
+//           we can exit the parent process. */
+//        if (pid > 0) {
+//            /* parent process */ 
+//            /* syslog(LOG_INFO, "fork() finished successfully, exit parent process!"); */
+//            exit(EXIT_SUCCESS);
+//        }
+// 
+//        /* Change the file mode mask */
+//        umask(0);
+// 
+//        /* Create a new SID for the child process */
+//        sid = setsid();
+//        if (sid < 0) {
+//            /* Log the failure */
+//            exit(EXIT_FAILURE);
+//        }
+// 
+//        /* Change the current working directory */
+//        if ((chdir("/")) < 0) {
+//            /* Log the failure */
+//            exit(EXIT_FAILURE);
+//        }
+// 
+//        /* Close out the standard file descriptors */
+//        close(STDIN_FILENO);
+//        close(STDOUT_FILENO);
+//        close(STDERR_FILENO);
+//    }
+// 
     //****************************************************
     // TODO: Insert core of your daemon processing here
     //****************************************************
@@ -324,7 +324,6 @@ int main( int argc, char* const argv[] ) {
 //    }
 
     telescope_run( device, baudrate, socket_path );
-
  
     syslog(LOG_INFO, "%s daemon exiting", DAEMON_NAME);
     //****************************************************

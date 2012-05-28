@@ -35,7 +35,7 @@ using namespace std;
 class myLCU
 {
     public:
-         myLCU(void );
+         myLCU(LoggerHelper *logLCUImpl);
         ~myLCU( void );
 
         int waitSemaphore( void );
@@ -67,7 +67,8 @@ class myLCU
         struct shmid_ds         m_shmbuffer;
         struct tm               m_LCU_Time;
         struct tm               m_LCU_UniversalTime;
-	LoggerHelper            logger;
+
+	LoggerHelper            *logger;
 };
 
 #endif //MYTCS_H
