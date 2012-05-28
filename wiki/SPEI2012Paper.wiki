@@ -27,8 +27,8 @@ In the following table relevant hardware are highlighted
 == Key frameworks == 
 *Summary of the selected technologies*
 
-  * ARM Simulation: virtualization, VirtualBox, QEMU  
-  * GUI: QT4
+
+
 
 
 
@@ -41,9 +41,9 @@ The source code are hosted at Google code [xx] repository, an simple but useful 
 
 Regarding to the build and deployment system, we choose Cmake to compile each modules, together with the home made deployment tools a clean build can be created and deploy as easy as one command line. Cmake fulfills perfectly our needs to compile C++, Java and Python, specially it is expressive enough to define dependencies and invokes external code generation tools provided by ICE and QT. 
 
-In order to be efficient in the GUI development, QT was chosen as the main framework. The signal/slot mechanism and the use of MVC pattern really help us to reach high consistency and low coupling among our code. 
+In order to be efficient in the GUI development, QT was chosen as the main framework. The signal/slot mechanism and the use of MVC pattern really help us to reach high consistency and low coupling among our code. *talk about QT designer and QT creator*
 
-
+**ARM Simulation: virtualization, VirtualBox, QEMU**  
 
 == Logging Services == 
 (Johnny) 
