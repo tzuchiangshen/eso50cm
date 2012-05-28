@@ -119,10 +119,9 @@ interface LCU
  
 
 = References = 
-[1] ICE: http://www.zeroc.com/ice.html
-[2] S. Shumko, "Ice middleware in the New Solar Telescope’s Telescope
-Control System", ADASS XVII, 2008
-[3] J.C. Guzman, "Preliminary Design of the Australian SKA PathFinder  Telescope Control System", ICALEPCS 2009, Kobe, Japan
-[2] paper del PUCHEROS
-[3] VLT Software Design 
-[4] Department of Astro-Engineering at UC 
+  * [1] referencia a Astro-ingenieria o el Observatorio UC
+  * [2] ICE: http://www.zeroc.com/ice.html
+  * [3] S. Shumko, "Ice middleware in the New Solar Telescope’s Telescope Control System", ADASS XVII, 2008
+  * [4] J.C. Guzman, "Preliminary Design of the Australian SKA PathFinder  Telescope Control System", ICALEPCS 2009, Kobe, Japan
+  * [5] referencia a un paper del PUCHEROS
+  * [6] VLT Software Design 
