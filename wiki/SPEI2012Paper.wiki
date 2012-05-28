@@ -16,7 +16,7 @@ Brief summary Santa Martina Observatory and the role that ESO50cm plays within i
 The ESO50cm is a equatorial mount telescope, manufactured by the end of 80ths. *...*
 </font>
 
-After the hardware refurbish, the telescope comprises of 3 encoders per motor in each axis. two of them are absolute encoders and one located in the worm is relative one. A low level PIC controller was created in order to read and interpret the encoders' gray code and to generate the PWM signal to drive the motors. The embedded PIC controller is controlled by another single board computer, together they form the Telescope Local Control Unit (LCU). One CCD camera is attached to the telescope with focus adjustment and the same light is split and redirected to the PUCHERO [2], an spectrograph designed by the Department of Astro-Engineering [3]
+After the hardware refurbish, the telescope comprises of 3 encoders per motor in each axis. two of them are absolute encoders and one located in the worm is relative one. A low level PIC controller was created in order to read and interpret the encoders' gray code and to generate the PWM signal to drive the motors. The embedded PIC controller is controlled by another single board computer, together they form the Telescope Local Control Unit (LCU). One CCD camera is attached to the telescope with focus adjustment and the same light is split and redirected to the PUCHERO `[2]`, an spectrograph designed by the Department of Astro-Engineering [3]
 
 In the following table relevant hardware are highlighted 
   * Equatorial mount telescope, 2 direct motors, 6 encoders (3 per axis)
