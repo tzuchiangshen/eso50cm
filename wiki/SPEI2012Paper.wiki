@@ -38,9 +38,10 @@ In the design of the control software for the telescope, the following base requ
 After reviewing frameworks dominate in the astronomical software, such as ACS, TANGO, EPICS, ICE [2],[3]. The Internet Communication Engine (ICE) [1] framework was selected, not only because it fulfills the aforementioned requirements but also provides 1) support of distributed programming environment 2)binding to C++,.NET, Java, Python, Objective-C, Ruby, PHP programming languages, 3) mature and has reasonable size of community, 4) open source LGPL license and finally 4) lightweight and suitable for a small development team.
 
 
-== Logging Services == (Johnny) 
+== Logging Services == 
+(Johnny) 
   
-http://eso50cm.googlecode.com/files/logging-services-class-diagram.png
+
 
 == Subsystems == 
 
