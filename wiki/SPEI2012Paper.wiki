@@ -35,10 +35,12 @@ In the following table relevant hardware are highlighted
 
 In the design of the control software for the telescope, the following base requirements were defined: 1) loosely coupled at subsystem level 2)be able to expose API to modern and mature programming languages, hopefully scripting languages and 3) allow incremental way to introduce new features or subsystems. 
 
-After reviewing reports presented at [3],[4],[5] (papers de tanaka, etc). The Internet Communication Engine (ICE) [1] framework was selected, not only because it fulfills the aforementioned requirements but also provides 1) support of distributed programming environment 2)binding to C++,.NET, Java, Python, Objective-C, Ruby, PHP programming languages, 3) mature and has reasonable size of community, 4) open source LGPL license and finally 4) lightweight and suitable for a small development team.
+After reviewing frameworks dominate in the astronomical software, such as ACS, TANGO, EPICS, ICE [2],[3]. The Internet Communication Engine (ICE) [1] framework was selected, not only because it fulfills the aforementioned requirements but also provides 1) support of distributed programming environment 2)binding to C++,.NET, Java, Python, Objective-C, Ruby, PHP programming languages, 3) mature and has reasonable size of community, 4) open source LGPL license and finally 4) lightweight and suitable for a small development team.
 
 
 == Logging Services == (Johnny) 
+  
+http://eso50cm.googlecode.com/files/logging-services-class-diagram.png
 
 == Subsystems == 
 
@@ -108,6 +110,9 @@ interface LCU
 
 = References = 
 [1] ICE: http://www.zeroc.com/ice.html
+[2] S. Shumko, "Ice middleware in the New Solar Telescope’s Telescope
+Control System", ADASS XVII, 2008
+[3] J.C. Guzman, "Preliminary Design of the Australian SKA PathFinder  Telescope Control System", ICALEPCS 2009, Kobe, Japan
 [2] paper del PUCHEROS
 [3] VLT Software Design 
 [4] Department of Astro-Engineering at UC 
