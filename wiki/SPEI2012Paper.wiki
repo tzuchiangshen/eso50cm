@@ -12,7 +12,9 @@ Brief summary Santa Martina Observatory and the role that ESO50cm plays within i
 
 = ESO50cm  telescope = 
 
-The ESO50cm is a equatorial mount telescope, manufactured by the end of 80ths.  *blablabla*
+<font color=red>
+The ESO50cm is a equatorial mount telescope, manufactured by the end of 80ths. *...*
+</font>
 
 After the hardware refurbish, the telescope comprises of 3 encoders per motor in each axis. two of them are absolute encoders and one located in the worm is relative one. A low level PIC controller was created in order to read and interpret the encoders' gray code and to generate the PWM signal to drive the motors. The embedded PIC controller is controlled by another single board computer, together they form the Telescope Local Control Unit (LCU). One CCD camera is attached to the telescope with focus adjustment and the same light is split and redirected to the PUCHERO [2], an spectrograph designed by the Department of Astro-Engineering [3]
 
@@ -27,12 +29,6 @@ In the following table relevant hardware are highlighted
 == Key frameworks == 
 *Summary of the selected technologies*
 
-
-
-
-
-
-
 In the design of the control software for the telescope, the following base requirements were defined: 1) loosely coupled at subsystem level 2)be able to expose API to modern and mature programming languages, hopefully scripting languages and 3) allow incremental way to introduce new features or subsystems. 
 
 After reviewing frameworks dominate in the astronomical software, such as ACS, TANGO, EPICS, ICE [2],[3]. The Internet Communication Engine (ICE) [1] framework was selected, not only because it fulfills the aforementioned requirements but also provides 1) support of distributed programming environment 2)binding to C++,.NET, Java, Python, Objective-C, Ruby, PHP programming languages, 3) mature and has reasonable size of community, 4) open source LGPL license and finally 4) lightweight and suitable for a small development team.
@@ -43,13 +39,17 @@ Regarding to the build and deployment system, we choose Cmake to compile each mo
 
 In order to be efficient in the GUI development, QT was chosen as the main framework. The signal/slot mechanism and the use of MVC pattern really help us to reach high consistency and low coupling among our code. *talk about QT designer and QT creator*
 
-**ARM Simulation: virtualization, VirtualBox, QEMU**  
+<font color=red>
+**ARM Simulation**
+  * virtualization, VirtualBox, QEMU**  
+</font>
 
 == Logging Services == 
+<font color=red>
 (Johnny) 
-
   * pub/sub mechanism
   * persistence plugins (mysql, text)
+</font>
 
 == Subsystems == 
 On top of the framework, a classical software architecture for telescope was chosen. It comprises a Telecope Control Subsystem (TCS), a Detector Control Subsystem (DCS), an Instrument Control Subsystem (ICS) and finally an Observation Coordination Subsystem (OCS) which coordinates the high level logic of an astronomical observation. 
@@ -99,12 +99,13 @@ interface LCU
 
 }}}
 
+<font color=red>
 
   * telescope61 (Ruben) telescope61-sim (Tzu)
     * share memory 
     * communication with hardware 
   * ObsControl, TcsGui, qths  (MVC)
-
+</font>
 = Future Challenges = 
   * Integration of CCD, Auto guiding 
   * Interface to Labviw for hardware control 
