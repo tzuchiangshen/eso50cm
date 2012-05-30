@@ -46,7 +46,13 @@ Regarding to the build system system, we choose CMake [xx], a cross platform bui
 
 In order to be efficient in the GUI development, QT was chosen as the main framework. The signal/slot mechanism and the use of MVC pattern really help us to reach the high consistency and low coupling paradigm among our code. *talk about QT designer and QT creator*
 
-To reduce testing time with the telescope, developers count on simulator to make progress, a telescope simulator was created by using QEMU, which provides support for ARM platform. In order to provide a common and clean development environment, virtual machine are created by using VirtualBox. 
+To reduce testing time with the telescope, developers count on simulator to make progress, a telescope simulator was created by using QEMU, which provides support for ARM platform. In order to provide a common and clean development environment, virtual machines equivalent to the run time are created by using VirtualBox. 
+
+In the following table we summarized the development and operation environment. 
+
+<font color="red"> 
+add a table
+</end> 
 
 == Logging Services == 
 <font color=red>
