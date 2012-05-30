@@ -52,7 +52,7 @@ In the following table we summarized the development and operation environment.
 
 <font color="red"> 
 add a table
-</end> 
+</font> 
 
 == Logging Services == 
 <font color=red>
