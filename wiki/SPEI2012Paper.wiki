@@ -38,18 +38,15 @@ In the following table relevant hardware are highlighted
 
 In the design of the control software for the telescope, the following base requirements were defined: 1) loosely coupled at subsystem level 2)be able to expose API to modern and mature programming languages, hopefully scripting languages and 3) allow incremental way to introduce new features or subsystems. 
 
-After reviewing frameworks dominate in the astronomical software, such as ACS, TANGO, EPICS, ICE [2],[3]. The Internet Communication Engine (ICE) [1] framework was selected, not only because it fulfills the aforementioned requirements but also provides 1) support of distributed programming environment 2)binding to C++,.NET, Java, Python, Objective-C, Ruby, PHP programming languages, 3) mature and has reasonable size of community, 4) open source LGPL license and finally 4) lightweight and suitable for a small development team.
+After reviewing frameworks dominate in the astronomical software, such as ACS, VLT, TANGO, EPICS, ICE [2],[3]. The Internet Communication Engine (ICE) [1] framework was selected, not only because it fulfills the aforementioned requirements but also provides 1) support of distributed programming environment 2)binding to C++,.NET, Java, Python, Objective-C, Ruby, PHP programming languages, 3) mature and has reasonable size of community, 4) open source LGPL license and finally 4)lightweight and suitable for a small development team. This last point really make other framework forbidden for our team. The complexity of these frameworks are beyond our available resource. 
 
 The source code are hosted at Google code [xx] repository, an simple but useful web application to host open source projects, with handy tools to generate documentations, release a new version of binaries, software version control, and source code browsing etc. SVN was selected as the official version control tool for this project.
 
-Regarding to the build and deployment system, we choose Cmake to compile each modules, together with the home made deployment tools a clean build can be created and deploy as easy as one command line. Cmake fulfills perfectly our needs to compile C++, Java and Python, specially it is expressive enough to define dependencies and invokes external code generation tools provided by ICE and QT. 
+Regarding to the build system system, we choose CMake [xx], a cross platform build system. Together with other homemade scripting tools, a clean build can be generated and deployed in a simple way, achievable through one single command line. CMake fulfills perfectly our needs to compile C++, Java code in Windows, i386 and ARM platforms, and it also provides support for scripting languages. Commands in CMake is expressive enough to define dependencies and invokes external code generation tools provided by ICE and QT. 
 
-In order to be efficient in the GUI development, QT was chosen as the main framework. The signal/slot mechanism and the use of MVC pattern really help us to reach high consistency and low coupling among our code. *talk about QT designer and QT creator*
+In order to be efficient in the GUI development, QT was chosen as the main framework. The signal/slot mechanism and the use of MVC pattern really help us to reach the high consistency and low coupling paradigm among our code. *talk about QT designer and QT creator*
 
-<font color=red>
-**ARM Simulation**
-  * virtualization, VirtualBox, QEMU**  
-</font>
+To reduce testing time with the telescope, developers count on simulator to make progress, a telescope simulator was created by using QEMU, which provides support for ARM platform. In order to provide a common and clean development environment, virtual machine are created by using VirtualBox. 
 
 == Logging Services == 
 <font color=red>
