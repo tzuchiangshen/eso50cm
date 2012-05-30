@@ -52,7 +52,7 @@ In order to be efficient in the GUI development, QT was chosen as the main frame
 </font>
 
 == Subsystems == 
-On top of the framework, a classical software architecture for telescope was chosen. It comprises a Telecope Control Subsystem (TCS), a Detector Control Subsystem (DCS), an Instrument Control Subsystem (ICS) and finally an Observation Coordination Subsystem (OCS) which coordinates the high level logic of an astronomical observation. 
+On top of the framework, a classical software architecture for telescope was chosen. It comprises a Telescope Control Subsystem (TCS), a Detector Control Subsystem (DCS), an Instrument Control Subsystem (ICS) and finally an Observation Coordination Subsystem (OCS) which coordinates the high level logic of an astronomical observation. 
 
 http://eso50cm.googlecode.com/files/eso50cm%20control%20system.jpg
 
@@ -100,6 +100,8 @@ interface LCU
 }}}
 
 <font color=red>
+
+Telescope Control Subsystem (TCS)
 
   * telescope61 (Ruben) telescope61-sim (Tzu)
     * share memory 
