@@ -99,10 +99,13 @@ interface LCU
 
 }}}
 
-<font color=red>
+
 
 ===Telescope Control Subsystem (TCS)===
+The telescope control subsystem was designated to cover all related aspects to the the movement (axis) and sky positioning (tracking) of telescope hardware and provide the high level interface to communicate with the rest of the subsystem (ICS, DCS, etc).  
 
+
+<font color=red>
   * telescope61 (Ruben) telescope61-sim (Tzu)
     * share memory 
     * communication with hardware 
