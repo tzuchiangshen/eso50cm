@@ -103,11 +103,19 @@ interface LCU
 
 ===Telescope Control Subsystem (TCS)===
 The telescope control subsystem was designated to cover all related aspects to the the movement (axis) and sky positioning (tracking) of telescope hardware and provide the high level interface to communicate with the rest of the subsystem (ICS, DCS, etc). TCS is compound of two process which receive instruction from the high level user through the OCS and communicate with the hardware to execute those instructions. Additionally a third process was implemented to simulate operations to be performed by the hardware: 
-  * *lcuControl*: This process is in charge to receive the request from the high level users an . This is an ICE process therefore the communication with the high level 
-  * *telescope61*:   
-  * *telescope61-sim*:
+  * *lcuControl*: This process is in charge to collect the requests from the OCS and pass them to the hardware for the execution. This is a pure ICE process therefore the communication with the high level world is via TCP/IP by using ICE protocol. However, the communication with hardware is not direct since it sends the request to telescope61 process, which knows the hardware protocol to execute the instructions. Due to telescope61 is not an ICE process, the communication with lcuControl is through a shared memory which stores the requests and results of the hardware operations. Note that lcuControl and telescope61 runs under the same server (TS-7800)
+  * *telescope61*: This process collect the request from the shared memory and send the instructions to the PIC18F422 interface, which communicate with the hardware by using RS232 protocol. Once executed an instruction, the results are stored in the share memory where lcuControl take the response and analyze the results. 
+  * *telescope61-sim*:This process provide same functionality of telescope61 for reading request from the shared memory, however the commands are not passed to the hardware but software routines are implemented to emulate hardware behavior. It was implemented as a response to continue the development of high level applications without the restriction for accessing to the real hardware.
   
-   
+The following diagram show the interaction between TCS processes and the the other actors involved:
+
+
+
+===Observation Coordination System (OCS)===
+The OCS was designated as the coordinator between the different subsystems (TCS, ICS, DCS, etc). The astronomical observation is 100% controlled by this subsystem which is responsible to execute every instruction in a coherent way. This subsystem is compound by the main coordinator process and the high level interfaces which communicates the end users with the whole system:
+  * *obsControl*: This process contains the public interfaces to communicate with the rest of the subsystems. For example it contains methods to move, track, stop, apply offset to the telescope. Other subsystem also send request to this process and it is in charge to distribute to the correct subsystem. High level interfaces (GUIs) should communicate exclusively with this process. Only engineering interfaces are allowed to communicate directly with the subsystems. 
+  * *TcsGui*: 
+  * *qths* :  
 
 
 <font color=red>
