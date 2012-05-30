@@ -101,7 +101,7 @@ interface LCU
 
 <font color=red>
 
-Telescope Control Subsystem (TCS)
+===Telescope Control Subsystem (TCS)===
 
   * telescope61 (Ruben) telescope61-sim (Tzu)
     * share memory 
