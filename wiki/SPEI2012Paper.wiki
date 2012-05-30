@@ -1,7 +1,14 @@
 = Development of telescope control system for the 50cm telescope of the UC Santa Martina Observatory   = 
 
-= Abstract = 
-The main telescope of the UC Santa Martina Observatory is a 50cm optical telescope donated by ESO to Pontificia Univesidad Catolica de Chile. During the past years the telescope has been refurbished and used as the main facility for testing and validating new instruments under construction by the center of Astro-Engineering UC. As part of this work the need to develop a more efficient and flexible control system arises. The new distributed control system has been developed on top of Internet Communication Engine (ICE), a framework developed by Zeroc. The result of this work will be presented in this paper which shows ICE as a real alternative for CORBA and other de facto distribute programming framework.
+= Abstract 100 words = 
+
+The main telescope of the UC Santa Martina Observatory is a 50cm optical telescope donated by ESO to Pontificia Univesidad Catolica de Chile. During the past years the telescope has been refurbished and used as the main facility for testing and validating new instruments under construction by the center of Astro-Engineering UC. As part of this work the need to develop a more efficient and flexible control system arises. The new distributed control system has been developed on top of Internet Communication Engine (ICE), a framework developed by Zeroc. The result of this work shows ICE as a real alternative for CORBA and other de facto distribute programming framework.
+
+= Abstract 250 words = 
+
+The main telescope of the UC Santa Martina Observatory is a 50cm optical telescope donated by ESO to Pontificia Univesidad Catolica de Chile. During the past years the telescope has been refurbished and used as the main facility for testing and validating new instruments under construction by the center of Astro-Engineering UC. As part of this work the need to develop a more efficient and flexible control system arises. The new distributed control system has been developed on top of Internet Communication Engine (ICE),  a framework developed by Zeroc Inc. This framework features a lightweight but powerful and flexible inter-process communication infrastructure and provides binding to classic and modern programming languages, such as, c/c++, java, c#, ruby-rail, objective c, etc. The result of this work shows ICE as a real alternative for CORBA and other de-facto distribute programming framework. A classical control software architecture has been chosen and comprises an observation control system (OCS), the orchestrator of  the observation, which controls the telescope control system (TCS), and detector control system (DCS). The real-time control and monitoring system is deployed and running over ARM based single board computers. Other features such as logging and configuration services have been developed as well. Inter-operation with other main astronomical control frameworks are foreseen in order achieve a smooth integration of instruments when they will be integrated in the main observatories in the north of Chile
+
+
 
 = Introduction =
 
