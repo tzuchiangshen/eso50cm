@@ -51,9 +51,9 @@ To reduce testing time with the telescope, developers count on simulator to make
 In the following table we summarized the development and operation environment. 
 
 <font color="red"> 
-||Framwork|| Version
-||ICE || version 3.4
-||QT  || version 4.3
+||Framwork|| Version ||
+||ICE || version 3.4 ||
+||QT  || version 4.3 ||
 
 </font> 
 
