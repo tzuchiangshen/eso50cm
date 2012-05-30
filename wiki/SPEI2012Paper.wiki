@@ -109,7 +109,7 @@ The telescope control subsystem was designated to cover all related aspects to t
   
 The following diagram show the interaction between TCS processes and the the other actors involved:
 
-
+http://eso50cm.googlecode.com/files/interaction-sta-martina.png
 
 ===Observation Coordination System (OCS)===
 The OCS was designated as the coordinator between the different subsystems (TCS, ICS, DCS, etc). The astronomical observation is 100% controlled by this subsystem which is responsible to execute every instruction in a coherent way. This subsystem is compound by the main coordinator process and the high level interfaces which communicates the end users with the whole system:
