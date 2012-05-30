@@ -103,9 +103,10 @@ interface LCU
 
 ===Telescope Control Subsystem (TCS)===
 The telescope control subsystem was designated to cover all related aspects to the the movement (axis) and sky positioning (tracking) of telescope hardware and provide the high level interface to communicate with the rest of the subsystem (ICS, DCS, etc). TCS is compound of two process which receive instruction from the high level user through the OCS and communicate with the hardware to execute those instructions. Additionally a third process was implemented to simulate operations to be performed by the hardware: 
+  * *lcuControl*: This process is in charge to receive the request from the high level users an . This is an ICE process therefore the communication with the high level 
   * *telescope61*:   
   * *telescope61-sim*:
-  * *lcuControl*:
+  
    
 
 
