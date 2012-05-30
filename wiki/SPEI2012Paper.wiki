@@ -10,15 +10,15 @@ The main telescope of the UC Santa Martina Observatory is a 50cm optical telesco
 
 
 
-= Introduction =
-
+= Introduction = 
+*Pedro*
 Brief summary Santa Martina Observatory and the role that ESO50cm plays within it. 
 
   * Educational telescope
   * Instrument testing and validation (PUCHEROS)
 
 = ESO50cm  telescope = 
-
+*Pedro*
 <font color=red>
 The ESO50cm is a equatorial mount telescope, manufactured by the end of 80ths. *...*
 </font>
