@@ -66,10 +66,16 @@ In the following table we summarized the development and operation environment.
 = Observatory Software Architecture = 
 == ICE introduction ==
 
-  * Object Adapter 
+When a client sends an remote operation invocation to the server through the proxy, a endpoint has to be specified in the request. Using the endpoint information, the object adapter (in the server side) finds the proper servant and dispatches the call and eventually returns the results to the proxy, and then to the client which established the call.
+
+The process of associating a request via a proxy to the correct servant is known as binding. The figure xxx depicts a so called "direct binding", in which the transport endpoint is embedded in the proxy. Ice also supports an indirect binding mode, in which the correct transport endpoints are resolved by IceGrid service, an service independent to the client and its proxy. 
+
+A proxy contains the object identity information for the corresponding object implemented in a specific servant. The object identify is sent over the wire together with the invocation to the object adapter.  
 
 http://eso50cm.googlecode.com/files/ICE%20object%20adapter.png
 *image taken from the website of zeroc 
+
+To allow binding to multiple programming languages 
 
   * Slice
   * IceStorm 
