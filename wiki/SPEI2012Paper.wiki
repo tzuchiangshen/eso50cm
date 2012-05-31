@@ -58,6 +58,10 @@ In the following table we summarized the development and operation environment.
 ||Workstation: Ubuntu || 9.0 ||
 ||ARM: Debian ||6.0||
 ||Virtualbox/Oracle||  
+||Windows ||XP ||
+||TheSky6/Software Bisque|| 6.1||
+||Big6/ ||
+
 </font> 
 
 == Logging Services == 
