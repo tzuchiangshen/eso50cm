@@ -70,7 +70,7 @@ When a client sends an remote operation invocation to the server through the pro
 
 The process of associating a request via a proxy to the correct servant is known as binding. The figure xxx depicts a so called "direct binding", in which the transport endpoint is embedded in the proxy. Ice also supports an indirect binding mode, in which the correct transport endpoints are resolved by IceGrid service, an service independent to the client and its proxy. 
 
-A proxy contains the object identity information for the corresponding object implemented in a specific servant. The object identify is sent over the wire together with the invocation to the object adapter.  
+A proxy contains the object identity information for the corresponding object implemented in a specific servant. The object identify is sent over the wire together with the invocation to the object adapter. The correct binding or endpoint-servant resolution is guarantied since in ICE definition, no two object adapters can be bound to the same endpoint.
 
 http://eso50cm.googlecode.com/files/ICE%20object%20adapter.png
 *image taken from the website of zeroc 
