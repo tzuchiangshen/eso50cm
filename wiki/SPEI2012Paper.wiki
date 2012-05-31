@@ -31,9 +31,8 @@ In the following table relevant hardware are highlighted
   * PIC18F422
   * CCD BIG6
 
-= Software Architecture = 
 
-== Key frameworks == 
+= Key frameworks =
 *Summary of the selected technologies*
 
 In the design of the control software for the telescope, the following base requirements were defined: 1) loosely coupled at subsystem level 2)be able to expose API to modern and mature programming languages, hopefully scripting languages and 3) allow incremental way to introduce new features or subsystems. 
@@ -64,22 +63,32 @@ In the following table we summarized the development and operation environment.
 ||CCD || Big6/ ||
 
 </font> 
+= Observatory Software Architecture = 
+== ICE introduction ==
 
-== Logging Services == 
+  * Object Adapter 
+  * Slice
+  * IceStorm 
+
+== Common Services: Logging Services ==
 <font color=red>
 (Johnny) 
   * pub/sub mechanism
   * persistence plugins (mysql, text)
 </font>
 
-== Subsystems == 
+== Subsystem Design == 
+  * add a container/component diagram
+  * loosely coupled and subsystem isolation and engineering tools for testing 
+  * communication with hardware (drivers)
+
 On top of the framework, a classical software architecture for telescope was chosen. It comprises a Telescope Control Subsystem (TCS), a Detector Control Subsystem (DCS), an Instrument Control Subsystem (ICS) and finally an Observation Coordination Subsystem (OCS) which coordinates the high level logic of an astronomical observation. 
 
 http://eso50cm.googlecode.com/files/eso50cm%20control%20system.jpg
 
 At hardware related subsystems (TCS, ICS, DCS), proper drivers were developed according to the specific hardware. At the same time, the required functionality is exposed through ICE interface. 
 
-*add a container/component diagram*
+
 
 ICE provides the ICE Slice tool .... *talk about the slice, and show lcu.ice* 
 
@@ -134,15 +143,16 @@ http://eso50cm.googlecode.com/files/interaction-sta-martina2.png
 
 ===Observation Coordination System (OCS)===
 The OCS was designated as the coordinator between the different subsystems (TCS, ICS, DCS, etc). The astronomical observation is 100% controlled by this subsystem which is responsible to execute every instruction in a coherent way. This subsystem is compound by the main coordinator process and the high level interfaces which communicates the end users with the whole system:
-  * *obsControl*: This process contains the public interfaces to communicate with the rest of the subsystems. For example it contains methods to move, track, stop, apply offset to the telescope. Other subsystem also send request to this process and it is in charge to distribute to the correct subsystem. High level interfaces (GUIs) should communicate exclusively with this process. Only engineering interfaces are allowed to communicate directly with the subsystems. 
-  * *TcsGui*: 
-  * *qths* :  
+  * *obsControl*: This process contains the public interfaces to communicate with the rest of the subsystems. For example it contains methods to move, track, stop, apply offset to the telescope. Other subsystem also send request to this process and it is in charge to distribute to the correct subsystem. High level interfaces (GUIs) should communicate exclusively with this process. Only engineering interfaces are allowed to communicate directly with the subsystems.   
 
+== DCS == 
+say it still under development in order to automate image acquisition 
 
+== GUI ==
 <font color=red>
   * telescope61 (Ruben) telescope61-sim (Tzu)
     * share memory 
-    * communication with hardware 
+
   * ObsControl, TcsGui, qths  (MVC)
 </font>
 = Future Challenges = 
@@ -150,7 +160,7 @@ The OCS was designated as the coordinator between the different subsystems (TCS,
   * Interface to Labviw for hardware control 
   * Integration of pointing model (get rid of theSky6)
   * Package of the final observation data into a FITS format
-
+  * Keep improving instrumentation, specially at encoder level
 = Conclusion = 
   * ICE framework is a mature distribute programming framework suitable for mission critical application.
   * TS-7800 ARM has proved to be a very robust platform for local control unit development
