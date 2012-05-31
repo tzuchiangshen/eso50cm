@@ -75,9 +75,12 @@ A proxy contains the object identity information for the corresponding object im
 http://eso50cm.googlecode.com/files/ICE%20object%20adapter.png
 *image taken from the website of zeroc 
 
-To allow binding to multiple programming languages 
-
   * Slice
+
+In order to provide multiple programming languages mapping to solid and modern programming languages, such as, C++, Java, C#, Python, Objective-C, Ruby, and PHP, the ICE framework uses the abstraction mechanism provided by the Specific Language for ICE (Slice). This compiler can translate the programming language independent definition into language specific type definitions. 
+
+Slice is a declarative language which describe interfaces and data types, which is a contract between client and server. This description is independent of the implementation language, so it does not matter whether the client is implemented in a different programming language than the server.
+
   * IceStorm 
 
 == Common Services: Logging Services ==
