@@ -66,11 +66,11 @@ In the following table we summarized the development and operation environment.
 = Observatory Software Architecture = 
 == ICE introduction ==
 
-When a client sends an remote operation invocation to the server through the proxy, a endpoint has to be specified in the request. Using the endpoint information, the object adapter (in the server side) finds the proper servant and dispatches the call and eventually returns the results to the proxy, and then to the client which established the call.
+When a client sends an remote operation invocation to the server through the proxy, a endpoint has to be specified in the request. Using the endpoint information, the object adapter (in the server side) finds the proper servant and dispatches the call and eventually returns the results to the proxy, and then to the client which started the call.
 
-The process of associating a request via a proxy to the correct servant is known as binding. The figure xxx depicts a so called "direct binding", in which the transport endpoint is embedded in the proxy. Ice also supports an indirect binding mode, in which the correct transport endpoints are resolved by IceGrid service, an service independent to the client and its proxy. 
+The process of associating a request via a proxy to the correct servant is known as binding. The figure xxx depicts a so called "direct binding", in which the transport endpoint is embedded in the proxy. Ice also supports an indirect binding mode, in which the correct transport endpoints are resolved by IceGrid service, which is independent to object adapters and clients. 
 
-A proxy contains the object identity information for the corresponding object implemented in a specific servant. The object identify is sent over the wire together with the invocation to the object adapter. The correct binding or endpoint-servant resolution is guarantied since in ICE definition, no two object adapters can be bound to the same endpoint.
+A proxy contains the object identity information for the corresponding object implemented in a specific servant. The object identity is sent over the wire together with the invocation to the correct object adapter. The correct binding or endpoint-servant resolution is guarantied since in ICE definition, no two object adapters can be bound to the same endpoint.
 
 http://eso50cm.googlecode.com/files/ICE%20object%20adapter.png
 *image taken from the website of zeroc 
