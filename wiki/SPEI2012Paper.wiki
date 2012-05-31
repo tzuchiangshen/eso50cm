@@ -52,12 +52,13 @@ In the following table we summarized the development and operation environment.
 
 <font color="red"> 
 ||Functionality || Framwork / Company|| Version ||
-||Distribute Programming ||ICE/Zeroc || 3.4 ||
-||GUI || QT/Nokia  || 4.3 ||
-||Cross-Platform build || CMake/Kitware|| 2.6||
-||Workstation OS || Ubuntu || 9.0 ||
+||Distributed Programming ||ICE,ICEE/Zeroc || 3.3.0/1.2.0-6 ||
+||GUI || QT/Nokia  || 4.5 ||
+||Cross-Platform build || CMake/Kitware|| 2.6.2||
+||Workstation OS || Ubuntu || 9.0.4 Jaunty ||
 ||Local Control Unit || ARM: Debian ||6.0||
 ||Virtualization || Virtualbox/Oracle||  
+||ARM Emulation || QEMU || 0.10.0 || 
 ||Workstation OS || Windows ||XP ||
 ||Astronomical Catalog and Telescope Pointing || TheSky6/Software Bisque|| 6.1||
 ||CCD || Big6/ ||
@@ -154,7 +155,7 @@ The OCS was designated as the coordinator between the different subsystems (TCS,
   * ICE framework is a mature distribute programming framework suitable for mission critical application.
   * TS-7800 ARM has proved to be a very robust platform for local control unit development
   * Reuse of software developed by big observatories in educational environment. 
- 
+  * Development environment standardize by using OS Virtualization 
 
 = References = 
   * [1] referencia a Astro-ingenieria o el Observatorio UC
