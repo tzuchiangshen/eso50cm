@@ -67,6 +67,10 @@ In the following table we summarized the development and operation environment.
 == ICE introduction ==
 
   * Object Adapter 
+
+http://eso50cm.googlecode.com/files/ICE%20object%20adapter.png
+*image taken from the website of zeroc 
+
   * Slice
   * IceStorm 
 
