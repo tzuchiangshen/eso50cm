@@ -161,8 +161,13 @@ http://eso50cm.googlecode.com/files/interaction-sta-martina2.png
 The OCS was designated as the coordinator between the different subsystems (TCS, ICS, DCS, etc). The astronomical observation is 100% controlled by this subsystem which is responsible to execute every instruction in a coherent way. This subsystem is compound by the main coordinator process and the high level interfaces which communicates the end users with the whole system:
   * *obsControl*: This process contains the public interfaces to communicate with the rest of the subsystems. For example it contains methods to move, track, stop, apply offset to the telescope. Other subsystem also send request to this process and it is in charge to distribute to the correct subsystem. High level interfaces (GUIs) should communicate exclusively with this process. Only engineering interfaces are allowed to communicate directly with the subsystems.   
 
-== DCS == (TZU)
-say it still under development in order to automate image acquisition 
+== DCS == (Tzu, Pedro)
+
+The CCD camera is Big6 ... 
+  * run on windows xp 
+  * use IDL ?
+
+By the time of this writing, the DCS subsystem hasn't been integrated yet with the rest of the subsystems. 
 
 == GUI == (TZU)
 <font color="red">
