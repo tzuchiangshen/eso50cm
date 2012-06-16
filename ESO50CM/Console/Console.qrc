@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/eso50cm/Cosole">
+        <file>save.png</file>
+    </qresource>
+</RCC>
