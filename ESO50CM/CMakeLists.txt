@@ -23,7 +23,7 @@ ELSE (NOT SWROOT)
     MESSAGE("CMAKE_INSTALL_PREFIX set to: $ENV{SWROOT}")
 ENDIF (NOT SWROOT)
 
-ADD_CUSTOM_TARGET(SWROOT ALL
+ADD_CUSTOM_TARGET(SWROOT_PREPARE ALL
     COMMAND cmake -E echo "Backup current ${SWROOT} ${SWROOT-BACKUP}" 
     COMMAND cmake -E copy_directory ${SWROOT} ${SWROOT-BACKUP}
     COMMAND cmake -E remove_directory ${SWROOT} 
@@ -44,22 +44,21 @@ ADD_CUSTOM_TARGET(SWROOT ALL
     COMMAND cmake -E make_directory ${SWROOT}/include
     COMMAND cmake -E echo "${SWROOT}/include created"
     COMMAND cmake -E make_directory ${SWROOT}/Sources
+    COMMAND cmake -E echo "${SWROOT}/Sources created"
+    COMMAND cmake -E make_directory ${SWROOT}/db
+    COMMAND cmake -E echo "${SWROOT}/db created"
+    COMMAND cmake -E make_directory ${SWROOT}/db/registry
+    COMMAND cmake -E echo "${SWROOT}/db/registry created"
+    COMMAND cmake -E make_directory ${SWROOT}/db/nodes
+    COMMAND cmake -E echo "${SWROOT}/db/nodes created"
+    COMMAND cmake -E make_directory ${SWROOT}/logs
+    COMMAND cmake -E echo "${SWROOT}/logs created"
+    COMMAND cmake -E make_directory ${SWROOT}/Sources
     COMMAND cmake -E echo "${SWROOT}/Sources created")
 
 SET(LCU $ENV{TYPE})
 IF(NOT LCU)
 # console
-    ADD_CUSTOM_TARGET(SWROOT ALL
-        COMMAND cmake -E make_directory ${SWROOT}/db
-        COMMAND cmake -E echo "${SWROOT}/db created"
-        COMMAND cmake -E make_directory ${SWROOT}/db/registry
-        COMMAND cmake -E echo "${SWROOT}/db/registry created"
-        COMMAND cmake -E make_directory ${SWROOT}/db/nodes
-        COMMAND cmake -E echo "${SWROOT}/db/nodes created"
-        COMMAND cmake -E make_directory ${SWROOT}/logs
-        COMMAND cmake -E echo "${SWROOT}/logs created"
-        COMMAND cmake -E make_directory ${SWROOT}/Sources
-        COMMAND cmake -E echo "${SWROOT}/Sources created")
     #install modules
     ADD_SUBDIRECTORY(Logger/src)
     ADD_SUBDIRECTORY(LogPanel/src)
