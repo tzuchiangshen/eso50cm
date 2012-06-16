@@ -166,73 +166,7 @@ int myTEncoder::setPosition( double degs )
  */
 int myTEncoder::readDeviceMemory( char mem_address, int * value )
 {
-    int retval = 0;
-    char * ptr;
-    int mem;
-    char chk_sum;
-
-    struct timeval  gtime;
-    struct timezone tzone;
-    double startT, endT;
-
-    gettimeofday( & gtime, & tzone );
-    startT  = ((double) gtime.tv_usec)/1000000.;
-    startT += (double) gtime.tv_sec;
-
-    bin_read_semaphore->wait();
-    logger->logFINER( "myTEncoder::readDeviceMemory: %c-%c read wait", m_ax, m_id );
-    bin_write_semaphore->wait();
-    logger->logFINER( "myTEncoder::readDeviceMemory: %c-%c write wait", m_ax, m_id );
-    memset( m_bin_encoder->message, 0, 16 );
-    memset( m_bin_encoder->answer, 0, 16 );
-    logger->logFINER( "myTEncoder::readDeviceMemory: Writing message for 0x%02X...", m_bin_encoder->i2c_address );
-    m_bin_encoder->message[0] = ':';
-    m_bin_encoder->message[1] = m_bin_encoder->i2c_address + 1;
-    m_bin_encoder->message[2] = mem_address;
-    m_bin_encoder->message[3] = 0;
-    m_bin_encoder->message[4] = 0;
-    m_bin_encoder->message[5] = 0;
-    m_bin_encoder->message[6] = 0;
-    m_bin_encoder->message[7] = 0;
-    m_bin_encoder->message[8] = 0;
-    m_bin_encoder->message[9] = '#';
-    bin_write_semaphore->post();
-    bin_read_semaphore->wait();
-    logger->logFINER( "myTEncoder::readDeviceMemory: %c-%c read wait", m_ax, m_id );
-    chk_sum  = m_bin_encoder->answer[1];
-    chk_sum += m_bin_encoder->answer[2];
-    ptr = (char *) value;
-    ptr[0] = m_bin_encoder->answer[3];
-    chk_sum += m_bin_encoder->answer[3];
-    ptr[1] = m_bin_encoder->answer[4];
-    chk_sum += m_bin_encoder->answer[4];
-    ptr[2] = m_bin_encoder->answer[5];
-    chk_sum += m_bin_encoder->answer[5];
-    ptr[3] = m_bin_encoder->answer[6];
-    chk_sum += m_bin_encoder->answer[6];
-    logger->logFINER( "myTEncoder::readDeviceMemory: %c 0x%02X %d %d (%d,%d) %c"
-		     , m_bin_encoder->answer[0]
-		     , (unsigned char) m_bin_encoder->answer[1]
-		     , (int) m_bin_encoder->answer[2]
-		     , * value
-		     , (int) chk_sum
-		     , (int) m_bin_encoder->answer[7]
-		     , m_bin_encoder->answer[9] );
-    if( chk_sum == m_bin_encoder->answer[7] ) 
-    {
-        mem = (int) mem_address;
-        m_bin_encoder->data[mem] = * value;
-    } else {
-        logger->logSEVERE( "myTEncoder::readDeviceMemory: Checksum ERROR!" );
-    }
-    bin_read_semaphore->post();
-
-    gettimeofday( & gtime, & tzone );
-    endT  = ((double) gtime.tv_usec)/1000000.;
-    endT += (double) gtime.tv_sec;
-    logger->logFINER( "myTEncoder::readDeviceMemory: %c-%c dT=%10.6lf[s]", m_ax, m_id, endT - startT );
-
-    return retval;
+	readDeviceMemory(mem_address, value, 0);
 }
 
 int myTEncoder::readDeviceMemory( char mem_address, int * value, int m_verbose )
@@ -250,10 +184,8 @@ int myTEncoder::readDeviceMemory( char mem_address, int * value, int m_verbose )
     startT  = ((double) gtime.tv_usec)/1000000.;
     startT += (double) gtime.tv_sec;
 
-    bin_read_semaphore->wait();
-    logger->logFINER( "myTEncoder::readDeviceMemory: %c-%c read wait", m_ax, m_id );
     bin_write_semaphore->wait();
-    logger->logFINER( "myTEncoder::readDeviceMemory: %c-%c write wait", m_ax, m_id );
+    logger->logFINER( "myTEncoder::readDeviceMemory: %c-%c obtained write semaphore", m_ax, m_id );
     memset( m_bin_encoder->message, 0, 16 );
     memset( m_bin_encoder->answer, 0, 16 );
     logger->logFINER( "myTEncoder::readDeviceMemory: Writing message for 0x%02X...", m_bin_encoder->i2c_address );
@@ -268,8 +200,13 @@ int myTEncoder::readDeviceMemory( char mem_address, int * value, int m_verbose )
     m_bin_encoder->message[8] = 0;
     m_bin_encoder->message[9] = '#';
     bin_write_semaphore->post();
+    logger->logFINER( "myTEncoder::readDeviceMemory: %c-%c write semaphore released", m_ax, m_id );
+    logger->logFINER( "myTEncoder::readDeviceMemory: %c-%c waiting for reply from telescope61", m_ax, m_id );
+
+	//wait for reply of telescope61
+
     bin_read_semaphore->wait();
-    logger->logFINER( "myTEncoder::readDeviceMemory: %c-%c read wait", m_ax, m_id );
+    logger->logFINER( "myTEncoder::readDeviceMemory: %c-%c read semaphore obtained", m_ax, m_id );
     chk_sum  = m_bin_encoder->answer[1];
     chk_sum += m_bin_encoder->answer[2];
     ptr = (char *) value;
@@ -296,6 +233,7 @@ int myTEncoder::readDeviceMemory( char mem_address, int * value, int m_verbose )
         logger->logSEVERE( "myTEncoder::readDeviceMemory: Checksum ERROR!" );
     }
     bin_read_semaphore->post();
+    logger->logFINER( "myTEncoder::readDeviceMemory: %c-%c read semaphore released", m_ax, m_id );
 
     gettimeofday( & gtime, & tzone );
     endT  = ((double) gtime.tv_usec)/1000000.;
@@ -310,54 +248,7 @@ int myTEncoder::readDeviceMemory( char mem_address, int * value, int m_verbose )
  */
 int myTEncoder::setDeviceMemory( char mem_address, int * value )
 {
-    int retval = 0;
-    char * ptr;
-
-    struct timeval  gtime;
-    struct timezone tzone;
-    double startT, endT;
-
-    gettimeofday( & gtime, & tzone );
-    startT  = ((double) gtime.tv_usec)/1000000.;
-    startT += (double) gtime.tv_sec;
-
-    bin_read_semaphore->wait();
-    logger->logFINER( "myTEncoder::setDeviceMemory: %c-%c read wait", m_ax, m_id );
-    bin_write_semaphore->wait();
-    logger->logFINER( "myTEncoder::setDeviceMemory: %c-%c write wait", m_ax, m_id );
-    memset( m_bin_encoder->message, 0, 16 );
-    memset( m_bin_encoder->answer, 0, 16 );
-
-    logger->logFINER( "myTEncoder::setDeviceMemory: Writing message for 0x%02X...", m_bin_encoder->i2c_address );
-    m_bin_encoder->message[0] = ':';
-    m_bin_encoder->message[1] = m_bin_encoder->i2c_address;
-    m_bin_encoder->message[2] = mem_address;
-    ptr = (char *) value;
-    m_bin_encoder->message[3] = ptr[0];
-    m_bin_encoder->message[4] = ptr[1];
-    m_bin_encoder->message[5] = ptr[2];
-    m_bin_encoder->message[6] = ptr[3];
-    m_bin_encoder->message[7] = 0;
-    m_bin_encoder->message[8] = 0;
-    m_bin_encoder->message[9] = '#';
-    bin_write_semaphore->post();
-    bin_read_semaphore->wait();
-    logger->logFINER( "myTEncoder::setDeviceMemory: %c-%c read wait", m_ax, m_id );
-    logger->logFINER( "myTEncoder::setDeviceMemory: %c 0x%02X %d %d %c"
-		     , m_bin_encoder->answer[0]
-		     , (unsigned char) m_bin_encoder->answer[1]
-		     , (int) m_bin_encoder->answer[2]
-		     , * (int *) & m_bin_encoder->answer[3]
-		     , m_bin_encoder->answer[9] );
-    retval = (int) m_bin_encoder->answer[2];
-    bin_read_semaphore->post();
-
-    gettimeofday( & gtime, & tzone );
-    endT  = ((double) gtime.tv_usec)/1000000.;
-    endT += (double) gtime.tv_sec;
-    logger->logFINER( "myTEncoder::setDeviceMemory: %c-%c dT=%10.6lf[s]", m_ax, m_id, endT - startT );
-
-    return retval;
+	setDeviceMemory(mem_address, value, 0);
 }
 
 int myTEncoder::setDeviceMemory( char mem_address, int * value, int m_verbose )
@@ -373,10 +264,8 @@ int myTEncoder::setDeviceMemory( char mem_address, int * value, int m_verbose )
     startT  = ((double) gtime.tv_usec)/1000000.;
     startT += (double) gtime.tv_sec;
 
-    bin_read_semaphore->wait();
-    logger->logFINER( "myTEncoder::setDeviceMemory: %c-%c read wait", m_ax, m_id );
     bin_write_semaphore->wait();
-    logger->logFINER( "myTEncoder::setDeviceMemory: %c-%c write wait", m_ax, m_id );
+    logger->logFINER( "myTEncoder::setDeviceMemory: %c-%c write semaphore obtained", m_ax, m_id );
     memset( m_bin_encoder->message, 0, 16 );
     memset( m_bin_encoder->answer, 0, 16 );
 
@@ -393,8 +282,13 @@ int myTEncoder::setDeviceMemory( char mem_address, int * value, int m_verbose )
     m_bin_encoder->message[8] = 0;
     m_bin_encoder->message[9] = '#';
     bin_write_semaphore->post();
+    logger->logFINER( "myTEncoder::setDeviceMemory: %c-%c write semaphore released", m_ax, m_id );
+
+	//waiting reply form telescope61
+
+    logger->logFINER( "myTEncoder::setDeviceMemory: %c-%c waiting reply form telescope61", m_ax, m_id );
     bin_read_semaphore->wait();
-    logger->logFINER( "myTEncoder::setDeviceMemory: %c-%c read wait", m_ax, m_id );
+    logger->logFINER( "myTEncoder::setDeviceMemory: %c-%c obtained read semaphore", m_ax, m_id );
     logger->logFINER( "myTEncoder::setDeviceMemory: %c 0x%02X %d %d %c"
                     , m_bin_encoder->answer[0]
                     , (unsigned char) m_bin_encoder->answer[1]
@@ -403,6 +297,7 @@ int myTEncoder::setDeviceMemory( char mem_address, int * value, int m_verbose )
                     , m_bin_encoder->answer[9] );
     retval = (int) m_bin_encoder->answer[2];
     bin_read_semaphore->post();
+    logger->logFINER( "myTEncoder::setDeviceMemory: %c-%c read semaphore released", m_ax, m_id );
 
     gettimeofday( & gtime, & tzone );
     endT  = ((double) gtime.tv_usec)/1000000.;
