@@ -10,8 +10,8 @@
 // Ice version 3.3.0
 // Generated from file `LogPublisher.ice'
 
-#ifndef ___home_tcsmgr_CURRENTLY_MOD_branches_eso50cm_stable_logging_ESO50CM_Logger_src_LogPublisher_h__
-#define ___home_tcsmgr_CURRENTLY_MOD_branches_eso50cm_stable_logging_ESO50CM_Logger_src_LogPublisher_h__
+#ifndef ___home_tcsmgr_CURRENTLY_MOD_branches_eso50cm_gui_ESO50CM_Logger_src_LogPublisher_h__
+#define ___home_tcsmgr_CURRENTLY_MOD_branches_eso50cm_gui_ESO50CM_Logger_src_LogPublisher_h__
 
 #include <Ice/LocalObjectF.h>
 #include <Ice/ProxyF.h>
