@@ -35,6 +35,7 @@
 char quit;
 int semaphore_id;
 struct telescope_data_t * telescope;
+long long counter =0;
 
 /** 
  * mutex for the motor threads
@@ -1212,8 +1213,14 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
             char *src;
             char *dst;
             if( bin_message_len == 0 ) {
+				printf("loop # %d\n", counter);
                 for( i = 0; i < 6; i ++ ) {
+					if(ultra_verbose)
+					    printf("processing message %d\n", i);
                     binary_semaphore_wait( semaphore_id );
+					if(ultra_verbose)
+					    printf("   semaphore obtained\n");
+					
                     if( telescope->encoder[i].message[0] == ':' ) {
                         gettimeofday( & gtime, & tzone );
                         startT  = ((double) gtime.tv_usec)/1000000.;
@@ -1434,6 +1441,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                             printf( "[telescope_run] message processed in dT=%10.6lf[s]\n", endT - startT );
                     }
                     binary_semaphore_post( semaphore_id );
+					printf("   semaphore released\n");
                 }
             }
 
@@ -1576,6 +1584,9 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                     //retval = write_RS232( fd_rs232, msg_buffer, 10  );
                 }
             }
+
+		    sleep(3); //slow down messages polling for debugging purpose
+			counter += 1;
 
         } while( ! quit );
         if( verbose ) {
