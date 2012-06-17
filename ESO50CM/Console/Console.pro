@@ -26,7 +26,8 @@ HEADERS  += \
 
 FORMS    += mainwindow.ui \
     telescope.ui \
-    encoder.ui
+    encoder.ui \
+    offset.ui
 
 RESOURCES += \
     Console.qrc
