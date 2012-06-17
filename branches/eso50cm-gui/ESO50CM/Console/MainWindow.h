@@ -4,12 +4,16 @@
 #include <QMainWindow>
 #include <QTextEdit>
 #include "MainController.h"
+#include "LCU.h"
 
 namespace Ui {
     class MainWindow;
     class TelescopeForm;
     class encoderForm;
+    class offsetForm;
 }
+
+class MainController;
 
 class MainWindow : public QMainWindow
 {
@@ -21,6 +25,7 @@ public:
 
 public slots:
     void testSlots(bool);
+    void showData(int, OUC::TelescopeData* );
 
 private:
     void createOffsetDocking();
@@ -35,6 +40,7 @@ private:
     Ui::MainWindow *ui;
     Ui::TelescopeForm *uiTelescope;
     Ui::encoderForm *uiEncoder;
+    Ui::offsetForm *uiOffset;
 
     QTextEdit *textEdit1;
     QTextEdit *textEdit2;

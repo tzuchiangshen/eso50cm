@@ -6,21 +6,21 @@
 #include "ObsControlIF.h"
 #include "Observing.h"
 #include "LoggerHelper.h"
-
+#include "MainWindow.h"
 
 class MainController: public QThread
 {
     Q_OBJECT
 
 public:
-    explicit MainController(QWidget *parent = 0);
+    ObsControlIF *obsControl;
+    MainController();
     ~MainController();
-    //Ui::TelescopeForm *ui;
 public slots:
-    //void testSlots(bool);
+    void testSlots(bool);
 
 private:
-    ObsControlIF *controller;
+
     TelescopePrx lcu;
     LoggerHelper logger;
 };

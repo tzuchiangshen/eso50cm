@@ -5,7 +5,7 @@ using namespace std;
 using namespace OUC;
 
 ObsControlIF::ObsControlIF() :
-   logger("TcsGui")
+   logger("ObsControlIF")
 {
     //::Log::LogLevel level = ::Log::FINE;
     //logger.setDiscardLevel(level);
