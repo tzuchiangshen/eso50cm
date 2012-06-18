@@ -5,6 +5,8 @@
 #include "ui_telescope.h"
 #include <QVBoxLayout>
 #include <QObject>
+#include <QTableWidget>
+#include <QTableWidgetItem>
 #include <QDebug>
 
 
@@ -19,14 +21,31 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     createOffsetDocking();
-    //createEncoderDocking();
+    createEncoderDocking();
     createCentralWidget();
 
+    // toolbar
     connect( ui->saveAsAction, SIGNAL( triggered(bool)),
             this, SLOT( testSlots(bool)));
 
+    // telescope position
     connect( mainController->obsControl, SIGNAL( newData(int, OUC::TelescopeData* ) ),
              this, SLOT( showData(int, OUC::TelescopeData* ) ) );
+
+    // offset panel
+    connect( uiOffset->northPB, SIGNAL( pressed() ),  this, SLOT( northButtonPressed() ));
+    connect( uiOffset->northPB, SIGNAL( released() ), this, SLOT( northButtonReleased() ));
+    connect( uiOffset->southPB, SIGNAL( pressed() ),  this, SLOT( southButtonPressed() ));
+    connect( uiOffset->southPB, SIGNAL( released() ), this, SLOT( southButtonReleased() ));
+    connect( uiOffset->eastPB, SIGNAL( pressed() ),  this, SLOT( eastButtonPressed() ));
+    connect( uiOffset->eastPB, SIGNAL( released() ), this, SLOT( eastButtonReleased() ));
+    connect( uiOffset->westPB, SIGNAL( pressed() ),  this, SLOT( westButtonPressed() ));
+    connect( uiOffset->westPB, SIGNAL( released() ), this, SLOT( westButtonReleased() ));
+
+    //encoder panel
+    connect( mainController->obsControl, SIGNAL( newEncData(int,OUC::RawEncoderData*)),
+             this, SLOT(showEncData(int,OUC::RawEncoderData*) ));
+
 }
 
 MainWindow::~MainWindow()
@@ -37,15 +56,6 @@ MainWindow::~MainWindow()
     delete uiOffset;
 }
 
-
-//void MainWindow::createEncoderDocking2() {
-//    //docking via GroupBox
-//    QGroupBox *telescopeGroupBox = new QGroupBox();
-//    uiTelescope->setupUi(telescopeGroupBox);
-//    ui->dockLogger->setWidget(telescopeGroupBox);
-//    ui->dockLogger->setWindowTitle("telescope");
-
-//}
 
 void MainWindow::testSlots(bool visible) {
     uiTelescope->UT_LineEdit->setText(QString("esto es una prueba2") + QString(visible));
@@ -140,12 +150,66 @@ void MainWindow::showData(int type, OUC::TelescopeData *data ) {
 
 }
 
-void MainWindow::createEncoderDocking() {
-    //docking via Widget
-    QWidget *encoder = new QWidget();
-    uiEncoder->setupUi(encoder);
-    ui->dockProcess->setWidget(encoder);
+// SLOTs for offset panel
+
+void MainWindow::northButtonPressed() {
+    //uiOffset->northPB->setEnabled(false);
+    QString rateName = uiOffset->speedComboBox->currentText();
+    string dir("N");
+    mainController->obsControl->handset_slew(rateName.toStdString(), dir);
 }
+
+void MainWindow::southButtonPressed() {
+    //uiOffset->southPB->setEnabled(false);
+    QString rateName = uiOffset->speedComboBox->currentText();
+    string dir("S");
+    mainController->obsControl->handset_slew(rateName.toStdString(), dir);
+}
+
+void MainWindow::eastButtonPressed() {
+    //uiOffset->eastPB->setEnabled(false);
+    QString rateName = uiOffset->speedComboBox->currentText();
+    string dir("E");
+    mainController->obsControl->handset_slew(rateName.toStdString(), dir);
+}
+
+void MainWindow::westButtonPressed() {
+    //uiOffset->westPB->setEnabled(false);
+    QString rateName = uiOffset->speedComboBox->currentText();
+    string dir("W");
+    mainController->obsControl->handset_slew(rateName.toStdString(), dir);
+}
+
+void MainWindow::northButtonReleased() {
+    qDebug() << "north released";
+    //uiOffset->northPB->setEnabled(true);
+    string rate("stop");
+    string dir("N");
+    mainController->obsControl->handset_slew(rate, dir);
+}
+
+void MainWindow::southButtonReleased() {
+    //uiOffset->southPB->setEnabled(true);
+    string rate("stop");
+    string dir("S");
+    mainController->obsControl->handset_slew(rate, dir);
+}
+
+void MainWindow::eastButtonReleased() {
+    //uiOffset->eastPB->setEnabled(true);
+    string rate("stop");
+    string dir("E");
+    mainController->obsControl->handset_slew(rate, dir);
+}
+
+void MainWindow::westButtonReleased() {
+    //uiOffset->westPB->setEnabled(true);
+    string rate("stop");
+    string dir("W");
+    mainController->obsControl->handset_slew(rate, dir);
+}
+
+
 
 void MainWindow::createCentralWidget() {
     QWidget *telescopeWidget = new QWidget;
@@ -155,22 +219,29 @@ void MainWindow::createCentralWidget() {
     uiTelescope->UT_LineEdit->setText(QString("esto es una prueba"));
 }
 
-//void MainWindow::createOffsetDocking() {
-//    textEdit1 = new QTextEdit();
-//    textEdit1->setText("hola");
-//    textEdit2 = new QTextEdit();
-//    textEdit2->setText("chao");
+void MainWindow::showEncData(int status,OUC::RawEncoderData *enc) {
+    if(status ==1) {
 
-//    QGroupBox *offsetGroupBox = new QGroupBox();
-//    QVBoxLayout *myLayout = new QVBoxLayout;
-//    myLayout->addWidget(textEdit1);
-//    myLayout->addWidget(textEdit2);
-//    offsetGroupBox->setLayout(myLayout);
+        QTableWidget *table = uiEncoder->tableWidget;
 
-//    ui->dockOffset->setWidget(offsetGroupBox);
-//    ui->dockOffset->setWindowTitle("offset");
+        //Alpha
+        table->item(0,0)->setText(QString::number(enc->lectAlphaAxisE));
+        table->item(0,1)->setText(QString::number(enc->posAlphaAxisE));
+        table->item(1,0)->setText(QString::number(enc->lectAlphaWormE));
+        table->item(1,1)->setText(QString::number(enc->posAlphaWormE));
+        table->item(2,0)->setText(QString::number(enc->lectAlphaMotor));
+        table->item(2,1)->setText(QString::number(enc->posAlphaMotor));
 
-//}
+        //Delta
+        table->item(4,0)->setText(QString::number(enc->lectDeltaAxisE));
+        table->item(4,1)->setText(QString::number(enc->posDeltaAxisE));
+        table->item(5,0)->setText(QString::number(enc->lectDeltaWormE));
+        table->item(5,1)->setText(QString::number(enc->posDeltaWormE));
+        table->item(6,0)->setText(QString::number(enc->lectDeltaMotor));
+        table->item(6,1)->setText(QString::number(enc->posDeltaMotor));
+
+    }
+}
 
 void MainWindow::createOffsetDocking() {
     QWidget *offsetWidget = new QWidget;
@@ -183,3 +254,20 @@ void MainWindow::createOffsetDocking() {
     ui->dockOffset->setMinimumWidth(200);
     qDebug() << "size=" << ui->dockOffset->sizeHint();
 }
+
+void MainWindow::createEncoderDocking() {
+    //docking via Widget
+    QWidget *encoderWidget = new QWidget();
+    uiEncoder->setupUi(encoderWidget);
+    ui->dockEncoder->setWidget(encoderWidget);
+    ui->dockEncoder->setMinimumWidth(300);
+    QTableWidget *table = encoderWidget->findChild<QTableWidget*>("tableWidget");
+    for (int i=0; i < table->rowCount(); i++) {
+        table->setRowHeight(i,20);
+        for(int j=0; j<table->columnCount(); j++) {
+            table->setItem(i,j, new QTableWidgetItem(""));
+            table->item(i,j)->setTextAlignment(Qt::AlignRight);
+        }
+    }
+}
+
