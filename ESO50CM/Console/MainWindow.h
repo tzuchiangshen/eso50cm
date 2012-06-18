@@ -35,6 +35,12 @@ public slots:
     void southButtonReleased();
     void eastButtonReleased();
     void westButtonReleased();
+    //toolbar 
+    void stopTelescope();
+    void gotoTarget();
+    void parkTelescope();
+    void parkTelecopeCap();
+
 
 private:
     void createOffsetDocking();

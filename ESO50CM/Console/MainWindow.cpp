@@ -8,6 +8,8 @@
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QDebug>
+#include <QWebView>
+#include <QUrl>
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -25,8 +27,8 @@ MainWindow::MainWindow(QWidget *parent) :
     createCentralWidget();
 
     // toolbar
-    connect( ui->saveAsAction, SIGNAL( triggered(bool)),
-            this, SLOT( testSlots(bool)));
+    connect( ui->saveAsAction, SIGNAL( triggered()),
+            this, SLOT( stopTelescope()));
 
     // telescope position
     connect( mainController->obsControl, SIGNAL( newData(int, OUC::TelescopeData* ) ),
@@ -46,6 +48,18 @@ MainWindow::MainWindow(QWidget *parent) :
     connect( mainController->obsControl, SIGNAL( newEncData(int,OUC::RawEncoderData*)),
              this, SLOT(showEncData(int,OUC::RawEncoderData*) ));
 
+    QWebView *view = new QWebView();
+    view->setStyleSheet("background-color:rgb(150,147,88); padding: 7px ; color:rgb(255,255,255)");
+    //view->url().setUserName("operador");
+    //view->url().setPassword("la810KaW");
+    //QUrl url("http://operador:operador@192.168.0.11:1084/admin/view.cgi?profile=2");
+    QUrl url("http://weather.aiv.alma.cl/data/all/images/temperature-30min.png");
+    qDebug() << "url=" << url;
+    view->load(url);
+    view->show(); // Minimized();
+    ui->dockWebcam->setWidget(view);
+    ui->dockWebcam->setWindowTitle("webcam");
+
 }
 
 MainWindow::~MainWindow()
@@ -60,6 +74,7 @@ MainWindow::~MainWindow()
 void MainWindow::testSlots(bool visible) {
     uiTelescope->UT_LineEdit->setText(QString("esto es una prueba2") + QString(visible));
 }
+
 
 void MainWindow::showData(int type, OUC::TelescopeData *data ) {
     QString info;
