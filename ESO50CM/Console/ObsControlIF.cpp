@@ -123,6 +123,40 @@ int ObsControlIF::getPosition()
     return EXIT_SUCCESS;
 }
 
+void ObsControlIF::stopTelescope() {
+    try {
+        OUC::TelescopeDirection dir = North;
+        lcu->stopTelescope(dir);
+        logger.logINFO("ObsControlIF::stopTelescope");
+    } catch(const Ice::Exception& ex) {
+        logger.logSEVERE("Error in ObsControlIF:stopTelescope(). %s", ex.ice_name().c_str());
+        cout << ex << endl;
+        emit newData(2, data);
+    }
+}
+
+void ObsControlIF::gotoTarget() {
+    try {
+        lcu->moveToTarget();
+        logger.logINFO("ObsControlIF::goto target");
+    } catch(const Ice::Exception& ex) {
+        logger.logSEVERE("Error in ObsControlIF:gotoTarget(). %s", ex.ice_name().c_str());
+        cout << ex << endl;
+        emit newData(2, data);
+    }
+}
+
+void ObsControlIF::parkTelescope() {
+    try {
+        lcu->parkTelescope();
+        logger.logINFO("ObsControlIF::park telescope");
+    } catch(const Ice::Exception& ex) {
+        logger.logSEVERE("Error in ObsControlIF:parkTelescope(). %s", ex.ice_name().c_str());
+        cout << ex << endl;
+        emit newData(2, data);
+    }
+}
+
 int ObsControlIF::setTargetPositionRA(const char *ra)
 {
     logger.logFINEST("ObsControlIF::setTargetPositionRA");

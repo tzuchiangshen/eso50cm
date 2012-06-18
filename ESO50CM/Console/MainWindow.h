@@ -39,7 +39,7 @@ public slots:
     void stopTelescope();
     void gotoTarget();
     void parkTelescope();
-    void parkTelecopeCap();
+    void parkTelescopeCap();
 
 
 private:

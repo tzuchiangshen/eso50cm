@@ -65,6 +65,8 @@
     <bool>false</bool>
    </attribute>
    <addaction name="saveAsAction"/>
+   <addaction name="gotoTargetAction"/>
+   <addaction name="stopTelescopeAction"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="dockProcess">
@@ -141,6 +143,30 @@
    </property>
    <property name="toolTip">
     <string>Save As ...</string>
+   </property>
+  </action>
+  <action name="gotoTargetAction">
+   <property name="icon">
+    <iconset resource="Console.qrc">
+     <normaloff>:/eso50cm/Cosole/goto_target.png</normaloff>:/eso50cm/Cosole/goto_target.png</iconset>
+   </property>
+   <property name="text">
+    <string>Goto Target</string>
+   </property>
+   <property name="toolTip">
+    <string>goto target</string>
+   </property>
+  </action>
+  <action name="stopTelescopeAction">
+   <property name="icon">
+    <iconset resource="Console.qrc">
+     <normaloff>:/eso50cm/Cosole/stop_telescope.png</normaloff>:/eso50cm/Cosole/stop_telescope.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stop Telescope</string>
+   </property>
+   <property name="toolTip">
+    <string>stop telescope</string>
    </property>
   </action>
  </widget>

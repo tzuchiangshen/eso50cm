@@ -27,8 +27,13 @@ MainWindow::MainWindow(QWidget *parent) :
     createCentralWidget();
 
     // toolbar
-    connect( ui->saveAsAction, SIGNAL( triggered()),
-            this, SLOT( stopTelescope()));
+    //connect( ui->saveAsAction, SIGNAL( triggered()),
+    //        this, SLOT( stopTelescope()));
+
+    connect( ui->gotoTargetAction, SIGNAL( triggered()),
+            this, SLOT( gotoTarget() ));
+
+    connect( ui->stopTelescopeAction, SIGNAL(triggered()), this, SLOT( stopTelescope()));
 
     // telescope position
     connect( mainController->obsControl, SIGNAL( newData(int, OUC::TelescopeData* ) ),
@@ -75,6 +80,24 @@ void MainWindow::testSlots(bool visible) {
     uiTelescope->UT_LineEdit->setText(QString("esto es una prueba2") + QString(visible));
 }
 
+// ToolBar
+
+void MainWindow::stopTelescope() {
+    mainController->obsControl->stopTelescope();
+}
+
+void MainWindow::parkTelescope() {
+    mainController->obsControl->parkTelescope();
+}
+
+void MainWindow::parkTelescopeCap() {
+    //to be implemented
+    qDebug() << "Not implemented yet";
+}
+
+void MainWindow::gotoTarget() {
+    mainController->obsControl->gotoTarget();
+}
 
 void MainWindow::showData(int type, OUC::TelescopeData *data ) {
     QString info;
