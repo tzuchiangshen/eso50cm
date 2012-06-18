@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/eso50cm/Cosole">
         <file>save.png</file>
+        <file>goto_target.png</file>
+        <file>stop_telescope.png</file>
     </qresource>
 </RCC>

@@ -35,7 +35,9 @@ public:
     int setTargetPositionRA(const char* ra);
     int setTargetPositionDec(const char* arguments);
     void handset_slew(string rate, string direction);
-
+    void stopTelescope();
+    void parkTelescope();
+    void gotoTarget();
 
 signals: 
     void newData(const int type,  OUC::TelescopeData *data);
