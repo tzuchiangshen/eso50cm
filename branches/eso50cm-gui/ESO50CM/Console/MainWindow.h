@@ -26,6 +26,15 @@ public:
 public slots:
     void testSlots(bool);
     void showData(int, OUC::TelescopeData* );
+    void showEncData(int,OUC::RawEncoderData*);
+    void northButtonPressed();
+    void southButtonPressed();
+    void eastButtonPressed();
+    void westButtonPressed();
+    void northButtonReleased();
+    void southButtonReleased();
+    void eastButtonReleased();
+    void westButtonReleased();
 
 private:
     void createOffsetDocking();
