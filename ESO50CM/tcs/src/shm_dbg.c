@@ -71,7 +71,17 @@ main() {
 				 sleep(1);
 			 }
              break; 
-         case 20: /*Set a specified value.*/ 
+         case 3: /*Get a specified value.*/ 
+             printf("\nEnter the semnum = "); 
+             int _semval, _pid;
+			 while(1) {
+                 _semval = semctl(semid, 0, GETVAL, arg); 
+                 _pid = semctl(semid, 0, GETPID, arg); 
+                 printf("\nThe semval = %d PID=%d\n", _semval, _pid); 
+				 sleep(1);
+			 }
+             break; 
+          case 20: /*Set a specified value.*/ 
              printf("\nEnter the semnum = "); 
              scanf("%d", &semnum); 
              printf("\nEnter the value = "); 
@@ -79,7 +89,7 @@ main() {
              /*Do the system call.*/ 
              retrn = semctl(semid, semnum, SETVAL, arg); 
              break; 
-         case 3: /*Get the process ID.*/ 
+         case 30: /*Get the process ID.*/ 
              retrn = semctl(semid, 0, GETPID, arg); 
              printf("\nThe sempid = %d", retrn); 
              break; 
