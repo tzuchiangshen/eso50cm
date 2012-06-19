@@ -240,6 +240,8 @@ void set_encoders_home_positions(struct telescope_data_t * telescope) {
     src = (char*)&alpha_axis_home;
     myMemcpy(dst, src, 4);
     printf("[telescope_run] Set alpha axis home position, value = %d\n", alpha_axis_home);
+    printf("[telescope_run] Set alpha axis home position, value = %d\n", telescope->encoder[3].data[2]);
+    printf("[telescope_run] Set alpha axis home position, value = %d\n", telescope->encoder[3].data[4]);
     //A-W
     dst = (char*)&telescope->encoder[2].data[4];
     src = (char*)&alpha_worm_home;
@@ -906,19 +908,19 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
 	pthread_t alpha_tracking_t;
 
 	int rc;
-	rc = pthread_create(&alpha_motor_t, NULL, move_motor_alpha, (void *)0xA2);
+	//rc = pthread_create(&alpha_motor_t, NULL, move_motor_alpha, (void *)0xA2);
 	if(rc) {
 		printf("ERROR creating alpha motor thread\n");
 	} else 
 	    printf("Starting alpha motor thread ...\n");
 
-	rc = pthread_create(&delta_motor_t, NULL, move_motor_delta, (void *)0xA4);
+	//rc = pthread_create(&delta_motor_t, NULL, move_motor_delta, (void *)0xA4);
 	if(rc) {
 		printf("ERROR creating delta motor thread\n");
 	} else
 	    printf("Starting delta motor thread ...\n");
 
-    rc = pthread_create(&alpha_tracking_t, NULL, track_motor_alpha, (void *)0xA2);
+    //rc = pthread_create(&alpha_tracking_t, NULL, track_motor_alpha, (void *)0xA2);
 	if(rc) {
 		printf("ERROR creating tracking alpha thread\n");
 	} else
@@ -997,7 +999,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
             init_ok_flag = 0;
         }
         if( verbose )
-            printf( "[telescope_run] semaphore_id = %d\n", read_semaphore_id );
+            printf( "[telescope_run] read_semaphore_id = %d\n", read_semaphore_id );
 
         /** Semaphore initialization */
         retval = binary_semaphore_initialize( read_semaphore_id );
@@ -1213,7 +1215,8 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
             char *src;
             char *dst;
             if( bin_message_len == 0 ) {
-				printf("loop # %d\n", counter);
+				if(ultra_verbose)
+					printf("loop # %d\n", counter);
                 for( i = 0; i < 6; i ++ ) {
 					if(ultra_verbose)
 					    printf("processing message %d\n", i);
@@ -1236,7 +1239,9 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                             printf("\n[telescope_run] --------------------GET----------------------\n");
                         }
                         printf( "[telescope_run] New message received from LCUControl, to be sent to PIC for 0x%02X mem_address=%d message=%d\n", telescope->encoder[i].message[1], mem_address, *(int*)&telescope->encoder[i].message[3]);
+						printf(">>>>>>>>>>>>>>antes de get/set %d\n", telescope->encoder[i].data[mem_address]);
                         if(message_type == 0) {
+							printf("?????????????????? raro, entre al SET\n");
                             //even => comes from setDeviceMemory, save the encoder value for later the next readDeviceMemory()
                             //Emulate sending data to the PIC (RS232)
                             //it will save the target encoder value in a internal memory structure 
@@ -1246,6 +1251,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                             timeout_error_flag = 0;
 
                             //copy message to data
+							printf("i!!!!!!!!!!!!! no deberia estar aca\n");
                             dst = (char*)&telescope->encoder[i].data[mem_address];
                             src = (char*)&telescope->encoder[i].message[3];
                             myMemcpy(dst, src, 4);
@@ -1354,9 +1360,9 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
 
                                }                               
                             }
-
                         }  else {
                             //odd => read 
+						    printf(">>>>>>>>>>>>>>recien entre a get= %d\n", telescope->encoder[i].data[mem_address]);
                             if (mem_address == 700) {
                                int val = telescope->encoder[i].data[mem_address];
                                //simulate the movement is finished, 
@@ -1369,18 +1375,27 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                                src = (char*)&val;
                                myMemcpy(dst, src, 4);
                             } else {
-                               int val = telescope->encoder[i].data[mem_address];
-                               dst = (char*)&telescope->encoder[i].answer[3];
-                               src = (char*)&val;
-                               myMemcpy(dst, src, 4);
+                                //int val = telescope->encoder[i].data[mem_address];
+                                printf("[encoders dump]: dumping encoder data\n");
+							    int i, j;
+								for(i = 0; i<6; i++) {
+									for(j=0; j<6; j++) {
+										printf("telescope->encoder[%d].data[%d]=%d (addr=0x%X, mem=%d) \n", i, j, telescope->encoder[i].data[j], telescope->encoder[i].i2c_address, j);
+									}
+								}		
+								int val = telescope->encoder[i].data[mem_address];
+							    printf(">>>>>>>>>>>>>%d\n", val);
+                                dst = (char*)&telescope->encoder[i].answer[3];
+                                src = (char*)&val;
+                                myMemcpy(dst, src, 4);
                             }
 
-							if (ultra_verbose)
+							if (verbose)
                                 printf("[telescope_run] current values of telescope->encoder[%d].data[%d] = %d\n", 
                                                           i, 
                                                           mem_address, 
                                                           telescope->encoder[i].data[mem_address]);
-							if (ultra_verbose)
+							if (verbose)
                                 printf( "[telescope_run] answering the requested message, telescope->encoder[%d].answer = 0x%X 0x%X 0x%X 0x%X val=%d\n", 
                                                           i, 
                                                           telescope->encoder[i].answer[3], 
@@ -1441,7 +1456,8 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                             printf( "[telescope_run] message processed in dT=%10.6lf[s]\n", endT - startT );
                     }
                     binary_semaphore_post( semaphore_id );
-					printf("   semaphore released\n");
+					if(ultra_verbose)
+						printf("   semaphore released\n");
                 }
             }
 
@@ -1499,6 +1515,7 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                     printf( "[telescope_run] Date: %s\n", infoline );
                     binary_semaphore_post( semaphore_id );
                 } else if( strcmp( buffer, "vn" ) == 0 ) {
+				
                     message_length = 0;
                     printf( "[telescope_run] Geting version number.\n" );
                     msg_buffer[0] = ':';
@@ -1555,13 +1572,25 @@ void telescope_run( const char * device, speed_t baudrate, const char * socket_n
                     msg_buffer[9] = '#';
                     //retval = write_RS232( fd_rs232, msg_buffer, 10  );
                 } else if(strcmp(buffer, "st") == 0 ) {
+					printf("[self test]: semaphore id=%d\n", semaphore_id);
+					printf("[self_test]: current semval=%d\n", binary_semaphore_check(semaphore_id));
 					printf("[self test]: waiting for semaphore ...\n");
                     binary_semaphore_wait( semaphore_id );
 					printf("[self_test]: obtained the sempahore ...\n");
+					printf("[self_test]: current semval=%d\n", binary_semaphore_check(semaphore_id));
 					sleep(3);
 					printf("[self test]: posting semaphore ...\n");
                     binary_semaphore_post( semaphore_id );
 					printf("[self test]: ready!\n");
+					printf("[self_test]: current semval=%d\n", binary_semaphore_check(semaphore_id));
+				} else if(strcmp(buffer, "dp") == 0) {
+					printf("[encoders dump]: dumping encoder data\n");
+					int i, j;
+					for(i = 0; i<6; i++) {
+						for(j=0; j<6; j++) {
+							printf("telescope->encoder[%d].data[%d]=%d (addr=0x%X, mem=%d) \n", i, j, telescope->encoder[i].data[j], telescope->encoder[i].i2c_address, j);
+						}
+					}
 				} else {
                     message_length = 0;
                     if( verbose )
