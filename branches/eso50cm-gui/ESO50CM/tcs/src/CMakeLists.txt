@@ -95,6 +95,10 @@ ELSE(NOT LCU)
 ENDIF(NOT LCU)
 set_property(TARGET ClientCXX PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
 
+#for shm_dbg executable
+ADD_EXECUTABLE(shm_dbg semaphore shm_dbg)
+set_property(TARGET shm_dbg PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
+
 #for telescope61 executable
 LINK_DIRECTORIES(${INTROOT}/lib)
 ADD_EXECUTABLE(telescope61 telescope61 common rs232 semaphore main)
