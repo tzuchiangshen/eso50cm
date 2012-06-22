@@ -1,11 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/sem.h>
+#include "shm_dbg.h"
 
-
-main() {
+int main( int argc, char* const argv[] ) {
 
     extern int errno;
     struct semid_ds semid_ds;
@@ -18,6 +13,37 @@ main() {
         struct semid_ds *buf;
         ushort *array;
     } arg;
+
+
+    struct shmid_ds m_shmbuffer;
+    struct telescope_data_t * bin_telescope;
+    int m_segment_id;
+    int m_shared_segment_size = 1024;
+    char *m_shared_memory;
+    int m_segment_size;
+    int m_semaphore_id;
+
+    /** Allocate the Instrument Shared Memory segment */
+    m_segment_id = shmget( TELSHMKEY, m_shared_segment_size,
+                           S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH );
+
+    if( m_segment_id < 0 ) {
+        perror( "myTelescope::attachTelescope: shmget" );
+        return errno;
+    }
+
+    /** Attach the Instrument Shared Memory segment */
+    m_shared_memory = (char *) shmat( m_segment_id, 0, 0 );
+    if( m_shared_memory < 0 ) {
+        perror( "myTelescope::attachTelescope: shmat" );
+        return errno;
+    }
+
+    /** Determine the Instrument Shared Memory segment size */
+    shmctl( m_segment_id, IPC_STAT, & m_shmbuffer );
+    m_segment_size = m_shmbuffer.shm_segsz;
+
+    bin_telescope = (struct telescope_data_t *) m_shared_memory;
 
     /*Enter the semaphore ID.*/
     printf("Enter the semid = ");
@@ -35,6 +61,7 @@ main() {
     printf("IPC_STAT = 8\n");
     printf("IPC_SET = 9\n");
     printf("IPC_RMID = 10\n");
+    printf("SHM = 11\n");
     printf("Entry = ");
     scanf("%d", &cmd);
 
@@ -51,12 +78,12 @@ main() {
              /*Do the system call.*/ 
              retrn = semctl(semid, semnum, GETVAL, arg); 
              printf("\nThe semval = %d", retrn); 
-			 binary_semaphore_wait(semid);
-			 while(1) {
+             binary_semaphore_wait(semid);
+             while(1) {
                  retrn = semctl(semid, semnum, GETVAL, arg); 
                  printf("\nThe semval = %d", retrn); 
-				 sleep(1);
-			 }
+                 sleep(1);
+             }
              break; 
          case 2: /*Get a specified value.*/ 
              printf("\nEnter the semnum = "); 
@@ -64,24 +91,24 @@ main() {
              /*Do the system call.*/ 
              retrn = semctl(semid, semnum, GETVAL, arg); 
              printf("\nThe semval = %d", retrn); 
-			 binary_semaphore_post(semid);
-			 while(1) {
+             binary_semaphore_post(semid);
+             while(1) {
                  retrn = semctl(semid, semnum, GETVAL, arg); 
                  printf("\nThe semval = %d", retrn); 
-				 sleep(1);
-			 }
+                 sleep(1);
+             }
              break; 
          case 3: /*Get a specified value.*/ 
              printf("\nEnter the semnum = "); 
              int _semval, _pid;
-			 while(1) {
+             while(1) {
                  _semval = semctl(semid, 0, GETVAL, arg); 
                  _pid = semctl(semid, 0, GETPID, arg); 
-                 printf("\nThe semval = %d PID=%d\n", _semval, _pid); 
-				 sleep(1);
-			 }
+                 printf("The semval = %d PID=%d\n", _semval, _pid); 
+                 sleep(1);
+             }
              break; 
-          case 20: /*Set a specified value.*/ 
+         case 20: /*Set a specified value.*/ 
              printf("\nEnter the semnum = "); 
              scanf("%d", &semnum); 
              printf("\nEnter the value = "); 
@@ -213,6 +240,19 @@ main() {
           case 10: /*Remove the semid along with its 189 data structure.*/ 
              retrn = semctl(semid, 0, IPC_RMID, arg); 
              break; 
+          case 11:
+
+             while(1) { 
+                 _semval = semctl(semid, 0, GETVAL, arg); 
+                 _pid = semctl(semid, 0, GETPID, arg); 
+                 printf("The semval = %d PID=%d\n", _semval, _pid); 
+                 printf("value=%d\t%d\n", bin_telescope->encoder[2].data[2], bin_telescope->encoder[2].data[4]);
+                 printf("value=%d\t%d\n", bin_telescope->encoder[3].data[2], bin_telescope->encoder[3].data[4]);
+                 printf("value=%d\t%d\n", bin_telescope->encoder[4].data[2], bin_telescope->encoder[4].data[4]);
+                 printf("value=%d\t%d\n", bin_telescope->encoder[5].data[2], bin_telescope->encoder[5].data[4]);
+                 sleep(1);
+             }
+             break;
           default: /* Invalid Input */ 
              exit(-1); 
       } 
@@ -220,7 +260,7 @@ main() {
      if(retrn == -1) 
      { 
           ERROR: 
-		    exit(0);
+            exit(0);
             //printf ("\nThe semctl call failed!, error number = %d\n", errno); 
     //      //exit(0); 
      } 

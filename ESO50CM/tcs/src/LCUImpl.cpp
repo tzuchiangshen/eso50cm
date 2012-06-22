@@ -56,22 +56,22 @@ LCUImpl::readDeviceMemory(int deviceId, int address, int value, const Ice::Curre
 
     if (deviceId == 0xA2) {
         //alpha-motor
-        m_lcu->telescope->alpha->Motor->readDeviceMemory(address, &value, 0);
+        m_lcu->telescope->alpha->Motor->readDeviceMemory(address, &value);
     } else if (deviceId == 0xA4) {
 		//delta-motor
-        m_lcu->telescope->delta->Motor->readDeviceMemory(address, &value, 0);
+        m_lcu->telescope->delta->Motor->readDeviceMemory(address, &value);
     } else if (deviceId == 0xA6) {
 		//alpha-worm
-        m_lcu->telescope->alpha->WormE->readDeviceMemory(address, &value, 0);
+        m_lcu->telescope->alpha->WormE->readDeviceMemory(address, &value);
     } else if (deviceId == 0xA8) {
 		//alpha-axis
-        m_lcu->telescope->alpha->AxisE->readDeviceMemory(address, &value, 0);
+        m_lcu->telescope->alpha->AxisE->readDeviceMemory(address, &value);
     } else if (deviceId == 0xAA) {
 		//delta-worm
-        m_lcu->telescope->delta->WormE->readDeviceMemory(address, &value, 0);
+        m_lcu->telescope->delta->WormE->readDeviceMemory(address, &value);
     } else if (deviceId == 0xAC) {
 		//delta-axis
-        m_lcu->telescope->delta->AxisE->readDeviceMemory(address, &value, 0);
+        m_lcu->telescope->delta->AxisE->readDeviceMemory(address, &value);
     } else {
         logger.logWARNING("LCUImpl::readDeviceMemory: Invalid device Id. Received=%d", deviceId);
 
