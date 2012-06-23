@@ -279,6 +279,56 @@ void TelescopeImpl::setOffset(const ::OUC::TelescopePosition& offsetPos, const I
     }
 }
 
+void TelescopeImpl::startTracking(const Ice::Current&)
+{
+    logger.logFINEST( "TelescopeImpl::startTracking" ); 
+
+    try
+    {
+        if(!lcuPrx)
+        {
+            OUC::NotLCUReferenceAvailableEx ex;
+            ex.reason = "Not reference to LCU Proxy available!";
+            throw ex;	
+        }
+        OUC::TrackingInfo trkInfo;
+        trkInfo.trackState = true;
+        trkInfo.ticVel = 1200;
+        return  lcuPrx->setTracking(trkInfo);
+    } catch (OUC::TelescopeNotConfiguredEx& ex) {
+        logger.logSEVERE("TelescopeImpl::startTracking: LCU returned: %s. Execute setConfiguration method first", &ex.reason);
+        throw ex;
+    } catch (Ice::Exception& ex) {
+        logger.logSEVERE("TelescopeImpl::starttTracking: Unexpected run-time error");
+        throw ex;
+    }
+}
+
+void TelescopeImpl::stopTracking(const Ice::Current&)
+{
+    logger.logFINEST( "TelescopeImpl::stopTracking" ); 
+
+    try
+    {
+        if(!lcuPrx)
+        {
+            OUC::NotLCUReferenceAvailableEx ex;
+            ex.reason = "Not reference to LCU Proxy available!";
+            throw ex;	
+        }
+        OUC::TrackingInfo trkInfo;
+        trkInfo.trackState = false;
+        trkInfo.ticVel = 0;
+        return  lcuPrx->setTracking(trkInfo);
+    } catch (OUC::TelescopeNotConfiguredEx& ex) {
+        logger.logSEVERE("TelescopeImpl::stopTracking: LCU returned: %s. Execute setConfiguration method first", &ex.reason);
+        throw ex;
+    } catch (Ice::Exception& ex) {
+        logger.logSEVERE("TelescopeImpl::stopTracking: Unexpected run-time error");
+        throw ex;
+    }
+}
+
 void TelescopeImpl::setTracking(const OUC::TrackingInfo& trkInfo, const Ice::Current&)
 {
     logger.logFINEST( "TelescopeImpl::setTracking" ); 
@@ -321,6 +371,30 @@ void TelescopeImpl::parkTelescope(const Ice::Current&)
         throw ex;
     } catch (Ice::Exception& ex) {
         logger.logSEVERE("TelescopeImpl::parkTelescope: Unexpected run-time error");
+        throw ex;
+    }
+}
+
+void TelescopeImpl::stopTelescope(const Ice::Current&)
+{
+    logger.logFINEST( "TelescopeImpl::stopTelescope" ); 
+
+    try
+    {
+        if(!lcuPrx)
+        {
+            OUC::NotLCUReferenceAvailableEx ex;
+            ex.reason = "Not reference to LCU Proxy available!";
+            throw ex;	
+        }
+
+        OUC::TelescopeDirection dir = OUC::North;
+        return  lcuPrx->stopTelescope(dir);
+    } catch (OUC::TelescopeNotConfiguredEx& ex) {
+        logger.logSEVERE("TelescopeImpl::stopTelescope: LCU returned: %s. Execute setConfiguration method first", &ex.reason);
+        throw ex;
+    } catch (Ice::Exception& ex) {
+        logger.logSEVERE("TelescopeImpl::stopTelescope: Unexpected run-time error");
         throw ex;
     }
 }

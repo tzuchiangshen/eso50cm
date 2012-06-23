@@ -2,7 +2,7 @@
 #include <TelescopeImpl.h>
 #include <Ice/Ice.h>
 
-using namespace std;
+//using namespace std;
 
 ObservingImpl::ObservingImpl(const Ice::ObjectAdapterPtr& adapter) : logger("ObservingControl"),
     _adapter(adapter),
@@ -43,3 +43,36 @@ ObservingImpl::getTelescope(const Ice::Current& c)
     _telescopePrx = OUC::TelescopePrx::uncheckedCast(_adapter->addWithUUID(_telescope));
     return _telescopePrx;
 }
+
+void ObservingImpl::moveToTarget(const Ice::Current& c) {
+    OUC::TelescopePrx lcu = getTelescope(c);
+    lcu->moveToTarget();
+}
+    
+void ObservingImpl::stopTelescope(const Ice::Current& c) {
+    OUC::TelescopeDirection dir = OUC::North;
+    OUC::TelescopePrx lcu = getTelescope(c);
+    lcu->stopTelescope(dir);
+}    
+
+void ObservingImpl::parkTelescope(const Ice::Current& c) {
+    OUC::TelescopePrx lcu = getTelescope(c);
+    lcu->parkTelescope();
+}
+
+void ObservingImpl::parkTelescopeCap(const Ice::Current& c) {
+    OUC::TelescopePrx lcu = getTelescope(c);
+    //not implmented yet
+}
+
+void ObservingImpl::startTracking(const Ice::Current& c) {
+    OUC::TelescopePrx lcu = getTelescope(c);
+    lcu->startTracking();
+}
+
+void ObservingImpl::stopTracking(const Ice::Current& c) {
+    OUC::TelescopePrx lcu = getTelescope(c);
+    lcu->stopTracking();
+}
+
+
