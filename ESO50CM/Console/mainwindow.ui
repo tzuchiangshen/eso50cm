@@ -65,8 +65,11 @@
     <bool>false</bool>
    </attribute>
    <addaction name="saveAsAction"/>
-   <addaction name="gotoTargetAction"/>
    <addaction name="stopTelescopeAction"/>
+   <addaction name="parkTelescopeAction"/>
+   <addaction name="parkTelescopeCap"/>
+   <addaction name="gotoTargetAction"/>
+   <addaction name="trackingAction"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="dockProcess">
@@ -167,6 +170,42 @@
    </property>
    <property name="toolTip">
     <string>stop telescope</string>
+   </property>
+  </action>
+  <action name="parkTelescopeAction">
+   <property name="icon">
+    <iconset resource="Console.qrc">
+     <normaloff>:/eso50cm/Cosole/park_telescope.png</normaloff>:/eso50cm/Cosole/park_telescope.png</iconset>
+   </property>
+   <property name="text">
+    <string>Park Telescope</string>
+   </property>
+   <property name="toolTip">
+    <string>park telescope</string>
+   </property>
+  </action>
+  <action name="parkTelescopeCap">
+   <property name="icon">
+    <iconset resource="Console.qrc">
+     <normaloff>:/eso50cm/Cosole/park_cap.png</normaloff>:/eso50cm/Cosole/park_cap.png</iconset>
+   </property>
+   <property name="text">
+    <string>Park Telescope Cap</string>
+   </property>
+   <property name="toolTip">
+    <string>park telescope cap</string>
+   </property>
+  </action>
+  <action name="trackingAction">
+   <property name="icon">
+    <iconset resource="Console.qrc">
+     <normaloff>:/eso50cm/Cosole/tracking.png</normaloff>:/eso50cm/Cosole/tracking.png</iconset>
+   </property>
+   <property name="text">
+    <string>Tracking</string>
+   </property>
+   <property name="toolTip">
+    <string>set tracking</string>
    </property>
   </action>
  </widget>

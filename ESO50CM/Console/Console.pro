@@ -34,5 +34,6 @@ RESOURCES += \
 
 
 LIBS += -L/eso50cm/SWROOT/lib/ -lLoggerCore -lObservingImpl -lLCUImpl -lIce -lIceUtil
-INCLUDEPATH += /eso50cm/SWROOT/include
+INCLUDEPATH += /eso50cm/SWROOT/include \
+               ../Observing/include/
 DEPENDPATH +=  /eso50cm/SWROOT/include

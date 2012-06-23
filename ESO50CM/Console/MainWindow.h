@@ -40,6 +40,8 @@ public slots:
     void gotoTarget();
     void parkTelescope();
     void parkTelescopeCap();
+    void startTracking();
+    void stopTracking();
 
 
 private:
