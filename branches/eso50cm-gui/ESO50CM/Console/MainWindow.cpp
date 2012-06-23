@@ -8,6 +8,8 @@
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QDebug>
+#include <QFuture>
+#include <QtCore>
 #include <QWebView>
 #include <QUrl>
 
@@ -34,6 +36,8 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT( gotoTarget() ));
 
     connect( ui->stopTelescopeAction, SIGNAL(triggered()), this, SLOT( stopTelescope()));
+
+    connect( ui->trackingAction, SIGNAL(triggered()), this, SLOT( startTracking() ));
 
     // telescope position
     connect( mainController->obsControl, SIGNAL( newData(int, OUC::TelescopeData* ) ),
@@ -86,6 +90,15 @@ void MainWindow::stopTelescope() {
     mainController->obsControl->stopTelescope();
 }
 
+void MainWindow::startTracking() {
+    mainController->obsControl->startTracking();
+}
+
+void MainWindow::stopTracking() {
+    mainController->obsControl->stopTracking();
+}
+
+
 void MainWindow::parkTelescope() {
     mainController->obsControl->parkTelescope();
 }
@@ -97,6 +110,7 @@ void MainWindow::parkTelescopeCap() {
 
 void MainWindow::gotoTarget() {
     mainController->obsControl->gotoTarget();
+    qDebug() << "Me fui, no estoy bloqueando!";
 }
 
 void MainWindow::showData(int type, OUC::TelescopeData *data ) {

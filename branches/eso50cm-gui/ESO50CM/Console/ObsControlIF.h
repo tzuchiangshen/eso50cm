@@ -4,6 +4,7 @@
 
 #include <Ice/Ice.h>
 #include "Observing.h"
+#include "AMI_Observing_moveToTargetImpl.h"
 #include <QThread>
 #include <QMutex>
 #include <QDebug>
@@ -36,6 +37,8 @@ public:
     int setTargetPositionDec(const char* arguments);
     void handset_slew(string rate, string direction);
     void stopTelescope();
+    void startTracking();
+    void stopTracking();
     void parkTelescope();
     void gotoTarget();
 
@@ -54,6 +57,22 @@ private:
     QMutex mutex;
     LoggerHelper logger;
 };
+
+class workThread: public QThread
+{
+    Q_OBJECT
+public:
+
+    void setLCU(TelescopePrx lcu) {
+        this->lcu = lcu;
+    }
+
+private:
+    void run();
+    TelescopePrx lcu;
+    //LoggerHelper logger;
+};
+
 #endif 
 
 

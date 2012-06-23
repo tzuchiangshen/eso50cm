@@ -135,15 +135,33 @@ void ObsControlIF::stopTelescope() {
     }
 }
 
-void ObsControlIF::gotoTarget() {
+void ObsControlIF::startTracking() {
     try {
-        lcu->moveToTarget();
-        logger.logINFO("ObsControlIF::goto target");
+        logger.logINFO("ObsControlIF::startTracking");
+        lcu->startTracking();
     } catch(const Ice::Exception& ex) {
-        logger.logSEVERE("Error in ObsControlIF:gotoTarget(). %s", ex.ice_name().c_str());
+        logger.logSEVERE("Error in ObsControlIF:startTracking(). %s", ex.ice_name().c_str());
         cout << ex << endl;
         emit newData(2, data);
     }
+}
+
+void ObsControlIF::stopTracking() {
+    try {
+        logger.logINFO("ObsControlIF::startTracking");
+        lcu->stopTracking();
+    } catch(const Ice::Exception& ex) {
+        logger.logSEVERE("Error in ObsControlIF:startTracking(). %s", ex.ice_name().c_str());
+        cout << ex << endl;
+        emit newData(2, data);
+    }
+}
+
+void ObsControlIF::gotoTarget() {
+
+    AMI_Observing_moveToTargetPtr cb = new AMI_Observing_moveToTargetImpl(lcu);
+    obs->moveToTarget_async(cb);
+    logger.logINFO(">>>>>>>>>>>>>>>>>>>>>>>> goto target invoked asynchronously");
 }
 
 void ObsControlIF::parkTelescope() {
@@ -400,5 +418,21 @@ void ObsControlIF::handset_slew(string rate, string direction)
         printf(">>>>>>>>>>>>> slew->direction = %s\n", slewInfo->direction.c_str());
     } catch(const Ice::Exception& ex) {
         cout << ex << endl;
+    }
+}
+
+//
+// WorkerThread implementation
+//
+void workThread::run() {
+    qDebug() << "Thread running: "  << thread()->currentThreadId();
+    //logger.logINFO("Thread running");
+    try {
+        lcu->moveToTarget();
+        //logger.logINFO("ObsControlIF::goto target");
+    } catch(const Ice::Exception& ex) {
+        //logger.logSEVERE("Error in ObsControlIF:gotoTarget(). %s", ex.ice_name().c_str());
+        cout << ex << endl;
+        //emit newData(2, data);
     }
 }
