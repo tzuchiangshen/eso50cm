@@ -415,6 +415,7 @@ LCUImpl::parkTelescopeAdvance(bool cap, const Ice::Current& c)
     int no_quit;
 
     logger.logFINEST( "LCUImpl::parkTelescope" );
+	m_stop_telescope = 0;
   
     /** Is telescope configured **/
     if(!m_configured) {
@@ -461,6 +462,11 @@ LCUImpl::parkTelescopeAdvance(bool cap, const Ice::Current& c)
     }
 
     /** Move telescope to zenith **/
+    if(m_stop_telescope == 1) {
+        logger.logSEVERE("LCUImpl::parkTelescope: Someone stopped the telescope, quit moving to the target!!!!");
+        return;
+    }
+
     if( alpha_mtr_counts < -50 || 50 < alpha_mtr_counts ) 
     {
         m_lcu->telescope->alpha->Motor->setDeviceMemory( 7, & alpha_mtr_counts, 0  );
@@ -481,6 +487,11 @@ LCUImpl::parkTelescopeAdvance(bool cap, const Ice::Current& c)
         do {
             /** Reading current position */
             sleep( 1 );
+            if(m_stop_telescope == 1) {
+               logger.logSEVERE("LCUImpl::parkTelescope: Someone stopped the telescope, quit moving to the target!!!!");
+               return;
+            }
+
             m_lcu->waitSemaphore();
             {
                 if( goto_alpha_flag ) {
@@ -511,12 +522,21 @@ LCUImpl::parkTelescopeAdvance(bool cap, const Ice::Current& c)
    
         goto_alpha_flag = false;
         goto_delta_flag = false;
+        if(m_stop_telescope == 1) {
+           logger.logSEVERE("LCUImpl::parkTelescope: Someone stopped the telescope, quit moving to the target!!!!");
+           return;
+        }
         m_lcu->waitSemaphore();
         { 
             /** Current Position */
             m_lcu->telescope->currentPosition(&targetPos.localSideralTime, &targetPos.RA, &targetPos.Dec, &targetPos.Alt, &targetPos.Az, &targetPos.HA);
-            targetPos.RA =  targetPos.localSideralTime;
-            targetPos.Dec = m_lcu->telescope->getLatitude();
+            if(cap) {
+                targetPos.RA =  targetPos.localSideralTime + 80.0;
+                targetPos.Dec = 0.0;
+            } else {
+                targetPos.RA =  targetPos.localSideralTime;
+                targetPos.Dec = m_lcu->telescope->getLatitude();
+            }
             logger.logINFO("LCUImpl::parkTelescope: RA for setTarget: %lf, Dec for setTarget: %lf ", targetPos.RA, targetPos.Dec);
             /** Set Position **/
             m_lcu->telescope->setTarget(targetPos.RA, targetPos.Dec, &targetPos.Alt, &targetPos.Az);
