@@ -130,7 +130,7 @@ class myTelescope : public myTClock
 
         //int    currentPosition( double * lst, double * ra, double * dec  );
         int    currentPosition( double * lst, double * ra, double * dec, double * alt, double * az, double * ha );
-	int    targetPosition( double * lst, double * ra, double * dec, double * alt, double * az, double * ha );
+        int    targetPosition( double * lst, double * ra, double * dec, double * alt, double * az, double * ha );
         int    setTarget( double trg_ra, double trg_dec, double * trgAlt, double * trgAz );
         double equatorialToHorizontal( double ha, double dec, double * alt, double * az );
 

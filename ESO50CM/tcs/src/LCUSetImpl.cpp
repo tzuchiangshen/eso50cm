@@ -390,9 +390,21 @@ LCUImpl::setTracking(const OUC::TrackingInfo& trkInfo, const Ice::Current& c)
     
     logger.logINFO( "LCUImpl::setTracking Tracking State: %d, ticks velocity: %d",trkInfo.trackState,trkInfo.ticVel);
 }
-  
+
+void 
+LCUImpl::parkTelescopeCap(const Ice::Current& c)
+{  
+    parkTelescopeAdvance(true, c);
+}
+
 void 
 LCUImpl::parkTelescope(const Ice::Current& c)
+{  
+    parkTelescopeAdvance(false, c);
+}
+
+void 
+LCUImpl::parkTelescopeAdvance(bool cap, const Ice::Current& c)
 {
     int  alpha_mtr_counts;
     int  delta_mtr_counts;
@@ -417,9 +429,15 @@ LCUImpl::parkTelescope(const Ice::Current& c)
     /** Current Position */
     m_lcu->telescope->currentPosition(&targetPos.localSideralTime, &targetPos.RA, &targetPos.Dec, &targetPos.Alt, &targetPos.Az, &targetPos.HA);
     /** Set target = zenith */
-    logger.logINFO("LCUImpl::parkTelescope: LST for setTarget: %lf, Latitude for setTarget: %lf ", targetPos.localSideralTime, m_lcu->telescope->getLatitude());
-    targetPos.RA =  targetPos.localSideralTime;
-    targetPos.Dec = m_lcu->telescope->getLatitude();
+    if(cap) {
+        logger.logINFO("LCUImpl::parkTelescope: LST for setTarget: %lf, Latitude for setTarget: %lf ", targetPos.localSideralTime + 80.0, m_lcu->telescope->getLatitude());
+        targetPos.RA =  targetPos.localSideralTime + 80.0;
+        targetPos.Dec = 0.0;
+    } else {
+        logger.logINFO("LCUImpl::parkTelescope: LST for setTarget: %lf, Latitude for setTarget: %lf ", targetPos.localSideralTime, m_lcu->telescope->getLatitude());
+        targetPos.RA =  targetPos.localSideralTime;
+        targetPos.Dec = m_lcu->telescope->getLatitude();
+    }
     logger.logINFO("LCUImpl::parkTelescope: RA for setTarget: %lf, Dec for setTarget: %lf ", targetPos.RA, targetPos.Dec);
     m_lcu->telescope->setTarget(targetPos.RA, targetPos.Dec, &targetPos.Alt, &targetPos.Az);
     /** Set Offsets **/
