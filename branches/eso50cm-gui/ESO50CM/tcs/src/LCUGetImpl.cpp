@@ -268,6 +268,7 @@ OUC::RawEncoderData LCUImpl::getRawEncodersPosition(const Ice::Current& c)
     //Motor
     m_lcu->telescope->alpha->Motor->readDeviceMemory( 2, &rawEncoder_t->lectAlphaMotor, 0 );
     m_lcu->telescope->alpha->Motor->readDeviceMemory( 4, &rawEncoder_t->posAlphaMotor, 0 );
+    m_lcu->telescope->alpha->Motor->readDeviceMemory( 7, &rawEncoder_t->remAlphaMotor, 0 );
 
     /** Delta Raw Encoder **/
     //Axis
@@ -279,6 +280,7 @@ OUC::RawEncoderData LCUImpl::getRawEncodersPosition(const Ice::Current& c)
     //Motor
     m_lcu->telescope->delta->Motor->readDeviceMemory( 2, &rawEncoder_t->lectDeltaMotor, 0 );
     m_lcu->telescope->delta->Motor->readDeviceMemory( 4, &rawEncoder_t->posDeltaMotor, 0 );
+    m_lcu->telescope->delta->Motor->readDeviceMemory( 7, &rawEncoder_t->remDeltaMotor, 0 );
 
     /** LCU Local Time **/  
     rawEncoder_t->lcuTime = MiddleEndianToLittleEndian(m_lcu->getLCUMTime());

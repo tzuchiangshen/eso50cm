@@ -11,12 +11,14 @@ struct RawEncoderData
 	int lectAlphaWormE;
 	int lectAlphaAxisE;
 	int lectAlphaMotor;
+    int remAlphaMotor;
 	int posAlphaWormE;
 	int posAlphaAxisE;
 	int posAlphaMotor;
 	int lectDeltaWormE;
 	int lectDeltaAxisE;
 	int lectDeltaMotor;
+    int remDeltaMotor;
 	int posDeltaWormE;
 	int posDeltaAxisE;
 	int posDeltaMotor;
