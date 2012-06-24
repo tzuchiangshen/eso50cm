@@ -34,6 +34,8 @@ public:
     void setOffset(const ::OUC::TelescopePosition& offsetPos);
     virtual void setTracking(const OUC::TrackingInfo& trkInfo, const Ice::Current&);
     virtual void parkTelescope(const Ice::Current&);
+    virtual void parkTelescopeCap(const Ice::Current&);
+    virtual void parkTelescopeAdvance(bool cap, const Ice::Current&);
     virtual void stopTelescope(OUC::TelescopeDirection dir, const Ice::Current&);
     virtual void moveToTarget(const Ice::Current&);
     virtual void handsetSlew(const ::OUC::SlewInfo& slewInfo, const Ice::Current&);

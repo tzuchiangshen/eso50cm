@@ -138,6 +138,10 @@ interface LCU
          throws TelescopeNotConfiguredEx;
     void parkTelescope()
          throws TelescopeNotConfiguredEx;
+    void parkTelescopeCap()
+         throws TelescopeNotConfiguredEx;
+    void parkTelescopeAdvance(bool cap)
+         throws TelescopeNotConfiguredEx;
     void stopTelescope(TelescopeDirection dir)
          throws TelescopeNotConfiguredEx;
     void moveToTarget()
