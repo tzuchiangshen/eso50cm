@@ -45,6 +45,7 @@ public:
     void parkTelescope();
     void parkTelescopeCap();
     void gotoTarget();
+    void telescopeMovementFinished();
 
 signals: 
     void newData(const int type,  OUC::TelescopeData *data);

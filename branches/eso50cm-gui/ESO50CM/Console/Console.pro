@@ -14,14 +14,20 @@ SOURCES += main.cpp\
     ObsControlIF.cpp \
     MainController.cpp \
     MainWindow.cpp \
-    TheSky6IF.cpp
+    TheSky6IF.cpp \
+    AMI_Observing_moveToTargetImpl.cpp \
+    AMI_Observing_parkTelescopeCapImpl.cpp \
+    AMI_Observing_parkTelescope.cpp
 
 HEADERS  += \
     ObsControlIF.h \
     MainController.h \
     MainWindow.h \
     TheSky6IF.h \
-    Console.h
+    Console.h \
+    AMI_Observing_moveToTargetImpl.h \
+    AMI_Observing_parkTelescopeImpl.h \
+    AMI_Observing_parkTelescopeCapImpl.h
 
 
 
