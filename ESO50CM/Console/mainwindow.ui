@@ -77,6 +77,9 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="dockProcess">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="windowTitle">
     <string>system</string>
    </property>
@@ -90,6 +93,9 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockLogger">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="windowTitle">
     <string>logger</string>
    </property>
@@ -232,6 +238,9 @@
   <action name="logsPanelAction">
    <property name="text">
     <string>Logs Panel</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
  </widget>

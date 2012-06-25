@@ -185,34 +185,52 @@ void ObsControlIF::stopTracking() {
 }
 
 void ObsControlIF::gotoTarget() {
-    logger.logINFO("goto_target invoked asynchronously");
-    AMI_Observing_moveToTargetPtr cb = new AMI_Observing_moveToTargetImpl(lcu);
-    obs->moveToTarget_async(cb);
-    TelescopeStatus status = TelescopeMoving;
+    try {
+        logger.logINFO("goto_target invoked asynchronously");
+        AMI_Observing_moveToTargetPtr cb = new AMI_Observing_moveToTargetImpl(this);
+        obs->moveToTarget_async(cb);
+        TelescopeStatus status = TelescopeMoving;
+        emit newTelescopeStatusTriggered(status);
+    } catch(const Ice::Exception& ex) {
+        logger.logSEVERE("Error in ObsControlIF:startTracking(). %s", ex.ice_name().c_str());
+        cout << "ObsControlIF::gotoTarget(): Exception caught, " << ex << endl;
+        TelescopeStatus status = TelescopeError;
+        emit newTelescopeStatusTriggered(status);
+    }
+}
+
+void ObsControlIF::telescopeMovementFinished() {
+    TelescopeStatus status = TelescopeStop;
     emit newTelescopeStatusTriggered(status);
 }
 
 void ObsControlIF::parkTelescope() {
     try {
         logger.logINFO("park_telescope invoked asynchronously");
-        AMI_Observing_parkTelescopePtr cb = new AMI_Observing_parkTelescopeImpl(lcu);
+        AMI_Observing_parkTelescopePtr cb = new AMI_Observing_parkTelescopeImpl(this);
         obs->parkTelescope_async(cb);
+        TelescopeStatus status = TelescopeMoving;
+        emit newTelescopeStatusTriggered(status);
     } catch(const Ice::Exception& ex) {
         logger.logSEVERE("Error in ObsControlIF:parkTelescope(). %s", ex.ice_name().c_str());
-        cout << ex << endl;
-        emit newData(2, data);
+        TelescopeStatus status = TelescopeError;
+        cout << "ObsControlIF::parkTelescope(): Exception caught, " << ex << endl;
+        emit newTelescopeStatusTriggered(status);
     }
 }
 
 void ObsControlIF::parkTelescopeCap() {
     try {
         logger.logINFO("park_telescope_cap invoked asynchronously");
-        AMI_Observing_parkTelescopeCapPtr cb = new AMI_Observing_parkTelescopeCapImpl(lcu);
+        AMI_Observing_parkTelescopeCapPtr cb = new AMI_Observing_parkTelescopeCapImpl(this);
         obs->parkTelescopeCap_async(cb);
+        TelescopeStatus status = TelescopeMoving;
+        emit newTelescopeStatusTriggered(status);
     } catch(const Ice::Exception& ex) {
         logger.logSEVERE("Error in ObsControlIF:parkTelescopeCap(). %s", ex.ice_name().c_str());
-        cout << ex << endl;
-        emit newData(2, data);
+        cout << "ObsControlIF::parkTelescopeCap(): Exception caught, " << ex << endl;
+        TelescopeStatus status = TelescopeError;
+        emit newTelescopeStatusTriggered(status);
     }
 }
 

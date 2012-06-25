@@ -69,6 +69,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // status bar
     qRegisterMetaType<ProcessStatus>("ProcessStatus");
+    qRegisterMetaType<TelescopeStatus>("TelescopeStatus");
+    qRegisterMetaType<TrackingStatus>("TrackingStatus");
     connect( mainController->obsControl, SIGNAL( newObsControlStatusTriggered(ProcessStatus)),
              this, SLOT( updateObsControlStatus(ProcessStatus) ));
     connect( mainController->obsControl, SIGNAL( newTelescopeStatusTriggered(TelescopeStatus)),
@@ -88,7 +90,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QUrl url("http://weather.aiv.alma.cl/data/all/images/temperature-30min.png");
     qDebug() << "url=" << url;
     view->load(url);
-    view->show(); // Minimized();
+    view->showMinimized();
     ui->dockWebcam->setWidget(view);
     ui->dockWebcam->setWindowTitle("webcam");
 
