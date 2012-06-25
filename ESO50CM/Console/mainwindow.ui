@@ -41,6 +41,8 @@
     <property name="title">
      <string>Windows</string>
     </property>
+    <addaction name="logsLevelPanelAction"/>
+    <addaction name="logsPanelAction"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -67,9 +69,11 @@
    <addaction name="saveAsAction"/>
    <addaction name="stopTelescopeAction"/>
    <addaction name="parkTelescopeAction"/>
-   <addaction name="parkTelescopeCap"/>
+   <addaction name="parkTelescopeCapAction"/>
    <addaction name="gotoTargetAction"/>
    <addaction name="trackingAction"/>
+   <addaction name="trackingDisableAction"/>
+   <addaction name="separator"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="dockProcess">
@@ -184,7 +188,7 @@
     <string>park telescope</string>
    </property>
   </action>
-  <action name="parkTelescopeCap">
+  <action name="parkTelescopeCapAction">
    <property name="icon">
     <iconset resource="Console.qrc">
      <normaloff>:/eso50cm/Cosole/park_cap.png</normaloff>:/eso50cm/Cosole/park_cap.png</iconset>
@@ -206,6 +210,28 @@
    </property>
    <property name="toolTip">
     <string>set tracking</string>
+   </property>
+  </action>
+  <action name="trackingDisableAction">
+   <property name="icon">
+    <iconset resource="Console.qrc">
+     <normaloff>:/eso50cm/Cosole/tracking_disable.png</normaloff>:/eso50cm/Cosole/tracking_disable.png</iconset>
+   </property>
+   <property name="text">
+    <string>trackingDisableAction</string>
+   </property>
+   <property name="toolTip">
+    <string>stop tracking</string>
+   </property>
+  </action>
+  <action name="logsLevelPanelAction">
+   <property name="text">
+    <string>Logs Level Panel  </string>
+   </property>
+  </action>
+  <action name="logsPanelAction">
+   <property name="text">
+    <string>Logs Panel</string>
    </property>
   </action>
  </widget>

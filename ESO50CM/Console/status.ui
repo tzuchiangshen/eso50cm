@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>statusForm</class>
+ <widget class="QWidget" name="statusForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>780</width>
+    <height>46</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QWidget" name="horizontalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>0</y>
+     <width>761</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QToolButton" name="trackingStatus">
+      <property name="text">
+       <string>tracking</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QToolButton" name="telescopeStatus">
+      <property name="text">
+       <string>Running</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QToolButton" name="consoleStatus">
+      <property name="text">
+       <string>Connected</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

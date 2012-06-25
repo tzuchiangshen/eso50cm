@@ -104,7 +104,7 @@ void ObsControlIF::formatDecPosition(double dec, char *buffer, int maxlen)
 int ObsControlIF::getPosition()
 {
     try {
-        char buffer[1000];
+        //char buffer[1000];
         mutex.lock();
         *data = lcu->getPosition();
         *enc = lcu->getRawEncodersPosition();
@@ -114,10 +114,28 @@ int ObsControlIF::getPosition()
         mutex.unlock();
         emit newData(1, data);
         emit newEncData(1, enc);
+        ProcessStatus status = ProcessConnected;
+        emit newObsControlStatusTriggered(status);
+        emit newLCUControlStatusTriggered(status);
+    } catch(Ice::ConnectionRefusedException& ex) {
+        ProcessStatus status = ProcessDisconnected;
+        emit newObsControlStatusTriggered(status);
+        emit newLCUControlStatusTriggered(status);
+        logger.logSEVERE("Connectivity error with ObsControl");
+        logger.logSEVERE("Error in ObsControlIF:getPosition(). %s", ex.ice_name().c_str());
+    } catch(Ice::ConnectionLostException& ex) {
+        ProcessStatus status = ProcessDisconnected;
+        emit newObsControlStatusTriggered(status);
+        emit newLCUControlStatusTriggered(status);
+        logger.logSEVERE("Lost connection to ObsControl");
+        logger.logSEVERE("Error in ObsControlIF:getPosition(). %s", ex.ice_name().c_str());
     } catch(const Ice::Exception& ex) {
         logger.logSEVERE("Error in ObsControlIF:getPosition(). %s", ex.ice_name().c_str());
         cout << ex << endl;
         emit newData(2, data);
+        ProcessStatus status = ProcessError;
+        emit newObsControlStatusTriggered(status);
+        emit newLCUControlStatusTriggered(status);
     }
 
     return EXIT_SUCCESS;
@@ -127,11 +145,15 @@ void ObsControlIF::stopTelescope() {
     try {
         OUC::TelescopeDirection dir = North;
         lcu->stopTelescope(dir);
+        TelescopeStatus status = TelescopeStop;
+        emit newTelescopeStatusTriggered(status);
         logger.logINFO("ObsControlIF::stopTelescope");
     } catch(const Ice::Exception& ex) {
         logger.logSEVERE("Error in ObsControlIF:stopTelescope(). %s", ex.ice_name().c_str());
         cout << ex << endl;
-        emit newData(2, data);
+        //emit newData(2, data);
+        //ProcessStatus status = Error;
+        //emit newObsControlStatusTriggered(status);
     }
 }
 
@@ -139,10 +161,13 @@ void ObsControlIF::startTracking() {
     try {
         logger.logINFO("ObsControlIF::startTracking");
         lcu->startTracking();
+        TrackingStatus status = TrackingOn;
+        emit newTrackingStatusTriggered(status);
+
     } catch(const Ice::Exception& ex) {
         logger.logSEVERE("Error in ObsControlIF:startTracking(). %s", ex.ice_name().c_str());
-        cout << ex << endl;
-        emit newData(2, data);
+        TrackingStatus status = TrackingError;
+        emit newTrackingStatusTriggered(status);
     }
 }
 
@@ -150,26 +175,42 @@ void ObsControlIF::stopTracking() {
     try {
         logger.logINFO("ObsControlIF::startTracking");
         lcu->stopTracking();
+        TrackingStatus status = TrackingOff;
+        emit newTrackingStatusTriggered(status);
     } catch(const Ice::Exception& ex) {
         logger.logSEVERE("Error in ObsControlIF:startTracking(). %s", ex.ice_name().c_str());
+        TrackingStatus status = TrackingError;
+        emit newTrackingStatusTriggered(status);
+    }
+}
+
+void ObsControlIF::gotoTarget() {
+    logger.logINFO("goto_target invoked asynchronously");
+    AMI_Observing_moveToTargetPtr cb = new AMI_Observing_moveToTargetImpl(lcu);
+    obs->moveToTarget_async(cb);
+    TelescopeStatus status = TelescopeMoving;
+    emit newTelescopeStatusTriggered(status);
+}
+
+void ObsControlIF::parkTelescope() {
+    try {
+        logger.logINFO("park_telescope invoked asynchronously");
+        AMI_Observing_parkTelescopePtr cb = new AMI_Observing_parkTelescopeImpl(lcu);
+        obs->parkTelescope_async(cb);
+    } catch(const Ice::Exception& ex) {
+        logger.logSEVERE("Error in ObsControlIF:parkTelescope(). %s", ex.ice_name().c_str());
         cout << ex << endl;
         emit newData(2, data);
     }
 }
 
-void ObsControlIF::gotoTarget() {
-
-    AMI_Observing_moveToTargetPtr cb = new AMI_Observing_moveToTargetImpl(lcu);
-    obs->moveToTarget_async(cb);
-    logger.logINFO(">>>>>>>>>>>>>>>>>>>>>>>> goto target invoked asynchronously");
-}
-
-void ObsControlIF::parkTelescope() {
+void ObsControlIF::parkTelescopeCap() {
     try {
-        lcu->parkTelescope();
-        logger.logINFO("ObsControlIF::park telescope");
+        logger.logINFO("park_telescope_cap invoked asynchronously");
+        AMI_Observing_parkTelescopeCapPtr cb = new AMI_Observing_parkTelescopeCapImpl(lcu);
+        obs->parkTelescopeCap_async(cb);
     } catch(const Ice::Exception& ex) {
-        logger.logSEVERE("Error in ObsControlIF:parkTelescope(). %s", ex.ice_name().c_str());
+        logger.logSEVERE("Error in ObsControlIF:parkTelescopeCap(). %s", ex.ice_name().c_str());
         cout << ex << endl;
         emit newData(2, data);
     }
@@ -353,7 +394,14 @@ int ObsControlIF::connect()
         obs = ObservingPrx::checkedCast(base->ice_twoway()->ice_timeout(-1));
         if(!obs) {
             logger.logSEVERE("ObsControlIF::connect: %s: invalid proxy", argv[0]);
+            ProcessStatus status = ProcessDisconnected;
+            emit newObsControlStatusTriggered(status);
             return EXIT_FAILURE;
+        } else {
+            qDebug() << "emitiendo newObsControlStatus(1)";
+            ProcessStatus status = ProcessConnected;
+            emit newObsControlStatusTriggered(status);
+            qDebug() << "listo";
         }
    
         lcu = obs->getTelescope();
@@ -362,12 +410,16 @@ int ObsControlIF::connect()
             return EXIT_FAILURE;
         }
     } catch(const Ice::ConnectionRefusedException& ex) {
-        cout << "ERROR!!! Unable to connect to server: " << ex << endl;
+        logger.logSEVERE("ERROR!!! Unable to connect to server: %s", ex.ice_name().c_str());
         status = EXIT_FAILURE;
+        ProcessStatus status = ProcessDisconnected;
+        emit newObsControlStatusTriggered(status);
     } catch(const Ice::Exception& ex) {
-        cout << ex << endl;
+        logger.logSEVERE("ERROR!!! Unable to connect to server: %s", ex.ice_name().c_str());
         status = EXIT_FAILURE;
-        emit newData(2, data);
+        //emit newData(2, data);
+        ProcessStatus status = ProcessError;
+        emit newObsControlStatusTriggered(status);
     }
 
     return status;

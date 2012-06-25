@@ -5,12 +5,15 @@
 #include <Ice/Ice.h>
 #include "Observing.h"
 #include "AMI_Observing_moveToTargetImpl.h"
+#include "AMI_Observing_parkTelescopeImpl.h"
+#include "AMI_Observing_parkTelescopeCapImpl.h"
 #include <QThread>
 #include <QMutex>
 #include <QDebug>
 #include <math.h>
 #include <string.h>
 #include "LoggerHelper.h"
+#include "Console.h"
 
 
 using namespace std;
@@ -40,11 +43,17 @@ public:
     void startTracking();
     void stopTracking();
     void parkTelescope();
+    void parkTelescopeCap();
     void gotoTarget();
 
 signals: 
     void newData(const int type,  OUC::TelescopeData *data);
     void newEncData(const int type, OUC::RawEncoderData *enc);
+    void newTelescopeStatusTriggered(TelescopeStatus status);
+    void newObsControlStatusTriggered(ProcessStatus status);
+    void newLCUControlStatusTriggered(ProcessStatus status);
+    void newTrackingStatusTriggered(TrackingStatus status);
+
 private:
     int getPosition();
     char * strfdegs( char * string, size_t max_len, const char * format, double degs );
