@@ -375,6 +375,29 @@ void TelescopeImpl::parkTelescope(const Ice::Current&)
     }
 }
 
+void TelescopeImpl::parkTelescopeCap(const Ice::Current&)
+{
+    logger.logFINEST( "TelescopeImpl::parkTelescopeCap" ); 
+
+    try
+    {
+        if(!lcuPrx)
+        {
+            OUC::NotLCUReferenceAvailableEx ex;
+            ex.reason = "Not reference to LCU Proxy available!";
+            throw ex;	
+        }
+
+        return  lcuPrx->parkTelescopeCap();
+    } catch (OUC::TelescopeNotConfiguredEx& ex) {
+        logger.logSEVERE("TelescopeImpl::parkTelescopeCap: LCU returned: %s. Execute setConfiguration method first", &ex.reason);
+        throw ex;
+    } catch (Ice::Exception& ex) {
+        logger.logSEVERE("TelescopeImpl::parkTelescopeCap: Unexpected run-time error");
+        throw ex;
+    }
+}
+
 void TelescopeImpl::stopTelescope(const Ice::Current&)
 {
     logger.logFINEST( "TelescopeImpl::stopTelescope" ); 

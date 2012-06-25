@@ -52,6 +52,9 @@ class Telescope
     void parkTelescope()
          throws TelescopeNotConfiguredEx,
                 NotLCUReferenceAvailableEx; 
+    void parkTelescopeCap()
+         throws TelescopeNotConfiguredEx,
+                NotLCUReferenceAvailableEx; 
     void stopTelescope(TelescopeDirection dir)
          throws TelescopeNotConfiguredEx,
                 NotLCUReferenceAvailableEx; 

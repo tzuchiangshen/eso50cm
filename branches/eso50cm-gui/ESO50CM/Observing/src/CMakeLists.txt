@@ -45,7 +45,7 @@ INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/../../tcs/src")   #for generated .h
 LINK_DIRECTORIES(${INTROOT}/lib)
 LINK_DIRECTORIES("${PROJECT_SOURCE_DIR}/../../Logger/lib")
 LINK_DIRECTORIES("${PROJECT_SOURCE_DIR}/../../tcs/lib")
-ADD_LIBRARY(ObservingImpl SHARED Observing TelescopeImpl ObservingImpl AMI_Observing_moveToTargetImpl)
+ADD_LIBRARY(ObservingImpl SHARED Observing TelescopeImpl ObservingImpl AMI_Observing_moveToTargetImpl AMI_Observing_parkTelescopeImpl AMI_Observing_parkTelescopeCapImpl)
 TARGET_LINK_LIBRARIES(ObservingImpl LoggerCore LCUImpl Ice IceUtil)
 set_property(TARGET ObservingImpl PROPERTY LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../lib)
 

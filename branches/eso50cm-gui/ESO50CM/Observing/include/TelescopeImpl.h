@@ -31,6 +31,7 @@ class TelescopeImpl : public OUC::Telescope
         virtual void startTracking(const Ice::Current&);
         virtual void stopTracking(const Ice::Current&);
         virtual void parkTelescope(const Ice::Current&);
+        virtual void parkTelescopeCap(const Ice::Current&);
         virtual void stopTelescope(const Ice::Current&);
         virtual void stopTelescope(const ::OUC::TelescopeDirection dir, const Ice::Current&);
         virtual void moveToTarget(const Ice::Current&);

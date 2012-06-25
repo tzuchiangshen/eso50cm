@@ -62,7 +62,7 @@ void ObservingImpl::parkTelescope(const Ice::Current& c) {
 
 void ObservingImpl::parkTelescopeCap(const Ice::Current& c) {
     OUC::TelescopePrx lcu = getTelescope(c);
-    //not implmented yet
+    lcu->parkTelescopeCap();
 }
 
 void ObservingImpl::startTracking(const Ice::Current& c) {
