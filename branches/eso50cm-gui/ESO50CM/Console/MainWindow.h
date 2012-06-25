@@ -2,15 +2,17 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QTextEdit>
+#include <QToolButton>
 #include "MainController.h"
 #include "LCU.h"
+#include "Console.h"
 
 namespace Ui {
     class MainWindow;
     class TelescopeForm;
     class encoderForm;
     class offsetForm;
+    class statusForm;
 }
 
 class MainController;
@@ -42,6 +44,15 @@ public slots:
     void parkTelescopeCap();
     void startTracking();
     void stopTracking();
+    //menu
+    void openLogsLevelPanel();
+    void openLogsPanel();
+    //status bar
+    void updateTelescopeStatus(TelescopeStatus status);
+    void updateObsControlStatus(ProcessStatus status);
+    void updateLCUControlStatus(ProcessStatus status);
+    void updateTrackingStatus(TrackingStatus status);
+    void updateTheSky6Status(ProcessStatus status);
 
 
 private:
@@ -51,6 +62,7 @@ private:
     void createSystemDocking();
     void createLoggerDocking();
     void createCentralWidget();
+    void createStatusBar();
 
     //main windows controller
     MainController *mainController;
@@ -58,9 +70,17 @@ private:
     Ui::TelescopeForm *uiTelescope;
     Ui::encoderForm *uiEncoder;
     Ui::offsetForm *uiOffset;
+    Ui::statusForm *uiStatus;
 
-    QTextEdit *textEdit1;
-    QTextEdit *textEdit2;
+    //status bar
+    QToolButton *telescopeStatus; //park, park_cap, moving
+    QToolButton *trackingStatus;  //tracking on, tracking off
+    QToolButton *theSky6Status;   //connected, disconneced
+    QToolButton *obsControlStatus; //connected, disconnected
+    QToolButton *lcuControlStatus; //connected, disconnected
+
+    //QTextEdit *textEdit1;
+    //QTextEdit *textEdit2;
 };
 
 #endif // MAINWINDOW_H

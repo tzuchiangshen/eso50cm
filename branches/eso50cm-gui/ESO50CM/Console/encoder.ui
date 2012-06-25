@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>316</width>
-    <height>256</height>
+    <width>314</width>
+    <height>314</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>0</x>
      <y>10</y>
      <width>311</width>
-     <height>241</height>
+     <height>301</height>
     </rect>
    </property>
    <property name="minimumSize">
@@ -45,6 +45,11 @@
    </row>
    <row>
     <property name="text">
+     <string>RemainingE</string>
+    </property>
+   </row>
+   <row>
+    <property name="text">
      <string/>
     </property>
    </row>
@@ -61,6 +66,11 @@
    <row>
     <property name="text">
      <string>Delta Motor</string>
+    </property>
+   </row>
+   <row>
+    <property name="text">
+     <string>RemainingE</string>
     </property>
    </row>
    <column>

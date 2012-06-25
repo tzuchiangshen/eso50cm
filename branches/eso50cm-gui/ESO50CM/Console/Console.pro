@@ -20,14 +20,16 @@ HEADERS  += \
     ObsControlIF.h \
     MainController.h \
     MainWindow.h \
-    TheSky6IF.h
+    TheSky6IF.h \
+    Console.h
 
 
 
 FORMS    += mainwindow.ui \
     telescope.ui \
     encoder.ui \
-    offset.ui
+    offset.ui \
+    status.ui
 
 RESOURCES += \
     Console.qrc

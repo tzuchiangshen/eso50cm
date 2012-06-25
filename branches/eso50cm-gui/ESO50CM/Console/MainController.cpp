@@ -50,6 +50,8 @@ void MainController::theSkyMessage( void )
         request = tr( buffer );
         answer.clear();
         logger.logFINE(" commands arrived from theSkySix: (%s)", buffer);
+        ProcessStatus status = ProcessConnected;
+        emit newTheSky6StatusTriggered(status);
 
         if( request.contains("GR#") ) {
             char buffer2[256];

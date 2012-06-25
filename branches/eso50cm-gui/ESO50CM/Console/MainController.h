@@ -8,6 +8,7 @@
 #include "Observing.h"
 #include "LoggerHelper.h"
 #include "MainWindow.h"
+#include "Console.h"
 
 class MainController: public QThread
 {
@@ -18,6 +19,10 @@ public:
     TheSky6IF *theSky6;
     MainController();
     ~MainController();
+
+signals:
+    void newTheSky6StatusTriggered(ProcessStatus status);
+
 public slots:
     void testSlots(bool);
     void theSkyMessage( void );

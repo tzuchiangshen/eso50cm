@@ -3,10 +3,12 @@
 #include "ui_encoder.h"
 #include "ui_offset.h"
 #include "ui_telescope.h"
+#include "ui_status.h"
 #include <QVBoxLayout>
 #include <QObject>
 #include <QTableWidget>
 #include <QTableWidgetItem>
+#include <QPalette>
 #include <QDebug>
 #include <QFuture>
 #include <QtCore>
@@ -20,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     uiTelescope(new Ui::TelescopeForm),
     uiEncoder(new Ui::encoderForm),
     uiOffset(new Ui::offsetForm),
+    uiStatus(new Ui::statusForm),
     mainController(new MainController)
 {
     ui->setupUi(this);
@@ -27,17 +30,20 @@ MainWindow::MainWindow(QWidget *parent) :
     createOffsetDocking();
     createEncoderDocking();
     createCentralWidget();
+    createStatusBar();
 
     // toolbar
     //connect( ui->saveAsAction, SIGNAL( triggered()),
     //        this, SLOT( stopTelescope()));
 
-    connect( ui->gotoTargetAction, SIGNAL( triggered()),
-            this, SLOT( gotoTarget() ));
-
+    connect( ui->gotoTargetAction, SIGNAL( triggered()), this, SLOT( gotoTarget() ));
+    connect( ui->parkTelescopeAction, SIGNAL(triggered()), this, SLOT( parkTelescope() ));
+    connect( ui->parkTelescopeCapAction, SIGNAL(triggered()), this, SLOT( parkTelescopeCap() ));
+    connect( ui->trackingAction, SIGNAL(triggered()), this, SLOT( startTracking() ));
+    connect( ui->trackingDisableAction, SIGNAL(triggered()), this, SLOT( stopTracking() ));
     connect( ui->stopTelescopeAction, SIGNAL(triggered()), this, SLOT( stopTelescope()));
 
-    connect( ui->trackingAction, SIGNAL(triggered()), this, SLOT( startTracking() ));
+
 
     // telescope position
     connect( mainController->obsControl, SIGNAL( newData(int, OUC::TelescopeData* ) ),
@@ -57,6 +63,23 @@ MainWindow::MainWindow(QWidget *parent) :
     connect( mainController->obsControl, SIGNAL( newEncData(int,OUC::RawEncoderData*)),
              this, SLOT(showEncData(int,OUC::RawEncoderData*) ));
 
+    // menu windows
+    connect( ui->logsLevelPanelAction, SIGNAL(triggered()), this, SLOT( openLogsLevelPanel()));
+    connect( ui->logsPanelAction, SIGNAL(triggered()), this, SLOT( openLogsPanel()));
+
+    // status bar
+    qRegisterMetaType<ProcessStatus>("ProcessStatus");
+    connect( mainController->obsControl, SIGNAL( newObsControlStatusTriggered(ProcessStatus)),
+             this, SLOT( updateObsControlStatus(ProcessStatus) ));
+    connect( mainController->obsControl, SIGNAL( newTelescopeStatusTriggered(TelescopeStatus)),
+             this, SLOT( updateTelescopeStatus(TelescopeStatus) ));
+    connect( mainController, SIGNAL( newTheSky6StatusTriggered(ProcessStatus)),
+             this, SLOT( updateTheSky6Status(ProcessStatus)) );
+    connect( mainController->obsControl, SIGNAL( newTrackingStatusTriggered(TrackingStatus)),
+             this, SLOT( updateTrackingStatus(TrackingStatus)) );
+    connect( mainController->obsControl, SIGNAL( newLCUControlStatusTriggered(ProcessStatus)),
+             this, SLOT( updateLCUControlStatus(ProcessStatus)) );
+
     QWebView *view = new QWebView();
     view->setStyleSheet("background-color:rgb(150,147,88); padding: 7px ; color:rgb(255,255,255)");
     //view->url().setUserName("operador");
@@ -68,6 +91,7 @@ MainWindow::MainWindow(QWidget *parent) :
     view->show(); // Minimized();
     ui->dockWebcam->setWidget(view);
     ui->dockWebcam->setWindowTitle("webcam");
+
 
 }
 
@@ -104,13 +128,11 @@ void MainWindow::parkTelescope() {
 }
 
 void MainWindow::parkTelescopeCap() {
-    //to be implemented
-    qDebug() << "Not implemented yet";
+    mainController->obsControl->parkTelescopeCap();
 }
 
 void MainWindow::gotoTarget() {
     mainController->obsControl->gotoTarget();
-    qDebug() << "Me fui, no estoy bloqueando!";
 }
 
 void MainWindow::showData(int type, OUC::TelescopeData *data ) {
@@ -283,18 +305,219 @@ void MainWindow::showEncData(int status,OUC::RawEncoderData *enc) {
         table->item(1,1)->setText(QString::number(enc->posAlphaWormE));
         table->item(2,0)->setText(QString::number(enc->lectAlphaMotor));
         table->item(2,1)->setText(QString::number(enc->posAlphaMotor));
+        table->item(3,0)->setText(QString::number(enc->remAlphaMotor));
+        table->item(3,0)->setTextColor(QColor(255,0,0));
+
 
         //Delta
-        table->item(4,0)->setText(QString::number(enc->lectDeltaAxisE));
-        table->item(4,1)->setText(QString::number(enc->posDeltaAxisE));
-        table->item(5,0)->setText(QString::number(enc->lectDeltaWormE));
-        table->item(5,1)->setText(QString::number(enc->posDeltaWormE));
-        table->item(6,0)->setText(QString::number(enc->lectDeltaMotor));
-        table->item(6,1)->setText(QString::number(enc->posDeltaMotor));
+        table->item(5,0)->setText(QString::number(enc->lectDeltaAxisE));
+        table->item(5,1)->setText(QString::number(enc->posDeltaAxisE));
+        table->item(6,0)->setText(QString::number(enc->lectDeltaWormE));
+        table->item(6,1)->setText(QString::number(enc->posDeltaWormE));
+        table->item(7,0)->setText(QString::number(enc->lectDeltaMotor));
+        table->item(7,1)->setText(QString::number(enc->posDeltaMotor));
+        table->item(8,0)->setText(QString::number(enc->remDeltaMotor));
+        table->item(8,0)->setTextColor(QColor(255,0,0));
+    }
+}
+
+// menu
+void MainWindow::openLogsLevelPanel() {
+    QProcess p;
+    p.startDetached("LogLevelPanel");
+    p.waitForStarted();
+}
+
+void MainWindow::openLogsPanel() {
+    QProcess p;
+    p.startDetached("runLogPanel");
+    p.waitForStarted();
+}
+
+//slots for status bar
+void MainWindow::updateTelescopeStatus(TelescopeStatus status) {
+    QPalette plt = telescopeStatus->palette();
+
+    //ProcessStatus status = (ProcessStatus)type;
+    switch(status) {
+        case TelescopeStop:
+        {
+            plt.setColor(QPalette::Button, Qt::green);
+            telescopeStatus->setPalette(plt);
+            telescopeStatus->setText("Stop");
+            break;
+        }
+        case TelescopeMoving:
+        {
+            plt.setColor(QPalette::Button, Qt::yellow);
+            telescopeStatus->setPalette(plt);
+            telescopeStatus->setText("Moving");
+            break;
+        }
+        case TelescopeError:
+        {
+            plt.setColor(QPalette::Button, Qt::red);
+            telescopeStatus->setPalette(plt);
+            telescopeStatus->setText("Error");
+            break;
+        }
+        default:
+        {
+            plt.setColor(QPalette::Button, Qt::gray);
+            telescopeStatus->setPalette(plt);
+            telescopeStatus->setText("unknown");
+            break;
+        }
+    }
+}
+void MainWindow::updateObsControlStatus(ProcessStatus status) {
+    QPalette plt = obsControlStatus->palette();
+
+    //ProcessStatus status = (ProcessStatus)type;
+    switch(status) {
+        case ProcessConnected:
+        {
+            plt.setColor(QPalette::Button, Qt::green);
+            obsControlStatus->setPalette(plt);
+            this->obsControlStatus->setText("connected");
+            break;
+        }
+        case ProcessDisconnected:
+        {
+            plt.setColor(QPalette::Button, Qt::red);
+            obsControlStatus->setPalette(plt);
+            obsControlStatus->setText("disconnected");
+            break;
+        }
+        case ProcessError:
+        {
+            plt.setColor(QPalette::Button, Qt::red);
+            telescopeStatus->setPalette(plt);
+            telescopeStatus->setText("Error");
+            break;
+        }
+        default:
+        {
+            plt.setColor(QPalette::Button, Qt::gray);
+            obsControlStatus->setPalette(plt);
+            obsControlStatus->setText("unknown");
+            break;
+        }
 
     }
 }
 
+void MainWindow::updateLCUControlStatus(ProcessStatus status) {
+    QPalette plt = lcuControlStatus->palette();
+
+    //ProcessStatus status = (ProcessStatus)type;
+    switch(status) {
+        case ProcessConnected:
+        {
+            plt.setColor(QPalette::Button, Qt::green);
+            lcuControlStatus->setPalette(plt);
+            lcuControlStatus->setText("connected");
+            break;
+        }
+        case ProcessDisconnected:
+        {
+            plt.setColor(QPalette::Button, Qt::red);
+            lcuControlStatus->setPalette(plt);
+            lcuControlStatus->setText("disconnected");
+            break;
+        }
+        case ProcessError:
+        {
+            plt.setColor(QPalette::Button, Qt::red);
+            lcuControlStatus->setPalette(plt);
+            lcuControlStatus->setText("Error");
+            break;
+        }
+        default:
+        {
+            plt.setColor(QPalette::Button, Qt::gray);
+            lcuControlStatus->setPalette(plt);
+            lcuControlStatus->setText("unknown");
+            break;
+        }
+
+    }
+}
+
+void MainWindow::updateTrackingStatus(TrackingStatus status) {
+    QPalette plt = trackingStatus->palette();
+
+    //ProcessStatus status = (ProcessStatus)type;
+    switch(status) {
+        case TrackingOff:
+        {
+            plt.setColor(QPalette::Button, Qt::green);
+            trackingStatus->setPalette(plt);
+            trackingStatus->setText("Off");
+            break;
+        }
+        case TrackingOn:
+        {
+            plt.setColor(QPalette::Button, Qt::yellow);
+            trackingStatus->setPalette(plt);
+            trackingStatus->setText("On");
+            break;
+        }
+        case TrackingError:
+        {
+            plt.setColor(QPalette::Button, Qt::red);
+            trackingStatus->setPalette(plt);
+            trackingStatus->setText("Error");
+            break;
+        }
+        default:
+        {
+            plt.setColor(QPalette::Button, Qt::gray);
+            trackingStatus->setPalette(plt);
+            trackingStatus->setText("unknown");
+            break;
+        }
+    }
+
+}
+
+void MainWindow::updateTheSky6Status(ProcessStatus status) {
+    QPalette plt = obsControlStatus->palette();
+
+    //ProcessStatus status = (ProcessStatus)type;
+    switch(status) {
+        case ProcessConnected:
+        {
+            plt.setColor(QPalette::Button, Qt::green);
+            theSky6Status->setPalette(plt);
+            theSky6Status->setText("connected");
+            break;
+        }
+        case ProcessDisconnected:
+        {
+            plt.setColor(QPalette::Button, Qt::red);
+            theSky6Status->setPalette(plt);
+            theSky6Status->setText("disconnected");
+            break;
+        }
+        case ProcessError:
+        {
+            plt.setColor(QPalette::Button, Qt::red);
+            theSky6Status->setPalette(plt);
+            theSky6Status->setText("Error");
+            break;
+        }
+        default:
+        {
+            plt.setColor(QPalette::Button, Qt::gray);
+            theSky6Status->setPalette(plt);
+            theSky6Status->setText("unknown");
+            break;
+        }
+    }
+}
+
+// widget creation
 void MainWindow::createOffsetDocking() {
     QWidget *offsetWidget = new QWidget;
     //uiTelescope->ui = new Ui::TelescopeForm;
@@ -323,3 +546,61 @@ void MainWindow::createEncoderDocking() {
     }
 }
 
+void MainWindow::createStatusBar() {
+
+    QLabel *lblTelescopeStatus = new QLabel("Telescope");
+    telescopeStatus = new QToolButton();
+    QLabel *lblTrackingStatus = new QLabel("Tracking");
+    trackingStatus = new QToolButton();
+    QLabel *lblTheSky6Status = new QLabel("TheSky6");
+    theSky6Status = new QToolButton();
+    QLabel *lblObsControlStatus = new QLabel("ObsControl");
+    obsControlStatus = new QToolButton();
+    QLabel *lblLCUControlStatus = new QLabel("LCUControl");
+    lcuControlStatus = new QToolButton();
+
+
+
+
+    statusBar()->addPermanentWidget(lblTelescopeStatus);
+    statusBar()->addPermanentWidget(telescopeStatus);
+    statusBar()->addPermanentWidget(lblTrackingStatus);
+    statusBar()->addPermanentWidget(trackingStatus);
+    statusBar()->addPermanentWidget(lblTheSky6Status);
+    statusBar()->addPermanentWidget(theSky6Status);
+    statusBar()->addPermanentWidget(lblObsControlStatus);
+    statusBar()->addPermanentWidget(obsControlStatus);
+    statusBar()->addPermanentWidget(lblLCUControlStatus);
+    statusBar()->addPermanentWidget(lcuControlStatus);
+
+    //statusBar()->setMinimumHeight(256);
+
+    //telescopeStatus
+    //telescopeStatus->setTextColor(0,0,0);
+    telescopeStatus->setText("unknown");
+    telescopeStatus->setToolTip("telescope");
+    telescopeStatus->setEnabled(true);
+
+
+    //trackingStatus
+    trackingStatus->setText("unknown");
+    trackingStatus->setToolTip("tracking");
+    trackingStatus->setEnabled(true);
+
+    //theSky6Status
+    theSky6Status->setText("unknown");
+    theSky6Status->setToolTip("TheSky6");
+    theSky6Status->setEnabled(true);
+
+    //obsControlStatus
+    obsControlStatus->setText("unknown");
+    obsControlStatus->setToolTip("ObsControl");
+    obsControlStatus->setEnabled(true);
+
+    //lcuControlStatus
+    lcuControlStatus->setText("unknown");
+    lcuControlStatus->setToolTip("LCUControl");
+    lcuControlStatus->setEnabled(true);
+
+    statusBar()->showMessage("eso50cm Console started", 3000);
+}
