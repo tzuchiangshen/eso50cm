@@ -1,3 +1,6 @@
+# telescope61 daemond script 
+# install the damond script as root with : 
+# update-rc.d LCUControl defaults 97
 
 case $1 in 
 start) 
@@ -8,6 +11,7 @@ start)
         echo "starting telescope61 process ..."
         /bin/chmod 777 /dev/ttts6
         su -l tcs -c "/eso50cm/SWROOT/bin/telescope61 -d /dev/ttts6 -v &> /dev/null &"
+        sleep 3
         PID=`ps aux |grep telescope61 |grep -v grep | awk '{print $2}'`
         if [ ! -z "$PID" ]; then 
             echo "done, pid=$PID"
@@ -35,8 +39,16 @@ restart)
     fi
     echo "starting telescope61 process ..."
     su -l tcs -c "/eso50cm/SWROOT/bin/telescope61 -d /dev/ttts6 -v &> /dev/null &"
+    sleep 3
     PID=`ps aux |grep telescope61 |grep -v grep | awk '{print $2}'`
     echo "done. pid=$PID"
-    
+;;
+status)
+    PID=`ps aux |grep telescope61 |grep -v grep | awk '{print $2}'`
+    if [ ! -z "$PID" ]; then 
+        echo "telescope61 process is running..., pid=$PID "
+    else 
+        echo "telescope61 process is not running."
+    fi
 esac
 exit 0
