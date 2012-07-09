@@ -1,50 +1,53 @@
-#!/bin/bash
-#
-# chkconfig: 35 90 12
-# description: Foo server
-#
+# LCU CONTROL 
+# install the damond script as root with : 
+# update-rc.d LCUControl defaults 98
 
-# Get function from functions library
-. /lib/lsb/init-functions
 
-# Start the service FOO
-start() {
-        log_daemon_msg "Starting LCUControl" "LCUControl" 
-        /eso50cm/SWROOT/bin/LCUControl &> /tmp/LCUControl &
-        ### Create the lock file ###
-        PID=`pidof LCUControl`
-        echo $PID > /var/run/eso50cm/LCUControl.pid
-        log_end_msg 0
-}
-
-# Restart the service FOO
-stop() {
-        log_daemon_msg "Stopping LCUControl " ""
-        read PID < /var/run/eso50cm/LCUControl.pid
-        ### Now, delete the lock file ###
-        echo " PID = $PID" 
-	kill -2 $PID 
-        rm -f /var/run/eso50cm/LCUControl.pid
-}
-
-### main logic ###
-case "$1" in
-  start)
-        start
-        ;;
-  stop)
-        stop
-        ;;
-  status)
-	status_of_proc -p /var/run/eso50cm/telescope61.pid /eso50cm/SWROOT/bin/LCUControl LCUControl && exit 0 || exit $?
-        ;;
-  restart|reload|condrestart)
-        stop
-        start
-        ;;
-  *)
-        echo $"Usage: $0 {start|stop|restart|reload|status}"
-        exit 1
+case $1 in 
+start) 
+    PID=`ps aux |grep LCUControl |grep -v grep | awk '{print $2}'`
+    if [ ! -z "$PID" ]; then 
+        echo "LCUControl has been already running, pid=$PID"
+    else
+        echo "starting LCUControl process ..."
+        su -l tcs -c "/eso50cm/SWROOT/bin/LCUControl -v &> /dev/null &"
+        sleep 3
+        PID=`ps aux |grep LCUControl |grep -v grep | awk '{print $2}'`
+        if [ ! -z "$PID" ]; then 
+            echo "done, pid=$PID"
+        else
+            echo "faied to start LCUControl process ..."
+        fi
+    fi
+;;
+stop)
+    PID=`ps aux |grep LCUControl |grep -v grep | awk '{print $2}'`
+    if [ ! -z "$PID" ]; then 
+        echo "stopping LCUControl process ..., pid=$PID "
+        su -l tcs -c "/bin/kill -9 $PID" 
+        /bin/sleep 3
+    else 
+        echo "LCUControl is not running."
+    fi
+;;
+restart)
+    PID=`ps aux |grep LCUControl |grep -v grep | awk '{print $2}'`
+    if [ ! -z "$PID" ]; then 
+        echo "stopping LCUControl process ..., pid=$PID "
+        su -l tcs -c "/bin/kill -2 $PID" 
+        /bin/sleep 3
+    fi
+    echo "starting LCUControl process ..."
+    su -l tcs -c "/eso50cm/SWROOT/bin/LCUControl -v &> /dev/null &"
+    PID=`ps aux |grep LCUControl |grep -v grep | awk '{print $2}'`
+    echo "done. pid=$PID"
+;;
+status)
+    PID=`ps aux |grep LCUControl |grep -v grep | awk '{print $2}'`
+    if [ ! -z "$PID" ]; then 
+        echo "LCUControl process is running..., pid=$PID "
+    else 
+        echo "LCUControl process is not running."
+    fi
 esac
-
 exit 0
