@@ -17,7 +17,9 @@ SOURCES += main.cpp\
     TheSky6IF.cpp \
     AMI_Observing_moveToTargetImpl.cpp \
     AMI_Observing_parkTelescopeCapImpl.cpp \
-    AMI_Observing_parkTelescope.cpp
+    AMI_Observing_parkTelescope.cpp \
+    LoggerIF.cpp \
+    messagetablemodel.cpp
 
 HEADERS  += \
     ObsControlIF.h \
@@ -27,7 +29,9 @@ HEADERS  += \
     Console.h \
     AMI_Observing_moveToTargetImpl.h \
     AMI_Observing_parkTelescopeImpl.h \
-    AMI_Observing_parkTelescopeCapImpl.h
+    AMI_Observing_parkTelescopeCapImpl.h \
+    LoggerIF.h \
+    messagetablemodel.h
 
 
 
@@ -35,13 +39,14 @@ FORMS    += mainwindow.ui \
     telescope.ui \
     encoder.ui \
     offset.ui \
-    status.ui
+    status.ui \
+    logpanel.ui
 
 RESOURCES += \
     Console.qrc
 
 
-LIBS += -L/eso50cm/SWROOT/lib/ -lLoggerCore -lObservingImpl -lLCUImpl -lIce -lIceUtil
+LIBS += -L/eso50cm/SWROOT/lib/ -lLoggerCore -lObservingImpl -lLCUImpl -lIce -lIceUtil -lIceStorm -lLoggerCore
 INCLUDEPATH += /eso50cm/SWROOT/include \
                ../Observing/include/
 DEPENDPATH +=  /eso50cm/SWROOT/include
