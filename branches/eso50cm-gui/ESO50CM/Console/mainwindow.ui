@@ -36,6 +36,7 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuWindows">
     <property name="title">
@@ -93,9 +94,6 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockLogger">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
    <property name="windowTitle">
     <string>logger</string>
    </property>
@@ -239,8 +237,10 @@
    <property name="text">
     <string>Logs Panel</string>
    </property>
-   <property name="visible">
-    <bool>false</bool>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
    </property>
   </action>
  </widget>

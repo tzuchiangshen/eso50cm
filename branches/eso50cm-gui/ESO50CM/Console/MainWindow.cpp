@@ -4,6 +4,7 @@
 #include "ui_offset.h"
 #include "ui_telescope.h"
 #include "ui_status.h"
+#include "ui_logpanel.h"
 #include <QVBoxLayout>
 #include <QObject>
 #include <QTableWidget>
@@ -14,23 +15,31 @@
 #include <QtCore>
 #include <QWebView>
 #include <QUrl>
+#include <QSortFilterProxyModel>
 
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(int arg, char** argv, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     uiTelescope(new Ui::TelescopeForm),
     uiEncoder(new Ui::encoderForm),
     uiOffset(new Ui::offsetForm),
     uiStatus(new Ui::statusForm),
+    uiLogPanel(new Ui::LogPanel),
     mainController(new MainController)
 {
+
+
+
+
     ui->setupUi(this);
 
     createOffsetDocking();
     createEncoderDocking();
     createCentralWidget();
+    createLoggerDocking(arg, argv);
     createStatusBar();
+
 
     // toolbar
     //connect( ui->saveAsAction, SIGNAL( triggered()),
@@ -63,9 +72,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect( mainController->obsControl, SIGNAL( newEncData(int,OUC::RawEncoderData*)),
              this, SLOT(showEncData(int,OUC::RawEncoderData*) ));
 
+    // menu file
+    connect( ui->actionExit, SIGNAL(triggered()), this, SLOT(exit()));
     // menu windows
     connect( ui->logsLevelPanelAction, SIGNAL(triggered()), this, SLOT( openLogsLevelPanel()));
     connect( ui->logsPanelAction, SIGNAL(triggered()), this, SLOT( openLogsPanel()));
+
 
     // status bar
     qRegisterMetaType<ProcessStatus>("ProcessStatus");
@@ -103,6 +115,7 @@ MainWindow::~MainWindow()
     delete uiTelescope;
     delete uiEncoder;
     delete uiOffset;
+    delete uiLogPanel;
 }
 
 
@@ -336,6 +349,10 @@ void MainWindow::openLogsPanel() {
     p.waitForStarted();
 }
 
+void MainWindow::exit() {
+    close();
+}
+
 //slots for status bar
 void MainWindow::updateTelescopeStatus(TelescopeStatus status) {
     QPalette plt = telescopeStatus->palette();
@@ -548,6 +565,49 @@ void MainWindow::createEncoderDocking() {
     }
 }
 
+void MainWindow::createLoggerDocking(int arg, char** argv) {
+    QWidget *logPanelWidget = new QWidget();
+    uiLogPanel->setupUi(logPanelWidget);
+    ui->dockLogger->setWidget(logPanelWidget);
+
+//   dummy message for testing
+//    LogMessageData msg;
+//    msg.data = "hola";
+//    //msg.level = 100;
+//    msg.method = "probando";
+//    model->addMessage(msg);
+
+    //move it to the constructor
+    list = new QList<LogMessageQT>;
+    model= new MessageTableModel(this);
+    model->setList(list,100000);  //   <--- MAX NUMBER OF LOGS!!
+    arg = 2;
+    argv[1] = "--Ice.Config=/eso50cm/SWROOT/config/loggingService.config";
+    Subscriber *subs = new Subscriber(uiLogPanel, model, arg, argv);
+    cout << "tengo ref a model?= " << model << endl;
+    cout << "tengo ref a model?= " << subs->model << endl;
+    cout << "tengo ref a gui?= " << subs->gui << endl;
+    subs->start();
+
+    proxyModel = new QSortFilterProxyModel(this);
+    proxyModel->setSourceModel(model);
+    proxyModel->setFilterKeyColumn(1);
+    //setProxyFilter(2); // default value for this is info
+    //connect(uiLogPanel->cbFilter,SIGNAL(currentIndexChanged(int)),this,SLOT(setProxyFilter(int)));
+    uiLogPanel->tableView->setModel(proxyModel);
+    //uiLogPanel->tableView->setModel(model);
+    uiLogPanel->tableView->setColumnWidth(0,175);
+    uiLogPanel->tableView->setColumnWidth(1,80);
+    uiLogPanel->tableView->setColumnWidth(2,140);
+    uiLogPanel->tableView->setColumnWidth(3,600);
+    uiLogPanel->tableView->horizontalHeader()->setStretchLastSection(true);
+    uiLogPanel->tableView->show();
+    proxyModel->sort(0, Qt::DescendingOrder);
+    //connect(uiLogPanel->bNext,SIGNAL(clicked()),this,SLOT(searchNext()));
+    //connect(uiLogPanel->bPrevious,SIGNAL(clicked()),this,SLOT(searchPrevious()));
+}
+
+
 void MainWindow::createStatusBar() {
 
     QLabel *lblTelescopeStatus = new QLabel("Telescope");
@@ -605,4 +665,25 @@ void MainWindow::createStatusBar() {
     lcuControlStatus->setEnabled(true);
 
     statusBar()->showMessage("eso50cm Console started", 3000);
+}
+
+
+void MainWindow::setProxyFilter( int filter)
+{
+    switch(filter) {
+      case 0:
+            proxyModel->setFilterRegExp("(^Severe$)"); return;
+      case 1:
+            proxyModel->setFilterRegExp("(^Severe$|^Warning$)"); return;
+      case 2:
+            proxyModel->setFilterRegExp("(^Severe$|^Warning$|^Info$)"); return;
+      case 3:
+            proxyModel->setFilterRegExp("(^Severe$|^Warning$|^Info$|^Config$)"); return;
+      case 4:
+            proxyModel->setFilterRegExp("(^Severe$|^Warning$|^Info$|^Config$|^Fine$)"); return;
+      case 5:
+            proxyModel->setFilterRegExp("(^Severe$|^Warning$|^Info$|^Config$|^Fine$|^Finer$)"); return;
+      case 6:
+            proxyModel->setFilterRegExp("(^Severe$|^Warning$|^Info$|^Config$|^Fine$|^Finer$|^Finest$)"); return;
+    }
 }
