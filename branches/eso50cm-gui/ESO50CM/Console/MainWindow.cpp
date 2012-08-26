@@ -580,20 +580,17 @@ void MainWindow::createLoggerDocking(int arg, char** argv) {
     //move it to the constructor
     list = new QList<LogMessageQT>;
     model= new MessageTableModel(this);
-    model->setList(list,100000);  //   <--- MAX NUMBER OF LOGS!!
+    model->setList(list,10000);  //   <--- MAX NUMBER OF LOGS!!
     arg = 2;
     argv[1] = "--Ice.Config=/eso50cm/SWROOT/config/loggingService.config";
     Subscriber *subs = new Subscriber(uiLogPanel, model, arg, argv);
-    cout << "tengo ref a model?= " << model << endl;
-    cout << "tengo ref a model?= " << subs->model << endl;
-    cout << "tengo ref a gui?= " << subs->gui << endl;
     subs->start();
 
     proxyModel = new QSortFilterProxyModel(this);
     proxyModel->setSourceModel(model);
     proxyModel->setFilterKeyColumn(1);
-    //setProxyFilter(2); // default value for this is info
-    //connect(uiLogPanel->cbFilter,SIGNAL(currentIndexChanged(int)),this,SLOT(setProxyFilter(int)));
+    setProxyFilter(2); // default value for this is info
+    connect(uiLogPanel->cbFilter,SIGNAL(currentIndexChanged(int)),this,SLOT(setProxyFilter(int)));
     uiLogPanel->tableView->setModel(proxyModel);
     //uiLogPanel->tableView->setModel(model);
     uiLogPanel->tableView->setColumnWidth(0,175);
@@ -670,20 +667,32 @@ void MainWindow::createStatusBar() {
 
 void MainWindow::setProxyFilter( int filter)
 {
+    qDebug() << " setProxyFilter: filter=" << filter;
+    model->stopReceivingMessage();
+    qDebug() << " stop receiving messages ";
     switch(filter) {
       case 0:
-            proxyModel->setFilterRegExp("(^Severe$)"); return;
+            proxyModel->setFilterRegExp("(^Severe$)");
+            break;
       case 1:
-            proxyModel->setFilterRegExp("(^Severe$|^Warning$)"); return;
+            proxyModel->setFilterRegExp("(^Severe$|^Warning$)");
+            break;
       case 2:
-            proxyModel->setFilterRegExp("(^Severe$|^Warning$|^Info$)"); return;
+            proxyModel->setFilterRegExp("(^Severe$|^Warning$|^Info$)");
+            break;
       case 3:
-            proxyModel->setFilterRegExp("(^Severe$|^Warning$|^Info$|^Config$)"); return;
+            proxyModel->setFilterRegExp("(^Severe$|^Warning$|^Info$|^Config$)");
+            break;
       case 4:
-            proxyModel->setFilterRegExp("(^Severe$|^Warning$|^Info$|^Config$|^Fine$)"); return;
+            proxyModel->setFilterRegExp("(^Severe$|^Warning$|^Info$|^Config$|^Fine$)");
+            break;
       case 5:
-            proxyModel->setFilterRegExp("(^Severe$|^Warning$|^Info$|^Config$|^Fine$|^Finer$)"); return;
+            proxyModel->setFilterRegExp("(^Severe$|^Warning$|^Info$|^Config$|^Fine$|^Finer$)");
+            break;
       case 6:
-            proxyModel->setFilterRegExp("(^Severe$|^Warning$|^Info$|^Config$|^Fine$|^Finer$|^Finest$)"); return;
+            proxyModel->setFilterRegExp("(^Severe$|^Warning$|^Info$|^Config$|^Fine$|^Finer$|^Finest$)");
+            break;
     }
+    model->startReceivingMessage();
+    qDebug() << " start receiving messages ";
 }

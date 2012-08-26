@@ -17,6 +17,7 @@
 #include <QList>
 
 
+
 #define MAX_NUMBER_OF_MESSAGES 30
 
 using namespace Ice;
@@ -38,9 +39,7 @@ typedef struct  {
 
 class MessageTableModel : public QAbstractTableModel
 {
-
     int m_rowCount;
-
 public:
     MessageTableModel(QObject *parent);
     void setList( QList<LogMessageQT>  *list, int maxMessages);
@@ -49,13 +48,17 @@ public:
     QVariant data ( const QModelIndex& index, int role = Qt::DisplayRole ) const;
     QVariant headerData( int section, Qt::Orientation, int role = Qt::DisplayRole ) const;
     void addMessage(LogMessageData message);
+    void stopReceivingMessage();
+    void startReceivingMessage();
+
 protected:
   // QList<QObject*> children( QObject* parent ) const;
    // QString label( const QObject* widget, int column ) const;
 private:
     QList<LogMessageQT>  *m_list;
     int m_maxMessages;
-
+    static const int DROP_MESSAGE_SIZE = 1000;
+    bool receivingMessage;
 };
 
 class MyModel : public QAbstractTableModel
