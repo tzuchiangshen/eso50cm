@@ -63,6 +63,8 @@ public slots:
     void updateLCUControlStatus(ProcessStatus status);
     void updateTrackingStatus(TrackingStatus status);
     void updateTheSky6Status(ProcessStatus status);
+    //for logPanel
+    void setProxyFilter( int filter);
 
 
 private:
@@ -74,8 +76,7 @@ private:
     void createCentralWidget();
     void createStatusBar();
 
-    //for logPanel
-    void setProxyFilter( int filter);
+
 
     //main windows controlle
     MainController *mainController;

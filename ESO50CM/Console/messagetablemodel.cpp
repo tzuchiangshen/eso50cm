@@ -125,8 +125,10 @@ QVariant MessageTableModel::headerData( const int section, const Qt::Orientation
 
 void MessageTableModel::addMessage(LogMessageData message)
 {
-    std::cout << " dentro de add Message" << std::endl;
-    std::cout << " message=" << message.level << std::endl;
+
+    if(!receivingMessage)
+        return;
+
     LogMessageQT messageQT;
     messageQT.data=QString(message.data.c_str());
     messageQT.level=message.level;
@@ -138,20 +140,43 @@ void MessageTableModel::addMessage(LogMessageData message)
 
     //std::cout << "QModelIndex=" << QModelIndex() << std::endl;
     //m_rowCount = 1;
-    std::cout << "m_rowCount=" << m_rowCount << std::endl;
-    beginInsertRows(QModelIndex(), m_rowCount, m_rowCount);
-    m_list->push_back(messageQT);
+    //std::cout << "m_rowCount=" << m_rowCount << std::endl;
+    //beginInsertRows(QModelIndex(), m_rowCount, m_rowCount);
+    //m_list->push_back(messageQT);
+
+    //newer message in the left or front of the queue
+    beginInsertRows(QModelIndex(), 0, 0);
+    m_list->push_front(messageQT);
     m_rowCount++;
     endInsertRows();
 
     if (m_list->size() >= m_maxMessages){
         // if the list reached its max capacity, we will start removing iterms
-        beginRemoveRows(QModelIndex(), 0, 0);
-        m_list->removeFirst();
-        m_rowCount--;
+
+        beginRemoveRows(QModelIndex(), m_maxMessages-DROP_MESSAGE_SIZE, m_maxMessages);
+        for (int i=0; i < DROP_MESSAGE_SIZE; i++)
+            m_list->removeLast();
+        m_rowCount -= DROP_MESSAGE_SIZE;
+
+        //beginRemoveRows(QModelIndex(), 0, 0);
+        //m_list->removeFirst();
+        ///m_rowCount--;
         endRemoveRows();
     }
+
 }
+
+void MessageTableModel::stopReceivingMessage()
+{
+    receivingMessage = false;
+}
+
+void MessageTableModel::startReceivingMessage()
+{
+    receivingMessage = true;
+}
+
+
 
 MyModel::MyModel(QObject *parent) : QAbstractTableModel(parent)
 {

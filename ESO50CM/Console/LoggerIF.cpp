@@ -103,15 +103,9 @@
 
 
 void LogCapturerI::logEvent(const LogMessageData &message, const Ice::Current& c) {
-    if (gui) {
-        //MessageTableModel* model = gui->tableView->model();
-        //QSortFilterProxyModel *proxyModel = gui->tableView->model();
-        std:cout << "new message arrived : " << std::endl;
-        //message.data;
-        std::cout << "model dentro del logEvent model=" << model << std::endl;
-        std::cout << "model dentro del logEvent message=" << &message << std::endl;
-        model->addMessage(message);
-        //gui->tableView ->model->addMessage(message);
+    if (gui) {        
+        //std:cout << "new message arrived : " << std::endl;
+        model->addMessage(message);        
    }
 }
 
