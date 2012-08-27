@@ -7,49 +7,53 @@ case $1 in
 start) 
     PID=`ps aux |grep loggingService |grep -v grep | awk '{print $2}'`
     if [ ! -z "$PID" ]; then 
-        echo "LoggingService has been already running, pid=$PID"
+        logger -s "LoggingService has been already running, pid=$PID"
     else
-        echo "starting LoggingService process ..."
-        /bin/chmod 777 /dev/ttyS0
-        su -l tcsmgr -c "/eso50cm/SWROOT/bin/runLoggingService &> /dev/null &"
-        sleep 3
+        logger -s "starting LoggingService process ..."
+	#comment this in simulation
+        #/bin/chmod 777 /dev/ttyS0
+        #comment this in real mode
+        bash /opt/qemu/iptable.sh
+	sleep 3
+        su -l tcsmgr -c "/eso50cm/SWROOT/bin/runLoggingService &> /tmp/LogginService.log &"
+        sleep 5
         PID=`ps aux |grep loggingService |grep -v grep | awk '{print $2}'`
         if [ ! -z "$PID" ]; then 
-            echo "done, pid=$PID"
+            logger -s "done, pid=$PID"
         else
-            echo "faied to start LoggingService process ..."
+            logger -s "failed to start LoggingService process ..."
         fi
     fi
 ;;
 stop)
     PID=`ps aux |grep loggingService |grep -v grep | awk '{print $2}'`
     if [ ! -z "$PID" ]; then 
-        echo "stopping LoggingService process ..., pid=$PID "
-        su -l tcs -c "/bin/kill -9 $PID" 
+        logger -s "stopping LoggingService process ..., pid=$PID "
+        su -l tcsmgr -c "/bin/kill -9 $PID" 
         /bin/sleep 3
     else 
-        echo "LoggingService is not running."
+        logger -s "LoggingService is not running."
     fi
 ;;
 restart)
     PID=`ps aux |grep loggingService |grep -v grep | awk '{print $2}'`
     if [ ! -z "$PID" ]; then 
-        echo "stopping LoggingService process ..., pid=$PID "
-        su -l tcs -c "/bin/kill -2 $PID" 
+        logger -s "stopping LoggingService process ..., pid=$PID "
+        su -l tcsmgr -c "/bin/kill -2 $PID" 
         /bin/sleep 3
     fi
-    echo "starting LoggingService process ..."
+    logger -s "starting LoggingService process ..."
     /bin/chmod 777 /dev/ttyS0
-    su -l tcs -c "/eso50cm/SWROOT/bin/runLoggingService -v &> /dev/null &"
+    su -l tcsmgr -c "/eso50cm/SWROOT/bin/runLoggingService -v &> /dev/null &"
     PID=`ps aux |grep LoggingService |grep -v grep | awk '{print $2}'`
-    echo "done. pid=$PID"
+    logger -s "done. pid=$PID"
 ;;
 status)
     PID=`ps aux |grep loggingService |grep -v grep | awk '{print $2}'`
     if [ ! -z "$PID" ]; then 
-        echo "LoggingService process is running..., pid=$PID "
+        logger -s "LoggingService process is running..., pid=$PID "
     else 
-        echo "LoggingService process is not running."
+        logger -s "LoggingService process is not running."
     fi
 esac
 exit 0
