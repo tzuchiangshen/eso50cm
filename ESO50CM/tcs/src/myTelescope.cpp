@@ -597,7 +597,7 @@ int myTelescope::setTarget( double trg_ra, double trg_dec, double * trgAlt, doub
     {
         m_telescope_data->targetRA  = trg_ra;
         m_telescope_data->targetDec = trg_dec;
-        logger->logINFO( "myTelescope::setTarget: Target [alt = %lf] [az = %lf]", * trgAlt, * trgAz );
+        logger->logFINE( "myTelescope::setTarget: Target [alt = %lf] [az = %lf]", * trgAlt, * trgAz );
     } else {
         logger->logSEVERE( "myTelescope::setTarget: Target [lst = %lf] [ra = %lf] [dec = %lf]", lst, trg_ra, trg_dec );
         logger->logSEVERE( "myTelescope::setTarget: Target [alt = %lf] [az = %lf] bellow horizon (%lf).", * trgAlt, * trgAz, m_telescope_data->LowElevation );
