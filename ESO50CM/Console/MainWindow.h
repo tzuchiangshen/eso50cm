@@ -67,6 +67,7 @@ public slots:
     void setProxyFilter( int filter);
     void startLogging();
     void stopLogging();
+    void clearLogging();
 
 
 private:

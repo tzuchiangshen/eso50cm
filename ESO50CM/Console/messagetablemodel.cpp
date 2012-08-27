@@ -19,6 +19,17 @@ void MessageTableModel::setList( QList<LogMessageQT>  *list, int maxMessages)
 
 }
 
+void MessageTableModel::clearList( )
+{
+    if(m_list != NULL) {
+        m_list->clear();
+        beginRemoveRows(QModelIndex(), 0, m_maxMessages);
+        m_list->clear();
+        m_rowCount = 0;
+        endRemoveRows();
+    }
+}
+
 int MessageTableModel::columnCount( const QModelIndex& /* parent */ ) const
 {
     return 4;
