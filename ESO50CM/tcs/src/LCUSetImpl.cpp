@@ -574,25 +574,33 @@ LCUImpl::parkTelescopeAdvance(bool cap, const Ice::Current& c)
 void 
 LCUImpl::stopTelescope(OUC::TelescopeDirection dir, const Ice::Current& c)
 {
-    int ticsPerSeconds= 0;
-    logger.logINFO( "LCUImpl::stopTelescope" );
+    logger.logFINER("--> LCUImpl::stopTelescope()" );
 
+    int alphaTicsPerSeconds= 0;
+    int alphaTics=0;
+    int deltaTicsPerSeconds= 0;
+    int deltaTics=0;
+
+    //should protect this variable with mutes
     m_stop_telescope = 1;
   
     /** Acquire Semaphore for SHM **/
     m_lcu->waitSemaphore();
   
-    ticsPerSeconds = 0;
-    m_lcu->telescope->alpha->Motor->setDeviceMemory(7, &ticsPerSeconds, 0);
-    m_lcu->telescope->alpha->Motor->setDeviceMemory(6, &ticsPerSeconds, 0);
-    m_lcu->telescope->delta->Motor->setDeviceMemory(7, &ticsPerSeconds, 0);
-    m_lcu->telescope->delta->Motor->setDeviceMemory(6, &ticsPerSeconds, 0);
-    logger.logINFO("LCUImpl::stopTelescope: Stopping Telescope in all directions!!... Tics per seconds: %d", ticsPerSeconds);
-    
-
+    //m_lcu->telescope->alpha->Motor->setDeviceMemory(7, &ticsPerSeconds, 0);
+    //m_lcu->telescope->alpha->Motor->setDeviceMemory(6, &ticsPerSeconds, 0);
+    //m_lcu->telescope->delta->Motor->setDeviceMemory(7, &ticsPerSeconds, 0);
+    //m_lcu->telescope->delta->Motor->setDeviceMemory(6, &ticsPerSeconds, 0);
+    setDeviceMemory(7, &alphaTics, 0, c);
+    setDeviceMemory(6, &alphaTicsPerSeconds, 0, c);
+    setDeviceMemory(7, &deltaTics, 0, c);
+    setDeviceMemory(6, &deltaTicsPerSeconds, 0, c);
   
     /** Release semaphore for SHM **/
     m_lcu->postSemaphore();    
+    logger.logFINE("LCUImpl::stopTelescope: Stopping Telescope in all directions!!... Tics per seconds: %d", aplhaTicsPerSeconds);
+    logger.logINFO("Stopping Telescope in all directions!!");
+    logger.logFINER("<-- LCUImpl::stopTelescope()" );
 }
 
 void 
