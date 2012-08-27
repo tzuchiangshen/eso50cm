@@ -95,7 +95,9 @@ MainWindow::MainWindow(int arg, char** argv, QWidget *parent) :
     connect( mainController->obsControl, SIGNAL( newLCUControlStatusTriggered(ProcessStatus)),
              this, SLOT( updateLCUControlStatus(ProcessStatus)) );
 
-
+    //set initial condition
+    stopTracking();
+    stopTelescope();
 
 
 }
@@ -591,6 +593,7 @@ void MainWindow::createLoggerDocking(int arg, char** argv) {
     connect(uiLogPanel->cbFilter,SIGNAL(currentIndexChanged(int)),this,SLOT(setProxyFilter(int)));
     connect(uiLogPanel->btStartLogging,SIGNAL(clicked()),this,SLOT(startLogging()));
     connect(uiLogPanel->btStopLogging,SIGNAL(clicked()),this,SLOT(stopLogging()));
+    connect(uiLogPanel->btClearLogging,SIGNAL(clicked()),this,SLOT(clearLogging()));
 
     uiLogPanel->btStartLogging->setEnabled(false);
 
@@ -611,11 +614,13 @@ void MainWindow::createWebcamDocking() {
 
     QWebView *view = new QWebView();
     view->setStyleSheet("background-color:rgb(150,147,88); padding: 7px ; color:rgb(255,255,255)");
-    //view->url().setUserName("operador");
-    //view->url().setPassword("la810KaW");
-    //QUrl url("http://operador:operador@192.168.0.11:1084/admin/view.cgi?profile=2");
-    QUrl url("http://weather.aiv.alma.cl/data/all/images/temperature-30min.png");
+    //QUrl url("http://admin:gUlg2385KaW@observatorio2.astro.puc.cl:1084/admin/view.cgi?profile=2");
+    QUrl url("http://admin:gUlg2385KaW@192.168.0.11:1084/admin/view.cgi?profile=2");
+    //QUrl url("http://weather.aiv.alma.cl/data/all/images/temperature-30min.png");
     qDebug() << "url=" << url;
+    view->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
+    view->settings()->setAttribute(QWebSettings::JavaEnabled, true);
+    view->settings()->setAttribute(QWebSettings::AutoLoadImages, true);
     view->load(url);
     view->showMinimized();
     ui->dockWebcam->setWidget(view);
@@ -734,4 +739,9 @@ void MainWindow::stopLogging() {
     uiLogPanel->btStartLogging->setEnabled(true);
     uiLogPanel->btStopLogging->setEnabled(false);
     model->stopReceivingMessage();
+}
+
+void MainWindow::clearLogging() {
+    qDebug() << " clear logPanel ";
+    model->clearList();
 }

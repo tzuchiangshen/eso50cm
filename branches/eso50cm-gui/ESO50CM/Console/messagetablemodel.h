@@ -51,6 +51,7 @@ public:
     void stopReceivingMessage();
     void startReceivingMessage();
     bool isReceivingMessage();
+    void clearList();
 
 protected:
   // QList<QObject*> children( QObject* parent ) const;

@@ -173,7 +173,7 @@ void ObsControlIF::startTracking() {
 
 void ObsControlIF::stopTracking() {
     try {
-        logger.logINFO("ObsControlIF::startTracking");
+        logger.logINFO("ObsControlIF::stopTracking");
         lcu->stopTracking();
         TrackingStatus status = TrackingOff;
         emit newTrackingStatusTriggered(status);
@@ -211,6 +211,8 @@ void ObsControlIF::parkTelescope() {
         obs->parkTelescope_async(cb);
         TelescopeStatus status = TelescopeMoving;
         emit newTelescopeStatusTriggered(status);
+        TrackingStatus trackStatus = TrackingOff;
+        emit newTrackingStatusTriggered(trackStatus);
     } catch(const Ice::Exception& ex) {
         logger.logSEVERE("Error in ObsControlIF:parkTelescope(). %s", ex.ice_name().c_str());
         TelescopeStatus status = TelescopeError;
@@ -226,6 +228,8 @@ void ObsControlIF::parkTelescopeCap() {
         obs->parkTelescopeCap_async(cb);
         TelescopeStatus status = TelescopeMoving;
         emit newTelescopeStatusTriggered(status);
+        TrackingStatus trackStatus = TrackingOff;
+        emit newTrackingStatusTriggered(trackStatus);
     } catch(const Ice::Exception& ex) {
         logger.logSEVERE("Error in ObsControlIF:parkTelescopeCap(). %s", ex.ice_name().c_str());
         cout << "ObsControlIF::parkTelescopeCap(): Exception caught, " << ex << endl;
