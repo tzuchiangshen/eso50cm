@@ -65,6 +65,8 @@ public slots:
     void updateTheSky6Status(ProcessStatus status);
     //for logPanel
     void setProxyFilter( int filter);
+    void startLogging();
+    void stopLogging();
 
 
 private:
@@ -75,6 +77,7 @@ private:
     void createLoggerDocking(int arg, char** argv);
     void createCentralWidget();
     void createStatusBar();
+    void createLoggerDocking();
 
 
 

@@ -50,6 +50,7 @@ public:
     void addMessage(LogMessageData message);
     void stopReceivingMessage();
     void startReceivingMessage();
+    bool isReceivingMessage();
 
 protected:
   // QList<QObject*> children( QObject* parent ) const;

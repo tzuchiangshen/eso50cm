@@ -165,14 +165,11 @@ class Subscriber: public QThread {
         }
 
         void run() {
-            cout << " todavia veo al model=" << model << endl;
+            //cout << " todavia veo al model=" << model << endl;
             _run(argc, argv, model);
         }
 
         virtual int _run(int argc, char** argv, MessageTableModel *_model) {
-
-            cout << "argc=" << argc << endl;
-            cout << "argv=" << *argv << endl;
 
             ic = Ice::initialize(argc, argv);
 
@@ -185,7 +182,7 @@ class Subscriber: public QThread {
             // Create the servant to receive the events.
             ObjectAdapterPtr adapter = ic->createObjectAdapter("LogPublisher.Subscriber");
             ObjectPtr servant = new LogCapturerI(gui, _model);
-            cout << ">>>>>>>>>>>>>>>>>>>>> dentro del subscriber._run()! model=" << _model << endl;
+            //cout << ">>>>>>>>>>>>>>>>>>>>> dentro del subscriber._run()! model=" << _model << endl;
 
             // Add a Servant for the Ice Object.
             ObjectPrx base = adapter->addWithUUID(servant);

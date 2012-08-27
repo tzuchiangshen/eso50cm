@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1024</width>
-    <height>768</height>
+    <width>1600</width>
+    <height>1200</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -28,7 +28,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1024</width>
+     <width>1600</width>
      <height>23</height>
     </rect>
    </property>
@@ -85,7 +85,7 @@
     <string>system</string>
    </property>
    <attribute name="dockWidgetArea">
-    <number>1</number>
+    <number>2</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
     <property name="autoFillBackground">
@@ -94,6 +94,9 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockLogger">
+   <property name="allowedAreas">
+    <set>Qt::BottomDockWidgetArea|Qt::RightDockWidgetArea|Qt::TopDockWidgetArea</set>
+   </property>
    <property name="windowTitle">
     <string>logger</string>
    </property>
@@ -127,15 +130,21 @@
    <property name="features">
     <set>QDockWidget::AllDockWidgetFeatures</set>
    </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea|Qt::TopDockWidgetArea</set>
+   </property>
    <property name="windowTitle">
     <string>offset</string>
    </property>
    <attribute name="dockWidgetArea">
-    <number>2</number>
+    <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_4"/>
   </widget>
   <widget class="QDockWidget" name="dockEncoder">
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea|Qt::TopDockWidgetArea</set>
+   </property>
    <property name="windowTitle">
     <string>encoders</string>
    </property>
