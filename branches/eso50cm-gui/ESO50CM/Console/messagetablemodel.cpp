@@ -176,6 +176,11 @@ void MessageTableModel::startReceivingMessage()
     receivingMessage = true;
 }
 
+bool MessageTableModel::isReceivingMessage()
+{
+    return receivingMessage;
+}
+
 
 
 MyModel::MyModel(QObject *parent) : QAbstractTableModel(parent)

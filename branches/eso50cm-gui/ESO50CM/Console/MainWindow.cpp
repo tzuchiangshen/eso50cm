@@ -39,6 +39,7 @@ MainWindow::MainWindow(int arg, char** argv, QWidget *parent) :
     createCentralWidget();
     createLoggerDocking(arg, argv);
     createStatusBar();
+    createWebcamDocking();
 
 
     // toolbar
@@ -94,17 +95,7 @@ MainWindow::MainWindow(int arg, char** argv, QWidget *parent) :
     connect( mainController->obsControl, SIGNAL( newLCUControlStatusTriggered(ProcessStatus)),
              this, SLOT( updateLCUControlStatus(ProcessStatus)) );
 
-    QWebView *view = new QWebView();
-    view->setStyleSheet("background-color:rgb(150,147,88); padding: 7px ; color:rgb(255,255,255)");
-    //view->url().setUserName("operador");
-    //view->url().setPassword("la810KaW");
-    //QUrl url("http://operador:operador@192.168.0.11:1084/admin/view.cgi?profile=2");
-    QUrl url("http://weather.aiv.alma.cl/data/all/images/temperature-30min.png");
-    qDebug() << "url=" << url;
-    view->load(url);
-    view->showMinimized();
-    ui->dockWebcam->setWidget(view);
-    ui->dockWebcam->setWindowTitle("webcam");
+
 
 
 }
@@ -303,7 +294,8 @@ void MainWindow::westButtonReleased() {
 void MainWindow::createCentralWidget() {
     QWidget *telescopeWidget = new QWidget;
     //uiTelescope->ui = new Ui::TelescopeForm;
-    uiTelescope->setupUi(telescopeWidget);
+    telescopeWidget->setMinimumWidth(550);
+    uiTelescope->setupUi(telescopeWidget);   
     setCentralWidget(telescopeWidget);
     uiTelescope->UT_LineEdit->setText(QString("esto es una prueba"));
 }
@@ -545,8 +537,9 @@ void MainWindow::createOffsetDocking() {
     ui->dockOffset->setWindowTitle("offset");
     //ui->dockOffset->setMaximumSize(ui->dockOffset->sizeHint());
 
-    ui->dockOffset->setMinimumWidth(200);
-    qDebug() << "size=" << ui->dockOffset->sizeHint();
+    ui->dockOffset->setMinimumSize(200, 300);
+    ui->dockOffset->setMaximumSize(400, 300);
+    qDebug() << "docking size=" << ui->dockOffset->sizeHint();
 }
 
 void MainWindow::createEncoderDocking() {
@@ -554,7 +547,10 @@ void MainWindow::createEncoderDocking() {
     QWidget *encoderWidget = new QWidget();
     uiEncoder->setupUi(encoderWidget);
     ui->dockEncoder->setWidget(encoderWidget);
-    ui->dockEncoder->setMinimumWidth(300);
+
+    ui->dockEncoder->setMinimumSize(350, 280);
+    ui->dockEncoder->setMaximumSize(400, 300);
+
     QTableWidget *table = encoderWidget->findChild<QTableWidget*>("tableWidget");
     for (int i=0; i < table->rowCount(); i++) {
         table->setRowHeight(i,20);
@@ -569,6 +565,7 @@ void MainWindow::createLoggerDocking(int arg, char** argv) {
     QWidget *logPanelWidget = new QWidget();
     uiLogPanel->setupUi(logPanelWidget);
     ui->dockLogger->setWidget(logPanelWidget);
+    ui->dockLogger->setMinimumHeight(200);
 
 //   dummy message for testing
 //    LogMessageData msg;
@@ -590,7 +587,13 @@ void MainWindow::createLoggerDocking(int arg, char** argv) {
     proxyModel->setSourceModel(model);
     proxyModel->setFilterKeyColumn(1);
     setProxyFilter(2); // default value for this is info
+
     connect(uiLogPanel->cbFilter,SIGNAL(currentIndexChanged(int)),this,SLOT(setProxyFilter(int)));
+    connect(uiLogPanel->btStartLogging,SIGNAL(clicked()),this,SLOT(startLogging()));
+    connect(uiLogPanel->btStopLogging,SIGNAL(clicked()),this,SLOT(stopLogging()));
+
+    uiLogPanel->btStartLogging->setEnabled(false);
+
     uiLogPanel->tableView->setModel(proxyModel);
     //uiLogPanel->tableView->setModel(model);
     uiLogPanel->tableView->setColumnWidth(0,175);
@@ -604,6 +607,22 @@ void MainWindow::createLoggerDocking(int arg, char** argv) {
     //connect(uiLogPanel->bPrevious,SIGNAL(clicked()),this,SLOT(searchPrevious()));
 }
 
+void MainWindow::createWebcamDocking() {
+
+    QWebView *view = new QWebView();
+    view->setStyleSheet("background-color:rgb(150,147,88); padding: 7px ; color:rgb(255,255,255)");
+    //view->url().setUserName("operador");
+    //view->url().setPassword("la810KaW");
+    //QUrl url("http://operador:operador@192.168.0.11:1084/admin/view.cgi?profile=2");
+    QUrl url("http://weather.aiv.alma.cl/data/all/images/temperature-30min.png");
+    qDebug() << "url=" << url;
+    view->load(url);
+    view->showMinimized();
+    ui->dockWebcam->setWidget(view);
+    ui->dockWebcam->setWindowTitle("webcam");
+    ui->dockWebcam->setMinimumWidth(300);
+    //ui->dockWebcam->setMaximumWidth(400);
+}
 
 void MainWindow::createStatusBar() {
 
@@ -668,8 +687,11 @@ void MainWindow::createStatusBar() {
 void MainWindow::setProxyFilter( int filter)
 {
     qDebug() << " setProxyFilter: filter=" << filter;
-    model->stopReceivingMessage();
-    qDebug() << " stop receiving messages ";
+    bool current_logging_status = model->isReceivingMessage();
+    if(current_logging_status == true)  {
+        model->stopReceivingMessage();
+        qDebug() << " stop receiving messages ";
+    }
     switch(filter) {
       case 0:
             proxyModel->setFilterRegExp("(^Severe$)");
@@ -693,6 +715,23 @@ void MainWindow::setProxyFilter( int filter)
             proxyModel->setFilterRegExp("(^Severe$|^Warning$|^Info$|^Config$|^Fine$|^Finer$|^Finest$)");
             break;
     }
+    if(current_logging_status  == true) {
+        model->startReceivingMessage();
+        qDebug() << " start receiving messages ";
+    }
+}
+
+
+void MainWindow::startLogging() {
+    qDebug() << " started to receive messages ";
+    uiLogPanel->btStartLogging->setEnabled(false);
+    uiLogPanel->btStopLogging->setEnabled(true);
     model->startReceivingMessage();
-    qDebug() << " start receiving messages ";
+}
+
+void MainWindow::stopLogging() {
+    qDebug() << " stopped to receive messages ";
+    uiLogPanel->btStartLogging->setEnabled(true);
+    uiLogPanel->btStopLogging->setEnabled(false);
+    model->stopReceivingMessage();
 }
