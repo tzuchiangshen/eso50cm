@@ -96,7 +96,6 @@ MainWindow::MainWindow(int arg, char** argv, QWidget *parent) :
              this, SLOT( updateLCUControlStatus(ProcessStatus)) );
 
     //set initial condition
-    stopTracking();
     stopTelescope();
 
 
@@ -119,6 +118,7 @@ void MainWindow::testSlots(bool visible) {
 // ToolBar
 
 void MainWindow::stopTelescope() {
+    mainController->obsControl->stopTracking();
     mainController->obsControl->stopTelescope();
 }
 
