@@ -617,7 +617,7 @@ void MainWindow::createWebcamDocking() {
     //QUrl url("http://admin:gUlg2385KaW@observatorio2.astro.puc.cl:1084/admin/view.cgi?profile=2");
     QUrl url("http://admin:gUlg2385KaW@192.168.0.11:1084/admin/view.cgi?profile=2");
     //QUrl url("http://weather.aiv.alma.cl/data/all/images/temperature-30min.png");
-    qDebug() << "url=" << url;
+    //qDebug() << "url=" << url;
     view->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
     view->settings()->setAttribute(QWebSettings::JavaEnabled, true);
     view->settings()->setAttribute(QWebSettings::AutoLoadImages, true);
