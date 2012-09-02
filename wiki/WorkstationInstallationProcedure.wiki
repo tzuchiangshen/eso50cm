@@ -18,8 +18,9 @@ The following packages must be installed
   * cmake 
   * gcc 
   * g++
-  * qt4-dev
-  * qt4-core
+  * qt4-qmake
+  * libqt4-core
+  * libqt4-dev
   * zeroc-ice
   * libc6-dev
   * subversion 
