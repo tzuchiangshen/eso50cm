@@ -1,13 +1,40 @@
-#summary One-sentence summary of this page.
+#summary Linux Workstation Ubuntu and software installation
 
 = Introduction =
 
-Add your content here.
+= O. S. =
+No LSB modules are available.
+Distributor ID:	Ubuntu
+Description:	Ubuntu 11.10
+Release:	11.10
+Codename:	oneiric
+
+Linux ubuntu11 3.0.0-12-generic #20-Ubuntu SMP Fri Oct 7 14:50:42 UTC 2011 i686 i686 i386 GNU/Linux
+
+= APT packages =
+
+The following packages must be installed 
+  * subversion 
+  * cmake 
+  * gcc 
+  * g++
+  * qt4-dev
+  * qt4-core
+  * zeroc-ice
+  * libc6-dev
+  * subversion 
+  * vim 
 
 
-= Details =
+= ESO50CM CONTROL SW =
+  * svn checkout https://eso50cm.googlecode.com/svn/trunk/ eso50cm --username tzuchiangshen@gmail.com
+  * cd eso50cm/ESO50CM/Deployment/src/
+  * make install 
+  * cd $SWROOT
+  * cd ..
+  * getTemplateForDirectory SWROOT SWROOT
+  * cd ~/CURRENTLY_MOD/eso50cm/ESO50cm/Logging/src
+  * cmake .
+  * make clean all install
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+#summary One-sentence summary of this page.
