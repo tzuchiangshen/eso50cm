@@ -1,3 +1,10 @@
+#  1. copy this file to /eso50cm/config
+#  2. append the following line in the users's .bashrc
+# 
+#source /eso50cm/config/defaultEnv
+#export INTROOT=$SWROOT
+#
+
 # include environmental vars added by the user 
 if [ -f ~/etc/userEnv ]
 then
