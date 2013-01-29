@@ -612,6 +612,10 @@ void MainWindow::createLoggerDocking(int arg, char** argv) {
 
 void MainWindow::createWebcamDocking() {
 
+    ui->dockWebcam->setVisible(false);
+    ui->dockProcess->setVisible(false);
+    return;
+
     QWebView *view = new QWebView();
     view->setStyleSheet("background-color:rgb(150,147,88); padding: 7px ; color:rgb(255,255,255)");
     //QUrl url("http://admin:gUlg2385KaW@observatorio2.astro.puc.cl:1084/admin/view.cgi?profile=2");
@@ -641,9 +645,6 @@ void MainWindow::createStatusBar() {
     obsControlStatus = new QToolButton();
     QLabel *lblLCUControlStatus = new QLabel("LCUControl");
     lcuControlStatus = new QToolButton();
-
-
-
 
     statusBar()->addPermanentWidget(lblTelescopeStatus);
     statusBar()->addPermanentWidget(telescopeStatus);
