@@ -23,7 +23,7 @@ if __name__ == "__main__":
     mgr.setDeviceMemory(0xA2, 6, 0)
     print "stop delta motor"
     mgr.setDeviceMemory(0xA4, 7, 0)
-    mgr.setDeviceMemory(0xA4, 7, 0)
+    mgr.setDeviceMemory(0xA4, 6, 0)
 
     mgr.disconnect()
     
