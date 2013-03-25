@@ -28,7 +28,11 @@ class TelescopeImpl : public OUC::Telescope
         virtual void handsetSlew(const ::OUC::SlewInfo& slewInfo, const Ice::Current&);
         virtual void setOffset(const ::OUC::TelescopePosition& offsetPos, const Ice::Current&);
         virtual void setTracking(const OUC::TrackingInfo& trkInfo, const Ice::Current&);
+        virtual void startTracking(const Ice::Current&);
+        virtual void stopTracking(const Ice::Current&);
         virtual void parkTelescope(const Ice::Current&);
+        virtual void parkTelescopeCap(const Ice::Current&);
+        virtual void stopTelescope(const Ice::Current&);
         virtual void stopTelescope(const ::OUC::TelescopeDirection dir, const Ice::Current&);
         virtual void moveToTarget(const Ice::Current&);
     private:

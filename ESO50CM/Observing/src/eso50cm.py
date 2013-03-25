@@ -270,7 +270,7 @@ if __name__ == "__main__":
                 trkInfo.ticVel = int(eval(args[0]))
             else:
                 trkInfo.trackState = True
-                trkInfo.ticVel = 602
+                trkInfo.ticVel = 1200
             telescope = obsImpl.getTelescope()
             telescope.setTracking(trkInfo)
         except OUC.TelescopeNotConfiguredEx():
