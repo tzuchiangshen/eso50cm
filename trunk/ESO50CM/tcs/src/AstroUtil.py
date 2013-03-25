@@ -39,9 +39,10 @@ def sexagesimal2degs(hhmmss, isRA=True):
     if(len(tmp) != 3): 
         return -1
     if (hhmmss[0] == '-'):
-        degs = -1.0 * (float(tmp[0]) + float(tmp[1])/60.0 + float(tmp[2])/3600.0)
+        #print "negative offset"
+        degs = -1.0 * math.fabs(float(tmp[0]) + float(tmp[1])/60.0 + float(tmp[2])/3600.0)
     else: 
-        degs = float(tmp[0]) + float(tmp[1])/60.0 + float(tmp[2])/3600.0
+        degs = math.fabs(float(tmp[0]) + float(tmp[1])/60.0 + float(tmp[2])/3600.0)
 
     if(isRA):
         degs  = degs * 15.0

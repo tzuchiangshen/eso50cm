@@ -53,3 +53,14 @@ int binary_semaphore_post( int sem_id ) {
     return semop( sem_id, operations, 1 );
 }
 
+int binary_semaphore_check(int sem_id) {
+    union semun  {
+        int val;
+        struct semid_ds *buf;
+        ushort *array;
+    } arg;
+
+    return semctl( sem_id, 0, GETVAL, arg );
+}
+
+

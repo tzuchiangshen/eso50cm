@@ -1,16 +1,14 @@
 #include "myLCU.h"
 
-extern int verbose;
 /**
  *  @brief myLCU class provides necesary functions to access the telescope shared memory segments.
  *  Telescope's (myTelescope) shared memory segments are two: one for the instrument (low level
  *  instructions and data) and a second for the users (high level instruction and data).
  */
-myLCU::myLCU(void):
-    logger("myLCU")
+myLCU::myLCU( LoggerHelper *logLCUImpl )
 {
-    logger.logFINE("myLCU::myLCU Hello World!");
-  
+    logger = logLCUImpl;
+    logger->logINFO( "myLCU::myLCU: Hello World!" );  
     m_segment_size = 0;
     m_shared_segment_size = 1024;           //sizeof( struct my_lcu_data_t );
 
@@ -23,29 +21,31 @@ myLCU::myLCU(void):
     m_shared_memory = (char *) shmat( m_segment_id, 0, 0 );
     if( (int) m_shared_memory < 0) 
     {
-        logger.logWARNING( "myLCU::myLCU shmat" );
-        //logger.logSEVERE("myLCU::myLCU Can't attach User Shared Memory!, id=%d\n", m_segment_id );
+        perror( "myLCU::myLCU: shmat" );
+        logger->logINFO( "myLCU::myLCU: Can't attach User Shared Memory!, id=%d", m_segment_id );
         m_shared_memory = NULL;
     } else {
-        logger.logFINE("myLCU::myLCU User Shared Memory attached at address %p", (void *) m_shared_memory );
-	
+        logger->logINFO( "myLCU::myLCU: User Shared Memory attached at address %p", (void *) m_shared_memory );
+
         /** Determine the User Shared Memory segment size */
         shmctl( m_segment_id, IPC_STAT, & m_shmbuffer );
         m_segment_size = m_shmbuffer.shm_segsz;
-        logger.logFINE("myLCU::myLCU segment size %d", m_segment_size );
-        logger.logFINE("[myLCU::myLCU sizeof( struct my_lcu_data_t ): %d\n", (int) sizeof( struct my_lcu_data_t ) );
+        logger->logINFO( "myLCU::myLCU: segment size:                   %d", m_segment_size );
+        logger->logINFO( "myLCU::myLCU: sizeof( struct my_lcu_data_t ): %d", (int) sizeof( struct my_lcu_data_t ) );
 
         m_lcu_data = (struct my_lcu_data_t *) m_shared_memory;
-        logger.logFINE("myLCU::myLCU m_lcu_data at address %p\n", (void *) m_lcu_data );
-        logger.logFINE("myLCU::myLCU m_lcu_data->m_telescope_data at address %p\n", (void *) & m_lcu_data->telescope_data );
+        logger->logINFO( "myLCU::myLCU: m_lcu_data at address                   %p", (void *) m_lcu_data );
+        logger->logINFO( "myLCU::myLCU: m_lcu_data->m_telescope_data at address %p", (void *) & m_lcu_data->telescope_data );
     }
-
     /** Create Semaphore to control the access to the User Shared Memory */
     m_lcu_semaphore = new myBSemaphore( USRSEMKEY,  S_IRUSR | S_IWUSR );
-    if( m_lcu_semaphore->allocate() < 0 ) {
-      logger.logWARNING("myLCU::myLCU semget");
-      logger.logSEVERE("myLCU::myLCU Can't allocate User Shared Memory's Semaphore");
+    if( m_lcu_semaphore->allocate() < 0 ) 
+    {
+        perror( "myLCU::myLCU: semget" );
+        logger->logINFO( "myLCU::myLCU: Can't allocate User Shared Memory's Semaphore" );
+        //return retval;
     }
+    
     /** */
     telescope = NULL;
 
@@ -60,22 +60,22 @@ myLCU::~myLCU( void )
 {
     if( telescope != NULL ) 
     {
-        logger.logFINE("myLCU::~myLCU Deleting telescope");
+        logger->logINFO( "myLCU::~myLCU: Deleting telescope" );
         delete telescope;
     } else {
-        logger.logFINE("myLCU::~myLCU No telescope!");
+        logger->logINFO( "myLCU::~myLCU: No telescope!" );
     }
 
     /** Detach the shared memory segment */
     if( m_shared_memory != NULL ) 
     {
-        logger.logFINE("myLCU::~myLCU Detaching User Shared Memory");
+        logger->logINFO( "myLCU::~myLCU: Detaching User Shared Memory" );
         shmdt( m_shared_memory );
     } else {
-        logger.logFINE("myLCU::~myLCU No User Shared Memory attached!");
+        logger->logINFO( "myLCU::~myLCU: No User Shared Memory attached!" );
     }
 
-    logger.logFINE("myLCU::~myLCU Good Bye!");
+    logger->logINFO( "myLCU::~myLCU: Good Bye!" );
 }
 
 /**
@@ -84,10 +84,8 @@ myLCU::~myLCU( void )
 int myLCU::run( void )
 {
     int retval = 0;
-
-    logger.logFINE( "myLCU::run Hello World!" );
-
-    logger.logFINE( "myLCU::run Good bye!" );
+    logger->logINFO( "myLCU::run: Hello World!" );
+    logger->logINFO( "myLCU::run: Good bye!" );
     return retval;
 }
 
@@ -113,8 +111,8 @@ int myLCU::postSemaphore( void )
  */
 void myLCU::createTelescope( void )
 {
-    telescope = new myTelescope( m_lcu_data );
-    logger.logFINE("myLCU::initializeTelescope] telescope %p", (void *) telescope);
+    telescope = new myTelescope( m_lcu_data, logger );
+    logger->logINFO("myLCU::initializeTelescope: telescope %p", (void *) telescope );
 }
 
 
