@@ -11,12 +11,14 @@ struct RawEncoderData
 	int lectAlphaWormE;
 	int lectAlphaAxisE;
 	int lectAlphaMotor;
+    int remAlphaMotor;
 	int posAlphaWormE;
 	int posAlphaAxisE;
 	int posAlphaMotor;
 	int lectDeltaWormE;
 	int lectDeltaAxisE;
 	int lectDeltaMotor;
+    int remDeltaMotor;
 	int posDeltaWormE;
 	int posDeltaAxisE;
 	int posDeltaMotor;
@@ -43,9 +45,9 @@ struct TrackingInfo
 
 struct SlewInfo
 {
-	string rateName;
-	double rate;
-	string direction;
+        string rateName;
+        double rate;
+        string direction;
 };
 
 struct TelescopeConfigData
@@ -53,7 +55,7 @@ struct TelescopeConfigData
 	double localTime;
 	double lcuTime;
 	double latitude;
- 	double longitude;
+	double longitude;
 	double altitude;
 	double AMT;
 	double AMH;
@@ -81,9 +83,9 @@ struct TelescopePosition
 	double localSideralTime;	
 	double RA;	
 	double HA;
-    	double Dec;
-    	double Alt;
-    	double Az;
+	double Dec;
+	double Alt;
+	double Az;
 };
 
 struct TelescopeData
@@ -138,12 +140,18 @@ interface LCU
          throws TelescopeNotConfiguredEx;
     void parkTelescope()
          throws TelescopeNotConfiguredEx;
+    void parkTelescopeCap()
+         throws TelescopeNotConfiguredEx;
+    void parkTelescopeAdvance(bool cap)
+         throws TelescopeNotConfiguredEx;
     void stopTelescope(TelescopeDirection dir)
          throws TelescopeNotConfiguredEx;
     void moveToTarget()
-         throws TelescopeNotConfiguredEx; 	 
+         throws TelescopeNotConfiguredEx;
     void handsetSlew(SlewInfo slew)
          throws TelescopeNotConfiguredEx; 	 
+    int readDeviceMemory(int deviceId, int address, int value);
+    int setDeviceMemory(int deviceId, int address, int value);
 };
 };
 	

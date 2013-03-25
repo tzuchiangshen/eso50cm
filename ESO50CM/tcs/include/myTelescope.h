@@ -15,10 +15,12 @@
 #include <myTAxis.h>
 #include <myTClock.h>
 #include <myBSemaphore.h>
+
 #include "LoggerHelper.h"
 
 #define TELSHMKEY   0xFAFAFA00
 #define TELSEMKEY   0xFAFAFA00
+
 
 struct telescope_data_t {
     struct timeval  gtime;
@@ -78,7 +80,7 @@ struct my_lcu_data_t
 class myTelescope : public myTClock
 {
     public:
-        myTelescope( struct my_lcu_data_t * lcu_data );
+        myTelescope( struct my_lcu_data_t * lcu_data, LoggerHelper *logLCUImpl );
         ~myTelescope( void );
 
         int attachInstrumentMemory( void );
@@ -128,7 +130,7 @@ class myTelescope : public myTClock
 
         //int    currentPosition( double * lst, double * ra, double * dec  );
         int    currentPosition( double * lst, double * ra, double * dec, double * alt, double * az, double * ha );
-	int    targetPosition( double * lst, double * ra, double * dec, double * alt, double * az, double * ha );
+        int    targetPosition( double * lst, double * ra, double * dec, double * alt, double * az, double * ha );
         int    setTarget( double trg_ra, double trg_dec, double * trgAlt, double * trgAz );
         double equatorialToHorizontal( double ha, double dec, double * alt, double * az );
 
@@ -151,7 +153,6 @@ class myTelescope : public myTClock
 
         int m_socket_fd;
         struct sockaddr_un m_server_name;
-	LoggerHelper logger;
 };
 
 #endif // * _MYTELSECOPE_H_ *

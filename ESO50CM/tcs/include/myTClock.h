@@ -8,7 +8,6 @@
 #include <errno.h>              //error number
 #include "LoggerHelper.h"
 
-
 //-------------------------------------------------------------
 //      Julian Date
 #define C0                  280.46061837
@@ -45,7 +44,7 @@ struct my_tClock_data_t
 class myTClock
 {
     public:
-        myTClock( struct my_tClock_data_t * clock_data );
+        myTClock( struct my_tClock_data_t * clock_data, LoggerHelper *logLCUImpl );
         ~myTClock( void );
 
         void initializeClock( double longitude );
@@ -61,12 +60,12 @@ class myTClock
         struct tm * getLocalTime( void );
         struct tm * getUniversalTime( void );
 
+	LoggerHelper *logger;
     private:
         struct my_tClock_data_t * m_clock_data;
 
         double julianDate( void );
         double localSiderealTime( void );
-	LoggerHelper logger;
 };
 
 #endif //* _MYTCLOCK_H_ *
