@@ -40,10 +40,19 @@ class Telescope
     void setOffset(TelescopePosition offsetPos)
     	 throws TelescopeNotConfiguredEx, TargetOutOfLimitsEx,
                 NotLCUReferenceAvailableEx;
+    void startTracking()
+         throws TelescopeNotConfiguredEx, 
+                NotLCUReferenceAvailableEx;
+    void stopTracking()
+         throws TelescopeNotConfiguredEx, 
+                NotLCUReferenceAvailableEx;
     void setTracking(TrackingInfo trkInfo)
          throws TelescopeNotConfiguredEx, 
                 NotLCUReferenceAvailableEx;
     void parkTelescope()
+         throws TelescopeNotConfiguredEx,
+                NotLCUReferenceAvailableEx; 
+    void parkTelescopeCap()
          throws TelescopeNotConfiguredEx,
                 NotLCUReferenceAvailableEx; 
     void stopTelescope(TelescopeDirection dir)
@@ -59,6 +68,13 @@ interface Observing
     idempotent void sayHello(int delay);
     idempotent void shutdown();
     Telescope* getTelescope();
+    ["ami"] void moveToTarget() throws TelescopeNotConfiguredEx, NotLCUReferenceAvailableEx; 
+    ["ami"] void startTracking() throws TelescopeNotConfiguredEx, NotLCUReferenceAvailableEx;
+    ["ami"] void stopTracking() throws TelescopeNotConfiguredEx, NotLCUReferenceAvailableEx;
+    ["ami"] void stopTelescope() throws TelescopeNotConfiguredEx, NotLCUReferenceAvailableEx;
+    ["ami"] void parkTelescope() throws TelescopeNotConfiguredEx, NotLCUReferenceAvailableEx;
+    ["ami"] void parkTelescopeCap() throws TelescopeNotConfiguredEx, NotLCUReferenceAvailableEx;
+
 };
 };
 #endif
