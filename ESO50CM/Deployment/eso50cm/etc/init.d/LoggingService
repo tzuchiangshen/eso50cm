@@ -1,0 +1,59 @@
+# Logging Service 
+# install the damond script as root with : 
+# update-rc.d LoggingService defaults 98
+
+
+case $1 in 
+start) 
+    PID=`ps aux |grep loggingService |grep -v grep | awk '{print $2}'`
+    if [ ! -z "$PID" ]; then 
+        logger -s "LoggingService has been already running, pid=$PID"
+    else
+        logger -s "starting LoggingService process ..."
+	#comment this in simulation
+        #/bin/chmod 777 /dev/ttyS0
+        #comment this in real mode
+        bash /opt/qemu/iptable.sh
+	sleep 3
+        su -l tcsmgr -c "/eso50cm/SWROOT/bin/runLoggingService &> /tmp/LogginService.log &"
+        sleep 5
+        PID=`ps aux |grep loggingService |grep -v grep | awk '{print $2}'`
+        if [ ! -z "$PID" ]; then 
+            logger -s "done, pid=$PID"
+        else
+            logger -s "failed to start LoggingService process ..."
+        fi
+    fi
+;;
+stop)
+    PID=`ps aux |grep loggingService |grep -v grep | awk '{print $2}'`
+    if [ ! -z "$PID" ]; then 
+        logger -s "stopping LoggingService process ..., pid=$PID "
+        su -l tcsmgr -c "/bin/kill -9 $PID" 
+        /bin/sleep 3
+    else 
+        logger -s "LoggingService is not running."
+    fi
+;;
+restart)
+    PID=`ps aux |grep loggingService |grep -v grep | awk '{print $2}'`
+    if [ ! -z "$PID" ]; then 
+        logger -s "stopping LoggingService process ..., pid=$PID "
+        su -l tcsmgr -c "/bin/kill -2 $PID" 
+        /bin/sleep 3
+    fi
+    logger -s "starting LoggingService process ..."
+    /bin/chmod 777 /dev/ttyS0
+    su -l tcsmgr -c "/eso50cm/SWROOT/bin/runLoggingService -v &> /dev/null &"
+    PID=`ps aux |grep LoggingService |grep -v grep | awk '{print $2}'`
+    logger -s "done. pid=$PID"
+;;
+status)
+    PID=`ps aux |grep loggingService |grep -v grep | awk '{print $2}'`
+    if [ ! -z "$PID" ]; then 
+        logger -s "LoggingService process is running..., pid=$PID "
+    else 
+        logger -s "LoggingService process is not running."
+    fi
+esac
+exit 0
