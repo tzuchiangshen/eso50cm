@@ -33,6 +33,7 @@ public:
     virtual void setOffset(const ::OUC::TelescopePosition& offsetPos, const Ice::Current&);
     void setOffset(const ::OUC::TelescopePosition& offsetPos);
     virtual void setTracking(const OUC::TrackingInfo& trkInfo, const Ice::Current&);
+    virtual OUC::TrackingInfo getTrackingInfo(const Ice::Current&);
     virtual void parkTelescope(const Ice::Current&);
     virtual void parkTelescopeCap(const Ice::Current&);
     virtual void parkTelescopeAdvance(bool cap, const Ice::Current&);
@@ -47,6 +48,7 @@ protected:
     bool m_configured;
     bool m_tracking; 
     bool m_stop_telescope; 
+    int  m_tracking_speed;
 private:
     void getCurrentPosition(OUC::TelescopeData *telescopeData_t);
     void getTargetPosition(OUC::TelescopeData *telescopeData_t);

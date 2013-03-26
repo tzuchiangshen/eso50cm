@@ -233,6 +233,16 @@ def setTracking(trkState=True, velocity=602):
         traceback.print_exc()
         status = 1
 
+def getTrackingInfo():
+    trkInfo = OUC.TrackingInfo()
+    try:
+        trkInfo = lcuImpl.getTrackingInfo();
+        print "tracking info: state=%d, velocity=%lf" % (trkInfo.trackState, trkInfo.ticVel)
+    except OUC.TelescopeNotConfiguredEx():
+        print "Telescope Not Configured !!!"
+        traceback.print_exc()
+        status = 1
+
 def setTarget(Ra, Dec):
     targetPos = OUC.TelescopePosition()
     targetPos.RA = HHMMSS2degs(Ra[0], Ra[1], Ra[2])

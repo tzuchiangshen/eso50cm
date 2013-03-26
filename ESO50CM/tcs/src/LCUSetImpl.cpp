@@ -373,6 +373,10 @@ LCUImpl::setTracking(const OUC::TrackingInfo& trkInfo, const Ice::Current& c)
     /** Read Tracking Flag **/
     if(trkInfo.trackState & !trkInfo.ticVel)
         velocity = 1200;
+    else {
+        m_tracking_speed = trkInfo.ticVel;
+        logger.logINFO( "Tracking parameter has been updated: velocity: %d enc/s", m_tracking_speed);
+    }
     
     /** Set Velocity **/
     m_lcu->waitSemaphore();
@@ -391,6 +395,18 @@ LCUImpl::setTracking(const OUC::TrackingInfo& trkInfo, const Ice::Current& c)
     logger.logFINE( "LCUImpl::setTracking Tracking State: %d, ticks velocity: %d",trkInfo.trackState,trkInfo.ticVel);
     logger.logFINER( "<-- LCUImpl::setTracking()" );
 }
+
+OUC::TrackingInfo LCUImpl::getTrackingInfo(const Ice::Current& c)
+{
+    OUC::TrackingInfo trkInfo;
+    /** Refresh tracking state **/
+    getTrackingState();
+    trkInfo.ticVel = m_tracking_speed;
+    trkInfo.trackState = m_tracking;
+    logger.logFINE( "LCUImpl::getTrackingInfo: Tracking State: %d, ticks velocity: %d",trkInfo.trackState,trkInfo.ticVel);
+    return trkInfo;
+}
+
 
 void 
 LCUImpl::parkTelescopeCap(const Ice::Current& c)
