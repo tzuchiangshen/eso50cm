@@ -1,0 +1,19 @@
+
+#check if ObsControl is running
+PID=`ps aux |grep ObsControl |grep -v grep | awk '{print $2}'`
+if [ ! -z "$PID" ]; then 
+    logger -s "previous instance of ObsControl process has been detected, pid=$PID, killing it ..."
+    kill -9 "$PID"
+fi
+
+PID=`ps aux |grep Console |grep -v grep | awk '{print $2}'`
+if [ ! -z "$PID" ]; then 
+    logger -s "previous instance of Console process has been detected, pid=$PID, killing it ..."
+    kill -9 "$PID"
+fi
+
+ObsControl &> /dev/null &
+sleep 3 
+logger -s "Starting ESO50CM Console" 
+Console &> /dev/null &
+

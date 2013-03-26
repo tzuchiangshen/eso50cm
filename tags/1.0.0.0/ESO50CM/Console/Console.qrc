@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/eso50cm/Cosole">
+        <file>save.png</file>
+        <file>goto_target.png</file>
+        <file>park_cap.png</file>
+        <file>stop_telescope.png</file>
+        <file>refresh.png</file>
+        <file>bookmark.png</file>
+        <file>park_telescope.png</file>
+        <file>tracking.png</file>
+        <file>tracking_disable.png</file>
+        <file>obsControlConnect.png</file>
+    </qresource>
+</RCC>
