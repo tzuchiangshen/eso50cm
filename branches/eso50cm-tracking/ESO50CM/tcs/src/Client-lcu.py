@@ -313,9 +313,10 @@ if __name__ == "__main__":
     #stopTelescope()
     #setTracking()
     #print "#######################################"    
-    getRawEncoderPosition()
+    #getRawEncoderPosition()
     #print "#######################################"
     #getPosition()
     #readDeviceMemory(0xA8, 4, 0)
+    getTrackingInfo()
     disconnect()
     
