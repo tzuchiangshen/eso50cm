@@ -20,6 +20,7 @@ ENDIF (NOT INTROOT)
 #for generated files from slice
 ADD_CUSTOM_COMMAND(
     OUTPUT ${PROJECT_SOURCE_DIR}/Observing.cpp ${PROJECT_SOURCE_DIR}/Observing.h ${PROJECT_SOURCE_DIR}/LCU.cpp ${PROJECT_SOURCE_DIR}/LCU.h
+    DEPENDS ${PROJECT_SOURCE_DIR}/../idl/Observing.ice  
     #DEPENDS ${PROJECT_SOURCE_DIR}/../idl/Observing.ice ${INTROOT}/idl/LCU.ice ${PROJECT_SOURCE_DIR}/../../tcs/idl/LCU.ice  
     #generate cpp proxies files
     COMMAND ${CMAKE_COMMAND} -E echo " Observing.cpp Observing.h generated."
@@ -45,7 +46,8 @@ INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/../../tcs/src")   #for generated .h
 LINK_DIRECTORIES(${INTROOT}/lib)
 LINK_DIRECTORIES("${PROJECT_SOURCE_DIR}/../../Logger/lib")
 LINK_DIRECTORIES("${PROJECT_SOURCE_DIR}/../../tcs/lib")
-ADD_LIBRARY(ObservingImpl SHARED Observing TelescopeImpl ObservingImpl AMI_Observing_moveToTargetImpl AMI_Observing_parkTelescopeImpl AMI_Observing_parkTelescopeCapImpl)
+#ADD_LIBRARY(ObservingImpl SHARED Observing TelescopeImpl ObservingImpl AMI_Observing_moveToTargetImpl AMI_Observing_parkTelescopeImpl AMI_Observing_parkTelescopeCapImpl)
+ADD_LIBRARY(ObservingImpl SHARED Observing TelescopeImpl ObservingImpl)
 TARGET_LINK_LIBRARIES(ObservingImpl LoggerCore LCUImpl Ice IceUtil)
 set_property(TARGET ObservingImpl PROPERTY LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../lib)
 
