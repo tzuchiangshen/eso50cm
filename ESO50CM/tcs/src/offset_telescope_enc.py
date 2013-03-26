@@ -12,7 +12,7 @@ from DeviceManager import DeviceManager
         
 if __name__ == "__main__":
 
-    parser = optparse.OptionParser(usage= "%prog ra=00:00:00 dec=00:00:00")
+    parser = optparse.OptionParser(usage= "%prog ra=120 dec=60")
     (options, args) = parser.parse_args()
 
     mgr = DeviceManager()

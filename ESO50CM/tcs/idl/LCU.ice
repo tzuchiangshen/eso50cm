@@ -138,6 +138,8 @@ interface LCU
     	 throws TelescopeNotConfiguredEx, TargetOutOfLimitsEx;
     void setTracking(TrackingInfo trkInfo)
          throws TelescopeNotConfiguredEx;
+    TrackingInfo getTrackingInfo()
+         throws TelescopeNotConfiguredEx;
     void parkTelescope()
          throws TelescopeNotConfiguredEx;
     void parkTelescopeCap()
