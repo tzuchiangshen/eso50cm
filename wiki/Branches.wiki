@@ -1,0 +1,10 @@
+#ESO50CM branches history
+
+= eso50cm-tracking =
+2013-03-26
+
+tcsmgr@dev:~/CURRENTLY_MOD/trunk/ESO50CM$ svn copy https://eso50cm.googlecode.com/svn/trunk https://eso50cm.googlecode.com/svn/branches/eso50cm-tracking
+
+Committed revision 582.
+
+
