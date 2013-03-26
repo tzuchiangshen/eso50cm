@@ -1,4 +1,0 @@
->>> Warning 216 "C:\Documents and Settings\mbaffico\My Documents\PICproj\ESO50pic\MotorDC_v06\MotorDC_v06.c" Line 815(0,1): Interrupts disabled during call to prevent re-entrancy:  (WriteI2C)
->>> Warning 202 "C:\Documents and Settings\mbaffico\My Documents\PICproj\ESO50pic\MotorDC_v06\MotorDC_v06.c" Line 104(9,17): Variable never used:   posError
-      Memory usage:   ROM=50%      RAM=33% - 35%
-      0 Errors,  2 Warnings.
