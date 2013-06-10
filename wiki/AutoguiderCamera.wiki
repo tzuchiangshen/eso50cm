@@ -1,0 +1,35 @@
+#summary One-sentence summary of this page.
+
+= Camera =
+
+
+= API =
+== ffmpeg == 
+{{{
+C:\programs\ffmpeg\bin>ffmpeg.exe -list_devices true -f dshow -i dummy
+ffmpeg version N-53934-gb77e58a Copyright (c) 2000-2013 the FFmpeg developers
+  built on Jun  8 2013 17:50:26 with gcc 4.7.3 (GCC)
+  configuration: --enable-gpl --enable-version3 --disable-w32threads --enable-av
+isynth --enable-bzlib --enable-fontconfig --enable-frei0r --enable-gnutls --enab
+le-iconv --enable-libass --enable-libbluray --enable-libcaca --enable-libfreetyp
+e --enable-libgsm --enable-libilbc --enable-libmodplug --enable-libmp3lame --ena
+ble-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-l
+ibopus --enable-librtmp --enable-libschroedinger --enable-libsoxr --enable-libsp
+eex --enable-libtheora --enable-libtwolame --enable-libvo-aacenc --enable-libvo-
+amrwbenc --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libxavs --
+enable-libxvid --enable-zlib
+  libavutil      52. 35.100 / 52. 35.100
+  libavcodec     55. 15.100 / 55. 15.100
+  libavformat    55.  8.102 / 55.  8.102
+  libavdevice    55.  2.100 / 55.  2.100
+  libavfilter     3. 75.101 /  3. 75.101
+  libswscale      2.  3.100 /  2.  3.100
+  libswresample   0. 17.102 /  0. 17.102
+  libpostproc    52.  3.100 / 52.  3.100
+[dshow @ 029aedc0] DirectShow video devices
+[dshow @ 029aedc0]  "DMx 21AU04.AS"
+[dshow @ 029aedc0] DirectShow audio devices
+[dshow @ 029aedc0] Could not enumerate audio devices.
+dummy: Immediate exit requested
+
+}}}
