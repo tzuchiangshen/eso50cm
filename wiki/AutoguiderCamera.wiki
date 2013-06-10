@@ -60,8 +60,7 @@ enable-libxvid --enable-zlib
   libpostproc    52.  3.100 / 52.  3.100
 [dshow @ 029aedc0] DirectShow video device options
 [dshow @ 029aedc0]  Pin "Capturar"
-[dshow @ 029aedc0]   pixel_format=gray  min s=640x480 fps=3.75 max s=640x480 fps
-=60.0002
+[dshow @ 029aedc0]   pixel_format=gray  min s=640x480 fps=3.75 max s=640x480 fps =60.0002
 video=DMx 21AU04.AS: Immediate exit requested
 }}}
 
@@ -89,10 +88,8 @@ enable-libxvid --enable-zlib
   libpostproc    52.  3.100 / 52.  3.100
 Input #0, dshow, from 'video=DMx 21AU04.AS':
   Duration: N/A, start: 2749.336000, bitrate: N/A
-    Stream #0:0: Video: rawvideo (Y800 / 0x30303859), gray, 640x480, 30 tbr, 100
-00k tbn, 30 tbc
-File 'out.mp4' already exists. Overwrite ? [y/N] [dshow @ 02ea5e20] real-time bu
-ffer 101% full! frame dropped!
+    Stream #0:0: Video: rawvideo (Y800 / 0x30303859), gray, 640x480, 30 tbr, 10000k tbn, 30 tbc
+File 'out.mp4' already exists. Overwrite ? [y/N] [dshow @ 02ea5e20] real-time buffer 101% full! frame dropped!
     Last message repeated 17 times
     Last message repeated 17 times
 No pixel format specified, yuvj420p for H.264 encoding chosen.
@@ -111,8 +108,7 @@ ut=40 intra_refresh=0 rc_lookahead=40 rc=crf mbtree=1 crf=23.0 qcomp=0.60 qpmin=
 Output #0, mp4, to 'out.mp4':
   Metadata:
     encoder         : Lavf55.8.102
-    Stream #0:0: Video: h264 (libx264) ([33][0][0][0] / 0x0021), yuvj420p, 640x4
-80, q=-1--1, 10000k tbn, 30 tbc
+    Stream #0:0: Video: h264 (libx264) ([33][0][0][0] / 0x0021), yuvj420p, 640x480, q=-1--1, 10000k tbn, 30 tbc
 Stream mapping:
   Stream #0:0 -> #0:0 (rawvideo -> libx264)
 Press [q] to stop, [?] for help
