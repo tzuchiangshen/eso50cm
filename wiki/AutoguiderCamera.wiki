@@ -64,3 +64,133 @@ enable-libxvid --enable-zlib
 =60.0002
 video=DMx 21AU04.AS: Immediate exit requested
 }}}
+
+  * A Quick video capture from the camera
+{{{
+C:\programs\ffmpeg\bin>ffmpeg.exe -f dshow -i video="DMx 21AU04.AS" out.mp4
+ffmpeg version N-53934-gb77e58a Copyright (c) 2000-2013 the FFmpeg developers
+  built on Jun  8 2013 17:50:26 with gcc 4.7.3 (GCC)
+  configuration: --enable-gpl --enable-version3 --disable-w32threads --enable-av
+isynth --enable-bzlib --enable-fontconfig --enable-frei0r --enable-gnutls --enab
+le-iconv --enable-libass --enable-libbluray --enable-libcaca --enable-libfreetyp
+e --enable-libgsm --enable-libilbc --enable-libmodplug --enable-libmp3lame --ena
+ble-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-l
+ibopus --enable-librtmp --enable-libschroedinger --enable-libsoxr --enable-libsp
+eex --enable-libtheora --enable-libtwolame --enable-libvo-aacenc --enable-libvo-
+amrwbenc --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libxavs --
+enable-libxvid --enable-zlib
+  libavutil      52. 35.100 / 52. 35.100
+  libavcodec     55. 15.100 / 55. 15.100
+  libavformat    55.  8.102 / 55.  8.102
+  libavdevice    55.  2.100 / 55.  2.100
+  libavfilter     3. 75.101 /  3. 75.101
+  libswscale      2.  3.100 /  2.  3.100
+  libswresample   0. 17.102 /  0. 17.102
+  libpostproc    52.  3.100 / 52.  3.100
+Input #0, dshow, from 'video=DMx 21AU04.AS':
+  Duration: N/A, start: 2749.336000, bitrate: N/A
+    Stream #0:0: Video: rawvideo (Y800 / 0x30303859), gray, 640x480, 30 tbr, 100
+00k tbn, 30 tbc
+File 'out.mp4' already exists. Overwrite ? [y/N] [dshow @ 02ea5e20] real-time bu
+ffer 101% full! frame dropped!
+    Last message repeated 17 times
+    Last message repeated 17 times
+No pixel format specified, yuvj420p for H.264 encoding chosen.
+Use -pix_fmt yuv420p for compatibility with outdated media players.
+[libx264 @ 02ef4980] using cpu capabilities: MMX2 SSE2Fast SSSE3 SSE4.1 Cache64
+[libx264 @ 02ef4980] profile High, level 3.0
+[libx264 @ 02ef4980] 264 - core 133 r2334 a3ac64b - H.264/MPEG-4 AVC codec - Cop
+yleft 2003-2013 - http://www.videolan.org/x264.html - options: cabac=1 ref=3 deb
+lock=1:0:0 analyse=0x3:0x113 me=hex subme=7 psy=1 psy_rd=1.00:0.00 mixed_ref=1 m
+e_range=16 chroma_me=1 trellis=1 8x8dct=1 cqm=0 deadzone=21,11 fast_pskip=1 chro
+ma_qp_offset=-2 threads=3 lookahead_threads=1 sliced_threads=0 nr=0 decimate=1 i
+nterlaced=0 bluray_compat=0 constrained_intra=0 bframes=3 b_pyramid=2 b_adapt=1
+b_bias=0 direct=1 weightb=1 open_gop=0 weightp=2 keyint=250 keyint_min=25 scenec
+ut=40 intra_refresh=0 rc_lookahead=40 rc=crf mbtree=1 crf=23.0 qcomp=0.60 qpmin=
+0 qpmax=69 qpstep=4 ip_ratio=1.40 aq=1:1.00
+Output #0, mp4, to 'out.mp4':
+  Metadata:
+    encoder         : Lavf55.8.102
+    Stream #0:0: Video: h264 (libx264) ([33][0][0][0] / 0x0021), yuvj420p, 640x4
+80, q=-1--1, 10000k tbn, 30 tbc
+Stream mapping:
+  Stream #0:0 -> #0:0 (rawvideo -> libx264)
+Press [q] to stop, [?] for help
+[dshow @ 02ea5e20] real-time buffer 90% full! frame dropped!
+frame=   93 fps=0.0 q=29.0 size=     412kB time=00:00:01.46 bitrate=2299.7kbits/
+frame=  122 fps=103 q=29.0 size=     412kB time=00:00:02.43 bitrate=1388.2kbits/
+frame=  137 fps= 81 q=29.0 size=     413kB time=00:00:02.93 bitrate=1152.4kbits/
+frame=  152 fps= 69 q=29.0 size=     595kB time=00:00:03.43 bitrate=1420.7kbits/
+frame=  167 fps= 62 q=29.0 size=     808kB time=00:00:03.93 bitrate=1682.7kbits/
+frame=  182 fps= 57 q=29.0 size=     991kB time=00:00:04.43 bitrate=1831.1kbits/
+frame=  196 fps= 53 q=29.0 size=    1137kB time=00:00:04.89 bitrate=1901.3kbits/
+frame=  211 fps= 50 q=29.0 size=    1320kB time=00:00:05.39 bitrate=2002.6kbits/
+frame=  226 fps= 48 q=29.0 size=    1503kB time=00:00:05.89 bitrate=2086.9kbits/
+frame=  241 fps= 46 q=29.0 size=    1716kB time=00:00:06.39 bitrate=2197.0kbits/
+frame=  255 fps= 45 q=29.0 size=    1863kB time=00:00:06.86 bitrate=2222.3kbits/
+frame=  270 fps= 44 q=29.0 size=    2045kB time=00:00:07.36 bitrate=2274.3kbits/
+frame=  285 fps= 43 q=29.0 size=    2228kB time=00:00:07.86 bitrate=2319.9kbits/
+frame=  300 fps= 42 q=29.0 size=    2411kB time=00:00:08.36 bitrate=2360.4kbits/
+frame=  315 fps= 41 q=29.0 size=    2624kB time=00:00:08.86 bitrate=2424.0kbits/
+frame=  332 fps= 40 q=29.0 size=    2807kB time=00:00:09.43 bitrate=2437.6kbits/
+frame=  332 fps= 38 q=-1.0 Lsize=    3390kB time=00:00:10.99 bitrate=2524.4kbits
+/s dup=238 drop=0
+video:3385kB audio:0kB subtitle:0 global headers:0kB muxing overhead 0.138134%
+[libx264 @ 02ef4980] frame I:94    Avg QP:20.09  size: 36810
+[libx264 @ 02ef4980] frame P:107   Avg QP:24.86  size:    26
+[libx264 @ 02ef4980] frame B:131   Avg QP:25.79  size:    19
+[libx264 @ 02ef4980] consecutive B-frames: 29.5% 53.6%  0.0% 16.9%
+[libx264 @ 02ef4980] mb I  I16..4:  9.1% 90.8%  0.1%
+[libx264 @ 02ef4980] mb P  I16..4:  0.0%  0.0%  0.0%  P16..4:  0.0%  0.0%  0.0%
+ 0.0%  0.0%    skip:100.0%
+[libx264 @ 02ef4980] mb B  I16..4:  0.0%  0.0%  0.0%  B16..8:  0.0%  0.0%  0.0%
+ direct: 0.0%  skip:100.0%  L0: 0.0% L1:100.0% BI: 0.0%
+[libx264 @ 02ef4980] 8x8 transform intra:90.8%
+[libx264 @ 02ef4980] coded y,uvDC,uvAC intra: 99.0% 0.0% 0.0% inter: 0.0% 0.0% 0
+.0%
+[libx264 @ 02ef4980] i16 v,h,dc,p:  9%  2% 83%  6%
+[libx264 @ 02ef4980] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu:  3%  3% 76%  4%  3%  3%  3%
+ 3%  3%
+[libx264 @ 02ef4980] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu:  2%  3% 55%  8%  7%  7%  7%
+ 5%  4%
+[libx264 @ 02ef4980] i8c dc,h,v,p: 100%  0%  0%  0%
+[libx264 @ 02ef4980] Weighted P-Frames: Y:0.0% UV:0.0%
+[libx264 @ 02ef4980] kb/s:2505.17
+
+C:\programs\ffmpeg\bin>
+}}}
+  * video encoding information 
+{{{
+C:\programs\ffmpeg\bin>ffmpeg.exe -i out.mp4
+ffmpeg version N-53934-gb77e58a Copyright (c) 2000-2013 the FFmpeg developers
+  built on Jun  8 2013 17:50:26 with gcc 4.7.3 (GCC)
+  configuration: --enable-gpl --enable-version3 --disable-w32threads --enable-av
+isynth --enable-bzlib --enable-fontconfig --enable-frei0r --enable-gnutls --enab
+le-iconv --enable-libass --enable-libbluray --enable-libcaca --enable-libfreetyp
+e --enable-libgsm --enable-libilbc --enable-libmodplug --enable-libmp3lame --ena
+ble-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-l
+ibopus --enable-librtmp --enable-libschroedinger --enable-libsoxr --enable-libsp
+eex --enable-libtheora --enable-libtwolame --enable-libvo-aacenc --enable-libvo-
+amrwbenc --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libxavs --
+enable-libxvid --enable-zlib
+  libavutil      52. 35.100 / 52. 35.100
+  libavcodec     55. 15.100 / 55. 15.100
+  libavformat    55.  8.102 / 55.  8.102
+  libavdevice    55.  2.100 / 55.  2.100
+  libavfilter     3. 75.101 /  3. 75.101
+  libswscale      2.  3.100 /  2.  3.100
+  libswresample   0. 17.102 /  0. 17.102
+  libpostproc    52.  3.100 / 52.  3.100
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from 'out.mp4':
+  Metadata:
+    major_brand     : isom
+    minor_version   : 512
+    compatible_brands: isomiso2avc1mp41
+    encoder         : Lavf55.8.102
+  Duration: 00:00:04.37, start: 0.000000, bitrate: 2929 kb/s
+    Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuvj420p, 640x480,
+ 2925 kb/s, 30 fps, 30 tbr, 10000k tbn, 60 tbc
+    Metadata:
+      handler_name    : VideoHandler
+At least one output file must be specified
+}}}
