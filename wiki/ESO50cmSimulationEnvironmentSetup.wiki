@@ -96,3 +96,55 @@ root@dev:~# iptables -S
 root@dev:~# 
 
 }}}
+
+  * wxp
+
+{{{
+
+C:\Program Files\VMware\VMware vSphere CLI>ipconfig
+
+Windows IP Configuration
+
+
+Ethernet adapter Local Area Connection:
+
+        Media State . . . . . . . . . . . : Media disconnected
+
+Ethernet adapter Local Area Connection 3:
+
+        Connection-specific DNS Suffix  . :
+        IP Address. . . . . . . . . . . . : 192.168.100.101
+        Subnet Mask . . . . . . . . . . . : 255.255.255.0
+        Default Gateway . . . . . . . . . :
+
+C:\Program Files\VMware\VMware vSphere CLI>route print
+===========================================================================
+Interface List
+0x1 ........................... MS TCP Loopback interface
+0x2 ...08 00 27 00 be ed ...... AMD PCNET Family PCI Ethernet Adapter - Packet S
+cheduler Miniport
+0x3 ...08 00 27 06 d2 47 ...... AMD PCNET Family PCI Ethernet Adapter #2 - Packe
+t Scheduler Miniport
+0x10005 ...08 00 27 7e f6 d9 ...... AMD PCNET Family PCI Ethernet Adapter #3 - P
+acket Scheduler Miniport
+===========================================================================
+===========================================================================
+Active Routes:
+Network Destination        Netmask          Gateway       Interface  Metric
+          0.0.0.0          0.0.0.0         10.0.2.2       10.0.2.15       20
+         10.0.2.0    255.255.255.0        10.0.2.15       10.0.2.15       20
+        10.0.2.15  255.255.255.255        127.0.0.1       127.0.0.1       20
+   10.255.255.255  255.255.255.255        10.0.2.15       10.0.2.15       20
+        127.0.0.0        255.0.0.0        127.0.0.1       127.0.0.1       1
+      192.168.0.0    255.255.255.0   192.168.100.20  192.168.100.101      1
+    192.168.100.0    255.255.255.0  192.168.100.101  192.168.100.101      20
+  192.168.100.101  255.255.255.255        127.0.0.1       127.0.0.1       20
+  192.168.100.255  255.255.255.255  192.168.100.101  192.168.100.101      20
+        224.0.0.0        240.0.0.0        10.0.2.15       10.0.2.15       20
+        224.0.0.0        240.0.0.0  192.168.100.101  192.168.100.101      20
+  255.255.255.255  255.255.255.255        10.0.2.15       10.0.2.15       1
+  255.255.255.255  255.255.255.255  192.168.100.101           10005       1
+  255.255.255.255  255.255.255.255  192.168.100.101  192.168.100.101      1
+Default Gateway:          10.0.2.2
+
+}}}
