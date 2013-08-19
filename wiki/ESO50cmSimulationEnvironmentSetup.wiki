@@ -1,0 +1,98 @@
+#summary One-sentence summary of this page.
+
+= Introduction =
+
+The Simulation Environment includes the following machines:
+  * arm: LCU
+  * linux: Workstation 
+  * wxp: Autoguider workstation
+
+= Details =
+
+  * arm 
+
+{{{
+eso50cm:~# ifconfig 
+eth0      Link encap:Ethernet  HWaddr 52:54:00:12:34:56  
+          inet addr:192.168.0.10  Bcast:192.168.0.255  Mask:255.255.255.0
+          inet6 addr: fe80::5054:ff:fe12:3456/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:807 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:981 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:102709 (100.3 KiB)  TX bytes:85374 (83.3 KiB)
+          Interrupt:25 Base address:0x2000 DMA chan:ff 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:15 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:15 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:1215 (1.1 KiB)  TX bytes:1215 (1.1 KiB)
+
+eso50cm:~# ip route 
+192.168.0.0/24 dev eth0  proto kernel  scope link  src 192.168.0.10 
+default via 192.168.0.20 dev eth0 
+eso50cm:~# 
+}}}
+
+  * linux 
+
+{{{
+
+root@dev:~# ifconfig 
+br0       Link encap:Ethernet  HWaddr 6e:2f:4b:93:86:e5  
+          inet addr:192.168.0.20  Bcast:192.168.0.255  Mask:255.255.255.0
+          inet6 addr: fe80::6c2f:4bff:fe93:86e5/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:1499 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:992 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:135989 (135.9 KB)  TX bytes:135703 (135.7 KB)
+
+eth7      Link encap:Ethernet  HWaddr 08:00:27:d7:f6:55  
+          inet addr:192.168.100.20  Bcast:192.168.100.255  Mask:255.255.255.0
+          inet6 addr: fe80::a00:27ff:fed7:f655/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:898 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:826 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:123748 (123.7 KB)  TX bytes:107135 (107.1 KB)
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:569888 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:569888 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:3119869910 (3.1 GB)  TX bytes:3119869910 (3.1 GB)
+
+tap0      Link encap:Ethernet  HWaddr 6e:2f:4b:93:86:e5  
+          inet6 addr: fe80::6c2f:4bff:fe93:86e5/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:1217 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:916 errors:0 dropped:28 overruns:0 carrier:0
+          collisions:0 txqueuelen:500 
+          RX bytes:114158 (114.1 KB)  TX bytes:121244 (121.2 KB)
+
+root@dev:~# 
+
+
+root@dev:~# ip route 
+192.168.100.0/24 dev eth7  proto kernel  scope link  src 192.168.100.20 
+192.168.0.0/24 dev br0  proto kernel  scope link  src 192.168.0.20 
+192.168.122.0/24 dev virbr0  proto kernel  scope link  src 192.168.122.1 
+root@dev:~# 
+
+root@dev:~# iptables -S
+-P INPUT ACCEPT
+-P FORWARD DROP
+-P OUTPUT ACCEPT
+-A FORWARD -i eth7 -o br0 -j ACCEPT 
+-A FORWARD -i br0 -o eth7 -j ACCEPT 
+root@dev:~# 
+
+}}}
