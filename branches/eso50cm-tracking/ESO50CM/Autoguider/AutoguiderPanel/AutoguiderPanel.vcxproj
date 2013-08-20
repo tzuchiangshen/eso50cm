@@ -112,6 +112,7 @@
     <ClCompile Include="ImageProcessor.cpp" />
     <ClCompile Include="LoggerHelper.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MatToQImage.cpp" />
     <ClCompile Include="ObsControlIF.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -146,6 +147,7 @@
     <ClInclude Include="generated\LogMessage.h" />
     <ClInclude Include="generated\Observing.h" />
     <ClInclude Include="LoggerHelper.h" />
+    <ClInclude Include="MatToQImage.h" />
     <CustomBuild Include="ImageProcessor.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing ImageProcessor.h...</Message>

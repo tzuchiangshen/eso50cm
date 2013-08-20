@@ -18,6 +18,9 @@ class AutoguiderPanel : public QMainWindow
 		ImageProcessor *proc;
 	public slots:
 		void startProcessing();
+		void refreshImage(QImage img);
+		void test();
+		void updateCorrection(int x, int y);
 
 };
 
