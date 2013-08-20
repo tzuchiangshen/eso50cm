@@ -60,9 +60,146 @@ void ImageProcessor::slewLoop() {
 	}
 }
 
+void ImageProcessor::setupVideoSource(int cameraId) {
+	cameraId = cameraId;
+}
+
+void ImageProcessor::setupVideoSource(string file) {
+	//abs path to the video file
+	fileName = file;
+}
+
+void ImageProcessor::openVideoSource() {
+	// open video file       
+    cap = VideoCapture(fileName);
+    cout << "Opening file: " << fileName << endl;
+    if(!cap.isOpened())  // check if we succeeded
+        throw "Error when reading video file";
+	
+    //get number of frames
+    nframes = cap.get(CV_CAP_PROP_FRAME_COUNT);
+    fps = cap.get(CV_CAP_PROP_FPS);
+    cols = cap.get(CV_CAP_PROP_FRAME_WIDTH);
+    rows = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
+    enc = cap.get(CV_CAP_PROP_FOURCC);
+    qDebug() << "number of frames " << nframes << " frames per second: " <<fps << " size: " << cols << "," << rows << "enc: " << enc;
+	
+	//hard coded position of the pinhole in the image, should be moved to a configuration file. 
+    pinhole = Point(383,252);
+	qDebug() << "pinhole position: (" << pinhole.x << "," << pinhole.y << ")";
+}
+
+bool ImageProcessor::processFrame() {
+	Mat frame;
+	Mat gray_image;
+	Mat gray_image1;
+	Mat fst;
+	Mat mask;
+	Mat object;
+    //video processing loop
+	if (!cap.grab())
+		return false;
+
+    //cap >> frame; // get a new frame from video file
+	cap.retrieve(frame);
+	cvtColor( frame, gray_image, CV_BGR2GRAY );
+	//qDebug() << " Covert image to gray level, channels=" << gray_image.channels() << " type=" << gray_image.type();
+    gray_image1.convertTo(gray_image1, CV_32F);
+
+	//median filter application, result to fst
+    medianBlur ( gray_image, fst, 5 );
+
+	//filtered image statistics: mean and standard deviation
+    cv::Scalar cvMean;
+    cv::Scalar cvStddev;
+    meanStdDev(fst, cvMean, cvStddev);
+    cout << " frame average: " << cvMean[0] << " std: " << cvStddev[0] << endl;
+        
+    //threshold for mask
+    float th = cvMean[0] + 3.0*cvStddev[0];
+
+    //mask definition and calculation
+    mask = fst > th;
+
+    //int totalpoints = sum(mask)[0]/1000;
+    //int posY = 200 - totalpoints;
+    //int posX = idx % 512;
+    //line(chart, cvPoint(posX+1,0), cvPoint(posX+1,200),0);
+    //circle(chart, cvPoint(posX, posY), 1, whiteLine, 1);
+    //imshow("number of segmented points", chart);
+    //object segmentation
+    bitwise_and(fst, mask, object);
+
+    //Centroid estimation
+    Mat object32;
+    object.convertTo(object32, CV_32F);
+    //Makes pinhole pixels = 0
+    circle(object32, pinhole, 8, 0);
+
+	//meshgrid creation
+    Mat XX,YY;
+    XX.create(rows, cols, CV_32F);
+    YY.create(rows, cols, CV_32F);
+    for (int i = 0; i < rows; i++) {
+        YY.at<float>(i,0) = (float)i;
+    }
+ 
+    for (int i = 0; i<cols;i++){
+        XX.at<float>(0,i) =  (float)i;
+    }
+
+    XX = repeat(XX.row(0),rows,1);
+
+
+    YY = repeat(YY.col(0),1,cols);
+	
+	//cout << " XX.rows=" << XX.rows << " cols=" << XX.cols << endl;  
+	//cout << " object32.rows=" << object32.rows << " cols=" << object32.cols << endl;
+    Mat xst = object32.mul(XX);
+    Mat yst = object32.mul(YY);
+    //imshow("filtered",xst);
+
+    Scalar gx = sum(xst);
+    Scalar gy = sum(yst);
+    Scalar sobj = sum(object32);
+    gx = gx/sobj;
+    gy = gy/sobj;
+        
+    int cx = (int)gx[0];
+    int cy = (int)gy[0];
+    
+	cout<<" centroid: ("<<cx<<","<<cy<<")" << endl;
+    Point center(cx, cy);
+	int corrX = center.x - pinhole.x;
+	int corrY = center.y - pinhole.y;
+	cout << " X Correction: " << corrX << " Y Correction: " << corrY << endl;
+	object32.convertTo(gray_image1, CV_8UC3);
+	QImage img = MatToQImage(gray_image1);
+	emit newFrame(img);
+	emit newCorrection(corrX, corrY);
+	if(corrX > 1) {
+		slewOn();
+	} else {
+		slewOff();
+	}
+	return true;
+}
+
+void ImageProcessor::test() {
+	setupVideoSource("c:\\tmp\\eso50cm\\guide2.mp4");
+	openVideoSource();
+	processFrame();
+}
 
 void ImageProcessor::run() {
-	process_main("c:\\tmp\\eso50cm\\guide1.mp4");
+	//process_main("c:\\tmp\\eso50cm\\guide1.mp4");
+	while(1) {
+		if(processFrame() == false) {
+			break;
+		}
+		QThread::sleep(1);
+	}
+	qDebug() << "Thread quit ...";
 }
 
 int ImageProcessor::process_main(char* filename) {

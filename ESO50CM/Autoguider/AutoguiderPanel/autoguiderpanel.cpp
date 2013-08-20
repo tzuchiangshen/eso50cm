@@ -12,7 +12,9 @@ AutoguiderPanel::AutoguiderPanel(QWidget *parent)
 	connect(ui.btSlewOn, SIGNAL(released()), proc, SLOT(slewOn()));
 	connect(ui.btSlewOff, SIGNAL(released()), proc, SLOT(slewOff()));
 	connect(ui.btLoop, SIGNAL(released()), proc, SLOT(slewLoop()));
-
+	connect(ui.btTest, SIGNAL(released()), this, SLOT(test()));
+	connect(proc,SIGNAL(newFrame(QImage)), this, SLOT(refreshImage(QImage)));
+	connect(proc,SIGNAL(newCorrection(int, int)), this, SLOT(updateCorrection(int, int)));
 }
 
 AutoguiderPanel::~AutoguiderPanel()
@@ -24,3 +26,18 @@ void AutoguiderPanel::startProcessing() {
 	proc->start();
 }
 
+void AutoguiderPanel::refreshImage(QImage img) {
+	ui.imgContainer->setPixmap(QPixmap::fromImage(img));
+	qDebug() << "image refreshed.";
+}
+
+void AutoguiderPanel::test() {
+	proc->test();
+	proc->start();
+}
+
+void AutoguiderPanel::updateCorrection(int x, int y) {
+	char text[100];
+	sprintf(text, "x=%d, y=%d", x, y);
+	ui.lbCorrection->setText(text);
+}
