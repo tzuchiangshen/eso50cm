@@ -117,6 +117,8 @@ Ethernet adapter Local Area Connection 3:
         Subnet Mask . . . . . . . . . . . : 255.255.255.0
         Default Gateway . . . . . . . . . :
 
+C:\>route add 192.168.0.0 mask 255.255.255.0 192.168.100.20 metric 1 if 3
+
 C:\Program Files\VMware\VMware vSphere CLI>route print
 ===========================================================================
 Interface List
