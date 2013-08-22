@@ -14,6 +14,7 @@ AutoguiderPanel::AutoguiderPanel(QWidget *parent)
 	connect(ui.btLoop, SIGNAL(released()), proc, SLOT(slewLoop()));
 	connect(ui.btTest, SIGNAL(released()), this, SLOT(test()));
 	connect(proc,SIGNAL(newFrame(QImage)), this, SLOT(refreshImage(QImage)));
+	connect(proc,SIGNAL(newIntensityProfile(QImage)), this, SLOT(refreshIntensityProfile(QImage)));
 	connect(proc,SIGNAL(newCorrection(int, int)), this, SLOT(updateCorrection(int, int)));
 }
 
@@ -28,7 +29,12 @@ void AutoguiderPanel::startProcessing() {
 
 void AutoguiderPanel::refreshImage(QImage img) {
 	ui.imgContainer->setPixmap(QPixmap::fromImage(img));
-	qDebug() << "image refreshed.";
+	qDebug() << "main image refreshed.";
+}
+
+void AutoguiderPanel::refreshIntensityProfile(QImage img) {
+	ui.lbPinholeProfileContainer->setPixmap(QPixmap::fromImage(img));
+	qDebug() << "intesity image refreshed.";
 }
 
 void AutoguiderPanel::test() {

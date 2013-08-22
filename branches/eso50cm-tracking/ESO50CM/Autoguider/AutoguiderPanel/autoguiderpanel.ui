@@ -97,12 +97,12 @@
      <rect>
       <x>20</x>
       <y>180</y>
-      <width>640</width>
-      <height>480</height>
+      <width>320</width>
+      <height>240</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>imgContainer</string>
     </property>
    </widget>
    <widget class="QLabel" name="lbCorrection">
@@ -116,6 +116,19 @@
     </property>
     <property name="text">
      <string>lbCorrection</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbPinholeProfileContainer">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>170</y>
+      <width>320</width>
+      <height>240</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>lbPinholeProfileContainer</string>
     </property>
    </widget>
   </widget>

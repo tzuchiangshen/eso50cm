@@ -120,20 +120,12 @@ bool ImageProcessor::processFrame() {
 
     //mask definition and calculation
     mask = fst > th;
-
-    //int totalpoints = sum(mask)[0]/1000;
-    //int posY = 200 - totalpoints;
-    //int posX = idx % 512;
-    //line(chart, cvPoint(posX+1,0), cvPoint(posX+1,200),0);
-    //circle(chart, cvPoint(posX, posY), 1, whiteLine, 1);
-    //imshow("number of segmented points", chart);
-    //object segmentation
     bitwise_and(fst, mask, object);
 
     //Centroid estimation
     Mat object32;
     object.convertTo(object32, CV_32F);
-    //Makes pinhole pixels = 0
+    //Draw the pinhole
     circle(object32, pinhole, 8, 0);
 
 	//meshgrid creation
@@ -149,15 +141,10 @@ bool ImageProcessor::processFrame() {
     }
 
     XX = repeat(XX.row(0),rows,1);
-
-
-    YY = repeat(YY.col(0),1,cols);
+	YY = repeat(YY.col(0),1,cols);
 	
-	//cout << " XX.rows=" << XX.rows << " cols=" << XX.cols << endl;  
-	//cout << " object32.rows=" << object32.rows << " cols=" << object32.cols << endl;
     Mat xst = object32.mul(XX);
     Mat yst = object32.mul(YY);
-    //imshow("filtered",xst);
 
     Scalar gx = sum(xst);
     Scalar gy = sum(yst);
@@ -173,9 +160,70 @@ bool ImageProcessor::processFrame() {
 	int corrX = center.x - pinhole.x;
 	int corrY = center.y - pinhole.y;
 	cout << " X Correction: " << corrX << " Y Correction: " << corrY << endl;
-	object32.convertTo(gray_image1, CV_8UC3);
-	QImage img = MatToQImage(gray_image1);
+
+	int R = 100;
+	Rect roi(pinhole.x-R, pinhole.y-R, 2*R, 2*R);
+	cout << "roi.x=" << roi.x << " row.width=" << roi.width << endl;
+	cout << "roi.y=" << roi.x << " row.height=" << roi.width << endl;
+	cout << "img.cols=" << gray_image.cols << " img.rows=" << gray_image.rows << endl;
+
+	Mat tmp;
+	object32.convertTo(tmp, CV_8UC3);
+
+	//draw the centroide 
+	Scalar colorcircle;
+	colorcircle[2] = 128;
+	circle(tmp, center, 3, colorcircle);
+	
+
+	Mat finalFrame = Mat(tmp.clone(), roi);
+	//zoom in
+	Mat imzoom;
+	pyrUp(finalFrame, imzoom, Size(finalFrame.cols*2, finalFrame.rows*2));
+	QImage img = MatToQImage(imzoom);
+
+	
+	//pinhole intensity profile
+	Mat chart1;
+	Mat Zeross;
+	Zeross = Mat::zeros(201, 400, CV_8UC3);
+	chart1.create(201, 400, CV_8UC3);
+	
+	//profile in X 
+	Rect roiX(pinhole.x - 40, pinhole.y, 80, 1);
+	Mat chartROIx;
+	CvScalar redLine = cvScalar(0,0,255);
+	chartROIx = gray_image(roiX);
+	
+	//profile in Y
+	Rect roiY(pinhole.x, pinhole.y-40, 1, 80);
+	Mat chartROIy;
+	CvScalar greenLine = cvScalar(255,0,0);
+	chartROIy = gray_image(roiY);
+	
+	cout << "gray_image.rows=" << gray_image.rows << " gray_image.cols=" << gray_image.cols << endl;
+	for(int ch=0; ch<80; ch++) {
+		int ptY = 200 - chartROIx.at<uchar>(0,ch);
+		int ptY1 = 200 - chartROIy.at<uchar>(ch,0);
+		int ptX = 5*ch;
+		circle(chart1, cvPoint(ptX, ptY), 1, redLine);
+		circle(chart1, cvPoint(ptX, ptY1), 1, greenLine);
+		//imshow("pinhole profile", chart1);
+	}
+	QImage img2 = MatToQImage(chart1);
+	cout << "chart1.rows=" << chart1.rows << " chart1.cols=" << chart1.cols << endl;
+	cout << "Zeross.rows=" << Zeross.rows << " Zeross.cols=" << Zeross.cols << endl;
+	//clear the chart1 container in order to paint the next profile
+	bitwise_and(chart1, Zeross, chart1);
+	cout << "llegue" << endl;
+	
+	
+	//chart1.convertTo(tmp, CV_8UC3);
+	
+
+	//update GUI
 	emit newFrame(img);
+	emit newIntensityProfile(img2);
 	emit newCorrection(corrX, corrY);
 	if(corrX > 1) {
 		slewOn();
@@ -183,7 +231,7 @@ bool ImageProcessor::processFrame() {
 		slewOff();
 	}
 	return true;
-}
+} 
 
 void ImageProcessor::test() {
 	setupVideoSource("c:\\tmp\\eso50cm\\guide2.mp4");
@@ -197,7 +245,8 @@ void ImageProcessor::run() {
 		if(processFrame() == false) {
 			break;
 		}
-		QThread::sleep(1);
+		QThread::msleep(33.3);
+		//QThread::sleep(1);
 	}
 	qDebug() << "Thread quit ...";
 }
