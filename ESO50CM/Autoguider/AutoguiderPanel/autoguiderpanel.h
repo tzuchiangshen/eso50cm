@@ -19,6 +19,7 @@ class AutoguiderPanel : public QMainWindow
 	public slots:
 		void startProcessing();
 		void refreshImage(QImage img);
+		void refreshIntensityProfile(QImage img);
 		void test();
 		void updateCorrection(int x, int y);
 

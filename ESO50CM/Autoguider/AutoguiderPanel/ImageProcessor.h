@@ -49,6 +49,7 @@ class ImageProcessor : public QThread
 	signals:
 		void updateStatisticsInGUI(double *x, double *y);
         void newFrame(const QImage &frame);
+		void newIntensityProfile(const QImage &frame);
 		void newCorrection(int x, int y);
 	public slots:
 		void connectToCamera();	
