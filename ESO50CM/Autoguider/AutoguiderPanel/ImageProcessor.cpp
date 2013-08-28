@@ -8,6 +8,7 @@ ImageProcessor::ImageProcessor(void)
 {
 	obs = new ObsControlIF(); 
 	count = 0;
+	connect(this,SIGNAL(newCorrection(int, int)), this, SLOT(sendCorrection(int, int)));
 }
 
 
@@ -28,6 +29,41 @@ const char* ImageProcessor::sayHello(char* name)
 	return  result;
 }
 
+void ImageProcessor::setVideoInput(int source) {
+	cameraId = source;
+	qDebug() << "new value for video input: " << cameraId;
+}
+
+void ImageProcessor::setPinholePosition(int x, int y) {
+	pinhole = Point(x, y);
+	qDebug() << "new value for pinhole position: (" << pinhole.x << "," << pinhole.y << ")";
+}
+
+void ImageProcessor::setPinholeRadius(int r) {
+	pinholeRadius = r;
+	qDebug() << "new value for pinhole radius: " << r;
+}
+
+
+void ImageProcessor::setOffsetCorrectionThreshold(int x) {
+	offsetCorrectionThreshold = x;
+	qDebug() << "new value for offset correction threshold: " << x;
+}
+
+int ImageProcessor::getOffsetCorrectionThreshold() {
+	return offsetCorrectionThreshold;
+}
+
+void ImageProcessor::setFramePerSeconds(int frame) {
+	framePerSeconds = frame;
+	qDebug() << "new value for frame per seconds: " << frame;
+}
+
+void ImageProcessor::setEnableCorrection(bool enable) {
+	enableCorrection = enable;
+	qDebug() << "new value for enable correction: " << enable;
+}
+
 void ImageProcessor::connectToCamera() {
 	qDebug() << "ObsControl: loading ...";
 	qDebug() << "ObsControl: connecting ...";
@@ -35,25 +71,36 @@ void ImageProcessor::connectToCamera() {
 	qDebug() << "Ready!";
 }
 
-void ImageProcessor::slewOn() {
-	count++;
-	qDebug() << "ObsControl: calling slewOn (" << count << ") ...";
-	string dir("N");
-    obs->handset_slew("S", dir);
+void ImageProcessor::connectToObsControl() {
+	qDebug() << "ObsControl: loading ...";
+	qDebug() << "ObsControl: connecting ...";
+	obs->connect();
 	qDebug() << "Ready!";
+}
+
+void ImageProcessor::slewOn(string dir) {
+	count++;
+	qDebug() << "ObsControl: calling slewOn(" << dir.c_str() << ") (" << count << ") ...";
+	//string dir("N");
+    obs->handset_slew("set", dir);
+	//qDebug() << "Ready!";
+}
+
+void ImageProcessor::slewOnNorth() {
+	slewOn(string("N"));
 }
 
 void ImageProcessor::slewOff() {
 	qDebug() << "ObsControl: calling slewOff ...";
-	string dir("stop");
-    obs->handset_slew("S", dir);
+	string rate("stop");
+    obs->handset_slew(rate, "S");
 	qDebug() << "Ready!";
 }
 
 void ImageProcessor::slewLoop() {
 	qDebug() << "ObsControl: calling slewLoop ...";
     while(1) {
-		slewOn();
+		slewOn(string("N"));
 		QThread::sleep(1);
 		slewOff();
 		QThread::sleep(1);
@@ -70,9 +117,17 @@ void ImageProcessor::setupVideoSource(string file) {
 }
 
 void ImageProcessor::openVideoSource() {
-	// open video file       
-    cap = VideoCapture(fileName);
-    cout << "Opening file: " << fileName << endl;
+	// open video file 
+	if(cameraId < 0 ) { 
+		//simulation mode, use a video file
+		cap = VideoCapture(fileName);
+		qDebug() << "Opening video Input: " << fileName.c_str();
+
+	} else {
+		cap = VideoCapture(cameraId);
+		qDebug() << "Opening video Input: " << cameraId;
+	}
+    
     if(!cap.isOpened())  // check if we succeeded
         throw "Error when reading video file";
 	
@@ -85,7 +140,7 @@ void ImageProcessor::openVideoSource() {
     qDebug() << "number of frames " << nframes << " frames per second: " <<fps << " size: " << cols << "," << rows << "enc: " << enc;
 	
 	//hard coded position of the pinhole in the image, should be moved to a configuration file. 
-    pinhole = Point(383,252);
+    //pinhole = Point(383,252);
 	qDebug() << "pinhole position: (" << pinhole.x << "," << pinhole.y << ")";
 }
 
@@ -126,7 +181,7 @@ bool ImageProcessor::processFrame() {
     Mat object32;
     object.convertTo(object32, CV_32F);
     //Draw the pinhole
-    circle(object32, pinhole, 8, 0);
+    circle(object32, pinhole, pinholeRadius, 0);
 
 	//meshgrid creation
     Mat XX,YY;
@@ -163,9 +218,9 @@ bool ImageProcessor::processFrame() {
 
 	int R = 100;
 	Rect roi(pinhole.x-R, pinhole.y-R, 2*R, 2*R);
-	cout << "roi.x=" << roi.x << " row.width=" << roi.width << endl;
-	cout << "roi.y=" << roi.x << " row.height=" << roi.width << endl;
-	cout << "img.cols=" << gray_image.cols << " img.rows=" << gray_image.rows << endl;
+	//cout << "roi.x=" << roi.x << " row.width=" << roi.width << endl;
+	//cout << "roi.y=" << roi.x << " row.height=" << roi.width << endl;
+	//cout << "img.cols=" << gray_image.cols << " img.rows=" << gray_image.rows << endl;
 
 	Mat tmp;
 	object32.convertTo(tmp, CV_8UC3);
@@ -201,7 +256,7 @@ bool ImageProcessor::processFrame() {
 	CvScalar greenLine = cvScalar(255,0,0);
 	chartROIy = gray_image(roiY);
 	
-	cout << "gray_image.rows=" << gray_image.rows << " gray_image.cols=" << gray_image.cols << endl;
+	//cout << "gray_image.rows=" << gray_image.rows << " gray_image.cols=" << gray_image.cols << endl;
 	for(int ch=0; ch<80; ch++) {
 		int ptY = 200 - chartROIx.at<uchar>(0,ch);
 		int ptY1 = 200 - chartROIy.at<uchar>(ch,0);
@@ -211,11 +266,11 @@ bool ImageProcessor::processFrame() {
 		//imshow("pinhole profile", chart1);
 	}
 	QImage img2 = MatToQImage(chart1);
-	cout << "chart1.rows=" << chart1.rows << " chart1.cols=" << chart1.cols << endl;
-	cout << "Zeross.rows=" << Zeross.rows << " Zeross.cols=" << Zeross.cols << endl;
+	//cout << "chart1.rows=" << chart1.rows << " chart1.cols=" << chart1.cols << endl;
+	//cout << "Zeross.rows=" << Zeross.rows << " Zeross.cols=" << Zeross.cols << endl;
 	//clear the chart1 container in order to paint the next profile
 	bitwise_and(chart1, Zeross, chart1);
-	cout << "llegue" << endl;
+	//cout << "llegue" << endl;
 	
 	
 	//chart1.convertTo(tmp, CV_8UC3);
@@ -225,28 +280,89 @@ bool ImageProcessor::processFrame() {
 	emit newFrame(img);
 	emit newIntensityProfile(img2);
 	emit newCorrection(corrX, corrY);
-	if(corrX > 1) {
+	/*if(corrX > 1) {
 		slewOn();
 	} else {
 		slewOff();
-	}
+	}*/
 	return true;
 } 
 
-void ImageProcessor::test() {
-	setupVideoSource("c:\\tmp\\eso50cm\\guide2.mp4");
+void ImageProcessor::sendCorrection(int x, int y) {
+	///* 
+	//*  Centroide (Cx, Cy)
+	//*  Pinhole (Px, Py)
+	//*  x = Cx - Px
+	//*  y = Cy - Py
+	//*  Cx - Px  > 0 => move East
+	//*  Cx - Px  < 0 => move West
+	//*  Cy - Py  > 0 => move North
+	//*  Cy - Py  < 0 => move South
+	//*/
+
+	////limit is the hysteresis 
+	int limitX = offsetCorrectionThreshold;
+	int limitY = offsetCorrectionThreshold;
+	
+	if( x > limitX) {
+        //move East
+		string dir("E");
+		if(enableCorrection) {
+			slewOff();
+			slewOn(dir);
+		}
+	} else if (x < -limitX) {
+		//move West
+		string dir("W");
+		if(enableCorrection) {
+			slewOff();
+			slewOn(dir);
+		}
+	} 
+
+	if ( y > limitY) {
+		//move S
+		string dir("S");
+		if(enableCorrection) {
+			slewOff();
+			slewOn(dir);
+		}
+	} else if ( y < -limitY) {
+		//move South
+		string dir("N");
+		if(enableCorrection) {
+			slewOff();
+			slewOn(dir);
+		}
+	}
+}
+
+void ImageProcessor::setupVideoInput() {
+	if(cameraId < 0) {
+		setupVideoSource("c:\\tmp\\eso50cm\\guide2.mp4");
+	}
+	//setupVideoSource(0);
+	connectToObsControl();
 	openVideoSource();
 	processFrame();
 }
 
 void ImageProcessor::run() {
 	//process_main("c:\\tmp\\eso50cm\\guide1.mp4");
+	double _interval;
+	
 	while(1) {
 		if(processFrame() == false) {
 			break;
 		}
-		QThread::msleep(33.3);
-		//QThread::sleep(1);
+		//QThread::msleep(33.3);
+		_interval = 1 / (double)framePerSeconds;
+		//max allowed values are 60 frame per seconds => 16 milliseconds between frame 
+		if(_interval < 0.016) {
+			_interval = 0.016;
+		} 
+		qDebug() << "frame per seconds: " << framePerSeconds << "; interval: " << _interval << " s";
+		QThread::msleep(_interval*1000);
 	}
 	qDebug() << "Thread quit ...";
 }
