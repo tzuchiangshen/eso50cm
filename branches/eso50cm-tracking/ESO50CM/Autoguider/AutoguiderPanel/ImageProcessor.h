@@ -25,6 +25,15 @@ class ImageProcessor : public QThread
 		~ImageProcessor(void);
 		const char * sayHello(char *name);
 		int ImageProcessor::process_main(char*filename);
+		void setPinholePosition(int x, int y);
+		void setPinholeRadius(int r);
+		void setOffsetCorrectionThreshold(int x);
+		int getOffsetCorrectionThreshold();
+		void setFramePerSeconds(int frame);
+		void setEnableCorrection(bool enable);
+		void setVideoInput(int source);
+
+
 		ObsControlIF *obs;
 	protected:
 		void run();
@@ -32,6 +41,7 @@ class ImageProcessor : public QThread
 		void setupVideoSource(int cameraId);
 		void openVideoSource();
 		bool processFrame();
+		
 		
 
 	private:
@@ -45,6 +55,10 @@ class ImageProcessor : public QThread
 		int enc;
 		Point pinhole;
 		VideoCapture cap;
+		int offsetCorrectionThreshold;
+		int framePerSeconds;
+		int pinholeRadius;
+		bool enableCorrection;
 
 	signals:
 		void updateStatisticsInGUI(double *x, double *y);
@@ -53,10 +67,12 @@ class ImageProcessor : public QThread
 		void newCorrection(int x, int y);
 	public slots:
 		void connectToCamera();	
-		void slewOn();
+		void connectToObsControl();
+		void slewOn(string dir);
+		void slewOnNorth();
 		void slewOff();
 		void slewLoop();
-		void test();
-		//void sendCorrection(int x, int y);
+		void setupVideoInput();
+		void sendCorrection(int x, int y);
 };
 
