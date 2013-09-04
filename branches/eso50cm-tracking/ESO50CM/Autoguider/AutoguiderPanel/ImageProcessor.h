@@ -69,8 +69,10 @@ class ImageProcessor : public QThread
 		void connectToCamera();	
 		void connectToObsControl();
 		void slewOn(string dir);
+		void slewOn(string speed, string dir);
 		void slewOnNorth();
 		void slewOff();
+		void slewOff(string dir);
 		void slewLoop();
 		void setupVideoInput();
 		void sendCorrection(int x, int y);

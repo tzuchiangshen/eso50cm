@@ -86,6 +86,14 @@ void ImageProcessor::slewOn(string dir) {
 	//qDebug() << "Ready!";
 }
 
+void ImageProcessor::slewOn(string speed, string dir) {
+	count++;
+	qDebug() << "ObsControl: calling slewOn(" << speed.c_str() << "," << dir.c_str() << ") (" << count << ") ...";
+	//string dir("N");
+    obs->handset_slew(speed, dir);
+	//qDebug() << "Ready!";
+}
+
 void ImageProcessor::slewOnNorth() {
 	slewOn(string("N"));
 }
@@ -96,6 +104,14 @@ void ImageProcessor::slewOff() {
     obs->handset_slew(rate, "S");
 	qDebug() << "Ready!";
 }
+
+void ImageProcessor::slewOff(string dir) {
+	qDebug() << "ObsControl: calling slewOff(" << dir.c_str() << ") ...";
+	string rate("stop");
+    obs->handset_slew(rate, dir);
+	qDebug() << "Ready!";
+}
+
 
 void ImageProcessor::slewLoop() {
 	qDebug() << "ObsControl: calling slewLoop ...";
@@ -303,37 +319,43 @@ void ImageProcessor::sendCorrection(int x, int y) {
 	////limit is the hysteresis 
 	int limitX = offsetCorrectionThreshold;
 	int limitY = offsetCorrectionThreshold;
-	
+	string speed("Offset");
 	if( x > limitX) {
         //move East
-		string dir("E");
+		string dir("W");
 		if(enableCorrection) {
-			slewOff();
-			slewOn(dir);
+			slewOff(dir);
+			slewOn(speed, dir);
 		}
 	} else if (x < -limitX) {
 		//move West
-		string dir("W");
+		string dir("E");
 		if(enableCorrection) {
-			slewOff();
-			slewOn(dir);
+			slewOff(dir);
+			slewOn(speed, dir);
 		}
-	} 
+	} else {
+		string dir("E");
+		slewOff(dir);
+	}
 
 	if ( y > limitY) {
 		//move S
-		string dir("S");
+		string dir("N");
 		if(enableCorrection) {
-			slewOff();
-			slewOn(dir);
+			slewOff(dir);
+			slewOn(speed, dir);
 		}
 	} else if ( y < -limitY) {
 		//move South
-		string dir("N");
+		string dir("S");
 		if(enableCorrection) {
-			slewOff();
-			slewOn(dir);
+			slewOff(dir);
+			slewOn(speed, dir);
 		}
+	} else {
+		string dir("S");
+		slewOff(dir);
 	}
 }
 

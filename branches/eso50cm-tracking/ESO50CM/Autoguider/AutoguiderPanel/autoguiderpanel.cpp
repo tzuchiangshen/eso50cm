@@ -176,11 +176,11 @@ void AutoguiderPanel::updateCorrection(int x, int y) {
 
 	if( x > limitX) {
         //move East
-		axisX = "E";
+		axisX = "W";
 		slewX = 1;
 	} else if (x < -limitX) {
 		//move West
-		axisX = "W";
+		axisX = "E";
 		slewX = 1;
 	} else {
 		axisX = "";
@@ -189,11 +189,11 @@ void AutoguiderPanel::updateCorrection(int x, int y) {
 
 	if ( y > limitY) {
 		//move N
-        axisY = "S";
+        axisY = "N";
 		slewY = 1;
 	} else if ( y < -limitY) {
 		//move South
-		axisY = "N";
+		axisY = "S";
 		slewY = 1;
 	} else {
 		axisY = "";
