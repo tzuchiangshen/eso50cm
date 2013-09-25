@@ -8,6 +8,9 @@ ImageProcessor::ImageProcessor(void)
 {
 	obs = new ObsControlIF(); 
 	count = 0;
+	threshold = 25;
+	enableAutoThreshold = true;
+
 	connect(this,SIGNAL(newCorrection(int, int)), this, SLOT(sendCorrection(int, int)));
 }
 
@@ -50,8 +53,17 @@ void ImageProcessor::setOffsetCorrectionThreshold(int x) {
 	qDebug() << "new value for offset correction threshold: " << x;
 }
 
+void ImageProcessor::setOffsetCorrectionDisableThreshold(int x) {
+	offsetCorrectionDisableThreshold = x;
+	qDebug() << "new value for offset correction disable threshold: " << x;
+}
+
 int ImageProcessor::getOffsetCorrectionThreshold() {
 	return offsetCorrectionThreshold;
+}
+
+int ImageProcessor::getOffsetCorrectionDisableThreshold() {
+	return offsetCorrectionDisableThreshold;
 }
 
 void ImageProcessor::setFramePerSeconds(int frame) {
@@ -123,6 +135,16 @@ void ImageProcessor::slewLoop() {
 	}
 }
 
+void ImageProcessor::setThreshold(int val) {
+	threshold = val;
+	cout << "proc: new threshold = " << threshold << endl;
+}
+
+void ImageProcessor::setAutoThreshold(bool status) {
+	enableAutoThreshold = status;
+	cout << "proc: new value for auto threshold = " << enableAutoThreshold << endl;
+}
+
 void ImageProcessor::setupVideoSource(int cameraId) {
 	cameraId = cameraId;
 }
@@ -167,6 +189,7 @@ bool ImageProcessor::processFrame() {
 	Mat fst;
 	Mat mask;
 	Mat object;
+	float th;
     //video processing loop
 	if (!cap.grab())
 		return false;
@@ -187,7 +210,12 @@ bool ImageProcessor::processFrame() {
     cout << " frame average: " << cvMean[0] << " std: " << cvStddev[0] << endl;
         
     //threshold for mask
-    float th = cvMean[0] + 3.0*cvStddev[0];
+	if(enableAutoThreshold) {
+		th = cvMean[0] + 3.0*cvStddev[0];
+	} else {
+		th = threshold;
+	}
+	cout << "auto=" << enableAutoThreshold << " threshold = " << th << endl;
 
     //mask definition and calculation
     mask = fst > th;
@@ -296,6 +324,7 @@ bool ImageProcessor::processFrame() {
 	emit newFrame(img);
 	emit newIntensityProfile(img2);
 	emit newCorrection(corrX, corrY);
+	emit newThreshold(th);
 	/*if(corrX > 1) {
 		slewOn();
 	} else {
@@ -315,53 +344,66 @@ void ImageProcessor::sendCorrection(int x, int y) {
 	//*  Cy - Py  > 0 => move North
 	//*  Cy - Py  < 0 => move South
 	//*/
-
+	
 	////limit is the hysteresis 
 	int limitX = offsetCorrectionThreshold;
 	int limitY = offsetCorrectionThreshold;
-	string speed("Offset");
-	if( x > limitX) {
-        //move East
+	int disable = offsetCorrectionDisableThreshold;
+
+	//                 negative                |0|               positive
+	//|-- disable --|-- enable --|-- disable --|0|-- disable --|-- enable --|-- disable --|
+	//                (region B)                                 (region A) 
+
+	if( x > limitX && x < disable) {
+        //move East (region A)
+		string speed("Offset");
 		string dir("W");
 		if(enableCorrection) {
 			slewOff(dir);
 			slewOn(speed, dir);
 		}
-	} else if (x < -limitX) {
-		//move West
+	} else if (x < -limitX && x > -disable) {
+		//move West (region B)
+		string speed("Offset");
 		string dir("E");
 		if(enableCorrection) {
 			slewOff(dir);
 			slewOn(speed, dir);
 		}
 	} else {
+		//disable 
 		string dir("E");
 		slewOff(dir);
+		qDebug() << "disable region. X=" << x << " disable=" << disable; 
 	}
 
-	if ( y > limitY) {
-		//move S
+	if ( y > limitY && y < disable) {
+		//move S (region A)
+		string speed("set");
 		string dir("N");
 		if(enableCorrection) {
 			slewOff(dir);
 			slewOn(speed, dir);
 		}
-	} else if ( y < -limitY) {
-		//move South
+	} else if ( y < -limitY && y > -disable) {
+		//move South (region B)
+		string speed("set");
 		string dir("S");
 		if(enableCorrection) {
 			slewOff(dir);
 			slewOn(speed, dir);
 		}
 	} else {
+		//disable
 		string dir("S");
 		slewOff(dir);
+		qDebug() << "Disable region Y=" << y << " limit=" << disable;
 	}
 }
 
 void ImageProcessor::setupVideoInput() {
 	if(cameraId < 0) {
-		setupVideoSource("c:\\tmp\\eso50cm\\guide2.mp4");
+		setupVideoSource("c:\\tmp\\eso50cm\\guide1.mp4");
 	}
 	//setupVideoSource(0);
 	connectToObsControl();

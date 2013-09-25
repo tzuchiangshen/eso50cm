@@ -10,6 +10,12 @@
     <height>599</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>AutoguiderPanel</string>
   </property>
@@ -18,13 +24,13 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>10</y>
+      <y>0</y>
       <width>711</width>
       <height>541</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -38,6 +44,9 @@
         <width>320</width>
         <height>240</height>
        </rect>
+      </property>
+      <property name="autoFillBackground">
+       <bool>true</bool>
       </property>
       <property name="text">
        <string>imgContainer</string>
@@ -1076,6 +1085,74 @@
        <string>  Y axis</string>
       </property>
      </widget>
+     <widget class="QCheckBox" name="chkScale">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>70</y>
+        <width>71</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Scale Image</string>
+      </property>
+     </widget>
+     <widget class="QSlider" name="sliThreshold">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>100</y>
+        <width>160</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_13">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>100</y>
+        <width>46</width>
+        <height>13</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Threshold</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblThresholdValue">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>100</y>
+        <width>46</width>
+        <height>13</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>lblThresholdValue</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="chkAutoThreshold">
+      <property name="geometry">
+       <rect>
+        <x>430</x>
+        <y>100</y>
+        <width>71</width>
+        <height>18</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>auto</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
@@ -1084,7 +1161,7 @@
      <widget class="QLineEdit" name="txtPinholeX">
       <property name="geometry">
        <rect>
-        <x>100</x>
+        <x>120</x>
         <y>60</y>
         <width>31</width>
         <height>20</height>
@@ -1094,7 +1171,7 @@
      <widget class="QLineEdit" name="txtPinholeY">
       <property name="geometry">
        <rect>
-        <x>160</x>
+        <x>180</x>
         <y>60</y>
         <width>31</width>
         <height>20</height>
@@ -1117,7 +1194,7 @@
      <widget class="QLabel" name="label_6">
       <property name="geometry">
        <rect>
-        <x>140</x>
+        <x>160</x>
         <y>60</y>
         <width>16</width>
         <height>16</height>
@@ -1130,7 +1207,7 @@
      <widget class="QLineEdit" name="txtOffsetCorrectionThreshold">
       <property name="geometry">
        <rect>
-        <x>100</x>
+        <x>120</x>
         <y>120</y>
         <width>91</width>
         <height>20</height>
@@ -1142,12 +1219,12 @@
        <rect>
         <x>10</x>
         <y>110</y>
-        <width>91</width>
+        <width>111</width>
         <height>41</height>
        </rect>
       </property>
       <property name="text">
-       <string>Offset Correction Threshold</string>
+       <string>Offset Correction Activation Threshold</string>
       </property>
       <property name="wordWrap">
        <bool>true</bool>
@@ -1156,7 +1233,7 @@
      <widget class="QPushButton" name="btPinholeApply">
       <property name="geometry">
        <rect>
-        <x>200</x>
+        <x>220</x>
         <y>60</y>
         <width>41</width>
         <height>23</height>
@@ -1169,7 +1246,7 @@
      <widget class="QPushButton" name="btOffsetCorrectionThresholdApply">
       <property name="geometry">
        <rect>
-        <x>200</x>
+        <x>220</x>
         <y>120</y>
         <width>41</width>
         <height>23</height>
@@ -1183,7 +1260,7 @@
       <property name="geometry">
        <rect>
         <x>15</x>
-        <y>150</y>
+        <y>180</y>
         <width>71</width>
         <height>20</height>
        </rect>
@@ -1195,8 +1272,8 @@
      <widget class="QLineEdit" name="txtFramePerSeconds">
       <property name="geometry">
        <rect>
-        <x>100</x>
-        <y>150</y>
+        <x>120</x>
+        <y>180</y>
         <width>91</width>
         <height>20</height>
        </rect>
@@ -1205,8 +1282,8 @@
      <widget class="QPushButton" name="btFramePerSecondsApply">
       <property name="geometry">
        <rect>
-        <x>200</x>
-        <y>150</y>
+        <x>220</x>
+        <y>180</y>
         <width>41</width>
         <height>23</height>
        </rect>
@@ -1218,7 +1295,7 @@
      <widget class="QLabel" name="label_11">
       <property name="geometry">
        <rect>
-        <x>20</x>
+        <x>10</x>
         <y>90</y>
         <width>71</width>
         <height>16</height>
@@ -1231,7 +1308,7 @@
      <widget class="QLineEdit" name="txtPinholeRadius">
       <property name="geometry">
        <rect>
-        <x>100</x>
+        <x>120</x>
         <y>90</y>
         <width>91</width>
         <height>20</height>
@@ -1241,7 +1318,7 @@
      <widget class="QPushButton" name="btPinholeRadiusApply">
       <property name="geometry">
        <rect>
-        <x>200</x>
+        <x>220</x>
         <y>90</y>
         <width>41</width>
         <height>23</height>
@@ -1267,7 +1344,7 @@
      <widget class="QLineEdit" name="txtVideoInput">
       <property name="geometry">
        <rect>
-        <x>100</x>
+        <x>120</x>
         <y>30</y>
         <width>91</width>
         <height>20</height>
@@ -1277,8 +1354,47 @@
      <widget class="QPushButton" name="btVideoInputApply">
       <property name="geometry">
        <rect>
-        <x>200</x>
+        <x>220</x>
         <y>30</y>
+        <width>41</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Apply</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_14">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>140</y>
+        <width>111</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Offset Correction Disable Threshold</string>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="txtOffsetCorrectionDisableThreshold">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>150</y>
+        <width>91</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btOffsetCorrectionDisableThresholdApply">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>150</y>
         <width>41</width>
         <height>23</height>
        </rect>

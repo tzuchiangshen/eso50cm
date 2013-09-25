@@ -5,6 +5,7 @@ AutoguiderPanel::AutoguiderPanel(QWidget *parent)
 {
 	int camera_id = 1;
 	ui.setupUi(this);
+	m_scale = false;
 
 	//configuration file
 	qDebug() << "path=" << QApplication::applicationDirPath();
@@ -17,17 +18,23 @@ AutoguiderPanel::AutoguiderPanel(QWidget *parent)
 	connect(ui.btConnect, SIGNAL(released()), proc, SLOT(connectToCamera()));
 	connect(ui.btSlewOn, SIGNAL(released()), this, SLOT(slewEnable()));
 	connect(ui.btSlewOff, SIGNAL(released()), this, SLOT(slewDisable()));
+	connect(ui.chkScale, SIGNAL(toggled(bool)), this, SLOT(scaleImage(bool)));
+	connect(ui.sliThreshold, SIGNAL(valueChanged(int)), this, SLOT(updateThreshold(int)));
+	connect(ui.chkAutoThreshold, SIGNAL(toggled(bool)), this, SLOT(enableAutoThreshold(bool)));
+
 	//connect(ui.btLoop, SIGNAL(released()), proc, SLOT(slewLoop()));
 	connect(ui.btProcessFrame, SIGNAL(released()), this, SLOT(setup()));
 	connect(proc,SIGNAL(newFrame(QImage)), this, SLOT(refreshImage(QImage)));
 	connect(proc,SIGNAL(newIntensityProfile(QImage)), this, SLOT(refreshIntensityProfile(QImage)));
 	connect(proc,SIGNAL(newCorrection(int, int)), this, SLOT(updateCorrection(int, int)));
+	connect(proc,SIGNAL(newThreshold(int)), this, SLOT(updateThresholdDuringAuto(int)));
 
 	//configuration panels
 	connect(ui.btVideoInputApply, SIGNAL(released()), this, SLOT(updateVideoInput()));
 	connect(ui.btPinholeApply, SIGNAL(released()), this, SLOT(updatePinhole()));
 	connect(ui.btPinholeRadiusApply, SIGNAL(released()), this, SLOT(updatePinholeRadius()));
 	connect(ui.btOffsetCorrectionThresholdApply, SIGNAL(released()), this, SLOT(updateOffsetCorrectionThreshold()));
+	connect(ui.btOffsetCorrectionDisableThresholdApply, SIGNAL(released()), this, SLOT(updateOffsetCorrectionDisableThreshold()));
 	connect(ui.btFramePerSecondsApply, SIGNAL(released()), this, SLOT(updateFramePerSeconds()));
 }
 
@@ -73,11 +80,17 @@ void AutoguiderPanel::loadConfiguration() {
 	proc->setPinholeRadius(_iValue);
 	ui.txtPinholeRadius->setText(_sValue);
 
-	//Offset threshold
-	_iValue = settings.value("threshold", "").toInt();
+	//Offset threshold enable (min)
+	_iValue = settings.value("threshold.enable", "").toInt();
 	_sValue = QString::number(_iValue);
 	proc->setOffsetCorrectionThreshold(_iValue);
 	ui.txtOffsetCorrectionThreshold->setText(_sValue);
+
+	//Offset threshold disable (max)
+	_iValue = settings.value("threshold.disable", "").toInt();
+	_sValue = QString::number(_iValue);
+	proc->setOffsetCorrectionDisableThreshold(_iValue);
+	ui.txtOffsetCorrectionDisableThreshold->setText(_sValue);
 
 	//Frame Per Seconds
 	_iValue = settings.value("frame_per_second", "").toInt();
@@ -85,7 +98,7 @@ void AutoguiderPanel::loadConfiguration() {
 	proc->setFramePerSeconds(_iValue);
 	ui.txtFramePerSeconds->setText(_sValue);
 
-
+	
 }
 
 void AutoguiderPanel::updateVideoInput() {
@@ -123,6 +136,14 @@ void AutoguiderPanel::updateOffsetCorrectionThreshold() {
 	proc->setOffsetCorrectionThreshold(_sValue.toInt());
 }
 
+void AutoguiderPanel::updateOffsetCorrectionDisableThreshold() {
+	QString _sValue;
+
+	_sValue = ui.txtOffsetCorrectionDisableThreshold->text();
+	proc->setOffsetCorrectionDisableThreshold(_sValue.toInt());
+}
+
+
 void AutoguiderPanel::updateFramePerSeconds() {
 	QString _sValue;
 	int _frame;
@@ -145,7 +166,12 @@ void AutoguiderPanel::startProcessing() {
 }
 
 void AutoguiderPanel::refreshImage(QImage img) {
-	ui.imgContainer->setPixmap(QPixmap::fromImage(img));
+	QPixmap _pmap = QPixmap::fromImage(img);
+	if(m_scale) {
+		ui.imgContainer->setPixmap(_pmap.scaled(320,240, Qt::KeepAspectRatio));
+	} else {
+		ui.imgContainer->setPixmap(_pmap);
+	}
 	//qDebug() << "main image refreshed.";
 }
 
@@ -165,7 +191,14 @@ void AutoguiderPanel::updateCorrection(int x, int y) {
 	ui.lbCorrection->setText(text);
 
 	int limit = proc->getOffsetCorrectionThreshold();
+	int disable = proc->getOffsetCorrectionDisableThreshold();
 	//qDebug() << "!!!!!!!!!!offsetCorrectionThreshold = " << limit;
+
+	//                 negative                |0|               positive
+	//|-- disable --|-- enable --|-- disable --|0|-- disable --|-- enable --|-- disable --|
+	//                (region B)        
+
+
 	int limitX = limit;
 	int limitY = limit;
 	string axisX;
@@ -174,11 +207,11 @@ void AutoguiderPanel::updateCorrection(int x, int y) {
 	int slewY = 0;
 	char text2[100];
 
-	if( x > limitX) {
+	if( x > limitX && x < disable) {
         //move East
 		axisX = "W";
 		slewX = 1;
-	} else if (x < -limitX) {
+	} else if (x < -limitX && x > -disable) {
 		//move West
 		axisX = "E";
 		slewX = 1;
@@ -187,11 +220,11 @@ void AutoguiderPanel::updateCorrection(int x, int y) {
 		slewX = 0;
 	}
 
-	if ( y > limitY) {
+	if ( y > limitY && y < disable) {
 		//move N
         axisY = "N";
 		slewY = 1;
-	} else if ( y < -limitY) {
+	} else if ( y < -limitY && y > -disable) {
 		//move South
 		axisY = "S";
 		slewY = 1;
@@ -219,4 +252,34 @@ void AutoguiderPanel::slewEnable() {
 
 void AutoguiderPanel::slewDisable() {
 	proc->setEnableCorrection(false);
+}
+
+void AutoguiderPanel::scaleImage(bool scale) {
+	//ui.imgContainer->setScaledContents(false);
+	m_scale = scale;
+	qDebug() << "[AutoguiderPanel]: scale = " << m_scale;
+}
+
+void AutoguiderPanel::updateThreshold(int val) {
+	//update the process
+	QString _sValue = QString::number(val);
+	ui.lblThresholdValue->setText(_sValue);
+	proc->setThreshold(val);
+	qDebug() << "[AutoguiderPanel]: new threshold = " << val;
+}
+
+void AutoguiderPanel::updateThresholdDuringAuto(int val) {
+	//update the GUI
+	QString _sValue = QString::number(val);
+	ui.lblThresholdValue->setText(_sValue);
+	ui.sliThreshold->setValue(val);
+	qDebug() << "[AutoguiderPanel]: new threshold from autoguider = " << val;
+}
+
+
+void AutoguiderPanel::enableAutoThreshold(bool status) {
+
+	//the first time it wil use the default value of 25
+	proc->setAutoThreshold(status);	
+	qDebug() << "[AutoguiderPanel]: autoThresHold = " << status;
 }

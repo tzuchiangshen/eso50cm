@@ -20,7 +20,9 @@ class AutoguiderPanel : public QMainWindow
 		Ui::AutoguiderPanelClass ui;
 		ImageProcessor *proc;
 		QString m_confFile;
+		bool m_scale;
 		void loadConfiguration();
+
 		
 	public slots:
 		void startProcessing();
@@ -34,7 +36,12 @@ class AutoguiderPanel : public QMainWindow
 		void updatePinhole();
 		void updatePinholeRadius();
 		void updateOffsetCorrectionThreshold();
+		void updateOffsetCorrectionDisableThreshold();
 		void updateFramePerSeconds();
+		void scaleImage(bool);
+		void updateThreshold(int val);
+		void updateThresholdDuringAuto(int val);
+		void enableAutoThreshold(bool);
 		
 
 };
