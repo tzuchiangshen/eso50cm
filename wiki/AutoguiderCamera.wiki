@@ -6,6 +6,8 @@ See this url to get documentation, drivers, etc.
 
 http://www.theimagingsource.com/en_US/products/cameras/usb-ccd-mono/dmk21au04/
 
+http://www.imagingcontrol.com/en_US/library/cpp/
+
 = API =
 
   * List of Installed Devices
