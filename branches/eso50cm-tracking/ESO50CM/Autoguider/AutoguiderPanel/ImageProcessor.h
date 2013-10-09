@@ -34,6 +34,7 @@ class ImageProcessor : public QThread
 		void setFramePerSeconds(int frame);
 		void setEnableCorrection(bool enable);
 		void setVideoInput(int source);
+		void setExposureTime(int time);
 
 
 		ObsControlIF *obs;
@@ -64,6 +65,7 @@ class ImageProcessor : public QThread
 		bool enableCorrection;
 		int threshold;
 		bool enableAutoThreshold;
+		int exposureTime;
 
 	signals:
 		void updateStatisticsInGUI(double *x, double *y);
@@ -71,6 +73,7 @@ class ImageProcessor : public QThread
 		void newIntensityProfile(const QImage &frame);
 		void newCorrection(int x, int y);
 		void newThreshold(int val);
+
 	public slots:
 		void connectToCamera();	
 		void connectToObsControl();

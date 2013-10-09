@@ -76,6 +76,14 @@ void ImageProcessor::setEnableCorrection(bool enable) {
 	qDebug() << "new value for enable correction: " << enable;
 }
 
+void ImageProcessor::setExposureTime(int time) {
+	exposureTime = time;
+	cap.set(CV_CAP_PROP_EXPOSURE, time ); 
+	qDebug() << "new value for exposure time: " << time;
+	double exposure = cap.get(CV_CAP_PROP_EXPOSURE); 
+	qDebug() << "read exposure time from camera--------------------> " << exposure;	
+}
+
 void ImageProcessor::connectToCamera() {
 	qDebug() << "ObsControl: loading ...";
 	qDebug() << "ObsControl: connecting ...";
@@ -164,6 +172,10 @@ void ImageProcessor::openVideoSource() {
 	} else {
 		cap = VideoCapture(cameraId);
 		qDebug() << "Opening video Input: " << cameraId;
+
+		//cap.set(CV_CAP_PROP_EXPOSURE, 10 ); 
+		double exposure = cap.get(CV_CAP_PROP_EXPOSURE); 
+		qDebug() << "Current exposure time --------------------> " << exposure;
 	}
     
     if(!cap.isOpened())  // check if we succeeded
@@ -194,7 +206,10 @@ bool ImageProcessor::processFrame() {
 	if (!cap.grab())
 		return false;
 
-    //cap >> frame; // get a new frame from video file
+	double exposure = cap.get(CV_CAP_PROP_EXPOSURE); 
+	qDebug() << "Current exposure time --------------------> " << exposure;
+    
+	//cap >> frame; // get a new frame from video file
 	cap.retrieve(frame);
 	cvtColor( frame, gray_image, CV_BGR2GRAY );
 	//qDebug() << " Covert image to gray level, channels=" << gray_image.channels() << " type=" << gray_image.type();
@@ -344,6 +359,13 @@ void ImageProcessor::sendCorrection(int x, int y) {
 	//*  Cy - Py  > 0 => move North
 	//*  Cy - Py  < 0 => move South
 	//*/
+
+	if(!enableCorrection) {
+		qDebug() << " --- Correction disabled ---";
+		return;
+	} else {
+		qDebug() << " --- Correction enabled ---";
+	}
 	
 	////limit is the hysteresis 
 	int limitX = offsetCorrectionThreshold;
@@ -379,7 +401,7 @@ void ImageProcessor::sendCorrection(int x, int y) {
 
 	if ( y > limitY && y < disable) {
 		//move S (region A)
-		string speed("set");
+		string speed("Offset");
 		string dir("N");
 		if(enableCorrection) {
 			slewOff(dir);
@@ -387,7 +409,7 @@ void ImageProcessor::sendCorrection(int x, int y) {
 		}
 	} else if ( y < -limitY && y > -disable) {
 		//move South (region B)
-		string speed("set");
+		string speed("Offset");
 		string dir("S");
 		if(enableCorrection) {
 			slewOff(dir);

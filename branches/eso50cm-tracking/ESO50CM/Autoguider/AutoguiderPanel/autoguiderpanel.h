@@ -42,6 +42,7 @@ class AutoguiderPanel : public QMainWindow
 		void updateThreshold(int val);
 		void updateThresholdDuringAuto(int val);
 		void enableAutoThreshold(bool);
+		void updateExposureTime();
 		
 
 };
