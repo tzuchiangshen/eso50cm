@@ -36,6 +36,7 @@ AutoguiderPanel::AutoguiderPanel(QWidget *parent)
 	connect(ui.btOffsetCorrectionThresholdApply, SIGNAL(released()), this, SLOT(updateOffsetCorrectionThreshold()));
 	connect(ui.btOffsetCorrectionDisableThresholdApply, SIGNAL(released()), this, SLOT(updateOffsetCorrectionDisableThreshold()));
 	connect(ui.btFramePerSecondsApply, SIGNAL(released()), this, SLOT(updateFramePerSeconds()));
+	connect(ui.btExposureTimeApply, SIGNAL(released()), this, SLOT(updateExposureTime()));
 }
 
 AutoguiderPanel::~AutoguiderPanel()
@@ -98,6 +99,12 @@ void AutoguiderPanel::loadConfiguration() {
 	proc->setFramePerSeconds(_iValue);
 	ui.txtFramePerSeconds->setText(_sValue);
 
+	//exposure time
+	_iValue = settings.value("exposure_time", "").toInt();
+	_sValue = QString::number(_iValue);
+	//proc->setExposureTime(_iValue);
+	ui.txtExposureTime->setText(_sValue);
+
 	
 }
 
@@ -143,6 +150,12 @@ void AutoguiderPanel::updateOffsetCorrectionDisableThreshold() {
 	proc->setOffsetCorrectionDisableThreshold(_sValue.toInt());
 }
 
+void AutoguiderPanel::updateExposureTime() {
+	QString _sValue;
+
+	_sValue = ui.txtExposureTime->text();
+	proc->setExposureTime(_sValue.toInt());
+}
 
 void AutoguiderPanel::updateFramePerSeconds() {
 	QString _sValue;
