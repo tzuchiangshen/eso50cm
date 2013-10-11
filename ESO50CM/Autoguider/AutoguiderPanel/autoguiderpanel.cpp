@@ -35,7 +35,8 @@ AutoguiderPanel::AutoguiderPanel(QWidget *parent)
 	connect(ui.btPinholeRadiusApply, SIGNAL(released()), this, SLOT(updatePinholeRadius()));
 	connect(ui.btOffsetCorrectionThresholdApply, SIGNAL(released()), this, SLOT(updateOffsetCorrectionThreshold()));
 	connect(ui.btOffsetCorrectionDisableThresholdApply, SIGNAL(released()), this, SLOT(updateOffsetCorrectionDisableThreshold()));
-	connect(ui.btFramePerSecondsApply, SIGNAL(released()), this, SLOT(updateFramePerSeconds()));
+	connect(ui.btSamplingFramePerSecondsApply, SIGNAL(released()), this, SLOT(updateSamplingFramePerSeconds()));
+	connect(ui.btCorrectionFramePerSecondsApply, SIGNAL(released()), this, SLOT(updateCorrectionFramePerSeconds()));
 	connect(ui.btExposureTimeApply, SIGNAL(released()), this, SLOT(updateExposureTime()));
 }
 
@@ -93,11 +94,17 @@ void AutoguiderPanel::loadConfiguration() {
 	proc->setOffsetCorrectionDisableThreshold(_iValue);
 	ui.txtOffsetCorrectionDisableThreshold->setText(_sValue);
 
-	//Frame Per Seconds
-	_iValue = settings.value("frame_per_second", "").toInt();
+	//Sampling Frame Per Seconds
+	_iValue = settings.value("frame_per_second.sampling", "").toInt();
 	_sValue = QString::number(_iValue);
-	proc->setFramePerSeconds(_iValue);
-	ui.txtFramePerSeconds->setText(_sValue);
+	proc->setSamplingFramePerSeconds(_iValue);
+	ui.txtSamplingFramePerSeconds->setText(_sValue);
+
+	//Correction Frame Per Seconds
+	_iValue = settings.value("frame_per_second.correction", "").toInt();
+	_sValue = QString::number(_iValue);
+	proc->setCorrectionFramePerSeconds(_iValue);
+	ui.txtCorrectionFramePerSeconds->setText(_sValue);
 
 	//exposure time
 	_iValue = settings.value("exposure_time", "").toInt();
@@ -157,19 +164,43 @@ void AutoguiderPanel::updateExposureTime() {
 	proc->setExposureTime(_sValue.toInt());
 }
 
-void AutoguiderPanel::updateFramePerSeconds() {
+void AutoguiderPanel::updateSamplingFramePerSeconds() {
 	QString _sValue;
 	int _frame;
 
-	_sValue = ui.txtFramePerSeconds->text();
+	_sValue = ui.txtSamplingFramePerSeconds->text();
 	_frame = _sValue.toInt();
 
 	if(_frame < 1 || _frame > 60 ) {
 		_frame = 10;
 		qDebug() << " frame per seconds is out of limit (1<=frame<=60), use default: 10 ";
-		ui.txtFramePerSeconds->setText("10");
+		ui.txtSamplingFramePerSeconds->setText("10");
 	} 
-	proc->setFramePerSeconds(_frame);
+	proc->setSamplingFramePerSeconds(_frame);
+}
+
+void AutoguiderPanel::updateCorrectionFramePerSeconds() {
+	QString _sValue;
+	QString _sValue2;
+	int _frame;
+	int _samplingFrame;
+
+	_sValue = ui.txtSamplingFramePerSeconds->text();
+	_samplingFrame = _sValue.toInt();
+
+	_sValue2 = ui.txtCorrectionFramePerSeconds->text();
+	_frame = _sValue2.toInt();
+
+	//check if correction rate is lower than sampling rate. force to use the correct value if the user enter
+	//no sense values (correction > sampling)
+	if(_frame > _samplingFrame) {
+		qDebug() << " correction rate (" << _frame << ") should be at least less or equal to sampling rate (" << _samplingFrame << ")."; 
+		qDebug() << " forced to use the same value of sampling rate.";
+		_frame = _samplingFrame;
+		ui.txtCorrectionFramePerSeconds->setText(_sValue);
+	} 
+
+	proc->setCorrectionFramePerSeconds(_frame);
 }
 
 
@@ -201,7 +232,7 @@ void AutoguiderPanel::setup() {
 void AutoguiderPanel::updateCorrection(int x, int y) {
 	char text[100];
 	sprintf(text, "x=%d, y=%d", x, y);
-	ui.lbCorrection->setText(text);
+	ui.lbEstimatedCorrection->setText(text);
 
 	int limit = proc->getOffsetCorrectionThreshold();
 	int disable = proc->getOffsetCorrectionDisableThreshold();

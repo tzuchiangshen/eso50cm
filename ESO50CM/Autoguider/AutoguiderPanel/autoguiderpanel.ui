@@ -145,7 +145,7 @@
        <string>lbPinholeProfileContainer</string>
       </property>
      </widget>
-     <widget class="QLabel" name="lbCorrection">
+     <widget class="QLabel" name="lbEstimatedCorrection">
       <property name="geometry">
        <rect>
         <x>30</x>
@@ -155,7 +155,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>lbCorrection</string>
+       <string>lbEstimatedCorrection</string>
       </property>
      </widget>
      <widget class="QLabel" name="lbSlewStatus">
@@ -1153,6 +1153,19 @@
        <bool>true</bool>
       </property>
      </widget>
+     <widget class="QLabel" name="lbAppliedCorrection">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>220</y>
+        <width>101</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>lbAppliedCorrection</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
@@ -1261,15 +1274,15 @@
        <rect>
         <x>15</x>
         <y>180</y>
-        <width>71</width>
+        <width>91</width>
         <height>20</height>
        </rect>
       </property>
       <property name="text">
-       <string>frame/s</string>
+       <string>Sampling frame/s</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="txtFramePerSeconds">
+     <widget class="QLineEdit" name="txtSamplingFramePerSeconds">
       <property name="geometry">
        <rect>
         <x>120</x>
@@ -1279,7 +1292,7 @@
        </rect>
       </property>
      </widget>
-     <widget class="QPushButton" name="btFramePerSecondsApply">
+     <widget class="QPushButton" name="btSamplingFramePerSecondsApply">
       <property name="geometry">
        <rect>
         <x>220</x>
@@ -1407,7 +1420,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>210</y>
+        <y>240</y>
         <width>101</width>
         <height>16</height>
        </rect>
@@ -1420,13 +1433,49 @@
       <property name="geometry">
        <rect>
         <x>120</x>
-        <y>210</y>
+        <y>240</y>
         <width>91</width>
         <height>20</height>
        </rect>
       </property>
      </widget>
      <widget class="QPushButton" name="btExposureTimeApply">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>240</y>
+        <width>41</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Apply</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_16">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>210</y>
+        <width>101</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Correction frame/s</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="txtCorrectionFramePerSeconds">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>210</y>
+        <width>91</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btCorrectionFramePerSecondsApply">
       <property name="geometry">
        <rect>
         <x>220</x>

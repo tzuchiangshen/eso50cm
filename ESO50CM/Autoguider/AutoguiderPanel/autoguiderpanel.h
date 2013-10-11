@@ -37,7 +37,8 @@ class AutoguiderPanel : public QMainWindow
 		void updatePinholeRadius();
 		void updateOffsetCorrectionThreshold();
 		void updateOffsetCorrectionDisableThreshold();
-		void updateFramePerSeconds();
+		void updateSamplingFramePerSeconds();
+		void updateCorrectionFramePerSeconds();
 		void scaleImage(bool);
 		void updateThreshold(int val);
 		void updateThresholdDuringAuto(int val);
