@@ -15,6 +15,9 @@
 #include <ObsControlIF.h>
 #include <MatToQImage.h>
 
+#include <algorithm>
+
+
 using namespace cv;
 
 class ImageProcessor : public QThread
@@ -31,10 +34,13 @@ class ImageProcessor : public QThread
 		void setOffsetCorrectionDisableThreshold(int x);
 		int getOffsetCorrectionThreshold();
 		int getOffsetCorrectionDisableThreshold();
-		void setFramePerSeconds(int frame);
+		void setSamplingFramePerSeconds(int frame);
+		void setCorrectionFramePerSeconds(int frame);
 		void setEnableCorrection(bool enable);
 		void setVideoInput(int source);
 		void setExposureTime(int time);
+		void dumpBuffer(int *, const char*);
+		int getMedian(int *);
 
 
 		ObsControlIF *obs;
@@ -60,12 +66,24 @@ class ImageProcessor : public QThread
 		VideoCapture cap;
 		int offsetCorrectionThreshold;
 		int offsetCorrectionDisableThreshold;
-		int framePerSeconds;
+		int samplingFramePerSeconds;
+		int correctionFramePerSeconds;
+		int *correctionXBuffer;
+		static const int BUFFER_SIZE = 30;
+		int XBuffer[BUFFER_SIZE];
+		int *correctionYBuffer;
+		int YBuffer[BUFFER_SIZE];
+		
+		long processedFrameCounter;
 		int pinholeRadius;
 		bool enableCorrection;
 		int threshold;
 		bool enableAutoThreshold;
 		int exposureTime;
+
+		bool XStop;
+		bool YStop;
+		
 
 	signals:
 		void updateStatisticsInGUI(double *x, double *y);

@@ -9,6 +9,17 @@ ImageProcessor::ImageProcessor(void)
 	obs = new ObsControlIF(); 
 	count = 0;
 	threshold = 25;
+	XStop = true;
+	YStop = true;
+
+	//buffer setup
+	
+	for(int i=0; i<60; i++) {
+		XBuffer[i] = 0;
+		YBuffer[i] = 0;
+		cout << "XBuffer[" << i << "]=" << XBuffer[i] << endl;
+	}
+	processedFrameCounter = 0;
 	enableAutoThreshold = true;
 
 	connect(this,SIGNAL(newCorrection(int, int)), this, SLOT(sendCorrection(int, int)));
@@ -66,9 +77,14 @@ int ImageProcessor::getOffsetCorrectionDisableThreshold() {
 	return offsetCorrectionDisableThreshold;
 }
 
-void ImageProcessor::setFramePerSeconds(int frame) {
-	framePerSeconds = frame;
-	qDebug() << "new value for frame per seconds: " << frame;
+void ImageProcessor::setSamplingFramePerSeconds(int frame) {
+	samplingFramePerSeconds = frame;
+	qDebug() << "new value for sampling frame per seconds: " << frame;
+}
+
+void ImageProcessor::setCorrectionFramePerSeconds(int frame) {
+	correctionFramePerSeconds = frame;
+	qDebug() << "new value for correction frame per seconds: " << frame;
 }
 
 void ImageProcessor::setEnableCorrection(bool enable) {
@@ -160,6 +176,28 @@ void ImageProcessor::setupVideoSource(int cameraId) {
 void ImageProcessor::setupVideoSource(string file) {
 	//abs path to the video file
 	fileName = file;
+}
+
+void ImageProcessor::dumpBuffer(int *_array, const char *name) {
+
+	cout << "Correction Buffer:" << name << endl;
+	cout << "-----------------------------" << endl;
+	for(int i=0; i<60; i++) {
+		cout << "[" << i  << "]=(" << _array[i] << ") ";
+	}
+	
+	cout << endl;
+	cout << "=========================="  << endl;
+}
+
+int ImageProcessor::getMedian(int *_array) {
+	int _tmp[BUFFER_SIZE];
+	for(int i=0; i<BUFFER_SIZE; i++) {
+		_tmp[i] = _array[i];
+	}
+	std::sort(std::begin(_tmp), std::end(_tmp));
+	//dumpBuffer(_tmp, "sorted buffer");
+	return _tmp[BUFFER_SIZE/2];
 }
 
 void ImageProcessor::openVideoSource() {
@@ -334,6 +372,16 @@ bool ImageProcessor::processFrame() {
 	
 	//chart1.convertTo(tmp, CV_8UC3);
 	
+	processedFrameCounter++;
+	int index = processedFrameCounter % BUFFER_SIZE;
+	//cout << " frames: " << processedFrameCounter << " index:" << index << endl;
+	XBuffer[index] = corrX;
+	YBuffer[index] = corrY;
+	//dumpBuffer(XBuffer, "XBuffer");
+	//dumpBuffer(YBuffer, "YBuffer");
+
+	cout << "============median (" << getMedian(XBuffer) << "," << getMedian(YBuffer) << ") =============="  << endl;
+
 
 	//update GUI
 	emit newFrame(img);
@@ -360,21 +408,51 @@ void ImageProcessor::sendCorrection(int x, int y) {
 	//*  Cy - Py  < 0 => move South
 	//*/
 
+	//verify if it is time to apply the modifications
+	//remember that the sampling rate and correction rate is separated.
+	//the counter depends in the samplingFramePerSeconds variable. 
+	//
+	qDebug() << "processedFrameCounter=" << processedFrameCounter; 
+	qDebug() << "correctionFramePerSeconds=" << samplingFramePerSeconds;
+	
+	//normalize the divder
+	int divider = (int)samplingFramePerSeconds/correctionFramePerSeconds;
+	int n = processedFrameCounter % divider;
+	qDebug() << "n=" << n << " divider=" << divider;
+	if( n != 0 ) {
+		//it is not moment to apply the correction yet, just update the average and return;
+		qDebug() << ">>>>>>>>>>>>>>>>>>>>>>>>>>> Calculating correction ...(" << processedFrameCounter << " index: " << n << ")";
+		return;
+	} 
+
+	qDebug() << "Time to apply the correction, count: " << processedFrameCounter << " index: " << n;
+
+	
+
+	////limit is the hysteresis 
+	int limitX = offsetCorrectionThreshold;
+	int limitY = offsetCorrectionThreshold;
+	int disable = offsetCorrectionDisableThreshold;
+
+	//get the median. 
+	int medianX = getMedian(XBuffer);
+	int medianY = getMedian(YBuffer);
+
+	qDebug() << "Instant correction are (" << x << "," << y << ")";
+	qDebug() << "Differences are (" << medianX - x << "," << medianY - y << ")";
+	qDebug() << "Applying the median of the corrections (" << medianX << "," << medianY << ")";
+
+	//                 negative                |0|               positive
+	//|-- disable --|-- enable --|-- disable --|0|-- disable --|-- enable --|-- disable --|
+	//                (region B)                                 (region A) 
+
 	if(!enableCorrection) {
 		qDebug() << " --- Correction disabled ---";
 		return;
 	} else {
 		qDebug() << " --- Correction enabled ---";
 	}
-	
-	////limit is the hysteresis 
-	int limitX = offsetCorrectionThreshold;
-	int limitY = offsetCorrectionThreshold;
-	int disable = offsetCorrectionDisableThreshold;
 
-	//                 negative                |0|               positive
-	//|-- disable --|-- enable --|-- disable --|0|-- disable --|-- enable --|-- disable --|
-	//                (region B)                                 (region A) 
 
 	if( x > limitX && x < disable) {
         //move East (region A)
@@ -383,6 +461,7 @@ void ImageProcessor::sendCorrection(int x, int y) {
 		if(enableCorrection) {
 			slewOff(dir);
 			slewOn(speed, dir);
+			XStop = false;
 		}
 	} else if (x < -limitX && x > -disable) {
 		//move West (region B)
@@ -391,12 +470,19 @@ void ImageProcessor::sendCorrection(int x, int y) {
 		if(enableCorrection) {
 			slewOff(dir);
 			slewOn(speed, dir);
+			XStop = false;
 		}
 	} else {
-		//disable 
-		string dir("E");
-		slewOff(dir);
-		qDebug() << "disable region. X=" << x << " disable=" << disable; 
+		//disable
+		qDebug() << "disable region. X=" << x << " disable=" << disable; 		
+		if(!XStop) {
+			string dir("E");
+			slewOff(dir);
+			XStop = true;	
+		} else {
+			qDebug() << "already in stop";
+		}
+
 	}
 
 	if ( y > limitY && y < disable) {
@@ -406,6 +492,7 @@ void ImageProcessor::sendCorrection(int x, int y) {
 		if(enableCorrection) {
 			slewOff(dir);
 			slewOn(speed, dir);
+			YStop = false;
 		}
 	} else if ( y < -limitY && y > -disable) {
 		//move South (region B)
@@ -414,18 +501,30 @@ void ImageProcessor::sendCorrection(int x, int y) {
 		if(enableCorrection) {
 			slewOff(dir);
 			slewOn(speed, dir);
+			YStop = false;
 		}
 	} else {
 		//disable
-		string dir("S");
-		slewOff(dir);
 		qDebug() << "Disable region Y=" << y << " limit=" << disable;
+		if(!YStop) {
+			string dir("S");
+			slewOff(dir);
+			YStop = true;
+		} else {
+			qDebug() << "already in stop";
+		}
 	}
 }
 
 void ImageProcessor::setupVideoInput() {
 	if(cameraId < 0) {
-		setupVideoSource("c:\\tmp\\eso50cm\\guide1.mp4");
+		if(cameraId == -1) {
+			setupVideoSource("c:\\tmp\\eso50cm\\guide1.mp4");
+		} else if (cameraId == -2) {
+			setupVideoSource("c:\\tmp\\eso50cm\\guide2.mp4");
+		} else {
+			setupVideoSource("c:\\tmp\\eso50cm\\guide1.mp4");
+		}
 	}
 	//setupVideoSource(0);
 	connectToObsControl();
@@ -442,13 +541,14 @@ void ImageProcessor::run() {
 			break;
 		}
 		//QThread::msleep(33.3);
-		_interval = 1 / (double)framePerSeconds;
+		_interval = 1 / (double)samplingFramePerSeconds;
 		//max allowed values are 60 frame per seconds => 16 milliseconds between frame 
 		if(_interval < 0.016) {
 			_interval = 0.016;
 		} 
-		qDebug() << "frame per seconds: " << framePerSeconds << "; interval: " << _interval << " s";
+		qDebug() << "frame per seconds: " << samplingFramePerSeconds << "; interval: " << _interval << " s";
 		QThread::msleep(_interval*1000);
+		//QThread::sleep(5);
 	}
 	qDebug() << "Thread quit ...";
 }
@@ -703,4 +803,6 @@ int ImageProcessor::process_main(char* filename) {
 	waitKey(0);
     return 0;
 }
+
+
 
